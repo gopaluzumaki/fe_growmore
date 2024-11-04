@@ -6,6 +6,14 @@ import Input from "./TextInput";
 import { Add_Units } from "../constants/inputdata";
 import { useNavigate } from "react-router-dom";
 import { createProperty, uploadFile } from "../api";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 
 interface FormData {
   propertyName: string;
@@ -117,6 +125,20 @@ const AddUnits = () => {
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+                  <Select>
+                    <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                      <div className="flex items-center">
+                        <SelectValue placeholder="Type" />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['Commercial','Residencial'].map((item, i) => (
+                        <SelectItem key={i} value={item}>
+                          {item}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                     {Add_Units.map(({ label, name, type }) => (
                       <Input
                         key={name}
@@ -128,6 +150,7 @@ const AddUnits = () => {
                         borderd
                         bgLight
                       />
+                      
                     ))}
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">

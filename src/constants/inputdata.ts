@@ -1,18 +1,20 @@
 export const Add_Units = [
-  { label: "Name Of Property", name: "propertyName", type: "text" },
+  // { label: "Name Of Property", name: "propertyName", type: "text" },
   { label: "Location / Area", name: "location", type: "text" },
   { label: "City", name: "city", type: "text" },
   { label: "State", name: "state", type: "text" },
   { label: "Country", name: "country", type: "text" },
   { label: "Status", name: "status", type: "text" },
-  { label: "Price / Rent", name: "rentPrice", type: "text" },
+  { label: "Price / Rent Annually", name: "rentPrice", type: "text" },
+  { label: "Price sft / Price sqm", name: "rentPrice", type: "text" },
+  { label: "Unit Number", name: "rentPrice", type: "text" },
   { label: "No. of Rooms", name: "rooms", type: "text" },
   { label: "No. of Floors", name: "floors", type: "text" },
   { label: "Amenities", name: "amenities", type: "text" },
   { label: "View", name: "view", type: "text" },
   { label: "Name of Owner", name: "ownerName", type: "text" },
   { label: "Name of Tenant", name: "tenantName", type: "text" },
-  { label: "Contact Number of Tenant", name: "contact", type: "text" },
+  // { label: "Contact Number of Tenant", name: "contact", type: "text" },
 ];
 
 export const Add_Property = [
@@ -28,15 +30,15 @@ export const Add_Property = [
 ];
 
 export const Add_Tenant = [
-  { label: "Name Of Property", name: "propertyName", type: "text" },
-  { label: "Location / Area", name: "location", type: "text" },
-  { label: "Number of Units", name: "units", type: "text" },
-  { label: "City", name: "city", type: "text" },
-  { label: "State", name: "state", type: "text" },
-  { label: "Postcode", name: "postcode", type: "text" },
-  { label: "Country", name: "country", type: "text" },
-  { label: "Status", name: "status", type: "text" },
-  { label: "Price / Rent", name: "rentPrice", type: "text" },
+  // { label: "Name Of Property", name: "propertyName", type: "text" },
+  // { label: "Location / Area", name: "location", type: "text" },
+  // { label: "Number of Units", name: "units", type: "text" },
+  // { label: "City", name: "city", type: "text" },
+  // { label: "State", name: "state", type: "text" },
+  // { label: "Postcode", name: "postcode", type: "text" },
+  // { label: "Country", name: "country", type: "text" },
+  // { label: "Status", name: "status", type: "text" },
+  // { label: "Price / Rent", name: "rentPrice", type: "text" },
   { label: "Name of Tenant", name: "tenantName", type: "text" },
   { label: "Contact Number", name: "contact", type: "text" },
   { label: "Residence", name: "residence", type: "text" },
@@ -45,10 +47,10 @@ export const Add_Tenant = [
   { label: "Email", name: "email", type: "text" },
   { label: "Passport Number", name: "passportNum", type: "text" },
   { label: "Emirates ID", name: "emiratesId", type: "text" },
-  { label: "Lease In Date", name: "leaseInDate", type: "date" },
-  { label: "Lease Out Date", name: "leaseOutDate", type: "date" },
-  { label: "Name of Owner", name: "ownerName", type: "text" },
-  { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
+  // { label: "Lease In Date", name: "leaseInDate", type: "date" },
+  // { label: "Lease Out Date", name: "leaseOutDate", type: "date" },
+  // { label: "Name of Owner", name: "ownerName", type: "text" },
+  // { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
 ];
 
 export const Add_Owner = [
@@ -69,15 +71,15 @@ export const Add_Owner = [
 ];
 
 export const Add_Lead = [
-  { label: "Name Of Property", name: "propertyName", type: "text" },
-  { label: "Location / Area", name: "location", type: "text" },
-  { label: "Number of Units", name: "unitCount", type: "text" },
-  { label: "City", name: "city", type: "text" },
-  { label: "State", name: "state", type: "text" },
-  { label: "Postcode", name: "postcode", type: "text" },
-  { label: "Country", name: "country", type: "text" },
-  { label: "Status", name: "status", type: "text" },
-  { label: "Price / Rent", name: "rentPrice", type: "text" },
+  // { label: "Name Of Property", name: "propertyName", type: "text" },
+  // { label: "Location / Area", name: "location", type: "text" },
+  // { label: "Number of Units", name: "unitCount", type: "text" },
+  // { label: "City", name: "city", type: "text" },
+  // { label: "State", name: "state", type: "text" },
+  // { label: "Postcode", name: "postcode", type: "text" },
+  // { label: "Country", name: "country", type: "text" },
+  // { label: "Status", name: "status", type: "text" },
+  // { label: "Price / Rent", name: "rentPrice", type: "text" },
   { label: "Name of Lead", name: "leadName", type: "text" },
   { label: "Contact Number", name: "contact", type: "text" },
   { label: "Residence", name: "residence", type: "text" },
@@ -95,7 +97,7 @@ export const Add_Lead = [
 export const Add_BookReserve = [
   { label: "Name Of Property", name: "propertyName", type: "text" },
   { label: "Location / Area", name: "location", type: "text" },
-  { label: "Number of Units", name: "unitCount", type: "text" },
+  { label: "Unit Number", name: "unitCount", type: "text" },
   { label: "City", name: "city", type: "text" },
   { label: "State", name: "state", type: "text" },
   { label: "Postcode", name: "postcode", type: "text" },

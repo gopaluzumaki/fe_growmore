@@ -32,6 +32,8 @@ const AddTenancyContracts = () => {
     brokarageAmt: "",
   });
   const [selectedCheckbox, setSelectedCheckbox] = useState<string | null>(null);
+  const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
+  const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -62,11 +64,13 @@ const AddTenancyContracts = () => {
     // Calculate Security Deposite Amount if checkbox is selected
     if (selectedCheckbox === "securityDeposite" && !isNaN(anualPriceRent) && !isNaN(securityDepositePercentage)) {
       calculatedSecurityDepositeAmt = ((anualPriceRent * securityDepositePercentage) / 100).toFixed(2);
+      setShowSecurityDepositeAmt(true);
     }
 
     // Calculate Brokarage Amount if checkbox is selected
     if (selectedCheckbox === "brokarage" && !isNaN(anualPriceRent) && !isNaN(brokaragePercentage)) {
       calculatedBrokarageAmt = ((anualPriceRent * brokaragePercentage) / 100).toFixed(2);
+      setShowBrokarageAmt(true);
     }
 
     // Update form values with calculated amounts
@@ -81,16 +85,22 @@ const AddTenancyContracts = () => {
     const newSelectedCheckbox = selectedCheckbox === name ? null : name;
     setSelectedCheckbox(newSelectedCheckbox);
 
+    // Reset visibility for amount fields based on checkbox selection
+    setShowSecurityDepositeAmt(newSelectedCheckbox === "securityDeposite");
+    setShowBrokarageAmt(newSelectedCheckbox === "brokarage");
+
     // Recalculate amounts based on the selected checkbox
     if (newSelectedCheckbox) {
       calculateAmounts({ ...formValues });
     } else {
-      // Clear the calculated values if no checkbox is selected
+      // Clear the calculated values and hide amount fields if no checkbox is selected
       setFormValues(prevValues => ({
         ...prevValues,
         securityDepositeAmt: "",
         brokarageAmt: "",
       }));
+      setShowSecurityDepositeAmt(false);
+      setShowBrokarageAmt(false);
     }
   };
 
@@ -172,8 +182,8 @@ const AddTenancyContracts = () => {
                         name={name}
                         type={type}
                         value={formValues[name] || ""}
-                        onChange={handleInputChange}
-                        disabled={name === "securityDepositeAmt" || name === "brokarageAmt"}
+                        onChange={()=>{}}
+                       // disabled={(name === "securityDepositeAmt" && showSecurityDepositeAmt) || (name === "brokarageAmt" && showBrokarageAmt)}
                         borderd
                         bgLight
                       />

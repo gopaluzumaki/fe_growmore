@@ -9,11 +9,12 @@ const Header = () => {
         <div className="flex justify-between">
           <div>
             <h2 className="text-3xl font-semibold">
-              Welcome Back, <span className="text-burlywood"> Grow & More</span>
+              {/* Welcome Back, <span className="text-burlywood"> Grow & More</span> */}
+              <span className="text-burlywood"> Grow & More</span>
             </h2>
-            <p className="text-[#7C8DB5] mt-1.5 ml-1">
+            {/* <p className="text-[#7C8DB5] mt-1.5 ml-1">
               Here is the information about all your Property
-            </p>
+            </p> */}
           </div>
           <div className="flex gap-6 items-center">
             <p>
