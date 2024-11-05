@@ -126,6 +126,11 @@ const AddTenancyContracts = () => {
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
             <Header />
+            <div className="flex">
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">
+              {'Tenancy Cotract > Add New'} 
+              </p>
+            </div>
             <div>
               
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">

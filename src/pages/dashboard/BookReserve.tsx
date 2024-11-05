@@ -38,6 +38,11 @@ const BookReserve = () => {
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-4`}>
           <Header />
+          <div className="flex">
+            <p className="text-[#7C8DB5] mt-1.5 ml-1">
+              Here is the information about all your Booking / Reservation
+            </p>
+          </div>
           <div className="flex justify-between items-center my-8 mx-4">
             <div className="max-w-fit">
               <Link

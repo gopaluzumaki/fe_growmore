@@ -5,7 +5,7 @@ import { DemoAvtar } from "../assets";
 const Header = () => {
   return (
     <main>
-      <div className="my-5 px-2">
+      <div className="">
         <div className="flex justify-between">
           <div>
             <h2 className="text-3xl font-semibold">
