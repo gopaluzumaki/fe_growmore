@@ -6,6 +6,13 @@ import { Add_Property } from "../constants/inputdata";
 import Input from "./TextInput";
 import { createProperty, uploadFile } from "../api";
 import { useNavigate } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@radix-ui/react-select";
 
 interface FormData {
   propertyName: string;
@@ -124,18 +131,38 @@ const AddProperty = () => {
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                    {Add_Property.map(({ label, name, type }) => (
-                      <Input
-                        key={name}
-                        label={label}
-                        name={name}
-                        type={type}
-                        value={formData[name as keyof FormData]}
-                        onChange={handleChange}
-                        borderd
-                        bgLight
-                      />
-                    ))}
+                    {Add_Property.map(({ label, name, type }) =>
+                      // type !== "dropdown" ? (
+                        <Input
+                          key={name}
+                          label={label}
+                          name={name}
+                          type={type}
+                          value={formData[name as keyof FormData]}
+                          onChange={handleChange}
+                          borderd
+                          bgLight
+                        />
+                      // ) 
+                      // : type === "dropdown" && name=="Type"? (
+                      //   <Select>
+                      //     <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                      //       <div className="flex items-center">
+                      //         <SelectValue placeholder="Type" />
+                      //       </div>
+                      //     </SelectTrigger>
+                      //     <SelectContent>
+                      //       {["Commercial", "Residencial"].map((item, i) => (
+                      //         <SelectItem key={i} value={item}>
+                      //           {item}
+                      //         </SelectItem>
+                      //       ))}
+                      //     </SelectContent>
+                      //   </Select>
+                      // ) : (
+                      //   <></>
+                      // )
+                    )}
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         <label>Image Attachment</label>

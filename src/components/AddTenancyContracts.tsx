@@ -4,7 +4,8 @@ import Sidebar from "./Sidebar";
 import {
   Add_TenancyContractOwner,
   Add_TenancyContractTenant,
-  Add_TenancyContractProperty
+  Add_TenancyContractProperty,
+  Add_Contract_Details
 } from "../constants/inputdata";
 import Input from "./TextInput";
 import { useEffect, useState } from "react";
@@ -126,7 +127,40 @@ const AddTenancyContracts = () => {
           <div className="my-5 px-2 ">
             <Header />
             <div>
+              
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
+              <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+                  <span className="pb-1 border-b border-[#7C8DB5]">Contract</span>
+                  <span className="pb-1">Details</span>
+                </p>
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                <Select>
+                    <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                      <div className="flex items-center">
+                        <SelectValue placeholder="No. of Cheques" />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['1','2','3','6'].map((item, i) => (
+                        <SelectItem key={i} value={item}>
+                          {item}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {Add_Contract_Details.map(({ label, name, type }) => (
+                    <Input
+                      key={name}
+                      label={label}
+                      name={name}
+                      type={type}
+                      value={""}
+                      onChange={() => {}}
+                      borderd
+                      bgLight
+                    />
+                  ))}
+                </div>
                 <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">
                   <span className="pb-1 border-b border-[#7C8DB5]">Property</span>
                   <span className="pb-1">Details</span>
@@ -146,20 +180,20 @@ const AddTenancyContracts = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Select>
+                  {/* <Select>
                     <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                       <div className="flex items-center">
                         <SelectValue placeholder="No. of Cheques" />
                       </div>
                     </SelectTrigger>
                     <SelectContent>
-                      {['1','2'].map((item, i) => (
+                      {['1','2','3','6'].map((item, i) => (
                         <SelectItem key={i} value={item}>
                           {item}
                         </SelectItem>
                       ))}
                     </SelectContent>
-                  </Select>
+                  </Select> */}
                   <Select>
                     <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                       <div className="flex items-center">
