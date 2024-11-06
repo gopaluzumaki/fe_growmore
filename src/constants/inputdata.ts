@@ -100,7 +100,12 @@ export const Add_Owner = [
 
 export const Add_Lead = [
   { label: "Name of Lead", name: "leadName", type: "text" },
-  { label: "Lead Type", name: "leadType", type: "dropdown", values: ["Commercial", "Residential"], },
+  {
+    label: "Lead Type",
+    name: "leadType",
+    type: "dropdown",
+    values: ["Commercial", "Residential"],
+  },
   { label: "Contact Number", name: "contact", type: "text" },
   { label: "Nationality", name: "nationality", type: "text" },
   { label: "Email", name: "email", type: "text" },
@@ -137,8 +142,8 @@ export const Add_BookReserve = [
 ];
 
 export const Add_Contract_Details = [
-  { label: "Lease In Date", name: "leaseInDate", type: "text" },
-  { label: "Lease Out Date", name: "leaseOutDate", type: "text" },
+  { label: "Start Date", name: "leaseInDate", type: "text" },
+  { label: "End Date", name: "leaseOutDate", type: "text" },
   { label: "Price / Rent Annually", name: "anualPriceRent", type: "text" },
   {
     label: "Security Deposit Amount",
