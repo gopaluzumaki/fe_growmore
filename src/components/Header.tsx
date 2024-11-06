@@ -2,15 +2,14 @@ import { GoBell } from "react-icons/go";
 import { IoIosSearch, IoIosArrowDown } from "react-icons/io";
 import { DemoAvtar } from "../assets";
 
-const Header = () => {
+const Header = (props) => {
   return (
     <main>
       <div className="">
         <div className="flex justify-between">
           <div>
-            <h2 className="text-3xl font-semibold">
-              {/* Welcome Back, <span className="text-burlywood"> Grow & More</span> */}
-              <span className="text-burlywood"> Grow & More</span>
+            <h2 className="text-3xl font-semibold mb-5">
+              <span className="text-burlywood">{props.name}</span>
             </h2>
             {/* <p className="text-[#7C8DB5] mt-1.5 ml-1">
               Here is the information about all your Property

@@ -35,7 +35,7 @@ const Owners = () => {
       <div className="flex">
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-4`}>
-          <Header />
+          <Header name="Owners"/>
           <div className="flex">
             <p className="text-[#7C8DB5] mt-1.5 ml-1">
               Here is the information about all your Owners
