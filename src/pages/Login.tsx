@@ -21,7 +21,7 @@ const Login = () => {
 
   return (
     <div className="bg-signup-bg w-full h-screen">
-      <div className="max-w-[1400px] mx-auto py-5 pb-16 px-4">
+      <div className="max-w-[500px] mx-auto py-5 pb-16 px-4">
         <div className="flex flex-col items-center gap-4 my-8">
           <img src={signuplogo_light} alt="SignupLogoLight" />
           <p className="text-burlywood text-[30px] font-semibold">
