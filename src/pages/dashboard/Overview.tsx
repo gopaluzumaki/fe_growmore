@@ -99,7 +99,7 @@ const Overview = () => {
         <Sidebar />
         <div className={`flex-grow ml-80`}>
           <div className="my-5 px-2">
-            <Header />
+            <Header name="Welcome Back!"/>
             <div className="p-4 py-6 grid grid-cols-4 border border-[#E6EDFF] rounded-xl">
               <DataCard
                 amount={propertyCount}

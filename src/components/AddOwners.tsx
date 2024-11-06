@@ -63,7 +63,7 @@ const AddOwners = () => {
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
-            <Header />
+            <Header name="Owners"/>
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
               {'Owner > Add New'} 

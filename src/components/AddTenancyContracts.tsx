@@ -125,7 +125,7 @@ const AddTenancyContracts = () => {
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
-            <Header />
+            <Header name="Tenancy Contracts"/>
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
               {'Tenancy Cotract > Add New'} 

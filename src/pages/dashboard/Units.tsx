@@ -45,7 +45,7 @@ const Units = () => {
         <Sidebar />
         <div className={`flex-grow ml-80`}>
           <div className="my-5 px-2">
-            <Header />
+            <Header name="Unit" />
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
                 Here is the information about all your Units
