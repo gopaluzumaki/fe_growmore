@@ -38,7 +38,6 @@ const Tenants = () => {
     "Unit Number",
     "Location",
     "status",
-    "Images",
     " ",
   ];
 
@@ -120,11 +119,6 @@ const Tenants = () => {
                               }`}
                             >
                               {item.status}
-                            </div>
-                          </td>
-                          <td className="p-2 py-3">
-                            <div className="flex justify-center">
-                              <img src={img_group} />
                             </div>
                           </td>
                           <td className="p-2 py-3">
