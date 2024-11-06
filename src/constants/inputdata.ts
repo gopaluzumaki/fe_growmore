@@ -67,9 +67,20 @@ export const Add_Tenant = [
 
 export const Add_Owner = [
   { label: "Name of Owner", name: "ownerName", type: "text" },
-  { label: "Type of Owner", name: "ownerType", type: "text" },
+  {
+    label: "Type of Owner",
+    name: "ownerType",
+    type: "dropdown",
+    values: ["Individual", "Company"],
+  },
   { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
   { label: "Email", name: "email", type: "text" },
+  {
+    label: "Gender",
+    name: "gender",
+    type: "dropdown",
+    values: ["Male", "Female"],
+  },
   { label: "Number Of Property", name: "propertyCount", type: "text" },
   { label: "Number of Units", name: "units", type: "text" },
   { label: "Location / Area", name: "location", type: "text" },
@@ -89,15 +100,12 @@ export const Add_Owner = [
 
 export const Add_Lead = [
   { label: "Name of Lead", name: "leadName", type: "text" },
-  { label: "Lead Type", name: "leadType", type: "text" },
+  { label: "Lead Type", name: "leadType", type: "dropdown", values: ["Commercial", "Residential"], },
   { label: "Contact Number", name: "contact", type: "text" },
   { label: "Nationality", name: "nationality", type: "text" },
-  { label: "Type", name: "type", type: "text" },
   { label: "Email", name: "email", type: "text" },
   { label: "Tentative Lease In Date", name: "leaseInDate", type: "text" },
   { label: "Budget Range", name: "budgetRange", type: "text" },
-  { label: "Name of Owner", name: "ownerName", type: "text" },
-  { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
   { label: "Property Preference", name: "propertyPreference", type: "text" },
   { label: "Area Preference", name: "budgetRange", type: "text" },
   { label: "Community Preference", name: "budgetRange", type: "text" },

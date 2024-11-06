@@ -6,6 +6,13 @@ import { Add_Lead } from "../constants/inputdata";
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createLead, uploadFile } from "../api";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 interface FormData {
   leadName: string;
@@ -118,26 +125,43 @@ const AddLeads = () => {
           <div className="my-5 px-2 ">
             <Header name="Leads" />
             <div className="flex">
-              <p className="text-[#7C8DB5] mt-1.5 ml-1">
-              {'Lead > Add New'} 
-              </p>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Lead > Add New"}</p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                    {Add_Lead.map(({ label, name, type }) => (
-                      <Input
-                        key={name}
-                        label={label}
-                        name={name}
-                        type={type}
-                        value={formData[name as keyof FormData]}
-                        onChange={handleChange}
-                        borderd
-                        bgLight
-                      />
-                    ))}
+                    {Add_Lead.map(({ label, name, type, values }) =>
+                      type === "text" ? (
+                        <Input
+                          key={name}
+                          label={label}
+                          name={name}
+                          type={type}
+                          value={formData[name as keyof FormData]}
+                          onChange={handleChange}
+                          borderd
+                          bgLight
+                        />
+                      ) : type === "dropdown" ? (
+                        <Select>
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                            <div className="flex items-center">
+                              <SelectValue placeholder={label} />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {values?.map((item, i) => (
+                              <SelectItem key={i} value={item}>
+                                {item}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <></>
+                      )
+                    )}
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         <label>Image Attachment</label>

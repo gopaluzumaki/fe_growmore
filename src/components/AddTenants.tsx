@@ -79,7 +79,7 @@ const AddTenants = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                     {Add_Tenant.map(({ label, name, type, values }) =>
-                      type !== "dropdown" ? (
+                      type === "text" ? (
                         <Input
                           key={name}
                           label={label}
@@ -91,20 +91,20 @@ const AddTenants = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
-                          <Select>
-                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
-                              <div className="flex items-center">
-                                <SelectValue placeholder={label} />
-                              </div>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {values?.map((item, i) => (
-                                <SelectItem key={i} value={item}>
-                                  {item}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                        <Select>
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                            <div className="flex items-center">
+                              <SelectValue placeholder={label} />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {values?.map((item, i) => (
+                              <SelectItem key={i} value={item}>
+                                {item}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       ) : (
                         <></>
                       )
