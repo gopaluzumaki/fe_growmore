@@ -37,23 +37,57 @@ export const Add_Property = [
 ];
 
 export const Add_Tenant = [
-  { label: "Name of Customer", name: "tenantName", type: "text" },
-  { label: "Contact Number", name: "contact", type: "text" },
-  { label: "Nationality", name: "nationality", type: "text" },
   {
-    label: "Type",
-    name: "type",
+    label: "Type of Customer",
+    name: "ownerType",
     type: "dropdown",
     values: ["Individual", "Company"],
   },
+  {
+    label: "Contact Number of Customer",
+    name: "customerContact",
+    type: "text",
+  },
+  { label: "Email", name: "email", type: "text" },
+  // { label: "Name of Customer", name: "tenantName", type: "text" },
+  // { label: "Contact Number", name: "contact", type: "text" },
+  // { label: "Nationality", name: "nationality", type: "text" },
+  // {
+  //   label: "Type",
+  //   name: "type",
+  //   type: "dropdown",
+  //   values: ["Individual", "Company"],
+  // },
+  // {
+  //   label: "Gender",
+  //   name: "gender",
+  //   type: "dropdown",
+  //   values: ["Male", "Female"],
+  // },
+  // { label: "DOB", name: "dob", type: "date" },
+  // { label: "Email", name: "email", type: "text" },
+  // { label: "Passport Number", name: "passportNum", type: "text" },
+  // { label: "Passport Expiry Date", name: "passportExpiryDate", type: "date" },
+  // { label: "Country Of Issuance", name: "countryOfIssuance", type: "text" },
+  // { label: "Emirates ID", name: "emiratesId", type: "text" },
+  // {
+  //   label: "Emirates ID Expiry Date",
+  //   name: "emiratesIdExpiryDate",
+  //   type: "date",
+  // },
+];
+
+export const Type_Individual_Tenant = [
+  { label: "Name of Customer", name: "ownerName", type: "text" },
   {
     label: "Gender",
     name: "gender",
     type: "dropdown",
     values: ["Male", "Female"],
   },
-  { label: "DOB", name: "dob", type: "date" },
-  { label: "Email", name: "email", type: "text" },
+  { label: "City", name: "city", type: "text" },
+  { label: "Country", name: "country", type: "text" },
+  { label: "Nationality", name: "nationality", type: "text" },
   { label: "Passport Number", name: "passportNum", type: "text" },
   { label: "Passport Expiry Date", name: "passportExpiryDate", type: "date" },
   { label: "Country Of Issuance", name: "countryOfIssuance", type: "text" },
