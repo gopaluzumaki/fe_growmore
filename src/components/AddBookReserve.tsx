@@ -6,6 +6,7 @@ import { Add_BookReserve } from "../constants/inputdata";
 import Input from "./TextInput";
 import { useNavigate } from "react-router-dom";
 import { createBooking, uploadFile } from "../api";
+import CustomDatePicker from './CustomDatePicker'
 
 interface FormData {
   propertyName: string;
@@ -40,6 +41,7 @@ const AddBookReserve = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -133,16 +135,27 @@ const AddBookReserve = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                     {Add_BookReserve.map(({ label, name, type }) => (
-                      <Input
-                        key={name}
-                        label={label}
-                        name={name}
-                        type={type}
-                        value={formData[name as keyof FormData]}
-                        onChange={handleChange}
-                        borderd
-                        bgLight
-                      />
+                      type === "text" ? (
+                        <Input
+                          key={name}
+                          label={label}
+                          name={name}
+                          type={type}
+                          value={formData[name as keyof FormData]}
+                          onChange={handleChange}
+                          borderd
+                          bgLight
+                        />
+                      ) : type === "date" ? (
+                        <CustomDatePicker
+                          selectedDate={selectedDate}
+                          onChange={setSelectedDate}
+                          label={label}
+                          placeholder="Select Date"
+                        />
+                      ):(
+                        <></>
+                      )
                     ))}
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">

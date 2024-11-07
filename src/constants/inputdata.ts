@@ -52,16 +52,16 @@ export const Add_Tenant = [
     type: "dropdown",
     values: ["Male", "Female"],
   },
-  { label: "DOB", name: "dob", type: "text" },
+  { label: "DOB", name: "dob", type: "date" },
   { label: "Email", name: "email", type: "text" },
   { label: "Passport Number", name: "passportNum", type: "text" },
-  { label: "Passport Expiry Date", name: "passportExpiryDate", type: "text" },
+  { label: "Passport Expiry Date", name: "passportExpiryDate", type: "date" },
   { label: "Country Of Issuance", name: "countryOfIssuance", type: "text" },
   { label: "Emirates ID", name: "emiratesId", type: "text" },
   {
     label: "Emirates ID Expiry Date",
     name: "emiratesIdExpiryDate",
-    type: "text",
+    type: "date",
   },
 ];
 
@@ -88,14 +88,15 @@ export const Add_Owner = [
   { label: "Country", name: "country", type: "text" },
   { label: "Nationality", name: "nationality", type: "text" },
   { label: "Passport Number", name: "passportNum", type: "text" },
-  { label: "Passport Expiry Date", name: "passportExpiryDate", type: "text" },
+  { label: "Passport Expiry Date", name: "passportExpiryDate", type: "date" },
   { label: "Country Of Issuance", name: "countryOfIssuance", type: "text" },
   { label: "Emirates ID/Trade License", name: "emiratesId", type: "text" },
   {
     label: "Emirates ID/License Expiry Date",
     name: "emiratesIdExpiryDate",
-    type: "text",
+    type: "date",
   },
+  { label: "Trade license number", name: "tradeLicNo", type: "text" },
 ];
 
 export const Add_Lead = [
@@ -109,7 +110,7 @@ export const Add_Lead = [
   { label: "Contact Number", name: "contact", type: "text" },
   { label: "Nationality", name: "nationality", type: "text" },
   { label: "Email", name: "email", type: "text" },
-  { label: "Tentative Lease In Date", name: "leaseInDate", type: "text" },
+  { label: "Tentative Lease In Date", name: "leaseInDate", type: "date" },
   { label: "Budget Range", name: "budgetRange", type: "text" },
   { label: "Property Preference", name: "propertyPreference", type: "text" },
   { label: "Area Preference", name: "budgetRange", type: "text" },
@@ -126,7 +127,7 @@ export const Add_BookReserve = [
   { label: "City", name: "city", type: "text" },
   { label: "Country", name: "country", type: "text" },
   { label: "Status", name: "status", type: "text" },
-  { label: "Date of booking", name: "bookingDate", type: "text" },
+  { label: "Date of booking", name: "bookingDate", type: "date" },
   { label: "Name of Customer", name: "tenantName", type: "text" },
   { label: "Contact Number", name: "contact", type: "text" },
   { label: "Nationality", name: "nationality", type: "text" },
@@ -142,8 +143,9 @@ export const Add_BookReserve = [
 ];
 
 export const Add_Contract_Details = [
-  { label: "Start Date", name: "leaseInDate", type: "text" },
-  { label: "End Date", name: "leaseOutDate", type: "text" },
+  { label: "No Of Cheques", name: "type", type: "dropdown", values: ["1", "2", "3", "6"] },
+  { label: "Start Date", name: "leaseInDate", type: "date" },
+  { label: "End Date", name: "leaseOutDate", type: "date" },
   { label: "Price / Rent Annually", name: "anualPriceRent", type: "text" },
   {
     label: "Security Deposit Amount",
@@ -154,6 +156,8 @@ export const Add_Contract_Details = [
 ];
 
 export const Add_TenancyContractProperty = [
+  { label: "Name of Property", name: "type", type: "dropdown", values: ["Build_1", "Build_2", "Build_3"] },
+  { label: "Type", name: "type", type: "dropdown", values: ["Individual", "Company"]},
   { label: "Location / Area", name: "location", type: "text" },
   { label: "Rent Amount to Pay", name: "payAmount", type: "text" },
   { label: "Number of Unit", name: "unitCount", type: "text" },
@@ -167,13 +171,13 @@ export const Add_TenancyContractTenant = [
   { label: "Email", name: "email", type: "text" },
   { label: "City", name: "city", type: "text" },
   { label: "Passport Number", name: "passportNum", type: "text" },
-  { label: "Passport Expiry Date", name: "passportExpiryDate", type: "text" },
+  { label: "Passport Expiry Date", name: "passportExpiryDate", type: "date" },
   { label: "Country Of Issuance", name: "countryOfIssuance", type: "text" },
   { label: "Emirates ID", name: "emiratesId", type: "text" },
   {
     label: "Emirates ID Expiry Date",
     name: "emiratesIdExpiryDate",
-    type: "text",
+    type: "date",
   },
   { label: "Signature of Customer", name: "signTenant", type: "text" },
 ];
