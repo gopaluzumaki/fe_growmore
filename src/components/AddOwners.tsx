@@ -2,7 +2,11 @@ import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
 import { ChangeEvent, useState } from "react";
-import { Add_Owner } from "../constants/inputdata";
+import {
+  Add_Owner,
+  Type_Company,
+  Type_Individual,
+} from "../constants/inputdata";
 import Input from "./TextInput";
 import { createOwner, uploadFile } from "../api";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import CustomDatePicker from './CustomDatePicker'
+import CustomDatePicker from "./CustomDatePicker";
 
 interface FormData {
   ownerName: string;
@@ -28,7 +32,8 @@ const AddOwners = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [ownerType, setOwnerType] = useState(null);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -66,6 +71,14 @@ const AddOwners = () => {
     }
   };
 
+  const onSelect = (item) => {
+    if (item === "Individual") {
+      setOwnerType(item);
+    } else if (item === "Company") {
+      setOwnerType(item);
+    }
+  };
+
   return (
     <main>
       <div className="flex">
@@ -93,13 +106,13 @@ const AddOwners = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
-                        <Select>
+                        <Select onValueChange={(item) => onSelect(item)}>
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent onChange={() => console.log("hello")}>
                             {values?.map((item, i) => (
                               <SelectItem key={i} value={item}>
                                 {item}
@@ -118,6 +131,88 @@ const AddOwners = () => {
                         <></>
                       )
                     )}
+                    {ownerType === "Individual" &&
+                      Type_Individual.map(({ label, name, type, values }) =>
+                        type === "text" ? (
+                          <Input
+                            key={name}
+                            label={label}
+                            name={name}
+                            type={type}
+                            value={formData[name as keyof FormData]}
+                            onChange={handleChange}
+                            borderd
+                            bgLight
+                          />
+                        ) : type === "dropdown" ? (
+                          <Select onValueChange={(item) => onSelect(item)}>
+                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent
+                              onChange={() => console.log("hello")}
+                            >
+                              {values?.map((item, i) => (
+                                <SelectItem key={i} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : type === "date" ? (
+                          <CustomDatePicker
+                            selectedDate={selectedDate}
+                            onChange={setSelectedDate}
+                            label={label}
+                            placeholder="Select Date"
+                          />
+                        ) : (
+                          <></>
+                        )
+                      )}
+                    {ownerType === "Company" &&
+                      Type_Company.map(({ label, name, type, values }) =>
+                        type === "text" ? (
+                          <Input
+                            key={name}
+                            label={label}
+                            name={name}
+                            type={type}
+                            value={formData[name as keyof FormData]}
+                            onChange={handleChange}
+                            borderd
+                            bgLight
+                          />
+                        ) : type === "dropdown" ? (
+                          <Select onValueChange={(item) => onSelect(item)}>
+                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent
+                              onChange={() => console.log("hello")}
+                            >
+                              {values?.map((item, i) => (
+                                <SelectItem key={i} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : type === "date" ? (
+                          <CustomDatePicker
+                            selectedDate={selectedDate}
+                            onChange={setSelectedDate}
+                            label={label}
+                            placeholder="Select Date"
+                          />
+                        ) : (
+                          <></>
+                        )
+                      )}
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         <label>Image Attachment</label>

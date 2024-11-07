@@ -66,7 +66,6 @@ export const Add_Tenant = [
 ];
 
 export const Add_Owner = [
-  { label: "Name of Owner", name: "ownerName", type: "text" },
   {
     label: "Type of Owner",
     name: "ownerType",
@@ -75,28 +74,39 @@ export const Add_Owner = [
   },
   { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
   { label: "Email", name: "email", type: "text" },
+  { label: "Number Of Property", name: "propertyCount", type: "text" },
+  { label: "Number of Units", name: "units", type: "text" },
+  { label: "Location / Area", name: "location", type: "text" },
+];
+
+export const Type_Individual = [
+  { label: "Name of Owner", name: "ownerName", type: "text" },
   {
     label: "Gender",
     name: "gender",
     type: "dropdown",
     values: ["Male", "Female"],
   },
-  { label: "Number Of Property", name: "propertyCount", type: "text" },
-  { label: "Number of Units", name: "units", type: "text" },
-  { label: "Location / Area", name: "location", type: "text" },
   { label: "City", name: "city", type: "text" },
   { label: "Country", name: "country", type: "text" },
   { label: "Nationality", name: "nationality", type: "text" },
   { label: "Passport Number", name: "passportNum", type: "text" },
   { label: "Passport Expiry Date", name: "passportExpiryDate", type: "date" },
   { label: "Country Of Issuance", name: "countryOfIssuance", type: "text" },
-  { label: "Emirates ID/Trade License", name: "emiratesId", type: "text" },
+  { label: "Emirates ID", name: "emiratesId", type: "text" },
   {
-    label: "Emirates ID/License Expiry Date",
+    label: "Emirates ID",
     name: "emiratesIdExpiryDate",
     type: "date",
   },
-  { label: "Trade license number", name: "tradeLicNo", type: "text" },
+];
+
+export const Type_Company = [
+  { label: "Trade license number", name: "tradeLicenseNumner", type: "text" },
+  { label: "Name of the company", name: "companyName", type: "text" },
+  { label: "Emirate", name: "emirate", type: "text" },
+  { label: "Trade license expiry date", name: "tradeLicense", type: "date" },
+  { label: "Power Of Attorney Holder Name", name: "poaHolder", type: "text" },
 ];
 
 export const Add_Lead = [
@@ -143,7 +153,12 @@ export const Add_BookReserve = [
 ];
 
 export const Add_Contract_Details = [
-  { label: "No Of Cheques", name: "type", type: "dropdown", values: ["1", "2", "3", "6"] },
+  {
+    label: "No Of Cheques",
+    name: "type",
+    type: "dropdown",
+    values: ["1", "2", "3", "6"],
+  },
   { label: "Start Date", name: "leaseInDate", type: "date" },
   { label: "End Date", name: "leaseOutDate", type: "date" },
   { label: "Price / Rent Annually", name: "anualPriceRent", type: "text" },
@@ -156,8 +171,18 @@ export const Add_Contract_Details = [
 ];
 
 export const Add_TenancyContractProperty = [
-  { label: "Name of Property", name: "type", type: "dropdown", values: ["Build_1", "Build_2", "Build_3"] },
-  { label: "Type", name: "type", type: "dropdown", values: ["Individual", "Company"]},
+  {
+    label: "Name of Property",
+    name: "type",
+    type: "dropdown",
+    values: ["Build_1", "Build_2", "Build_3"],
+  },
+  {
+    label: "Type",
+    name: "type",
+    type: "dropdown",
+    values: ["Individual", "Company"],
+  },
   { label: "Location / Area", name: "location", type: "text" },
   { label: "Rent Amount to Pay", name: "payAmount", type: "text" },
   { label: "Number of Unit", name: "unitCount", type: "text" },
