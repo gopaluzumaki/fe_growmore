@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-
+import CustomDatePicker from './CustomDatePicker'
 interface FormData {
   ownerName: string;
   tenantName: string;
@@ -24,6 +24,7 @@ const AddTenants = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -105,7 +106,14 @@ const AddTenants = () => {
                             ))}
                           </SelectContent>
                         </Select>
-                      ) : (
+                      ) : type === "date" ? (
+                        <CustomDatePicker
+                          selectedDate={selectedDate}
+                          onChange={setSelectedDate}
+                          label={label}
+                          placeholder="Select Date"
+                        />
+                      ):(
                         <></>
                       )
                     )}
