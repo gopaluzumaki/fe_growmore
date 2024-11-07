@@ -96,6 +96,7 @@ export const Add_Owner = [
     name: "emiratesIdExpiryDate",
     type: "text",
   },
+  { label: "Trade license number", name: "tradeLicNo", type: "text" },
 ];
 
 export const Add_Lead = [
