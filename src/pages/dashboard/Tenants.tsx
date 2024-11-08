@@ -47,7 +47,7 @@ const Tenants = () => {
         <Sidebar />
         <div className={`flex-grow ml-80`}>
           <div className="my-5 px-2">
-            <Header name="Tenants"/>
+            <Header name="Customers"/>
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
                 Here is the information about all your Tenants
@@ -59,7 +59,7 @@ const Tenants = () => {
                   to={"/tenants/add"}
                   className="flex items-center gap-2 text-sonicsilver p-3 px-6 border rounded-lg bg-slate-100"
                 >
-                  Add New Tenant
+                  Add New Customer
                   <IoAdd size={20} />
                 </Link>
               </div>

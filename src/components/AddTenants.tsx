@@ -84,9 +84,9 @@ const AddTenants = () => {
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
-            <Header name="Tenants" />
+            <Header name="Customer" />
             <div className="flex">
-              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Tenant > Add New"}</p>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Customer > Add New"}</p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
@@ -173,7 +173,7 @@ const AddTenants = () => {
                           )
                       )}
                     {ownerType === "Company" &&
-                      Type_Company.map(({ label, name, type, values }) =>
+                      Type_Company.map(({ label, name, type }) =>
                         type === "text" ? (
                           <Input
                             key={name}
@@ -195,11 +195,11 @@ const AddTenants = () => {
                             <SelectContent
                               onChange={() => console.log("hello")}
                             >
-                              {values?.map((item, i) => (
+                              {/* {values?.map((item, i) => (
                                 <SelectItem key={i} value={item}>
                                   {item}
                                 </SelectItem>
-                              ))}
+                              ))} */}
                             </SelectContent>
                           </Select>
                         ) : type === "date" ? (

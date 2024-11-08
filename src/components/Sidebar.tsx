@@ -27,7 +27,7 @@ const Sidebar = () => {
     },
     { name: "Units", icon: <TbHomeSignal size={25} />, path: "/units" },
     {
-      name: "Tenants",
+      name: "Customers",
       icon: <IoDocumentTextOutline size={25} />,
       path: "/tenants",
     },

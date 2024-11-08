@@ -19,12 +19,17 @@ export const Add_Units = [
   { label: "Balcony Available", name: "balcony", type: "text" },
   { label: "View", name: "view", type: "text" },
   { label: "Name of Owner", name: "ownerName", type: "text" },
-  { label: "Name of Customer", name: "tenantName", type: "text" },
 ];
 
 export const Add_Property = [
   { label: "Type", name: "type",  type: "dropdown", values: ["Commercial", "Residential"] },
   { label: "Name Of Property", name: "propertyName", type: "text" },
+  {
+    label: "Type",
+    name: "Type",
+    type: "dropdown",
+    values: ["Commercial", "Residential"],
+  },
   { label: "Location", name: "location", type: "text" },
   { label: "No. of Units", name: "units", type: "text" },
   { label: "Community Name", name: "communityName", type: "text" },
@@ -136,8 +141,8 @@ export const Type_Individual = [
 ];
 
 export const Type_Company = [
-  { label: "Trade license number", name: "tradeLicenseNumner", type: "text" },
   { label: "Name of the company", name: "companyName", type: "text" },
+  { label: "Trade license number", name: "tradeLicenseNumner", type: "text" },
   { label: "Emirate", name: "emirate", type: "text" },
   { label: "Trade license expiry date", name: "tradeLicense", type: "date" },
   { label: "Power Of Attorney Holder Name", name: "poaHolder", type: "text" },
@@ -160,7 +165,12 @@ export const Add_Lead = [
   { label: "Area Preference", name: "budgetRange", type: "text" },
   { label: "Community Preference", name: "budgetRange", type: "text" },
   { label: "Bedroom Preference", name: "budgetRange", type: "text" },
-  { label: "Lead Status", name: "leadStatus", type: "text" },
+  {
+    label: "Lead Status",
+    name: "leadStatus",
+    type: "dropdown",
+    values: ["Open", "Converted To Booking", "Dropped", "Junk Lead"],
+  },
 ];
 
 export const Add_BookReserve = [
@@ -177,9 +187,14 @@ export const Add_BookReserve = [
   { label: "Nationality", name: "nationality", type: "text" },
   { label: "Type", name: "type", type: "text" },
   { label: "Email", name: "email", type: "text" },
-  { label: "Booking Start Date", name: "startDate", type: "text" },
-  { label: "Booking End Date", name: "endDate", type: "text" },
-  { label: "No. of Cheques", name: "chequesCount", type: "text" },
+  { label: "Booking Start Date", name: "startDate", type: "date" },
+  { label: "Booking End Date", name: "endDate", type: "date" },
+  {
+    label: "No. of Cheques",
+    name: "chequesCount",
+    type: "dropdown",
+    values: ["1", "2", "3", "6"],
+  },
   { label: "Rent Amount to Pay", name: "payAmount", type: "text" },
   { label: "Booking Amount", name: "bookingAmount", type: "text" },
   { label: "Name of Owner", name: "ownerName", type: "text" },

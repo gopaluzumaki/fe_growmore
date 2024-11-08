@@ -12,7 +12,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@radix-ui/react-select";
+} from "./ui/select";
 
 interface FormData {
   propertyName: string;
@@ -102,17 +102,17 @@ const AddProperty = () => {
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
-            <Header name="Property"/>
+            <Header name="Property" />
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
-              {'Property > Add New'} 
+                {"Property > Add New"}
               </p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                  {Add_Property.map(({ label, name, type, values }) =>
+                    {Add_Property.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
                           key={name}
@@ -124,6 +124,21 @@ const AddProperty = () => {
                           borderd
                           bgLight
                         />
+                      ) : type === "dropdown" ? (
+                        <Select>
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                            <div className="flex items-center">
+                              <SelectValue placeholder={label} />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {values?.map((item, i) => (
+                              <SelectItem key={i} value={item}>
+                                {item}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       ) : (
                         <></>
                       )
