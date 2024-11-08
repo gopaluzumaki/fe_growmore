@@ -188,7 +188,12 @@ export const Add_BookReserve = [
   { label: "Email", name: "email", type: "text" },
   { label: "Booking Start Date", name: "startDate", type: "date" },
   { label: "Booking End Date", name: "endDate", type: "date" },
-  { label: "No. of Cheques", name: "chequesCount", type: "text" },
+  {
+    label: "No. of Cheques",
+    name: "chequesCount",
+    type: "dropdown",
+    values: ["1", "2", "3", "6"],
+  },
   { label: "Rent Amount to Pay", name: "payAmount", type: "text" },
   { label: "Booking Amount", name: "bookingAmount", type: "text" },
   { label: "Name of Owner", name: "ownerName", type: "text" },
