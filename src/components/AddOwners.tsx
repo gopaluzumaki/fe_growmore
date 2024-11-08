@@ -21,6 +21,22 @@ import CustomDatePicker from "./CustomDatePicker";
 
 interface FormData {
   ownerName: string;
+  gender: string;
+  city: string;
+  country: string;
+  nationality: string;
+  passportNum: string;
+  passportExpiryDate: Date | null;
+  countryOfIssuance: string;
+  emiratesId: string;
+  emiratesIdExpiryDate: string;
+  companyName: string;
+  tradeLicenseNumner: string;
+  emirate: string;
+  tradeLicense: Date | null;
+  poaHolder: string;
+  description: string;
+  [key: string]: string | Date | null;
 }
 
 // {
@@ -35,6 +51,25 @@ const AddOwners = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [ownerType, setOwnerType] = useState(null);
 
+  const [formData, setFormData] = useState<FormData>({
+    ownerName: '',
+    gender: '',
+    city: '',
+    country: '',
+    nationality: '',
+    passportNum: '',
+    passportExpiryDate: null,
+    countryOfIssuance: '',
+    emiratesId: '',
+    emiratesIdExpiryDate: '',
+    companyName: '',
+    tradeLicenseNumner: '',
+    emirate: '',
+    tradeLicense: null,
+    poaHolder: '',
+    description: '',
+  });
+
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
@@ -46,9 +81,6 @@ const AddOwners = () => {
       }
     }
   };
-  const [formData, setFormData] = useState<FormData>({
-    ownerName: "",
-  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,17 +89,23 @@ const AddOwners = () => {
       [name]: value,
     }));
   };
+  const handleDateChange = (name: string, date: Date | null) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: date,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const apiData = {
-      supplier_name: formData.ownerName,
-      supplier_type: "Company",
-    };
-    console.log("API Data => ", apiData);
-    const res = await createOwner(apiData);
-    if (res) {
-      navigate("/owners");
+    try {
+      console.log("API Data => ", formData);
+      const res = await createOwner(formData);
+      if (res) {
+        navigate("/owners");
+      }
+    }catch(err) {
+      console.log(err);
     }
   };
 
@@ -122,8 +160,8 @@ const AddOwners = () => {
                         </Select>
                       ) : type === "date" ? (
                         <CustomDatePicker
-                          selectedDate={selectedDate}
-                          onChange={setSelectedDate}
+                          selectedDate={formData[name] as Date}
+                          onChange={(date) => handleDateChange(name, date)}
                           label={label}
                           placeholder="Select Date"
                         />
@@ -163,8 +201,8 @@ const AddOwners = () => {
                           </Select>
                         ) : type === "date" ? (
                           <CustomDatePicker
-                            selectedDate={selectedDate}
-                            onChange={setSelectedDate}
+                            selectedDate={formData[name] as Date}
+                            onChange={(date) => handleDateChange(name, date)}
                             label={label}
                             placeholder="Select Date"
                           />
@@ -204,8 +242,8 @@ const AddOwners = () => {
                           </Select>
                         ) : type === "date" ? (
                           <CustomDatePicker
-                            selectedDate={selectedDate}
-                            onChange={setSelectedDate}
+                            selectedDate={formData[name] as Date}
+                            onChange={(date) => handleDateChange(name, date)}
                             label={label}
                             placeholder="Select Date"
                           />

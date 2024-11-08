@@ -7,12 +7,12 @@ export const Add_Units = [
   { label: "Country", name: "country", type: "text" },
   { label: "Status", name: "status", type: "text" },
   { label: "Renting Price", name: "rentPrice", type: "text" },
-  { label: "Selling Price", name: "rentPrice", type: "text" },
+  { label: "Selling Price", name: "sellingPrice", type: "text" },
   { label: "Square ft of unit", name: "sqFoot", type: "text" },
   { label: "Square m of unit", name: "sqMeter", type: "text" },
   { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
   { label: "Price/ Square ft", name: "priceSqFt", type: "text" },
-  { label: "Unit Number", name: "rentPrice", type: "text" },
+  { label: "Unit Number", name: "unitNumber", type: "text" },
   { label: "No. of Rooms", name: "rooms", type: "text" },
   { label: "No. of Floors", name: "floors", type: "text" },
   { label: "No. of Bathrooms", name: "bathrooms", type: "text" },
@@ -22,6 +22,7 @@ export const Add_Units = [
 ];
 
 export const Add_Property = [
+  { label: "Type", name: "type",  type: "dropdown", values: ["Commercial", "Residential"] },
   { label: "Name Of Property", name: "propertyName", type: "text" },
   {
     label: "Type",
@@ -31,8 +32,8 @@ export const Add_Property = [
   },
   { label: "Location", name: "location", type: "text" },
   { label: "No. of Units", name: "units", type: "text" },
-  { label: "Community Name", name: "Community Name", type: "text" },
-  { label: "Area", name: "Area", type: "text" },
+  { label: "Community Name", name: "communityName", type: "text" },
+  { label: "Area", name: "area", type: "text" },
   { label: "City", name: "city", type: "text" },
   { label: "Country", name: "country", type: "text" },
   { label: "Status", name: "status", type: "text" },
@@ -161,9 +162,9 @@ export const Add_Lead = [
   { label: "Tentative Lease In Date", name: "leaseInDate", type: "date" },
   { label: "Budget Range", name: "budgetRange", type: "text" },
   { label: "Property Preference", name: "propertyPreference", type: "text" },
-  { label: "Area Preference", name: "budgetRange", type: "text" },
-  { label: "Community Preference", name: "budgetRange", type: "text" },
-  { label: "Bedroom Preference", name: "budgetRange", type: "text" },
+  { label: "Area Preference", name: "areaPreference", type: "text" },
+  { label: "Community Preference", name: "communityPreference", type: "text" },
+  { label: "Bedroom Preference", name: "bedroomPreference", type: "text" },
   {
     label: "Lead Status",
     name: "leadStatus",

@@ -16,22 +16,25 @@ import {
 } from "../components/ui/select";
 
 interface FormData {
-  propertyName: string;
   location: string;
   city: string;
   state: string;
   country: string;
   status: string;
   rentPrice: string;
+  sellingPrice: string;
+  sqFoot: string;
+  sqMeter: string;
+  priceSqMeter: string;
+  priceSqFt: string;
+  unitNumber: string;
   rooms: string;
   floors: string;
-  doc: string;
-  amenities: string;
+  bathrooms: string;
+  balcony: string;
   view: string;
   ownerName: string;
   tenantName: string;
-  Description: string;
-  contact: string;
 }
 
 // {
@@ -66,22 +69,25 @@ const AddUnits = () => {
   };
 
   const [formData, setFormData] = useState<FormData>({
-    propertyName: "",
     location: "",
     city: "",
     state: "",
     country: "",
     status: "",
     rentPrice: "",
+    sellingPrice: "",
+    sqFoot: "",
+    sqMeter: "",
+    priceSqMeter: "",
+    priceSqFt: "",
+    unitNumber: "",
     rooms: "",
     floors: "",
-    doc: "",
-    amenities: "",
+    bathrooms: "",
+    balcony: "",
     view: "",
     ownerName: "",
     tenantName: "",
-    Description: "",
-    contact: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,23 +100,14 @@ const AddUnits = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const apiData = {
-      name1: formData.propertyName,
-      custom_location: formData.location,
-      custom_thumbnail_image: imgUrl,
-      rent: formData.rentPrice,
-      parent_property: "Build2",
-      custom_units_available: formData.rooms,
-      // unit_owner: formData.ownerName,
-      is_group: 0,
-      cost_center: "Main - SRE",
-      company: "Syscort Real Estate",
-      custom_number_of_units: 1,
-    };
-    console.log("API Data => ", apiData);
-    const res = await createProperty(apiData);
-    if (res) {
-      navigate("/units");
+    try {
+      console.log("API Data => ", formData);
+      const res = await createProperty(formData);
+      if (res) {
+        navigate("/units");
+      }
+    }catch(err) {
+      console.log(err);
     }
   };
 
