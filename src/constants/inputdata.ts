@@ -135,8 +135,8 @@ export const Type_Individual = [
 ];
 
 export const Type_Company = [
-  { label: "Trade license number", name: "tradeLicenseNumner", type: "text" },
   { label: "Name of the company", name: "companyName", type: "text" },
+  { label: "Trade license number", name: "tradeLicenseNumner", type: "text" },
   { label: "Emirate", name: "emirate", type: "text" },
   { label: "Trade license expiry date", name: "tradeLicense", type: "date" },
   { label: "Power Of Attorney Holder Name", name: "poaHolder", type: "text" },
@@ -159,7 +159,12 @@ export const Add_Lead = [
   { label: "Area Preference", name: "budgetRange", type: "text" },
   { label: "Community Preference", name: "budgetRange", type: "text" },
   { label: "Bedroom Preference", name: "budgetRange", type: "text" },
-  { label: "Lead Status", name: "leadStatus", type: "text" },
+  {
+    label: "Lead Status",
+    name: "leadStatus",
+    type: "dropdown",
+    values: ["Open", "Converted To Booking", "Dropped", "Junk Lead"],
+  },
 ];
 
 export const Add_BookReserve = [
