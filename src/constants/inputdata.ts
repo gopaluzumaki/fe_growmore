@@ -19,7 +19,6 @@ export const Add_Units = [
   { label: "Balcony Available", name: "balcony", type: "text" },
   { label: "View", name: "view", type: "text" },
   { label: "Name of Owner", name: "ownerName", type: "text" },
-  { label: "Name of Customer", name: "tenantName", type: "text" },
 ];
 
 export const Add_Property = [
