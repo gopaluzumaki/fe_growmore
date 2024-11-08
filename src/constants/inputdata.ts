@@ -23,7 +23,12 @@ export const Add_Units = [
 
 export const Add_Property = [
   { label: "Name Of Property", name: "propertyName", type: "text" },
-  { label: "Type", name: "Type", type: "dropdown" },
+  {
+    label: "Type",
+    name: "Type",
+    type: "dropdown",
+    values: ["Commercial", "Residential"],
+  },
   { label: "Location", name: "location", type: "text" },
   { label: "No. of Units", name: "units", type: "text" },
   { label: "Community Name", name: "Community Name", type: "text" },
