@@ -16,27 +16,18 @@ import {
 
 interface FormData {
   propertyName: string;
+  type: string;
   location: string;
-  unitCount: string;
+  units: string;
+  communityName: string;
+  area: string;
   city: string;
-  state: string;
-  postcode: string;
   country: string;
   status: string;
+  amenities: string;
   rentPrice: string;
-  doc: string;
-  leadName: string;
-  contact: string;
-  residence: string;
-  nationality: string;
-  type: string;
-  email: string;
-  passportNum: string;
-  emiratesId: string;
-  leaseInDate: string;
-  leaseOutDate: string;
-  ownerName: string;
-  ownerContact: string;
+  description: string;
+  imageAttachment?: File;
 }
 
 // {
@@ -70,28 +61,18 @@ const AddProperty = () => {
   };
 
   const [formData, setFormData] = useState<FormData>({
-    propertyName: "",
-    location: "",
-    unitCount: "",
-    city: "",
-    state: "",
-    postcode: "",
-    country: "",
-    status: "",
-    rentPrice: "",
-    doc: "",
-    leadName: "",
-    contact: "",
-    residence: "",
-    nationality: "",
-    type: "",
-    email: "",
-    passportNum: "",
-    emiratesId: "",
-    leaseInDate: "",
-    leaseOutDate: "",
-    ownerName: "",
-    ownerContact: "",
+    propertyName: '',
+    type: '',
+    location: '',
+    units: '',
+    communityName: '',
+    area: '',
+    city: '',
+    country: '',
+    status: '',
+    amenities: '',
+    rentPrice: '',
+    description: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,19 +85,14 @@ const AddProperty = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const apiData = {
-      name1: formData.propertyName,
-      custom_location: formData.location,
-      custom_thumbnail_image: imgUrl,
-      custom_number_of_units: formData.unitCount,
-      rent: formData.rentPrice,
-      is_group: 1,
-      cost_center: "Main - SRE",
-    };
-    console.log("API Data => ", apiData);
-    const res = await createProperty(apiData);
-    if (res) {
-      navigate("/property");
+    try {
+      console.log("API Data => ", formData);
+      const res = await createProperty(formData);
+      if (res) {
+        navigate("/property");
+      }
+    }catch(err) {
+      console.log(err);
     }
   };
 
@@ -136,8 +112,8 @@ const AddProperty = () => {
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                    {Add_Property.map(({ label, name, type }) =>
-                      // type !== "dropdown" ? (
+                  {Add_Property.map(({ label, name, type, values }) =>
+                      type === "text" ? (
                         <Input
                           key={name}
                           label={label}
@@ -148,25 +124,9 @@ const AddProperty = () => {
                           borderd
                           bgLight
                         />
-                      // ) 
-                      // : type === "dropdown" && name=="Type"? (
-                      //   <Select>
-                      //     <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
-                      //       <div className="flex items-center">
-                      //         <SelectValue placeholder="Type" />
-                      //       </div>
-                      //     </SelectTrigger>
-                      //     <SelectContent>
-                      //       {["Commercial", "Residencial"].map((item, i) => (
-                      //         <SelectItem key={i} value={item}>
-                      //           {item}
-                      //         </SelectItem>
-                      //       ))}
-                      //     </SelectContent>
-                      //   </Select>
-                      // ) : (
-                      //   <></>
-                      // )
+                      ) : (
+                        <></>
+                      )
                     )}
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
@@ -189,6 +149,10 @@ const AddProperty = () => {
                       <label>Description</label>
                     </p>
                     <textarea
+                      id="description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                     ></textarea>
