@@ -59,7 +59,7 @@ const Tenants = () => {
                   to={"/tenants/add"}
                   className="flex items-center gap-2 text-sonicsilver p-3 px-6 border rounded-lg bg-slate-100"
                 >
-                  Add New Tenant
+                  Add New Customer
                   <IoAdd size={20} />
                 </Link>
               </div>
