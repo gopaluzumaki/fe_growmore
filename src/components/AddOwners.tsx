@@ -173,7 +173,7 @@ const AddOwners = () => {
                         )
                       )}
                     {ownerType === "Company" &&
-                      Type_Company.map(({ label, name, type, values }) =>
+                      Type_Company.map(({ label, name, type }) =>
                         type === "text" ? (
                           <Input
                             key={name}
@@ -195,11 +195,11 @@ const AddOwners = () => {
                             <SelectContent
                               onChange={() => console.log("hello")}
                             >
-                              {values?.map((item, i) => (
+                              {/* {values?.map((item, i) => (
                                 <SelectItem key={i} value={item}>
                                   {item}
                                 </SelectItem>
-                              ))}
+                              ))} */}
                             </SelectContent>
                           </Select>
                         ) : type === "date" ? (
