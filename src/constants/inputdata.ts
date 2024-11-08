@@ -162,9 +162,9 @@ export const Add_Lead = [
   { label: "Tentative Lease In Date", name: "leaseInDate", type: "date" },
   { label: "Budget Range", name: "budgetRange", type: "text" },
   { label: "Property Preference", name: "propertyPreference", type: "text" },
-  { label: "Area Preference", name: "budgetRange", type: "text" },
-  { label: "Community Preference", name: "budgetRange", type: "text" },
-  { label: "Bedroom Preference", name: "budgetRange", type: "text" },
+  { label: "Area Preference", name: "areaPreference", type: "text" },
+  { label: "Community Preference", name: "communityPreference", type: "text" },
+  { label: "Bedroom Preference", name: "bedroomPreference", type: "text" },
   {
     label: "Lead Status",
     name: "leadStatus",

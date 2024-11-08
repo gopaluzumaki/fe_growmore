@@ -155,7 +155,7 @@ const AddTenants = () => {
                         </Select>
                       ) : type === "date" ? (
                         <CustomDatePicker
-                          selectedDate={selectedDate}
+                          selectedDate={formData[name] as Date}
                           onChange={(date) => handleDateChange(name, date)}
                           label={label}
                           placeholder="Select Date"
@@ -197,7 +197,7 @@ const AddTenants = () => {
                             </Select>
                           ) : type === "date" ? (
                             <CustomDatePicker
-                              selectedDate={selectedDate}
+                              selectedDate={formData[name] as Date}
                               onChange={(date) => handleDateChange(name, date)}
                               label={label}
                               placeholder="Select Date"
@@ -238,7 +238,7 @@ const AddTenants = () => {
                           </Select>
                         ) : type === "date" ? (
                           <CustomDatePicker
-                            selectedDate={selectedDate}
+                            selectedDate={formData[name] as Date}
                             onChange={(date) => handleDateChange(name, date)}
                             label={label}
                             placeholder="Select Date"
