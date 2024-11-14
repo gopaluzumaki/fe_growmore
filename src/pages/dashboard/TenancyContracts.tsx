@@ -113,9 +113,6 @@ const TenancyContracts = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <div className="w-[100px]">
-                  <PrimaryButton title="Apply" />
-                </div>
               </div>
             </div>
             <div className="my-4 p-4">
