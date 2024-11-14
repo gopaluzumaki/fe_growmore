@@ -1,6 +1,12 @@
 import { Label } from "@radix-ui/react-select";
 
 export const Add_Units = [
+  {
+    label: "Type",
+    name: "type",
+    type: "dropdown",
+    values: ["Commercial", "Residential"],
+  },
   { label: "Location / Area", name: "location", type: "text" },
   { label: "City", name: "city", type: "text" },
   { label: "State", name: "state", type: "text" },
@@ -9,7 +15,7 @@ export const Add_Units = [
     label: "Status",
     name: "status",
     type: "dropdown",
-    values: ["Vacant", "Legal","Occupied", "Under Maintenance"],
+    values: ["Vacant", "Legal", "Occupied", "Under Maintenance"],
   },
   { label: "Renting Price", name: "rentPrice", type: "text" },
   { label: "Selling Price", name: "sellingPrice", type: "text" },

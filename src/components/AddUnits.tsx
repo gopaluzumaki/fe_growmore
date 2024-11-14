@@ -55,6 +55,9 @@ const AddUnits = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
+  const [sqmValue, setSqmValue] = useState();
+  const [priceSqFt, setPriceSqFt] = useState();
+  const [priceSqMeter, setPriceSqMeter] = useState();
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -92,9 +95,33 @@ const AddUnits = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log("dsadas", formData);
+    if (name === "sqFoot" && value) {
+      let sqMeter = value * 0.092903;
+      handleDropDown("sqMeter", value * 0.092903);
+      handleDropDown("priceSqFt", formData["rentPrice"] / value);
+      handleDropDown("priceSqMeter", formData["rentPrice"] / sqMeter);
+
+      // let priceSqFt
+      // let priceSqMeter
+      // setSqmValue(value* 0.092903)
+      setPriceSqFt(priceSqFt);
+      setPriceSqMeter(priceSqMeter);
+    } else if (!value) {
+      handleDropDown("sqMeter", 0);
+      handleDropDown("priceSqFt", 0);
+      handleDropDown("priceSqMeter", 0);
+    }
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleDropDown = (name, item) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: item,
     }));
   };
 
@@ -125,21 +152,7 @@ const AddUnits = () => {
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                    <Select>
-                      <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
-                        <div className="flex items-center">
-                          <SelectValue placeholder="Type" />
-                        </div>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {["Commercial", "Residencial"].map((item, i) => (
-                          <SelectItem key={i} value={item}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {Add_Units.map(({ label, name, type,values }) =>
+                    {Add_Units.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
                           key={name}
@@ -152,7 +165,9 @@ const AddUnits = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
-                        <Select onValueChange={(item) => onSelect(item)}>
+                        <Select
+                          onValueChange={(item) => handleDropDown(name, item)}
+                        >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
