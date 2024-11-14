@@ -62,8 +62,8 @@ const EditUnits = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log('dsads',location.state.unitList)
-    setFormData([...location.state.unitList]);
+    console.log('dsads',location.state.tenantList)
+    setFormData([...location.state.tenantList]);
   }, []);
 
   // const { state } = props.location;x
@@ -155,7 +155,7 @@ const EditUnits = () => {
           <div className="my-5 px-2 ">
             <Header name="Units" />
             <div className="flex">
-              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Unit > Edit Unit"}</p>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Unit > Edit Customer"}</p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">

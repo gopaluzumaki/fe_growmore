@@ -24,6 +24,7 @@ import AddUnits from "./components/AddUnits";
 import AddBookReserve from "./components/AddBookReserve";
 import EditProperty from "./components/EditProperty";
 import EditUnits from "./components/EditUnits";
+import EditTenants from "./components/EditTenants";
 
 function App() {
   const router = createBrowserRouter(
@@ -45,6 +46,7 @@ function App() {
         <Route path="/leads/add" element={<AddLeads />} />
         <Route path="/owners/add" element={<AddOwners />} />
         <Route path="/tenants/add" element={<AddTenants />} />
+        <Route path="/tenants/edit" element={<EditTenants />} />
         <Route path="/booking/add" element={<AddBookReserve />} />
         <Route path="/contracts/add" element={<AddTenancyContracts />} />
         <Route path="/signup" element={<Signup />} />
