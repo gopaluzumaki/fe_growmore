@@ -16,27 +16,18 @@ import {
 
 interface FormData {
   propertyName: string;
+  type: string;
   location: string;
-  unitCount: string;
+  units: string;
+  communityName: string;
+  area: string;
   city: string;
-  state: string;
-  postcode: string;
   country: string;
   status: string;
+  amenities: string;
   rentPrice: string;
-  doc: string;
-  leadName: string;
-  contact: string;
-  residence: string;
-  nationality: string;
-  type: string;
-  email: string;
-  passportNum: string;
-  emiratesId: string;
-  leaseInDate: string;
-  leaseOutDate: string;
-  ownerName: string;
-  ownerContact: string;
+  description: string;
+  imageAttachment?: File;
 }
 
 // {
@@ -70,28 +61,18 @@ const AddProperty = () => {
   };
 
   const [formData, setFormData] = useState<FormData>({
-    propertyName: "",
-    location: "",
-    unitCount: "",
-    city: "",
-    state: "",
-    postcode: "",
-    country: "",
-    status: "",
-    rentPrice: "",
-    doc: "",
-    leadName: "",
-    contact: "",
-    residence: "",
-    nationality: "",
-    type: "",
-    email: "",
-    passportNum: "",
-    emiratesId: "",
-    leaseInDate: "",
-    leaseOutDate: "",
-    ownerName: "",
-    ownerContact: "",
+    propertyName: '',
+    type: '',
+    location: '',
+    units: '',
+    communityName: '',
+    area: '',
+    city: '',
+    country: '',
+    status: '',
+    amenities: '',
+    rentPrice: '',
+    description: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,19 +85,14 @@ const AddProperty = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const apiData = {
-      name1: formData.propertyName,
-      custom_location: formData.location,
-      custom_thumbnail_image: imgUrl,
-      custom_number_of_units: formData.unitCount,
-      rent: formData.rentPrice,
-      is_group: 1,
-      cost_center: "Main - SRE",
-    };
-    console.log("API Data => ", apiData);
-    const res = await createProperty(apiData);
-    if (res) {
-      navigate("/property");
+    try {
+      console.log("API Data => ", formData);
+      const res = await createProperty(formData);
+      if (res) {
+        navigate("/property");
+      }
+    }catch(err) {
+      console.log(err);
     }
   };
 
@@ -188,6 +164,10 @@ const AddProperty = () => {
                       <label>Description</label>
                     </p>
                     <textarea
+                      id="description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                     ></textarea>

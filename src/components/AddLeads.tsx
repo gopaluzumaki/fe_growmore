@@ -17,26 +17,18 @@ import CustomDatePicker from './CustomDatePicker'
 
 interface FormData {
   leadName: string;
-  ownerName: string;
-  propertyName: string;
-  location: string;
-  country: string;
-  unitCount: string;
-  city: string;
-  state: string;
-  postcode: string;
-  status: string;
-  rentPrice: string;
+  leadType: string;
   contact: string;
-  residence: string;
   nationality: string;
-  type: string;
   email: string;
-  passportNum: string;
-  emiratesId: string;
-  leaseInDate: string;
-  leaseOutDate: string;
-  ownerContact: string;
+  leaseInDate: Date | null;
+  budgetRange: string;
+  propertyPreference: string;
+  areaPreference: string;
+  communityPreference: string;
+  bedroomPreference: string;
+  leadStatus: string;
+  [key: string]: string | Date | null;
 }
 
 // {
@@ -69,26 +61,17 @@ const AddLeads = () => {
   };
   const [formData, setFormData] = useState<FormData>({
     leadName: "",
-    ownerName: "",
-    propertyName: "",
-    location: "",
-    country: "",
-    unitCount: "",
-    city: "",
-    state: "",
-    postcode: "",
-    status: "",
-    rentPrice: "",
+    leadType: "",
     contact: "",
-    residence: "",
     nationality: "",
-    type: "",
     email: "",
-    passportNum: "",
-    emiratesId: "",
-    leaseInDate: "",
-    leaseOutDate: "",
-    ownerContact: "",
+    leaseInDate: null,
+    budgetRange: "",
+    propertyPreference: "",
+    areaPreference: "",
+    communityPreference: "",
+    bedroomPreference: "",
+    leadStatus: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,23 +82,31 @@ const AddLeads = () => {
     }));
   };
 
+  const handleDropdownChange = (name: string, value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleDateChange = (name: string, date: Date | null) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: date,
+    }));
+  };
+
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const apiData = {
-      first_name: "Saeed",
-      lead_name: formData.leadName,
-      lead_owner: formData.ownerName,
-      type: formData.type,
-      custom_property: "101",
-      annual_revenue: 0,
-      country: formData.country,
-      qualification_status: "Unqualified",
-      title: "Saeed",
-    };
-    console.log("API Data => ", apiData);
-    const res = await createLead(apiData);
-    if (res) {
-      navigate("/leads");
+    try {
+      console.log("API Data => ", formData);
+      const res = await createLead(formData);
+      if (res) {
+        navigate("/leads");
+      }
+    }catch(err) {
+      console.log(err);
     }
   };
 
@@ -146,7 +137,9 @@ const AddLeads = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
-                        <Select>
+                        <Select
+                          onValueChange={(value) => handleDropdownChange(name, value)}
+                        >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
@@ -162,8 +155,8 @@ const AddLeads = () => {
                         </Select>
                       ) : type === "date" ? (
                         <CustomDatePicker
-                          selectedDate={selectedDate}
-                          onChange={setSelectedDate}
+                          selectedDate={formData[name] as Date}
+                          onChange={(date) => handleDateChange(name, date)}
                           label={label}
                           placeholder="Select Date"
                         />
@@ -194,6 +187,7 @@ const AddLeads = () => {
                     <textarea
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
+                      onChange={(e) => handleChange(e as any)}
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">

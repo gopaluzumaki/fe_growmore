@@ -16,29 +16,23 @@ import {
 } from "./ui/select";
 
 interface FormData {
+  selectALead: string;
   propertyName: string;
   location: string;
   unitCount: string;
   city: string;
-  state: string;
-  postcode: string;
   country: string;
   status: string;
   bookingDate: string;
-  doc: string;
   tenantName: string;
   contact: string;
-  residence: string;
   nationality: string;
   type: string;
   email: string;
-  passportNum: string;
-  emiratesId: string;
-  endDate: string;
   startDate: string;
+  endDate: string;
   chequesCount: string;
   payAmount: string;
-  unitName: string;
   bookingAmount: string;
   ownerName: string;
   ownerContact: string;
@@ -49,6 +43,29 @@ const AddBookReserve = () => {
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const [formData, setFormData] = useState<FormData>({
+    selectALead: "",
+    propertyName: "",
+    location: "",
+    unitCount: "",
+    city: "",
+    country: "",
+    status: "",
+    bookingDate: "",
+    tenantName: "",
+    contact: "",
+    nationality: "",
+    type: "",
+    email: "",
+    startDate: "",
+    endDate: "",
+    chequesCount: "",
+    payAmount: "",
+    bookingAmount: "",
+    ownerName: "",
+    ownerContact: "",
+  });
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -62,40 +79,25 @@ const AddBookReserve = () => {
     }
   };
 
-  const [formData, setFormData] = useState<FormData>({
-    propertyName: "",
-    location: "",
-    unitCount: "",
-    city: "",
-    state: "",
-    postcode: "",
-    country: "",
-    status: "",
-    bookingDate: "",
-    doc: "",
-    tenantName: "",
-    contact: "",
-    residence: "",
-    nationality: "",
-    type: "",
-    email: "",
-    passportNum: "",
-    emiratesId: "",
-    endDate: "",
-    startDate: "",
-    chequesCount: "",
-    payAmount: "",
-    unitName: "",
-    bookingAmount: "",
-    ownerName: "",
-    ownerContact: "",
-  });
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleDropdownChange = (name: string, value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleDateChange = (name: string, date: Date | null) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: date,
     }));
   };
 
@@ -109,19 +111,14 @@ const AddBookReserve = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const apiData = {
-      docstatus: 1,
-      name: formData.tenantName,
-      owner: formData.ownerName,
-      property: formData.propertyName,
-      book_against: "Lead",
-      customer: "CRM-LEAD-2024-00002",
-      annual_rent: 100000,
-    };
-    console.log("API Data => ", apiData);
-    const res = await createBooking(apiData);
-    if (res) {
-      navigate("/units");
+    try {
+      console.log("API Data => ", formData);
+      const res = await createBooking(formData);
+      if (res) {
+        navigate("/units");
+      }
+    }catch(err) {
+      console.log(err);
     }
   };
 
@@ -154,7 +151,9 @@ const AddBookReserve = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
-                        <Select>
+                        <Select
+                          onValueChange={(value) => handleDropdownChange(name, value)}
+                        >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
@@ -170,8 +169,8 @@ const AddBookReserve = () => {
                         </Select>
                       ) : type === "date" ? (
                         <CustomDatePicker
-                          selectedDate={selectedDate}
-                          onChange={setSelectedDate}
+                          selectedDate={formData[name] as Date}
+                          onChange={(date) => handleDateChange(name, date)}
                           label={label}
                           placeholder="Select Date"
                         />
@@ -202,6 +201,7 @@ const AddBookReserve = () => {
                     <textarea
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
+                      onChange={(e) => handleChange(e as any)}
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
