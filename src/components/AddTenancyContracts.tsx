@@ -373,7 +373,7 @@ const AddTenancyContracts = () => {
                   </div>
                   <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
                     <span className="pb-1 border-b border-[#7C8DB5]">
-                      Tenant
+                      Customer
                     </span>
                     <span className="pb-1">Details</span>
                   </p>
