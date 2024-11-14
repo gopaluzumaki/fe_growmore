@@ -5,7 +5,12 @@ export const Add_Units = [
   { label: "City", name: "city", type: "text" },
   { label: "State", name: "state", type: "text" },
   { label: "Country", name: "country", type: "text" },
-  { label: "Status", name: "status", type: "text" },
+  {
+    label: "Status",
+    name: "status",
+    type: "dropdown",
+    values: ["Vacant", "Legal", "Under Maintenance"],
+  },
   { label: "Renting Price", name: "rentPrice", type: "text" },
   { label: "Selling Price", name: "sellingPrice", type: "text" },
   { label: "Square ft of unit", name: "sqFoot", type: "text" },
@@ -22,7 +27,12 @@ export const Add_Units = [
 ];
 
 export const Add_Property = [
-  { label: "Type", name: "type",  type: "dropdown", values: ["Commercial", "Residential"] },
+  {
+    label: "Type",
+    name: "type",
+    type: "dropdown",
+    values: ["Commercial", "Residential"],
+  },
   { label: "Name Of Property", name: "propertyName", type: "text" },
   {
     label: "Type",
@@ -189,12 +199,6 @@ export const Add_BookReserve = [
   { label: "Email", name: "email", type: "text" },
   { label: "Booking Start Date", name: "startDate", type: "date" },
   { label: "Booking End Date", name: "endDate", type: "date" },
-  {
-    label: "No. of Cheques",
-    name: "chequesCount",
-    type: "dropdown",
-    values: ["1", "2", "3", "6"],
-  },
   { label: "Rent Amount to Pay", name: "payAmount", type: "text" },
   { label: "Booking Amount", name: "bookingAmount", type: "text" },
   { label: "Name of Owner", name: "ownerName", type: "text" },
@@ -246,7 +250,11 @@ export const Add_TenancyContractTenant = [
   { label: "City", name: "tenantCity", type: "text" },
   { label: "Passport Number", name: "tenantPassport", type: "text" },
   { label: "Passport Expiry Date", name: "tenantPassportExpiry", type: "date" },
-  { label: "Country Of Issuance", name: "tenantCountryOfIssuence", type: "text" },
+  {
+    label: "Country Of Issuance",
+    name: "tenantCountryOfIssuence",
+    type: "text",
+  },
   { label: "Emirates ID", name: "tenantEmiratesId", type: "text" },
   {
     label: "Emirates ID Expiry Date",
