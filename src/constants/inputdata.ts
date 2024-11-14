@@ -218,9 +218,28 @@ export const Add_Contract_Details = [
     type: "dropdown",
     values: ["1", "2", "3", "6"],
   },
+  {
+    label: "Bank Name",
+    name: "bankName",
+    type: "text",
+  },
+  {
+    label: "Cheque No",
+    name: "chequeNo",
+    type: "text",
+  },
+  {
+    label: "Cheque Date",
+    name: "chequeDate",
+    type: "date",
+  },
   { label: "Start Date", name: "startDate", type: "date" },
   { label: "End Date", name: "endDate", type: "date" },
   { label: "Price / Rent Annually", name: "anualPriceRent", type: "text" },
+  { label: "Square ft of unit", name: "sqFoot", type: "text" },
+  { label: "Square m of unit", name: "sqMeter", type: "text" },
+  { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
+  { label: "Price/ Square ft", name: "priceSqFt", type: "text" },
   {
     label: "Security Deposit Amount",
     name: "securityDepositeAmt",
