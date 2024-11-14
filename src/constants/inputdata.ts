@@ -9,7 +9,7 @@ export const Add_Units = [
     label: "Status",
     name: "status",
     type: "dropdown",
-    values: ["Vacant", "Legal", "Under Maintenance"],
+    values: ["Vacant", "Legal","Occupied", "Under Maintenance"],
   },
   { label: "Renting Price", name: "rentPrice", type: "text" },
   { label: "Selling Price", name: "sellingPrice", type: "text" },

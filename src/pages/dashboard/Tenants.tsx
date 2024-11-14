@@ -32,7 +32,7 @@ const Tenants = () => {
 
   const headers = [
     "Sr. No",
-    "Tenant Name",
+    "Customer Name",
     "Property Name",
     "Owner Name",
     "Unit Number",
@@ -50,7 +50,7 @@ const Tenants = () => {
             <Header name="Customers"/>
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
-                Here is the information about all your Tenants
+                Here is the information about all your Customers
               </p>
             </div>
             <div className="flex justify-between items-center my-8 mx-4">
