@@ -73,6 +73,7 @@ const AddUnits = () => {
   };
 
   const [formData, setFormData] = useState<FormData>({
+    type: "",
     location: "",
     city: "",
     state: "",
@@ -91,7 +92,6 @@ const AddUnits = () => {
     balcony: "",
     view: "",
     ownerName: "",
-    tenantName: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

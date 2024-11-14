@@ -47,22 +47,29 @@ const AddTenants = () => {
   const [ownerType, setOwnerType] = useState(null);
 
   const [formData, setFormData] = useState<FormData>({
-    ownerName: '',
-    gender: '',
-    city: '',
-    country: '',
-    nationality: '',
-    passportNum: '',
+    ownerType: "",
+    customerContact: "",
+    ownerContact: "",
+    email: "",
+    ownerName: "",
+    gender: "",
+    city: "",
+    country: "",
+    nationality: "",
+    passportNum: "",
     passportExpiryDate: null,
-    countryOfIssuance: '',
-    emiratesId: '',
-    emiratesIdExpiryDate: '',
-    companyName: '',
-    tradeLicenseNumner: '',
-    emirate: '',
+    propertyCount: "",
+    units: "",
+    location: "",
+    countryOfIssuance: "",
+    emiratesId: "",
+    emiratesIdExpiryDate: "",
+    companyName: "",
+    tradeLicenseNumner: "",
+    emirate: "",
     tradeLicense: null,
-    poaHolder: '',
-    description: '',
+    poaHolder: "",
+    description: "",
   });
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -108,7 +115,7 @@ const AddTenants = () => {
       if (res) {
         navigate("/tenants");
       }
-    }catch(err) {
+    } catch (err) {
       console.log(err);
     }
   };
@@ -121,7 +128,9 @@ const AddTenants = () => {
           <div className="my-5 px-2 ">
             <Header name="Customer" />
             <div className="flex">
-              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Customer > Add New"}</p>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">
+                {"Customer > Add New"}
+              </p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
