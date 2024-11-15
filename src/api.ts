@@ -93,7 +93,7 @@ export const getUnitList = async () => {
 };
 
 export const getTenantList = async () => {
-  const response = await axios.get(API_URL.Tenant_List, {
+  const response = await axios.get(API_URL.Create_Tenant, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -153,15 +153,17 @@ export const createProperty = async (propertyData: any) => {
 };
 
 export const fetchUnit = async (params: any) => {
-  const response = await axios.get(`${API_URL.Create_Property}/${params.unit_number}`, {
-    auth: {
-      username: APP_AUTH.USERNAME,
-      password: APP_AUTH.PASSWORD,
-    },
-  });
+  const response = await axios.get(
+    `${API_URL.Create_Property}/${params.unit_number}`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
   return response;
 };
-
 
 export const fetchProperty = async (params: any) => {
   const response = await axios.get(`${API_URL.Create_Property}/${params}`, {
@@ -197,8 +199,28 @@ export const createTenant = async (tenantData: any) => {
   return response;
 };
 
+export const fetchTenant = async (params: any) => {
+  const response = await axios.get(`${API_URL.Create_Tenant}/${params}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
 export const createOwner = async (ownerData: any) => {
   const response = await axios.post(API_URL.Create_Owner, ownerData, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
+export const fetchOwner = async (params: any) => {
+  const response = await axios.get(`${API_URL.Create_Owner}/${params}`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
@@ -10,7 +9,14 @@ import {
 } from "../constants/inputdata";
 import Input from "./TextInput";
 import { useEffect, useState } from "react";
-import { fetchProperty, getPropertyList } from "../api";
+import {
+  fetchProperty,
+  getPropertyList,
+  getTenantList,
+  getOwnerList,
+  fetchTenant,
+  fetchOwner,
+} from "../api";
 import {
   Select,
   SelectContent,
@@ -21,18 +27,34 @@ import {
 } from "../components/ui/select";
 import Checkbox from "./CheckBox";
 import CustomDatePicker from "./CustomDatePicker";
+import { Select as MantineSelect, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import { APP_AUTH } from "../constants/config";
 
 const AddTenancyContracts = () => {
   const navigate = useNavigate();
   const [property, setProperty] = useState();
   const [checked, setChecked] = useState<boolean>(false);
   const [propertyList, setPropertyList] = useState<any[]>([]);
+  const [tenantList, setTenantList] = useState<any[]>([]);
+  const [singlePropertyData, setSinglePropertyData] = useState<any[]>([]);
+  const [ownerList, setOwnerList] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [numberOfChecks, setNumberOfChecks] = useState();
+  const [tableData, setTableData] = useState<
+    {
+      rent: string;
+      chequeNumber: string;
+      chequeDate: string;
+      bankName: string;
+    }[]
+  >([]);
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     numberOfChecks: "",
+    bankName: "",
+    chequeNo: "",
+    chequeDate: "",
     startDate: null,
     endDate: null,
     anualPriceRent: "",
@@ -159,18 +181,65 @@ const AddTenancyContracts = () => {
   };
 
   useEffect(() => {
-    getData();
+    getProperties();
+    getTenants();
+    getOwnerData();
   }, []);
 
-  const getData = async () => {
+  const getProperties = async () => {
     const res = await getPropertyList();
     const item = res?.data?.data;
     console.log(item);
     setPropertyList(item);
   };
 
+  const getTenants = async () => {
+    const res = await getTenantList();
+    const item = res?.data?.data;
+    console.log(item);
+    setTenantList(item);
+  };
+
+  const getOwnerData = async () => {
+    const res = await getOwnerList();
+    const item = res?.data?.data;
+    console.log(item);
+    setOwnerList(item);
+  };
+
+  useEffect(() => {
+    if (
+      formValues?.numberOfChecks &&
+      formValues?.anualPriceRent &&
+      formValues?.bankName &&
+      formValues?.chequeNo &&
+      formValues?.chequeDate
+    ) {
+      setTableData((prevData) => {
+        const newData = [];
+
+        for (let i = 0; i < +formValues.numberOfChecks; i++) {
+          newData.push({
+            rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+            chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
+            chequeDate: formValues.chequeDate,
+            bankName: formValues.bankName,
+          });
+        }
+        return newData;
+      });
+    }
+  }, [
+    formValues?.numberOfChecks,
+    formValues?.anualPriceRent,
+    formValues?.bankName,
+    formValues?.chequeNo,
+    formValues?.chequeDate,
+  ]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     if (name === "sqFoot" && value) {
       let sqMeter = value * 0.092903;
       handleDropDown("sqMeter", value * 0.092903);
@@ -195,7 +264,72 @@ const AddTenancyContracts = () => {
   //     }));
   //   };
 
-  const handleDropDown = (name, item) => {
+  const handleDropDown = async (name, item) => {
+    if (name === "propertyName") {
+      // Fetch property data based on the selected property
+
+      const res = await fetchProperty(item);
+      const propertyData = res?.data?.data;
+
+      console.log("property data", propertyData);
+      if (propertyData) {
+        // Fill all the fields with the fetched data
+        setFormValues((prevData) => ({
+          ...prevData,
+          propertyName: propertyData?.name,
+          propertyType: propertyData?.customer_type,
+          propertyLocation: propertyData?.custom_location,
+          propertyRent: propertyData?.rent,
+          propertyUnits: propertyData?.custom_number_of_units,
+          propertyStatus: propertyData?.status,
+          propertyDoc: propertyData?.custom_thumbnail_image,
+        }));
+      }
+    }
+
+    if (name === "tenantName") {
+      // Fetch tenant data based on the selected tenant
+      const res = await fetchTenant(item);
+      const tenantData = res?.data?.data;
+      if (tenantData) {
+        // Fill all the tenant-related fields with the fetched tenant data
+        setFormValues((prevData) => ({
+          ...prevData,
+          tenantName: tenantData?.customer_name,
+          tenantContact: tenantData?.mobile_no,
+          tenantEmail: tenantData?.email_id,
+          tenantCity: tenantData?.city,
+          tenantPassport: tenantData?.passport,
+          tenantPassportExpiry: tenantData?.passportExpiry,
+          tenantCountryOfIssuence: tenantData?.countryOfIssuence,
+          tenantEmiratesId: tenantData?.emiratesId,
+          tenantEmiratesIdExpiry: tenantData?.emiratesIdExpiry,
+          tenantSignature: tenantData?.signature,
+        }));
+      }
+    }
+
+    if (name === "ownerName") {
+      // Fetch tenant data based on the selected tenant
+      const res = await fetchOwner(item);
+      const ownerData = res?.data?.data;
+      if (ownerData) {
+        // Fill all the tenant-related fields with the fetched tenant data
+        setFormValues((prevData) => ({
+          ...prevData,
+          ownerName: ownerData?.name,
+          ownerType: ownerData?.supplier_type,
+          ownerContact: ownerData?.contact,
+          ownerEmail: ownerData?.email,
+          ownerCountry: ownerData?.country,
+          ownerEmiratesId: ownerData?.emiratesId,
+          ownerMobile: ownerData?.mobile,
+          ownerDoc: ownerData?.doc,
+          ownerSign: ownerData?.sign,
+        }));
+      }
+    }
+
     console.log("name", name, item);
     if (name === "numberOfChecks") {
       setNumberOfChecks(item);
@@ -328,6 +462,30 @@ const AddTenancyContracts = () => {
                           )
                       )}
                     </div>
+                    <div className="pt-6 pb-20">
+                      {tableData?.length > 0 && (
+                        <Table>
+                          <Table.Thead>
+                            <Table.Tr>
+                              <Table.Th>Rent</Table.Th>
+                              <Table.Th>Cheque Number</Table.Th>
+                              <Table.Th>Cheque Date</Table.Th>
+                              <Table.Th>Bank Name</Table.Th>
+                            </Table.Tr>
+                          </Table.Thead>
+                          <Table.Tbody>
+                            {tableData?.map((item, i) => (
+                              <Table.Tr key={i}>
+                                <Table.Td>{item.rent}</Table.Td>
+                                <Table.Td>{item.chequeNumber}</Table.Td>
+                                <Table.Td>{item.chequeDate}</Table.Td>
+                                <Table.Td>{item.bankName}</Table.Td>
+                              </Table.Tr>
+                            ))}
+                          </Table.Tbody>
+                        </Table>
+                      )}
+                    </div>
                   </div>
                   {/* property details */}
                   <div>
@@ -338,7 +496,7 @@ const AddTenancyContracts = () => {
                       <span className="pb-1">Details</span>
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                      <Select
+                      {/* <Select
                         name="propertyName"
                         onValueChange={(item) =>
                           handleDropDown("propertyName", item)
@@ -356,7 +514,41 @@ const AddTenancyContracts = () => {
                             </SelectItem>
                           ))}
                         </SelectContent>
-                      </Select>
+                      </Select> */}
+
+                      <MantineSelect
+                        label="Property Name"
+                        placeholder="Select Property"
+                        data={propertyList.map((item) => ({
+                          value: item?.property,
+                          label: item?.property,
+                        }))}
+                        value={formValues.propertyName}
+                        onChange={(value) =>
+                          handleDropDown("propertyName", value)
+                        }
+                        styles={{
+                          label: {
+                            marginBottom: "7px",
+                            color: "#7C8DB5",
+                            fontSize: "16px",
+                          },
+                          input: {
+                            border: "1px solid #CCDAFF",
+                            borderRadius: "8px",
+                            padding: "24px",
+                            fontSize: "16px",
+                            color: "#1A202C",
+                          },
+                          dropdown: {
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            border: "1px solid #E2E8F0",
+                          },
+                        }}
+                        searchable
+                      />
+
                       {Add_TenancyContractProperty.map(
                         ({ label, name, type, values }) =>
                           type === "text" ? (
@@ -402,41 +594,7 @@ const AddTenancyContracts = () => {
                       )}
                     </div>
                   </div>
-                  {/* Tenant Details */}
-                  <div>
-                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
-                      <span className="pb-1 border-b border-[#7C8DB5]">
-                        Tenant
-                      </span>
-                      <span className="pb-1">Details</span>
-                    </p>
-                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                      {Add_TenancyContractTenant.map(({ label, name, type }) =>
-                        type === "text" ? (
-                          <Input
-                            key={name}
-                            label={label}
-                            name={name}
-                            type={type}
-                            value={formValues[name]}
-                            onChange={handleChange}
-                            borderd
-                            bgLight
-                          />
-                        ) : type === "date" ? (
-                          <CustomDatePicker
-                            selectedDate={selectedDate}
-                            onChange={setSelectedDate}
-                            label={label}
-                            placeholder="Select Date"
-                          />
-                        ) : (
-                          <></>
-                        )
-                      )}
-                    </div>
-                  </div>
-                  {/* customer details */}
+                  {/* Customer Details */}
                   <div>
                     <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
                       <span className="pb-1 border-b border-[#7C8DB5]">
@@ -445,6 +603,37 @@ const AddTenancyContracts = () => {
                       <span className="pb-1">Details</span>
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+                      <MantineSelect
+                        label="Customer Name"
+                        placeholder="Select Property"
+                        data={tenantList.map((value) => {
+                          return value?.name;
+                        })}
+                        value={formValues.tenantName}
+                        onChange={(value) =>
+                          handleDropDown("tenantName", value)
+                        }
+                        styles={{
+                          label: {
+                            marginBottom: "7px",
+                            color: "#7C8DB5",
+                            fontSize: "16px",
+                          },
+                          input: {
+                            border: "1px solid #CCDAFF",
+                            borderRadius: "8px",
+                            padding: "24px",
+                            fontSize: "16px",
+                            color: "#1A202C",
+                          },
+                          dropdown: {
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            border: "1px solid #E2E8F0",
+                          },
+                        }}
+                        searchable
+                      />
                       {Add_TenancyContractTenant.map(({ label, name, type }) =>
                         type === "text" ? (
                           <Input
@@ -470,6 +659,7 @@ const AddTenancyContracts = () => {
                       )}
                     </div>
                   </div>
+
                   {/* owner details */}
                   <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
@@ -479,6 +669,36 @@ const AddTenancyContracts = () => {
                       <span className="pb-1">Details</span>
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                      <MantineSelect
+                        label="Owner Name"
+                        placeholder="Select Property"
+                        data={ownerList.map((item) => ({
+                          value: item?.supplier_name,
+                          label: item?.supplier_name,
+                        }))}
+                        value={formValues.ownerName}
+                        onChange={(value) => handleDropDown("ownerName", value)}
+                        styles={{
+                          label: {
+                            marginBottom: "7px",
+                            color: "#7C8DB5",
+                            fontSize: "16px",
+                          },
+                          input: {
+                            border: "1px solid #CCDAFF",
+                            borderRadius: "8px",
+                            padding: "24px",
+                            fontSize: "16px",
+                            color: "#1A202C",
+                          },
+                          dropdown: {
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            border: "1px solid #E2E8F0",
+                          },
+                        }}
+                        searchable
+                      />
                       {Add_TenancyContractOwner.map(({ label, name, type }) =>
                         type === "text" ? (
                           <Input

@@ -280,7 +280,6 @@ export const Add_TenancyContractProperty = [
 ];
 
 export const Add_TenancyContractTenant = [
-  { label: "Name of Customer", name: "tenantName", type: "text" },
   { label: "Contact Number", name: "tenantContact", type: "text" },
   { label: "Email", name: "tenantEmail", type: "text" },
   { label: "City", name: "tenantCity", type: "text" },
@@ -301,7 +300,6 @@ export const Add_TenancyContractTenant = [
 ];
 
 export const Add_TenancyContractOwner = [
-  { label: "Name Of Owner", name: "ownerName", type: "text" },
   { label: "Type Of Owner", name: "ownerType", type: "text" },
   { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
   { label: "Emirates ID/Trade License", name: "ownerEmiratesId", type: "text" },
