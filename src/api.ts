@@ -152,6 +152,17 @@ export const createProperty = async (propertyData: any) => {
   return response;
 };
 
+export const fetchUnit = async (params: any) => {
+  const response = await axios.get(`${API_URL.Create_Property}/${params.unit_number}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
+
 export const fetchProperty = async (params: any) => {
   const response = await axios.get(`${API_URL.Create_Property}/${params}`, {
     auth: {

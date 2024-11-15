@@ -28,7 +28,7 @@ interface FormData {
   postcode: string;
   country: string;
   status: string;
-  rentPrice: string;
+  rent: string;
   doc: string;
   leadName: string;
   contact: string;
@@ -73,7 +73,7 @@ const EditProperty = () => {
     custom_country: "",
     status: "",
     amenities: "",
-    rentPrice: "",
+    rent: "",
     description: "",
     is_group: 1,
   });
@@ -85,7 +85,7 @@ const EditProperty = () => {
     const fetchPropertyData = async () => {
       try {
         const res = await fetchProperty(id); // Fetch the property data
-        console.log("res123", res.data.data.description);
+        console.log("res123", res.data.data);
         if (res) {
           setFormData({
             type: res.data.data.type || "",
@@ -100,8 +100,9 @@ const EditProperty = () => {
             custom_country: res.data.data.custom_country || "",
             status: res.data.data.status || "",
             amenities: res.data.data.amenities || "",
-            rentPrice: res.data.data.rentPrice || "",
+            rent: res.data.data.rent || "",
             description: res.data.data.description || "",
+            custom_amenities:res.data.data.custom_amenities||"",
             is_group: 1,
           });
           setImgUrl(res.data.data.custom_thumbnail_image || "");

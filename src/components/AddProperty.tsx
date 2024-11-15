@@ -26,7 +26,7 @@ interface FormData {
   country: string;
   status: string;
   amenities: string;
-  rentPrice: string;
+  rent: string;
   description: string;
   imageAttachment?: File;
 }
@@ -74,9 +74,9 @@ const AddProperty = () => {
     custom_city: "",
     custom_country: "",
     status: "",
-    amenities: "",
-    rentPrice: "",
+    rent: "",
     description: "",
+    custom_amenities:"",
     custom_thumbnail_image: "",
     is_group: 1,
   });

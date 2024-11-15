@@ -6,7 +6,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Input from "./TextInput";
 import { Add_Units } from "../constants/inputdata";
 import { useLocation, useNavigate } from "react-router-dom";
-import { createProperty, uploadFile } from "../api";
+import { createProperty, fetchProperty, fetchUnit, updateProperty, uploadFile } from "../api";
 import {
   Select,
   SelectContent,
@@ -61,12 +61,55 @@ const EditUnits = () => {
   const [priceSqMeter, setPriceSqMeter] = useState();
   const location = useLocation();
 
-  useEffect(() => {
-    console.log('dsads',location.state.unitList)
-    setFormData([...location.state.unitList]);
-  }, []);
+
+  // useEffect(() => {
+  //   console.log('dsads',location.state.item)
+  //   // setFormData([...location.state.unitList]);
+  // }, []);
 
   // const { state } = props.location;x
+
+
+
+  useEffect(() => {
+    const fetchUnitData = async () => {
+      try {
+        const res = await fetchUnit(location.state.item); // Fetch the property data
+        console.log('dasdas',res)
+        if (res) {
+          setFormData({
+            type: res.data.data.type || "",
+            parent_property: res.data.data.name1 || "",
+            location: res.data.data.custom_location || "",
+            city:res.data.data.custom_city || "",
+            state:res.data.data.custom_city || "",
+            country:res.data.data.custom_country || "",
+            custom_status:res.data.data.status || "",
+            rent:res.data.data.rent || "",
+            sellingPrice:res.data.data.custom_selling_price || "",
+            sqFoot:res.data.data.custom_square_ft_of_unit || "",
+            sqMeter:res.data.data.custom_square_m_of_unit || "",
+            priceSqMeter:res.data.data.custom_price_square_m || "",
+            priceSqFt:res.data.data.custom_price_square_ft || "",
+            unitNumber:res.data.data.custom_unit_number || "",
+            rooms:res.data.data.custom_no_of_rooms || "",
+            floors:res.data.data.custom_no_of_floors || "",
+            bathrooms:res.data.data.common_bathroom || "",
+            balcony:res.data.data.custom_balcony_available || "",
+            view:res.data.data.custom_view,
+            ownerName:res.data.data.unit_owner || "",
+            cost_center: "Main - SRE",
+            is_group: 1,
+          });
+          setImgUrl(res.data.data.custom_thumbnail_image || "");
+        }
+      } catch (error) {
+        console.error("Error fetching property data:", error);
+      }
+    };
+
+    fetchUnitData();
+  }, [location.state.item.property]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -138,7 +181,7 @@ const EditUnits = () => {
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
-      const res = await createProperty(formData);
+      const res = await updateProperty(formData,location.state.item.property as string );
       if (res) {
         navigate("/units");
       }
@@ -175,6 +218,7 @@ const EditUnits = () => {
                         />
                       ) : type === "dropdown" ? (
                         <Select
+                         value={formData[name as keyof FormData]}
                           onValueChange={(item) => handleDropDown(name, item)}
                         >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">

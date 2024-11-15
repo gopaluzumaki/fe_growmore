@@ -36,6 +36,7 @@ const Units = () => {
 
   const getData = async () => {
     const unitList = await getUnitList();
+    console.log('eqwads',unitList)
     setUnitList(unitList?.data?.data);
   };
 
@@ -127,7 +128,7 @@ const Units = () => {
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
-                                <Link to={"/units/edit"} state={{ unitList }}>
+                                <Link to={"/units/edit"} state={{ item }}>
                                   <MdOutlineEdit
                                     size={20}
                                     className="text-[#D09D4A]"

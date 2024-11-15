@@ -22,7 +22,7 @@ interface FormData {
   state: string;
   country: string;
   status: string;
-  rentPrice: string;
+  rent: string;
   sellingPrice: string;
   sqFoot: string;
   sqMeter: string;
@@ -79,7 +79,7 @@ const AddUnits = () => {
     state: "",
     country: "",
     status: "",
-    rentPrice: "",
+    rent: "",
     sellingPrice: "",
     sqFoot: "",
     sqMeter: "",
@@ -100,8 +100,8 @@ const AddUnits = () => {
     if (name === "sqFoot" && value) {
       let sqMeter = value * 0.092903;
       handleDropDown("sqMeter", value * 0.092903);
-      handleDropDown("priceSqFt", formData["rentPrice"] / value);
-      handleDropDown("priceSqMeter", formData["rentPrice"] / sqMeter);
+      handleDropDown("priceSqFt",Number(formData["rent"] / value));
+      handleDropDown("priceSqMeter", Number(formData["rent"] / sqMeter));
 
       // let priceSqFt
       // let priceSqMeter
@@ -129,8 +129,59 @@ const AddUnits = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log("API Data => ", formData);
-      const res = await createProperty(formData);
+      console.log("API Data => ", {
+        name1: formData.parent_property,
+        parent_property: formData.parent_property,
+        type: formData?.type,
+        custom_location: formData?.location,
+        custom_city: formData?.city,
+        custom_state: formData?.state,
+        custom_country: formData?.country,
+        custom_status: formData?.custom_status,
+        rent: formData?.rent,
+        custom_selling_price: formData?.sellingPrice,
+        custom_square_ft_of_unit: formData?.sqFoot,
+        custom_square_m_of_unit: formData?.sqMeter,
+        custom_price_square_m: formData?.priceSqMeter,
+        custom_price_square_ft: formData?.priceSqFt,
+        custom_unit_number: formData?.unitNumber,
+        custom_no_of_rooms: formData.rooms,
+        custom_no_of_floors: formData.floors,
+        common_bathroom: formData?.bathrooms,
+        custom_balcony_available: formData?.balcony,
+        custom_view: formData?.view,
+        unit_owner: formData?.ownerName,
+        custom_thumbnail_image: imgUrl,
+        isGroup: 0,
+        cost_center: "Main - SRE",
+      });
+
+      const res = await createProperty({
+        name1: formData.parent_property,
+        parent_property: formData.parent_property,
+        type: formData?.type,
+        custom_location: formData?.location,
+        custom_city: formData?.city,
+        custom_state: formData?.state,
+        custom_country: formData?.country,
+        custom_status: formData?.status,
+        rent: formData.rent,
+        custom_selling_price: formData?.sellingPrice,
+        custom_square_ft_of_unit: formData?.sqFoot,
+        custom_square_m_of_unit: formData?.sqMeter,
+        custom_price_square_m: formData?.priceSqMeter,
+        custom_price_square_ft: formData?.priceSqFt,
+        custom_unit_number: formData?.unitNumber,
+        custom_no_of_rooms: formData.rooms,
+        custom_no_of_floors: formData.floors,
+        common_bathroom: formData?.bathrooms,
+        custom_balcony_available: formData?.balcony,
+        custom_view: formData?.view,
+        unit_owner: formData?.ownerName,
+        custom_thumbnail_image: imgUrl,
+        isGroup: 0,
+        cost_center: "Main - SRE",
+      });
       if (res) {
         navigate("/units");
       }
