@@ -164,9 +164,8 @@ const AddTenancyContracts = () => {
 
   const getData = async () => {
     const res = await getPropertyList();
-    const item = res?.data?.data.map(
-      (item: { property: any }) => item.property
-    );
+    const item = res?.data?.data;
+    console.log(item);
     setPropertyList(item);
   };
 
@@ -238,11 +237,12 @@ const AddTenancyContracts = () => {
     }
   };
 
-  const getChequeData = ( name, label, type) => {
+  const getChequeData = (name, label, type) => {
     // console.log('nuda',numberOfChecks)
 
     // {Array(numberOfChecks).map((index)=>(
-      return  <Input
+    return (
+      <Input
         key={name}
         label={label}
         name={name}
@@ -252,8 +252,9 @@ const AddTenancyContracts = () => {
         borderd
         bgLight
       />
+    );
     // ))}
-    }
+  };
 
   return (
     <main>
@@ -269,68 +270,148 @@ const AddTenancyContracts = () => {
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
-                <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
-                  <span className="pb-1 border-b border-[#7C8DB5]">
-                    Contract
-                  </span>
-                  <span className="pb-1">Details</span>
-                </p>
                 <form onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
-                    {Add_Contract_Details.map(({ label, name, type, values }) =>
-                      type === "text" &&
-                      name !== "chequeNo" &&
-                      name !== "chequeDate" ? (
-                        <Input
-                          key={name}
-                          label={label}
-                          name={name}
-                          type={type}
-                          value={formValues[name]}
-                          onChange={handleChange}
-                          borderd
-                          bgLight
-                        />
-                      ) : name === "chequeNo" || name === "chequeDate" ? (
-                        getChequeData( name, label, type)
-                      ) : type === "dropdown" ? (
-                        <Select
-                          onValueChange={(item) => handleDropDown(name, item)}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : type === "date" ? (
-                        <CustomDatePicker
-                          selectedDate={selectedDate}
-                          onChange={setSelectedDate}
-                          label={label}
-                          placeholder="Select Date"
-                        />
-                      ) : (
-                        <></>
-                      )
-                    )}
+                  {/* Contract Details */}
+                  <div>
+                    <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+                      <span className="pb-1 border-b border-[#7C8DB5]">
+                        Contract
+                      </span>
+                      <span className="pb-1">Details</span>
+                    </p>
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                      {Add_Contract_Details.map(
+                        ({ label, name, type, values }) =>
+                          type === "text" &&
+                          name !== "chequeNo" &&
+                          name !== "chequeDate" ? (
+                            <Input
+                              key={name}
+                              label={label}
+                              name={name}
+                              type={type}
+                              value={formValues[name]}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
+                          ) : name === "chequeNo" || name === "chequeDate" ? (
+                            getChequeData(name, label, type)
+                          ) : type === "dropdown" ? (
+                            <Select
+                              onValueChange={(item) =>
+                                handleDropDown(name, item)
+                              }
+                            >
+                              <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                <div className="flex items-center">
+                                  <SelectValue placeholder={label} />
+                                </div>
+                              </SelectTrigger>
+                              <SelectContent>
+                                {values?.map((item, i) => (
+                                  <SelectItem key={i} value={item}>
+                                    {item}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : type === "date" ? (
+                            <CustomDatePicker
+                              selectedDate={selectedDate}
+                              onChange={setSelectedDate}
+                              label={label}
+                              placeholder="Select Date"
+                            />
+                          ) : (
+                            <></>
+                          )
+                      )}
+                    </div>
                   </div>
-                  <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">
-                    <span className="pb-1 border-b border-[#7C8DB5]">
-                      Property
-                    </span>
-                    <span className="pb-1">Details</span>
-                  </p>
-                  <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                    {Add_TenancyContractProperty.map(
-                      ({ label, name, type, values }) =>
+                  {/* property details */}
+                  <div>
+                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">
+                      <span className="pb-1 border-b border-[#7C8DB5]">
+                        Property
+                      </span>
+                      <span className="pb-1">Details</span>
+                    </p>
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+                      <Select
+                        name="propertyName"
+                        onValueChange={(item) =>
+                          handleDropDown("propertyName", item)
+                        }
+                      >
+                        <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <div className="flex items-center">
+                            <SelectValue placeholder={"Name of Property"} />
+                          </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {propertyList?.map((item, i) => (
+                            <SelectItem key={i} value={item?.property}>
+                              {item?.property}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {Add_TenancyContractProperty.map(
+                        ({ label, name, type, values }) =>
+                          type === "text" ? (
+                            <Input
+                              key={name}
+                              label={label}
+                              name={name}
+                              type={type}
+                              value={formValues[name]}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
+                          ) : type === "dropdown" ? (
+                            <Select
+                              onValueChange={(item) =>
+                                handleDropDown(name, item)
+                              }
+                            >
+                              <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                <div className="flex items-center">
+                                  <SelectValue placeholder={label} />
+                                </div>
+                              </SelectTrigger>
+                              <SelectContent>
+                                {values?.map((item, i) => (
+                                  <SelectItem key={i} value={item}>
+                                    {item}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : type === "date" ? (
+                            <CustomDatePicker
+                              selectedDate={selectedDate}
+                              onChange={setSelectedDate}
+                              label={label}
+                              placeholder="Select Date"
+                            />
+                          ) : (
+                            <></>
+                          )
+                      )}
+                    </div>
+                  </div>
+                  {/* Tenant Details */}
+                  <div>
+                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
+                      <span className="pb-1 border-b border-[#7C8DB5]">
+                        Tenant
+                      </span>
+                      <span className="pb-1">Details</span>
+                    </p>
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+                      {Add_TenancyContractTenant.map(({ label, name, type }) =>
                         type === "text" ? (
                           <Input
                             key={name}
@@ -342,23 +423,6 @@ const AddTenancyContracts = () => {
                             borderd
                             bgLight
                           />
-                        ) : type === "dropdown" ? (
-                          <Select
-                            onValueChange={(item) => handleDropDown(name, item)}
-                          >
-                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
-                              <div className="flex items-center">
-                                <SelectValue placeholder={label} />
-                              </div>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {values?.map((item, i) => (
-                                <SelectItem key={i} value={item}>
-                                  {item}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
                         ) : type === "date" ? (
                           <CustomDatePicker
                             selectedDate={selectedDate}
@@ -369,69 +433,76 @@ const AddTenancyContracts = () => {
                         ) : (
                           <></>
                         )
-                    )}
+                      )}
+                    </div>
                   </div>
-                  <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
-                    <span className="pb-1 border-b border-[#7C8DB5]">
-                      Customer
-                    </span>
-                    <span className="pb-1">Details</span>
-                  </p>
-                  <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                    {Add_TenancyContractTenant.map(({ label, name, type }) =>
-                      type === "text" ? (
-                        <Input
-                          key={name}
-                          label={label}
-                          name={name}
-                          type={type}
-                          value={formValues[name]}
-                          onChange={handleChange}
-                          borderd
-                          bgLight
-                        />
-                      ) : type === "date" ? (
-                        <CustomDatePicker
-                          selectedDate={selectedDate}
-                          onChange={setSelectedDate}
-                          label={label}
-                          placeholder="Select Date"
-                        />
-                      ) : (
-                        <></>
-                      )
-                    )}
+                  {/* customer details */}
+                  <div>
+                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
+                      <span className="pb-1 border-b border-[#7C8DB5]">
+                        Customer
+                      </span>
+                      <span className="pb-1">Details</span>
+                    </p>
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+                      {Add_TenancyContractTenant.map(({ label, name, type }) =>
+                        type === "text" ? (
+                          <Input
+                            key={name}
+                            label={label}
+                            name={name}
+                            type={type}
+                            value={formValues[name]}
+                            onChange={handleChange}
+                            borderd
+                            bgLight
+                          />
+                        ) : type === "date" ? (
+                          <CustomDatePicker
+                            selectedDate={selectedDate}
+                            onChange={setSelectedDate}
+                            label={label}
+                            placeholder="Select Date"
+                          />
+                        ) : (
+                          <></>
+                        )
+                      )}
+                    </div>
                   </div>
-                  <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
-                    <span className="pb-1 border-b border-[#7C8DB5]">
-                      Owner
-                    </span>
-                    <span className="pb-1">Details</span>
-                  </p>
-                  <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
-                    {Add_TenancyContractOwner.map(({ label, name, type }) =>
-                      type === "text" ? (
-                        <Input
-                          key={name}
-                          label={label}
-                          name={name}
-                          type={type}
-                          value={formValues[name]}
-                          onChange={handleChange}
-                          borderd
-                          bgLight
-                        />
-                      ) : type === "date" ? (
-                        <CustomDatePicker
-                          selectedDate={formValues[name] as Date}
-                          onChange={setSelectedDate}
-                          label={label}
-                          placeholder="Select Date"
-                        />
-                      ) : (
-                        <></>
-                      )
-                    )}
+                  {/* owner details */}
+                  <div>
+                    <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+                      <span className="pb-1 border-b border-[#7C8DB5]">
+                        Owner
+                      </span>
+                      <span className="pb-1">Details</span>
+                    </p>
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                      {Add_TenancyContractOwner.map(({ label, name, type }) =>
+                        type === "text" ? (
+                          <Input
+                            key={name}
+                            label={label}
+                            name={name}
+                            type={type}
+                            value={formValues[name]}
+                            onChange={handleChange}
+                            borderd
+                            bgLight
+                          />
+                        ) : type === "date" ? (
+                          <CustomDatePicker
+                            selectedDate={formValues[name] as Date}
+                            onChange={setSelectedDate}
+                            label={label}
+                            placeholder="Select Date"
+                          />
+                        ) : (
+                          <></>
+                        )
+                      )}
+                    </div>
                   </div>
                   <div className="max-w-[100px]">
                     <PrimaryButton title="Save" />
