@@ -26,6 +26,7 @@ const Owners = () => {
 
   const getData = async () => {
     const unitList = await getOwnerList();
+    console.log('dase',unitList)
     setOwnerList(unitList?.data?.data);
   };
 
@@ -100,6 +101,7 @@ const Owners = () => {
                 totalProperty={item.unit_count}
                 totalUnit={item.unit_count}
                 img={demo_avatar}
+                path={`/owner/${item?.property}`}
               />
             ))}
           </div>

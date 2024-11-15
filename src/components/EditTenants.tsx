@@ -2,10 +2,10 @@
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Input from "./TextInput";
 import { Add_Units } from "../constants/inputdata";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { createProperty, uploadFile } from "../api";
 import {
   Select,
@@ -14,7 +14,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../components/ui/select";
+} from "./ui/select";
 
 interface FormData {
   location: string;
@@ -52,13 +52,21 @@ interface FormData {
 //   "rent": 0.0
 // }
 
-const AddUnits = () => {
+const EditUnits = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
   const [sqmValue, setSqmValue] = useState();
   const [priceSqFt, setPriceSqFt] = useState();
   const [priceSqMeter, setPriceSqMeter] = useState();
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log('dsads',location.state.tenantList)
+    setFormData([...location.state.tenantList]);
+  }, []);
+
+  // const { state } = props.location;x
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -73,7 +81,6 @@ const AddUnits = () => {
   };
 
   const [formData, setFormData] = useState<FormData>({
-    type: "",
     location: "",
     city: "",
     state: "",
@@ -92,6 +99,7 @@ const AddUnits = () => {
     balcony: "",
     view: "",
     ownerName: "",
+    tenantName: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +155,7 @@ const AddUnits = () => {
           <div className="my-5 px-2 ">
             <Header name="Units" />
             <div className="flex">
-              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Unit > Add New"}</p>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Unit > Edit Customer"}</p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
@@ -224,4 +232,4 @@ const AddUnits = () => {
   );
 };
 
-export default AddUnits;
+export default EditUnits;

@@ -53,6 +53,12 @@ const AddOwners = () => {
   const [ownerType, setOwnerType] = useState(null);
 
   const [formData, setFormData] = useState<FormData>({
+    ownerType:'',
+    ownerContact:'',
+    email:'',
+    propertyCount:'',
+    units:'',
+    location:'',
     ownerName: '',
     gender: '',
     city: '',

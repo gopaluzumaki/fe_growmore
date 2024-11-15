@@ -436,7 +436,41 @@ const AddTenancyContracts = () => {
                       )}
                     </div>
                   </div>
-                  {/* Owner Details */}
+                  {/* customer details */}
+                  <div>
+                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
+                      <span className="pb-1 border-b border-[#7C8DB5]">
+                        Customer
+                      </span>
+                      <span className="pb-1">Details</span>
+                    </p>
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+                      {Add_TenancyContractTenant.map(({ label, name, type }) =>
+                        type === "text" ? (
+                          <Input
+                            key={name}
+                            label={label}
+                            name={name}
+                            type={type}
+                            value={formValues[name]}
+                            onChange={handleChange}
+                            borderd
+                            bgLight
+                          />
+                        ) : type === "date" ? (
+                          <CustomDatePicker
+                            selectedDate={selectedDate}
+                            onChange={setSelectedDate}
+                            label={label}
+                            placeholder="Select Date"
+                          />
+                        ) : (
+                          <></>
+                        )
+                      )}
+                    </div>
+                  </div>
+                  {/* owner details */}
                   <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
                       <span className="pb-1 border-b border-[#7C8DB5]">

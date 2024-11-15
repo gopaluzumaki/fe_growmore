@@ -62,8 +62,8 @@ const AddProperty = () => {
   };
 
   const [formData, setFormData] = useState<FormData>({
-    propertyName: '',
     type: '',
+    propertyName: '',
     location: '',
     units: '',
     communityName: '',

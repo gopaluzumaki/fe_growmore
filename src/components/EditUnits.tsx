@@ -62,6 +62,7 @@ const EditUnits = () => {
   const location = useLocation();
 
   useEffect(() => {
+    console.log('dsads',location.state.unitList)
     setFormData([...location.state.unitList]);
   }, []);
 
@@ -154,7 +155,7 @@ const EditUnits = () => {
           <div className="my-5 px-2 ">
             <Header name="Units" />
             <div className="flex">
-              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Unit > Add New"}</p>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Unit > Edit Unit"}</p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">

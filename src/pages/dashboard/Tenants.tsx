@@ -47,7 +47,7 @@ const Tenants = () => {
         <Sidebar />
         <div className={`flex-grow ml-80`}>
           <div className="my-5 px-2">
-            <Header name="Customers"/>
+            <Header name="Customers" />
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
                 Here is the information about all your Customers
@@ -124,10 +124,15 @@ const Tenants = () => {
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
-                                <MdOutlineEdit
-                                  size={20}
-                                  className="text-[#D09D4A]"
-                                />
+                                <Link
+                                  to={"/tenants/edit"}
+                                  state={{ tenantList }}
+                                >
+                                  <MdOutlineEdit
+                                    size={20}
+                                    className="text-[#D09D4A]"
+                                  />
+                                </Link>
                               </button>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
                                 <MdDeleteForever
