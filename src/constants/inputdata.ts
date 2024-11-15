@@ -250,12 +250,6 @@ export const Add_Contract_Details = [
 
 export const Add_TenancyContractProperty = [
   {
-    label: "Name of Property",
-    name: "propertyName",
-    type: "dropdown",
-    values: ["Build_1", "Build_2", "Build_3"],
-  },
-  {
     label: "Type",
     name: "propertyType",
     type: "dropdown",
