@@ -11,6 +11,13 @@ import {
   uploadFile,
 } from "../api";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 interface FormData {
   propertyName: string;
@@ -54,28 +61,21 @@ const EditProperty = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const [formData, setFormData] = useState<FormData>({
-    propertyName: "",
-    location: "",
-    unitCount: "",
-    city: "",
-    state: "",
-    postcode: "",
-    country: "",
-    status: "",
-    rentPrice: "",
-    doc: "",
-    leadName: "",
-    contact: "",
-    residence: "",
-    nationality: "",
     type: "",
-    email: "",
-    passportNum: "",
-    emiratesId: "",
-    leaseInDate: "",
-    leaseOutDate: "",
-    ownerName: "",
-    ownerContact: "",
+    name: "",
+    name1: "",
+    cost_center: "Main - SRE",
+    custom_location: "",
+    custom_number_of_units: "",
+    custom_community_name: "",
+    custom_area: "",
+    custom_city: "",
+    custom_country: "",
+    status: "",
+    amenities: "",
+    rentPrice: "",
+    description: "",
+    is_group: 1,
   });
 
   const navigate = useNavigate();
@@ -85,30 +85,24 @@ const EditProperty = () => {
     const fetchPropertyData = async () => {
       try {
         const res = await fetchProperty(id); // Fetch the property data
+        console.log("res123", res.data.data.description);
         if (res) {
           setFormData({
-            propertyName: res.data.data.name1,
-            location: res.data.data.custom_location,
-            unitCount: res.data.data.custom_number_of_units.toString(),
-            city: res.data.data.city || "",
-            state: res.data.data.state || "",
-            postcode: res.data.data.postcode || "",
-            country: res.data.data.country || "",
-            status: res.data.data.status || "",
-            rentPrice: res.data.data.rent.toString(),
-            doc: res.data.data.doc || "",
-            leadName: res.data.data.leadName || "",
-            contact: res.data.data.contact || "",
-            residence: res.data.data.residence || "",
-            nationality: res.data.data.nationality || "",
             type: res.data.data.type || "",
-            email: res.data.data.email || "",
-            passportNum: res.data.data.passportNum || "",
-            emiratesId: res.data.data.emiratesId || "",
-            leaseInDate: res.data.data.leaseInDate || "",
-            leaseOutDate: res.data.data.leaseOutDate || "",
-            ownerName: res.data.data.ownerName || "",
-            ownerContact: res.data.data.ownerContact || "",
+            name: res.data.data.name || "",
+            name1: res.data.data.name1 || "",
+            cost_center: "Main - SRE",
+            custom_location: res.data.data.custom_location || "",
+            custom_number_of_units: res.data.data.custom_number_of_units || "",
+            custom_community_name: res.data.data.custom_community_name || "",
+            custom_area: res.data.data.custom_area || "",
+            custom_city: res.data.data.custom_city || "",
+            custom_country: res.data.data.custom_country || "",
+            status: res.data.data.status || "",
+            amenities: res.data.data.amenities || "",
+            rentPrice: res.data.data.rentPrice || "",
+            description: res.data.data.description || "",
+            is_group: 1,
           });
           setImgUrl(res.data.data.custom_thumbnail_image || "");
         }
@@ -119,6 +113,13 @@ const EditProperty = () => {
 
     fetchPropertyData();
   }, [id]);
+
+  const handleDropDown = (name, item) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: item,
+    }));
+  };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -145,13 +146,8 @@ const EditProperty = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const apiData = {
-      name1: formData.propertyName,
-      custom_location: formData.location,
+      ...formData,
       custom_thumbnail_image: imgUrl,
-      custom_number_of_units: formData.unitCount,
-      rent: formData.rentPrice,
-      is_group: 1,
-      cost_center: "Main - SRE",
     };
     console.log("API Data => ", apiData);
     const res = await updateProperty(apiData, id as string);
@@ -166,23 +162,45 @@ const EditProperty = () => {
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
-            <Header name="Properties"/>
+            <Header name="Properties" />
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                    {Add_Property.map(({ label, name, type }) => (
-                      <Input
-                        key={name}
-                        label={label}
-                        name={name}
-                        type={type}
-                        value={formData[name as keyof FormData]}
-                        onChange={handleChange}
-                        borderd
-                        bgLight
-                      />
-                    ))}
+                    {Add_Property.map(({ label, name, type, values }) =>
+                      type === "text" ? (
+                        <Input
+                          key={name}
+                          label={label}
+                          name={name}
+                          type={type}
+                          value={formData[name as keyof FormData]}
+                          onChange={handleChange}
+                          borderd
+                          bgLight
+                        />
+                      ) : type === "dropdown" ? (
+                        <Select
+                          value={formData[name as keyof FormData]}
+                          onValueChange={(item) => handleDropDown(name, item)}
+                        >
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                            <div className="flex items-center">
+                              <SelectValue placeholder={label} />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {values?.map((item, i) => (
+                              <SelectItem key={i} value={item}>
+                                {item}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <></>
+                      )
+                    )}
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         <label>Image Attachment</label>
@@ -206,7 +224,7 @@ const EditProperty = () => {
                     <textarea
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
-                      value={formData.doc} // Binding to doc field
+                      value={formData.description} // Binding to doc field
                       onChange={handleChange}
                       name="doc" // Set name to match state
                     ></textarea>

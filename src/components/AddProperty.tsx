@@ -56,25 +56,36 @@ const AddProperty = () => {
 
       if (file) {
         const res = await uploadFile(file);
+        console.log('reaeq2asd',res)
         setImgUrl(res?.data?.message?.file_url);
       }
     }
   };
 
   const [formData, setFormData] = useState<FormData>({
-    type: '',
-    propertyName: '',
-    location: '',
-    units: '',
-    communityName: '',
-    area: '',
-    city: '',
-    country: '',
-    status: '',
-    amenities: '',
-    rentPrice: '',
-    description: ''
+    type: "",
+    name: "",
+    name1: "",
+    cost_center: "Main - SRE",
+    custom_location: "",
+    custom_number_of_units: "",
+    custom_community_name: "",
+    custom_area: "",
+    custom_city: "",
+    custom_country: "",
+    status: "",
+    amenities: "",
+    rentPrice: "",
+    description: "",
+    custom_thumbnail_image: "",
+    is_group: 1,
   });
+  const handleDropDown = (name, item) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: item,
+    }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -86,13 +97,18 @@ const AddProperty = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('13e2qdwas',imgUrl)
     try {
       console.log("API Data => ", formData);
-      const res = await createProperty(formData);
+      const res = await createProperty({
+        ...formData,
+        custom_thumbnail_image: imgUrl,
+      });
+      console.log("res,res", res);
       if (res) {
         navigate("/property");
       }
-    }catch(err) {
+    } catch (err) {
       console.log(err);
     }
   };
@@ -126,7 +142,9 @@ const AddProperty = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
-                        <Select>
+                        <Select
+                          onValueChange={(item) => handleDropDown(name, item)}
+                        >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />

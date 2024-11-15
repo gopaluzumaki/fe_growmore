@@ -39,16 +39,34 @@ export const Add_Property = [
     type: "dropdown",
     values: ["Commercial", "Residential"],
   },
-  { label: "Name Of Property", name: "propertyName", type: "text" },
-  { label: "Location", name: "location", type: "text" },
-  { label: "No. of Units", name: "units", type: "text" },
-  { label: "Community Name", name: "communityName", type: "text" },
-  { label: "Area", name: "area", type: "text" },
-  { label: "City", name: "city", type: "text" },
-  { label: "Country", name: "country", type: "text" },
-  { label: "Status", name: "status", type: "text" },
+  { label: "Name Of Property", name: "name1", type: "text" },
+  { label: "Location", name: "custom_location", type: "text" },
+  { label: "No. of Units", name: "custom_number_of_units", type: "text" },
+  { label: "Community Name", name: "custom_community_name", type: "text" },
+  { label: "Area", name: "custom_area", type: "text" },
+  { label: "City", name: "custom_city", type: "text" },
+  { label: "Country", name: "custom_country", type: "text" },
+  {
+    label: "Status",
+    name: "status",
+    type: "dropdown",
+    values: [
+      "Available",
+      "Booked",
+      "Common Area (Not for lease)",
+      "Managed for Customer",
+      "Off Lease in 3 Months",
+      "On Lease",
+      "On Sale",
+      "Removed",
+      "Renewal",
+      "Sold",
+      "Vacating",
+    ],
+  },
   { label: "Amenities", name: "amenities", type: "text" },
   { label: "Price / Rent", name: "rentPrice", type: "text" },
+  { label: "Description", name: "description", type: "textArea" },
 ];
 
 export const Add_Tenant = [
@@ -185,7 +203,7 @@ export const Add_Lead = [
 
 export const Add_BookReserve = [
   { label: "Select a Lead", name: "selectALead", type: "text" },
-  { label: "Name Of Property", name: "propertyName", type: "text" },
+  { label: "Name Of Property", name: "name1", type: "text" },
   { label: "Location / Area", name: "location", type: "text" },
   { label: "Unit Number", name: "unitCount", type: "text" },
   { label: "City", name: "city", type: "text" },
@@ -245,7 +263,7 @@ export const Add_Contract_Details = [
 export const Add_TenancyContractProperty = [
   {
     label: "Name of Property",
-    name: "propertyName",
+    name: "name1",
     type: "dropdown",
     values: ["Build_1", "Build_2", "Build_3"],
   },

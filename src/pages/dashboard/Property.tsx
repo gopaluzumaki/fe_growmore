@@ -24,6 +24,7 @@ const Property = () => {
 
   const getData = async () => {
     const propertyList = await getPropertyList();
+    console.log('nbv',propertyList.data.data)
     setPropertyList(propertyList?.data?.data);
   };
 
