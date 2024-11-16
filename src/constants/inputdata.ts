@@ -224,7 +224,7 @@ export const Add_BookReserve = [
   { label: "Booking End Date", name: "endDate", type: "date" },
   { label: "Rent Amount to Pay", name: "payAmount", type: "text" },
   { label: "Booking Amount", name: "bookingAmount", type: "text" },
-  { label: "Name of Owner", name: "ownerName", type: "text" },
+  // { label: "Name of Owner", name: "ownerName", type: "text" },
   { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
 ];
 

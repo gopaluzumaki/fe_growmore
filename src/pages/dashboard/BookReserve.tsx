@@ -37,7 +37,7 @@ const BookReserve = () => {
       <div className="flex">
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-4`}>
-          <Header name="Booking / Reservation"/>
+          <Header name="Booking / Reservation" />
           <div className="flex">
             <p className="text-[#7C8DB5] mt-1.5 ml-1">
               Here is the information about all your Booking / Reservation
@@ -110,6 +110,7 @@ const BookReserve = () => {
           <div className="my-4 p-6 grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] gap-10 border border-[#E6EDFF] rounded-xl">
             {bookingList.map((item, i) => (
               <OwnerCard
+                bookingName={item?.name}
                 key={i}
                 name={item?.customer}
                 contact="971 52 489 1755"

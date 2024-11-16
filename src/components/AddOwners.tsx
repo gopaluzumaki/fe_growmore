@@ -53,28 +53,28 @@ const AddOwners = () => {
   const [ownerType, setOwnerType] = useState(null);
 
   const [formData, setFormData] = useState<FormData>({
-    ownerType:'',
-    ownerContact:'',
-    email:'',
-    propertyCount:'',
-    units:'',
-    location:'',
-    ownerName: '',
-    gender: '',
-    city: '',
-    country: '',
-    nationality: '',
-    passportNum: '',
+    ownerType: "",
+    ownerContact: "",
+    email: "",
+    propertyCount: "",
+    units: "",
+    location: "",
+    ownerName: "",
+    gender: "",
+    city: "",
+    country: "",
+    nationality: "",
+    passportNum: "",
     passportExpiryDate: null,
-    countryOfIssuance: '',
-    emiratesId: '',
-    emiratesIdExpiryDate: '',
-    companyName: '',
-    tradeLicenseNumner: '',
-    emirate: '',
+    countryOfIssuance: "",
+    emiratesId: "",
+    emiratesIdExpiryDate: "",
+    companyName: "",
+    tradeLicenseNumner: "",
+    emirate: "",
     tradeLicense: null,
-    poaHolder: '',
-    description: '',
+    poaHolder: "",
+    description: "",
   });
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -107,13 +107,51 @@ const AddOwners = () => {
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
-      const res = await createOwner(formData);
+      const res = await createOwner({
+        image: imgUrl,
+        supplier_details: formData?.description,
+        supplier_name:
+          ownerType === "Individual"
+            ? formData?.ownerName
+            : formData?.companyName,
+        custom_phone_number: formData?.ownerContact,
+        custom_email: formData?.email,
+        custom_number_of_property: formData?.propetyCount,
+        custom_number_of_units: formData?.units,
+        custom_location__area: formData?.location,
+
+        custom_trade_license_number: formData?.tradeLicenseNumner,
+        custom_emirate: formData?.emirate,
+        custom_trade_license_expiry_date: formData?.tradeLicense, //TODO
+        custom_power_of_attorney_holder_name: formData?.poaHolder,
+
+        custom_gender: formData.gender,
+        custom_city: formData.city,
+        country: formData.country,
+        custom_nationality: formData.nationality,
+        custom_passport_number: formData.passportNum,
+        custom_passport_expiry_date: formData.passportExpiryDate, //TODO
+        custom_country_of_issuance: formData.countryOfIssuance,
+        custom_emirates_id: formData.emiratesId,
+        custom_emirates_id_expiry_date: formData.emiratesIdExpiryDate, //TODO
+      });
       if (res) {
         navigate("/owners");
       }
-    }catch(err) {
+    } catch (err) {
       console.log(err);
     }
+  };
+
+  const handleDropDown = async (name, item) => {
+    if (name === "ownerType") {
+      setOwnerType(item);
+    }
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: item,
+    }));
   };
 
   const onSelect = (item) => {
@@ -151,7 +189,9 @@ const AddOwners = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
-                        <Select onValueChange={(item) => onSelect(item)}>
+                        <Select
+                          onValueChange={(item) => handleDropDown(name, item)}
+                        >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
@@ -190,7 +230,9 @@ const AddOwners = () => {
                             bgLight
                           />
                         ) : type === "dropdown" ? (
-                          <Select onValueChange={(item) => onSelect(item)}>
+                          <Select
+                            onValueChange={(item) => handleDropDown(name, item)}
+                          >
                             <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                               <div className="flex items-center">
                                 <SelectValue placeholder={label} />
@@ -231,7 +273,9 @@ const AddOwners = () => {
                             bgLight
                           />
                         ) : type === "dropdown" ? (
-                          <Select onValueChange={(item) => onSelect(item)}>
+                          <Select
+                            onValueChange={(item) => handleDropDown(name, item)}
+                          >
                             <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                               <div className="flex items-center">
                                 <SelectValue placeholder={label} />
@@ -279,6 +323,8 @@ const AddOwners = () => {
                       <label>Description</label>
                     </p>
                     <textarea
+                      name="description"
+                      onChange={handleChange}
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                     ></textarea>

@@ -272,3 +272,13 @@ export const uploadFile = async (file: File) => {
     console.error("Error uploading file:", error);
   }
 };
+
+export const fetchBooking = async (params: any) => {
+  const response = await axios.get(`${API_URL.Create_Booking}/${params}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};

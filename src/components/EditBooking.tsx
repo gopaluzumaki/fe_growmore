@@ -5,11 +5,12 @@ import Sidebar from "./Sidebar";
 import { ChangeEvent, useState } from "react";
 import { Add_BookReserve } from "../constants/inputdata";
 import Input from "./TextInput";
-import { useNavigate } from "react-router-dom";
-import { createBooking, uploadFile, getOwnerList } from "../api";
+import { useLocation, useNavigate } from "react-router-dom";
+import { createBooking, uploadFile, getOwnerList, fetchBooking } from "../api";
 import CustomDatePicker from "./CustomDatePicker";
 import { Select as MantineSelect } from "@mantine/core";
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import {
   Select,
@@ -42,12 +43,13 @@ interface FormData {
   ownerContact: string;
 }
 
-const AddBookReserve = () => {
+const EditBooking = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [ownerList, setOwnerList] = useState<any[]>([]);
+  const location = useLocation();
 
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
@@ -73,10 +75,6 @@ const AddBookReserve = () => {
     description: "",
   });
 
-  if (imgUrl) {
-    console.log(imgUrl);
-  }
-
   useEffect(() => {
     getOwnerData();
   }, []);
@@ -87,6 +85,49 @@ const AddBookReserve = () => {
     console.log(item);
     setOwnerList(item);
   };
+
+  useEffect(() => {
+    const fetchingBookedData = async () => {
+      if (location.state) {
+        try {
+          const res = await fetchBooking("Booking-0053");
+          const item = res?.data?.data;
+          console.log("booking item", item);
+          if (item) {
+            setFormData({
+              propertyName: item?.property || "",
+              selectALead: item?.custom_select_a_lead || "",
+              location: item?.custom_location__area || "",
+              unitCount: item?.custom_unit_number || "",
+              city: item?.custom_city || "",
+              country: item?.custom_country || "",
+              status: item?.custom_status || "",
+              bookingDate:
+                formatDateToYYMMDD(item?.custom_date_of_booking) || "",
+              tenantName: item?.custom_name_of_customer || "",
+              contact: item?.custom_contact_number || "",
+              nationality: item?.custom_nationality || "",
+              type: item?.custom_type || "",
+              email: item?.custom_email || "",
+              startDate:
+                formatDateToYYMMDD(item?.custom_booking_start_date) || "",
+              endDate: formatDateToYYMMDD(item?.custom_booking_end_date) || "",
+              chequesCount: item?.custom_cheques_count || "",
+              payAmount: item?.custom_rent_amount_to_pay || "",
+              bookingAmount: item?.custom_booking_amount || "",
+              ownerContact: item?.custom_contact_number_of_owner || "",
+              ownerName: item?.custom_name_of_owner || "",
+              description: item?.custom_description || "",
+            });
+            setImgUrl(item?.custom_image_attachment || "");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchingBookedData();
+  }, []);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -186,7 +227,7 @@ const AddBookReserve = () => {
             <Header name="Booking / Reservation" />
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
-                {"Booking / Reservation > Add New"}
+                {"Booking / Reservation > Edit your booking"}
               </p>
             </div>
             <div>
@@ -330,7 +371,7 @@ const AddBookReserve = () => {
                     ></textarea>
                   </div>
                   <div type="button" className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Save Update" />
                   </div>
                 </form>
               </div>
@@ -342,4 +383,4 @@ const AddBookReserve = () => {
   );
 };
 
-export default AddBookReserve;
+export default EditBooking;

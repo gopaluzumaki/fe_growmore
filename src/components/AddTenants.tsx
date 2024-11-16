@@ -111,7 +111,33 @@ const AddTenants = () => {
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
-      const res = await createTenant(formData);
+      const res = await createTenant({
+        image: imgUrl,
+        supplier_details: formData?.description,
+        customer_name:
+          ownerType === "Individual"
+            ? formData?.ownerName
+            : formData?.companyName,
+        custom_phone_number: formData?.customerContact,
+        custom_email: formData?.email,
+
+        // company
+        custom_trade_license_number: formData?.tradeLicenseNumner,
+        custom_emirate: formData?.emirate,
+        custom_trade_license_expiry_date: formData?.tradeLicense, // TODO
+        custom_power_of_attorney_holder_name: formData?.poaHolder,
+
+        //individual
+        custom_gender: formData.gender,
+        custom_city: formData.city,
+        country: formData.country,
+        custom_nationality: formData.nationality,
+        custom_passport_number: formData.passportNum,
+        custom_passport_expiry_date: formData.passportExpiryDate, //TODO
+        custom_country_of_issuance: formData.countryOfIssuance,
+        custom_emirates_id: formData.emiratesId,
+        custom_emirates_id_expiry_date: formData.emiratesIdExpiryDate, //TODO
+      });
       if (res) {
         navigate("/tenants");
       }
