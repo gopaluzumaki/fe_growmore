@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
@@ -40,6 +39,7 @@ interface FormData {
   bookingAmount: string;
   ownerName: string;
   ownerContact: string;
+  description: string;
 }
 
 const AddBookReserve = () => {
@@ -131,11 +131,12 @@ const AddBookReserve = () => {
   //   "annual_rent": 100000
   // }
 
-  const formatDateToYYMMDD = (date: Date | null): string => {
+  const formatDateToYYMMDD = (date: string): string => {
+    const dateObj = new Date(date);
     if (!date) return "";
-    const year = date.getFullYear().toString().slice(-2);
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
+    const year = dateObj.getFullYear().toString().slice(-2);
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+    const day = dateObj.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
