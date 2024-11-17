@@ -2,11 +2,17 @@
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Input from "./TextInput";
 import { Add_Units } from "../constants/inputdata";
 import { useNavigate } from "react-router-dom";
-import { createProperty, uploadFile } from "../api";
+import {
+  createProperty,
+  fetchProperty,
+  getOwnerList,
+  getPropertyList,
+  uploadFile,
+} from "../api";
 import {
   Select,
   SelectContent,
@@ -15,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { Select as MantineSelect, Table } from "@mantine/core";
 
 interface FormData {
   location: string;
@@ -59,6 +66,8 @@ const AddUnits = () => {
   const [sqmValue, setSqmValue] = useState();
   const [priceSqFt, setPriceSqFt] = useState();
   const [priceSqMeter, setPriceSqMeter] = useState();
+  const [ownerList, setOwnerList] = useState<any[]>([]);
+  const [propertyList, setPropertyList] = useState<any[]>([]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -73,6 +82,7 @@ const AddUnits = () => {
   };
 
   const [formData, setFormData] = useState<FormData>({
+    parent_property: "",
     type: "",
     location: "",
     city: "",
@@ -100,7 +110,7 @@ const AddUnits = () => {
     if (name === "sqFoot" && value) {
       let sqMeter = value * 0.092903;
       handleDropDown("sqMeter", value * 0.092903);
-      handleDropDown("priceSqFt",Number(formData["rent"] / value));
+      handleDropDown("priceSqFt", Number(formData["rent"] / value));
       handleDropDown("priceSqMeter", Number(formData["rent"] / sqMeter));
 
       // let priceSqFt
@@ -119,7 +129,51 @@ const AddUnits = () => {
     }));
   };
 
-  const handleDropDown = (name, item) => {
+  const getOwnerData = async () => {
+    const res = await getOwnerList();
+    const item = res?.data?.data;
+    console.log(item);
+    setOwnerList(item);
+  };
+
+  useEffect(() => {
+    getProperties();
+    getOwnerData();
+  }, []);
+
+  const getProperties = async () => {
+    const res = await getPropertyList();
+    const item = res?.data?.data;
+    console.log(item);
+    setPropertyList(item);
+  };
+
+  const handleDropDown = async (name, item) => {
+    if (name === "parent_property") {
+      const res = await fetchProperty(item);
+      const propertyData = res?.data?.data;
+
+      console.log("property data", propertyData);
+
+      if (propertyData) {
+        // Fill all the fields with the fetched data
+        setFormData((prevData) => ({
+          ...prevData,
+          // propertyName: propertyData?.name,
+          type: propertyData?.customer_type,
+          location: propertyData?.custom_location,
+          city: propertyData?.custom_city,
+          state: propertyData?.custom_state,
+          country: propertyData?.custom_country,
+          status:propertyData?.custom_status
+          ,
+          // propertyRent: propertyData?.rent,
+          // propertyUnits: propertyData?.custom_number_of_units,
+          // propertyStatus: propertyData?.status,
+          // propertyDoc: propertyData?.custom_thumbnail_image,
+        }));
+      }
+    }
     setFormData((prevData) => ({
       ...prevData,
       [name]: item,
@@ -204,6 +258,40 @@ const AddUnits = () => {
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(px,1fr))] gap-4">
+                      <MantineSelect
+                        label="Property Name"
+                        placeholder="Select Property"
+                        data={propertyList.map((item) => ({
+                          value: item?.property,
+                          label: item?.property,
+                        }))}
+                        value={formData.propertyName}
+                        onChange={(value) =>
+                          handleDropDown("parent_property", value)
+                        }
+                        styles={{
+                          label: {
+                            marginBottom: "7px",
+                            color: "#7C8DB5",
+                            fontSize: "16px",
+                          },
+                          input: {
+                            border: "1px solid #CCDAFF",
+                            borderRadius: "8px",
+                            padding: "24px",
+                            fontSize: "16px",
+                            color: "#1A202C",
+                          },
+                          dropdown: {
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            border: "1px solid #E2E8F0",
+                          },
+                        }}
+                        searchable
+                      />
+                    </div>
                     {Add_Units.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
@@ -237,6 +325,38 @@ const AddUnits = () => {
                         <></>
                       )
                     )}
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                      <MantineSelect
+                        label="Owner Name"
+                        placeholder="Select Property"
+                        data={ownerList.map((item) => ({
+                          value: item?.supplier_name,
+                          label: item?.supplier_name,
+                        }))}
+                        value={formData.ownerName}
+                        onChange={(value) => handleDropDown("ownerName", value)}
+                        styles={{
+                          label: {
+                            marginBottom: "7px",
+                            color: "#7C8DB5",
+                            fontSize: "16px",
+                          },
+                          input: {
+                            border: "1px solid #CCDAFF",
+                            borderRadius: "8px",
+                            padding: "24px",
+                            fontSize: "16px",
+                            color: "#1A202C",
+                          },
+                          dropdown: {
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            border: "1px solid #E2E8F0",
+                          },
+                        }}
+                        searchable
+                      />
+                    </div>
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         <label>Image Attachment</label>

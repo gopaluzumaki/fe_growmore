@@ -7,11 +7,11 @@ export const Add_Units = [
     type: "dropdown",
     values: ["Commercial", "Residential"],
   },
-  {
-    label: "Parent Property Name",
-    name: "parent_property",
-    type: "text",
-  },
+  // {
+  //   label: "Parent Property Name",
+  //   name: "parent_property",
+  //   type: "text",
+  // },
   { label: "Location / Area", name: "location", type: "text" },
   { label: "City", name: "city", type: "text" },
   { label: "State", name: "state", type: "text" },
@@ -34,7 +34,7 @@ export const Add_Units = [
   { label: "No. of Bathrooms", name: "bathrooms", type: "text" },
   { label: "Balcony Available", name: "balcony", type: "text" },
   { label: "View", name: "view", type: "text" },
-  { label: "Name of Owner", name: "ownerName", type: "text" },
+  // { label: "Name of Owner", name: "ownerName", type: "text" },
 ];
 
 export const Add_Property = [
