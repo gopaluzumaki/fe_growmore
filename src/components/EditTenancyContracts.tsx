@@ -310,6 +310,70 @@ const EditTenancyContracts = () => {
   };
 
   useEffect(() => {
+    let chequeDate: any = [];
+    // console.log("formValues.chequeDate", formValues.chequeDate);
+    chequeDate.push(formValues.chequeDate);
+    if (formValues.numberOfChecks === "2") {
+      let currentDate = new Date(formValues.chequeDate);
+
+      let date = currentDate.setMonth(currentDate.getMonth() + 6);
+
+      let dateMDY = `${new Date(date).getFullYear()}-${
+        new Date(date).getMonth() + 1
+      }-${new Date(date).getDate()}`;
+
+      chequeDate.push(dateMDY);
+    } else if (formValues.numberOfChecks === "3") {
+      let currentDate = new Date(formValues.chequeDate);
+
+      let date = currentDate.setMonth(currentDate.getMonth() + 4);
+      let date1 = currentDate.setMonth(currentDate.getMonth() + 4);
+
+      let dateMDY = `${new Date(date).getFullYear()}-${
+        new Date(date).getMonth() + 1
+      }-${new Date(date).getDate()}`;
+
+      let dateMDY1 = `${new Date(date1).getFullYear()}-${
+        new Date(date1).getMonth() + 1
+      }-${new Date(date1).getDate()}`;
+
+      chequeDate.push(dateMDY);
+      chequeDate.push(dateMDY1);
+    } else if (formValues.numberOfChecks === "6") {
+      let currentDate = new Date(formValues.chequeDate);
+
+      let date = currentDate.setMonth(currentDate.getMonth() + 2);
+      let date1 = currentDate.setMonth(currentDate.getMonth() + 2);
+      let date2 = currentDate.setMonth(currentDate.getMonth() + 2);
+      let date3 = currentDate.setMonth(currentDate.getMonth() + 2);
+      let date4 = currentDate.setMonth(currentDate.getMonth() + 2);
+
+      let dateMDY = `${new Date(date).getFullYear()}-${
+        new Date(date).getMonth() + 1
+      }-${new Date(date).getDate()}`;
+
+      let dateMDY1 = `${new Date(date1).getFullYear()}-${
+        new Date(date1).getMonth() + 1
+      }-${new Date(date1).getDate()}`;
+
+      let dateMDY2 = `${new Date(date2).getFullYear()}-${
+        new Date(date2).getMonth() + 1
+      }-${new Date(date2).getDate()}`;
+
+      let dateMDY3 = `${new Date(date3).getFullYear()}-${
+        new Date(date3).getMonth() + 1
+      }-${new Date(date3).getDate()}`;
+
+      let dateMDY4 = `${new Date(date4).getFullYear()}-${
+        new Date(date4).getMonth() + 1
+      }-${new Date(date4).getDate()}`;
+
+      chequeDate.push(dateMDY);
+      chequeDate.push(dateMDY1);
+      chequeDate.push(dateMDY2);
+      chequeDate.push(dateMDY3);
+      chequeDate.push(dateMDY4);
+    }
     if (
       formValues?.numberOfChecks &&
       formValues?.anualPriceRent &&
@@ -324,7 +388,7 @@ const EditTenancyContracts = () => {
           newData.push({
             rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
             chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
-            chequeDate: formValues.chequeDate,
+            chequeDate: chequeDate[i],
             bankName: formValues.bankName,
           });
         }
