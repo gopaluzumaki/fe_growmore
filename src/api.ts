@@ -16,7 +16,7 @@ export const API_URL = {
   Lead_List:
     "https://propms.erpnext.syscort.com/api/resource/Lead?fields=[%22name%22,%22lead_name%22,%22lead_owner%22,%22status%22,%22custom_property%22,%22company%22]",
   Booking_List:
-    "https://propms.erpnext.syscort.com/api/resource/Property%20Booking?fields=[%22name%22,%22owner%22,%22creation%22,%22modified%22,%22modified_by%22,%22docstatus%22,%22idx%22,%22property%22,%22book_against%22,%22customer%22,%22annual_rent%22,%22doctype%22]",
+    "https://propms.erpnext.syscort.com/api/resource/Property%20Booking?fields=[%22name%22,%22owner%22,%22creation%22,%22modified%22,%22modified_by%22,%22docstatus%22,%22idx%22,%22property%22,%22book_against%22,%22customer%22,%22annual_rent%22,%22doctype%22]&order_by=creation%20desc",
   Tenancy_Contract:
     "https://propms.erpnext.syscort.com/api/method/tenancy_contract",
   Create_Property: "https://propms.erpnext.syscort.com/api/resource/Property",
@@ -25,6 +25,9 @@ export const API_URL = {
   Create_Lead: "https://propms.erpnext.syscort.com/api/resource/Lead",
   Create_Booking:
     "https://propms.erpnext.syscort.com/api/resource/Property%20Booking",
+  Create_Lease: "https://propms.erpnext.syscort.com/api/resource/Lease",
+  Lease_list:
+    "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22]",
 };
 
 export const loginUser = async (credentials: { usr: string; pwd: string }) => {
@@ -133,7 +136,7 @@ export const getBookingList = async () => {
 };
 
 export const getTenancyContractList = async () => {
-  const response = await axios.get(API_URL.Tenancy_Contract, {
+  const response = await axios.get(API_URL.Lease_list, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -199,8 +202,45 @@ export const createTenant = async (tenantData: any) => {
   return response;
 };
 
+export const createTanencyContract = async (tenancyContractData: any) => {
+  const response = await axios.post(API_URL.Create_Lease, tenancyContractData, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
+export const updateTanencyContract = async (
+  name: string,
+  tenancyContractData: any
+) => {
+  const response = await axios.put(
+    API_URL.Create_Lease + `/${name}`,
+    tenancyContractData,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
+  return response;
+};
+
 export const fetchTenant = async (params: any) => {
   const response = await axios.get(`${API_URL.Create_Tenant}/${params}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
+export const fetchTenancyContract = async (params: any) => {
+  const response = await axios.get(`${API_URL.Create_Lease}/${params}`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -246,6 +286,21 @@ export const createBooking = async (bookingData: any) => {
       password: APP_AUTH.PASSWORD,
     },
   });
+  return response;
+};
+
+export const updateBooking = async (name: string, bookingData: any) => {
+  console.log("updating booking name", name);
+  const response = await axios.put(
+    API_URL.Create_Booking + `/${name}`,
+    bookingData,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
   return response;
 };
 

@@ -8,7 +8,7 @@ import {
   Add_Contract_Details,
 } from "../constants/inputdata";
 import Input from "./TextInput";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   fetchProperty,
   getPropertyList,
@@ -16,6 +16,8 @@ import {
   getOwnerList,
   fetchTenant,
   fetchOwner,
+  createTanencyContract,
+  uploadFile,
 } from "../api";
 import {
   Select,
@@ -30,6 +32,7 @@ import CustomDatePicker from "./CustomDatePicker";
 import { Select as MantineSelect, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
+import { formatDateToYYMMDD } from "../lib/utils";
 
 const AddTenancyContracts = () => {
   const navigate = useNavigate();
@@ -49,6 +52,8 @@ const AddTenancyContracts = () => {
       bankName: string;
     }[]
   >([]);
+  const [ownerImgUrl, setOwnerImgUrl] = useState("");
+  const [propertyImgUrl, setPropertyImgUrl] = useState("");
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     numberOfChecks: "",
@@ -60,6 +65,7 @@ const AddTenancyContracts = () => {
     anualPriceRent: "",
     securityDepositeAmt: "",
     brokerageAmt: "",
+    notice_period: "",
 
     propertyName: "",
     propertyType: "",
@@ -93,6 +99,32 @@ const AddTenancyContracts = () => {
   const [selectedCheckbox, setSelectedCheckbox] = useState<string | null>(null);
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
+
+  const handleOwnerFileChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files) {
+      const file = event.target.files[0];
+
+      if (file) {
+        const res = await uploadFile(file);
+        setOwnerImgUrl(res?.data?.message?.file_url);
+      }
+    }
+  };
+
+  const handlePropertyFileChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files) {
+      const file = event.target.files[0];
+
+      if (file) {
+        const res = await uploadFile(file);
+        setPropertyImgUrl(res?.data?.message?.file_url);
+      }
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -360,14 +392,15 @@ const AddTenancyContracts = () => {
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
           ...prevData,
+
           tenantName: tenantData?.customer_name,
           tenantContact: tenantData?.mobile_no,
-          tenantEmail: tenantData?.email_id,
-          tenantCity: tenantData?.city,
-          tenantPassport: tenantData?.passport,
+          tenantEmail: tenantData?.custom_email,
+          tenantCity: tenantData?.custom_city,
+          tenantPassport: tenantData?.custom_passport_number,
           tenantPassportExpiry: tenantData?.passportExpiry,
-          tenantCountryOfIssuence: tenantData?.countryOfIssuence,
-          tenantEmiratesId: tenantData?.emiratesId,
+          tenantCountryOfIssuence: tenantData?.custom_country_of_issuance,
+          tenantEmiratesId: tenantData?.custom_emirates_id,
           tenantEmiratesIdExpiry: tenantData?.emiratesIdExpiry,
           tenantSignature: tenantData?.signature,
         }));
@@ -384,13 +417,13 @@ const AddTenancyContracts = () => {
           ...prevData,
           ownerName: ownerData?.name,
           ownerType: ownerData?.supplier_type,
-          ownerContact: ownerData?.contact,
-          ownerEmail: ownerData?.email,
+          ownerContact: ownerData?.custom_phone_number,
+          ownerEmail: ownerData?.custom_email,
           ownerCountry: ownerData?.country,
-          ownerEmiratesId: ownerData?.emiratesId,
-          ownerMobile: ownerData?.mobile,
+          ownerEmiratesId: ownerData?.custom_trade_license_number,
+          ownerMobile: ownerData?.custom_phone_number,
           ownerDoc: ownerData?.doc,
-          ownerSign: ownerData?.sign,
+          ownerSign: ownerData?.custom_signature_of_owner,
         }));
       }
     }
@@ -402,6 +435,13 @@ const AddTenancyContracts = () => {
     setFormValues((prevData) => ({
       ...prevData,
       [name]: item,
+    }));
+  };
+
+  const handleDateChange = (name: string, date: Date | null) => {
+    setFormValues((prevData) => ({
+      ...prevData,
+      [name]: date.toISOString(),
     }));
   };
 
@@ -427,10 +467,76 @@ const AddTenancyContracts = () => {
     e.preventDefault();
     try {
       console.log("API Data => ", formValues);
-      // const res = await createTanencyContract(formValues); //import from API
-      // if (res) {
-      //     navigate('/contracts');
-      // }
+      const res = await createTanencyContract({
+        ...formValues,
+        //contract details
+        custom_no_of__cheques: formValues.numberOfChecks,
+        bank_name: formValues.bankName,
+        cheque_no: formValues.chequeNo,
+        cheque_date: formatDateToYYMMDD(formValues.chequeDate),
+        start_date: formatDateToYYMMDD(formValues.startDate),
+        end_date: formatDateToYYMMDD(formValues.endDate),
+        custom_price__rent_annually: formValues.anualPriceRent,
+        sq_foot: formValues.sqFoot,
+        sq_meter: formValues.sqMeter,
+        price_sq_meter: formValues.priceSqMeter,
+        price_sq_ft: formValues.priceSqFt,
+        security_deposit: formValues.securityDepositeAmt,
+        custom_brokerage_amount: formValues.brokerageAmt,
+
+        notice_period: formValues.notice_period,
+
+        lease_item: tableData.map((item) => {
+          return {
+            lease_item: "Rent",
+            frequency: "Monthly",
+            custom_annual_amount: 0,
+            currency_code: "AED",
+            document_type: "Sales Invoice",
+            amount: formValues.anualPriceRent,
+            parentfield: "lease_item",
+            parenttype: "Lease",
+            doctype: "Lease Item",
+          };
+        }),
+        // property details
+        property: formValues.propertyName,
+        custom_type: formValues.propertyType,
+        custom_location__area: formValues.propertyLocation,
+        custom_rent_amount_to_pay: formValues.propertyRent,
+        custom_number_of_unit: formValues.propertyUnits,
+        lease_status: formValues.propertyStatus,
+        propertyDoc: propertyImgUrl,
+        // customer details
+        lease_customer: formValues.tenantName,
+        customer: formValues.tenantName,
+        custom_contact_number: formValues.tenantContact,
+        custom_email: formValues.tenantEmail,
+        custom_city: formValues.tenantCity,
+        custom_passport_number: formValues.tenantPassport,
+        custom_passport_expiry_date: formatDateToYYMMDD(
+          formValues.tenantPassportExpiry
+        ),
+        custom_country_of_issuance: formValues.tenantCountryOfIssuence,
+        custom_emirates_id: formValues.tenantEmiratesId,
+        custom_emirates_id_expiry_date: formatDateToYYMMDD(
+          formValues.tenantEmiratesIdExpiry
+        ),
+        custom_signature_of_customer: formValues.tenantSignature,
+        // owner details
+        custom_name_of_owner: formValues.ownerName,
+        custom_type_of_owner: formValues.ownerType,
+        custom_contact_number_of_owner: formValues.ownerContact,
+        custom_emirates_idtrade_license: formValues.ownerEmiratesId,
+        custom_owner_country: formValues.ownerCountry,
+        custom_owner_email: formValues.ownerEmail,
+        custom_mobile_number: formValues.ownerMobile,
+        custom_image: ownerImgUrl,
+        custom_signature_of_owner: formValues.ownerSign,
+      }); //import from API
+      if (res) {
+        navigate("/contracts");
+      }
     } catch (err) {
       console.log(err);
     }
@@ -518,7 +624,7 @@ const AddTenancyContracts = () => {
                           ) : type === "date" ? (
                             <CustomDatePicker
                               selectedDate={selectedDate}
-                              onChange={setSelectedDate}
+                              onChange={(date) => handleDateChange(name, date)}
                               label={label}
                               placeholder="Select Date"
                             />
@@ -649,7 +755,7 @@ const AddTenancyContracts = () => {
                           ) : type === "date" ? (
                             <CustomDatePicker
                               selectedDate={selectedDate}
-                              onChange={setSelectedDate}
+                              onChange={(date) => handleDateChange(name, date)}
                               label={label}
                               placeholder="Select Date"
                             />
@@ -657,6 +763,21 @@ const AddTenancyContracts = () => {
                             <></>
                           )
                       )}
+                      <div>
+                        <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                          <label>Image Attachment</label>
+                        </p>
+                        <div
+                          className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
+                        >
+                          <input
+                            className={`w-full bg-white outline-none`}
+                            type="file"
+                            accept="image/*"
+                            onChange={handlePropertyFileChange}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                   {/* Customer Details */}
@@ -714,7 +835,7 @@ const AddTenancyContracts = () => {
                         ) : type === "date" ? (
                           <CustomDatePicker
                             selectedDate={selectedDate}
-                            onChange={setSelectedDate}
+                            onChange={(date) => handleDateChange(name, date)}
                             label={label}
                             placeholder="Select Date"
                           />
@@ -779,7 +900,7 @@ const AddTenancyContracts = () => {
                         ) : type === "date" ? (
                           <CustomDatePicker
                             selectedDate={formValues[name] as Date}
-                            onChange={setSelectedDate}
+                            onChange={(date) => handleDateChange(name, date)}
                             label={label}
                             placeholder="Select Date"
                           />
@@ -787,6 +908,21 @@ const AddTenancyContracts = () => {
                           <></>
                         )
                       )}
+                      <div>
+                        <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                          <label>Image Attachment</label>
+                        </p>
+                        <div
+                          className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
+                        >
+                          <input
+                            className={`w-full bg-white outline-none`}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleOwnerFileChange}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="max-w-[100px]">

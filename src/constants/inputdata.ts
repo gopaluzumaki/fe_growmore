@@ -263,6 +263,7 @@ export const Add_Contract_Details = [
     type: "text",
   },
   { label: "Brokerage Amount", name: "brokerageAmt", type: "text" },
+  { label: "Notice Period", name: "notice_period", type: "text" },
 ];
 
 export const Add_TenancyContractProperty = [
@@ -276,7 +277,6 @@ export const Add_TenancyContractProperty = [
   { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
   { label: "Number of Unit", name: "propertyUnits", type: "text" },
   { label: "Status", name: "propertyStatus", type: "text" },
-  { label: "Image Attachment", name: "propertyDoc", type: "text" },
 ];
 
 export const Add_TenancyContractTenant = [
@@ -306,6 +306,5 @@ export const Add_TenancyContractOwner = [
   { label: "Country", name: "ownerCountry", type: "text" },
   { label: "Email", name: "ownerEmail", type: "text" },
   { label: "Mobile Number", name: "ownerMobile", type: "text" },
-  { label: "Image Attachment", name: "ownerDoc", type: "text" },
   { label: "Signature of Owner", name: "ownerSign", type: "text" },
 ];

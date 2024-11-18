@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
@@ -6,7 +5,13 @@ import { ChangeEvent, useState } from "react";
 import { Add_BookReserve } from "../constants/inputdata";
 import Input from "./TextInput";
 import { useLocation, useNavigate } from "react-router-dom";
-import { createBooking, uploadFile, getOwnerList, fetchBooking } from "../api";
+import {
+  createBooking,
+  uploadFile,
+  getOwnerList,
+  fetchBooking,
+  updateBooking,
+} from "../api";
 import CustomDatePicker from "./CustomDatePicker";
 import { Select as MantineSelect } from "@mantine/core";
 import { useEffect } from "react";
@@ -41,6 +46,7 @@ interface FormData {
   bookingAmount: string;
   ownerName: string;
   ownerContact: string;
+  description: string;
 }
 
 const EditBooking = () => {
@@ -90,34 +96,36 @@ const EditBooking = () => {
     const fetchingBookedData = async () => {
       if (location.state) {
         try {
-          const res = await fetchBooking("Booking-0053");
+          const res = await fetchBooking(location.state);
           const item = res?.data?.data;
           console.log("booking item", item);
           if (item) {
-            setFormData({
-              propertyName: item?.property || "",
-              selectALead: item?.custom_select_a_lead || "",
-              location: item?.custom_location__area || "",
-              unitCount: item?.custom_unit_number || "",
-              city: item?.custom_city || "",
-              country: item?.custom_country || "",
-              status: item?.custom_status || "",
-              bookingDate:
-                formatDateToYYMMDD(item?.custom_date_of_booking) || "",
-              tenantName: item?.custom_name_of_customer || "",
-              contact: item?.custom_contact_number || "",
-              nationality: item?.custom_nationality || "",
-              type: item?.custom_type || "",
-              email: item?.custom_email || "",
-              startDate:
-                formatDateToYYMMDD(item?.custom_booking_start_date) || "",
-              endDate: formatDateToYYMMDD(item?.custom_booking_end_date) || "",
-              chequesCount: item?.custom_cheques_count || "",
-              payAmount: item?.custom_rent_amount_to_pay || "",
-              bookingAmount: item?.custom_booking_amount || "",
-              ownerContact: item?.custom_contact_number_of_owner || "",
-              ownerName: item?.custom_name_of_owner || "",
-              description: item?.custom_description || "",
+            setFormData((prevData) => {
+              return {
+                ...prevData,
+
+                propertyName: item?.property || "",
+                selectALead: item?.custom_select_a_lead || "",
+                location: item?.custom_location__area || "",
+                unitCount: item?.custom_unit_number || "",
+                city: item?.custom_city || "",
+                country: item?.custom_country || "",
+                status: item?.custom_status || "",
+                bookingDate: item?.custom_date_of_booking || "",
+                tenantName: item?.custom_name_of_customer || "",
+                contact: item?.custom_contact_number || "",
+                nationality: item?.custom_nationality || "",
+                type: item?.custom_type || "",
+                email: item?.custom_email || "",
+                startDate: item?.custom_booking_start_date || "",
+                endDate: item?.custom_booking_end_date || "",
+                chequesCount: item?.custom_cheques_count || "",
+                payAmount: item?.custom_rent_amount_to_pay || "",
+                bookingAmount: item?.custom_booking_amount || "",
+                ownerContact: item?.custom_contact_number_of_owner || "",
+                ownerName: item?.custom_name_of_owner || "",
+                description: item?.custom_description || "",
+              };
             });
             setImgUrl(item?.custom_image_attachment || "");
           }
@@ -127,7 +135,7 @@ const EditBooking = () => {
       }
     };
     fetchingBookedData();
-  }, []);
+  }, [location.state]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -172,11 +180,12 @@ const EditBooking = () => {
   //   "annual_rent": 100000
   // }
 
-  const formatDateToYYMMDD = (date: Date | null): string => {
+  const formatDateToYYMMDD = (date: string): string => {
+    const dateObj = new Date(date);
     if (!date) return "";
-    const year = date.getFullYear().toString().slice(-2);
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
+    const year = dateObj.getFullYear().toString().slice(-2);
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+    const day = dateObj.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -185,7 +194,7 @@ const EditBooking = () => {
     try {
       console.log("API Data => ", formData);
 
-      const res = await createBooking({
+      const res = await updateBooking(location.state, {
         property: formData.propertyName,
         custom_select_a_lead: formData.selectALead,
         custom_location__area: formData.location,
@@ -370,8 +379,8 @@ const EditBooking = () => {
                       onChange={handleChange}
                     ></textarea>
                   </div>
-                  <div type="button" className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save Update" />
+                  <div className="mt-4 max-w-[100px]">
+                    <PrimaryButton type="submit" title="Save Update" />
                   </div>
                 </form>
               </div>

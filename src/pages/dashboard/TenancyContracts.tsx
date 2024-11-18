@@ -48,12 +48,12 @@ const TenancyContracts = () => {
         <Sidebar />
         <div className={`flex-grow ml-80`}>
           <div className="my-5 px-2">
-            <Header name="Tenancy Contracts"/>
+            <Header name="Tenancy Contracts" />
             <div className="flex">
-            <p className="text-[#7C8DB5] mt-1.5 ml-1">
-              Here is the information about all your Tenancy Contract
-            </p>
-          </div>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">
+                Here is the information about all your Tenancy Contract
+              </p>
+            </div>
             <div className="flex justify-between items-center my-8 mx-4">
               <div className="max-w-fit">
                 <Link
@@ -137,10 +137,16 @@ const TenancyContracts = () => {
                         >
                           <td className="p-2 py-3">{i + 1}</td>
                           <td className="p-2 py-3">{item?.property}</td>
-                          <td className="p-2 py-3">{item.unit}</td>
-                          <td className="p-2 py-3">{item.location}</td>
-                          <td className="p-2 py-3">{item.unit_owner}</td>
-                          <td className="p-2 py-3">{item.tenant}</td>
+                          <td className="p-2 py-3">
+                            {item.custom_number_of_unit}
+                          </td>
+                          <td className="p-2 py-3">
+                            {item.custom_location__area}
+                          </td>
+                          <td className="p-2 py-3">
+                            {item.custom_name_of_owner}
+                          </td>
+                          <td className="p-2 py-3">{item.lease_customer}</td>
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${
@@ -161,12 +167,16 @@ const TenancyContracts = () => {
                           </td>
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
-                              <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
+                              <Link
+                                to={"/contracts/edit"}
+                                state={item.name}
+                                className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
+                              >
                                 <MdOutlineEdit
                                   size={20}
                                   className="text-[#D09D4A]"
                                 />
-                              </button>
+                              </Link>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
                                 <MdDeleteForever
                                   size={20}
