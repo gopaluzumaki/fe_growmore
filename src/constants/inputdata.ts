@@ -276,11 +276,11 @@ export const Add_TenancyContractProperty = [
     label: "Type",
     name: "propertyType",
     type: "dropdown",
-    values: ["Individual", "Company"],
+    values: ["Commercial", "Residential"],
   },
   { label: "Location / Area", name: "propertyLocation", type: "text" },
   { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
-  { label: "Number of Unit", name: "propertyUnits", type: "text" },
+  { label: "Unit Number", name: "propertyUnits", type: "text" },
 ];
 
 export const Add_TenancyContractTenant = [
@@ -300,7 +300,7 @@ export const Add_TenancyContractTenant = [
     name: "tenantEmiratesIdExpiry",
     type: "date",
   },
-  { label: "Signature of Customer", name: "tenantSignature", type: "text" },
+  // { label: "Signature of Customer", name: "tenantSignature", type: "text" },
 ];
 
 export const Add_TenancyContractOwner = [
@@ -310,5 +310,5 @@ export const Add_TenancyContractOwner = [
   { label: "Country", name: "ownerCountry", type: "text" },
   { label: "Email", name: "ownerEmail", type: "text" },
   { label: "Mobile Number", name: "ownerMobile", type: "text" },
-  { label: "Signature of Owner", name: "ownerSign", type: "text" },
+  // { label: "Signature of Owner", name: "ownerSign", type: "text" },
 ];
