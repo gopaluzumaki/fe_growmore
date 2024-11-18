@@ -763,7 +763,7 @@ const AddTenancyContracts = () => {
                             <></>
                           )
                       )}
-                      <div>
+                      {/* <div>
                         <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           <label>Image Attachment</label>
                         </p>
@@ -777,7 +777,7 @@ const AddTenancyContracts = () => {
                             onChange={handlePropertyFileChange}
                           />
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   {/* Customer Details */}
@@ -843,6 +843,21 @@ const AddTenancyContracts = () => {
                           <></>
                         )
                       )}
+                       <div>
+                        <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                          <label>Attach Owner Signature</label>
+                        </p>
+                        <div
+                          className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
+                        >
+                          <input
+                            className={`w-full bg-white outline-none`}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleOwnerFileChange}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -910,7 +925,7 @@ const AddTenancyContracts = () => {
                       )}
                       <div>
                         <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          <label>Image Attachment</label>
+                          <label>Attach Owner Signature</label>
                         </p>
                         <div
                           className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
