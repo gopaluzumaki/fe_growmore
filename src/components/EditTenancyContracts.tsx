@@ -117,19 +117,19 @@ const EditTenancyContracts = () => {
                 ...prevData,
 
                 numberOfChecks: item.lease_item.length,
-                bankName: item.bank_name,
-                chequeNo: item.cheque_no,
-                chequeDate: item.cheque_date,
+                bankName: item.bank_name || "xyz bank",
+                chequeNo: item.cheque_no || "11,13,15,17,19,21",
+                chequeDate: item.cheque_date || "2024-12-12",
                 startDate: item.start_date,
                 endDate: item.end_date,
-                annualPriceRent: item.custom_price__rent_annually,
+                anualPriceRent: item.custom_price__rent_annually + "",
                 sqFoot: item.sq_foot,
                 sqMeter: item.sq_meter,
                 priceSqMeter: item.price_sq_meter,
                 priceSqFt: item.price_sq_ft,
                 securityDepositAmt: item.security_deposit,
                 brokerageAmt: item.custom_brokerage_amount,
-                noticePeriod: item.notice_period,
+                notice_period: item.notice_period,
 
                 propertyName: item.property,
                 propertyType: item.custom_type,
@@ -612,6 +612,7 @@ const EditTenancyContracts = () => {
                               onValueChange={(item) =>
                                 handleDropDown(name, item)
                               }
+                              value={formValues[name]}
                             >
                               <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                                 <div className="flex items-center">
