@@ -310,5 +310,6 @@ export const Add_TenancyContractOwner = [
   { label: "Country", name: "ownerCountry", type: "text" },
   { label: "Email", name: "ownerEmail", type: "text" },
   { label: "Mobile Number", name: "ownerMobile", type: "text" },
+  { label: "Emirates ID/License Expiry Date", name: "ownerEmiratesIdExpiry", type: "text" },
   // { label: "Signature of Owner", name: "ownerSign", type: "text" },
 ];
