@@ -791,7 +791,7 @@ const AddTenancyContracts = () => {
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                       <MantineSelect
                         label="Customer Name"
-                        placeholder="Select Property"
+                        placeholder="Select Customer"
                         data={tenantList.map((value) => {
                           return value?.name;
                         })}
@@ -857,7 +857,7 @@ const AddTenancyContracts = () => {
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
                       <MantineSelect
                         label="Owner Name"
-                        placeholder="Select Property"
+                        placeholder="Select Owner"
                         data={ownerList.map((item) => ({
                           value: item?.supplier_name,
                           label: item?.supplier_name,

@@ -26,8 +26,8 @@ export const Add_Units = [
   { label: "Selling Price", name: "sellingPrice", type: "text" },
   { label: "Square ft of unit", name: "sqFoot", type: "text" },
   { label: "Square m of unit", name: "sqMeter", type: "text" },
-  { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
-  { label: "Price/ Square ft", name: "priceSqFt", type: "text" },
+  { label: "Rent Price/ Square m", name: "priceSqMeter", type: "text" },
+  { label: "Rent Price/ Square ft", name: "priceSqFt", type: "text" },
   { label: "Unit Number", name: "unitNumber", type: "text" },
   { label: "No. of Rooms", name: "rooms", type: "text" },
   { label: "No. of Floors", name: "floors", type: "text" },
@@ -191,7 +191,6 @@ export const Add_Lead = [
     values: ["Commercial", "Residential"],
   },
   { label: "Contact Number", name: "contact", type: "text" },
-  { label: "Nationality", name: "nationality", type: "text" },
   { label: "Email", name: "email", type: "text" },
   { label: "Tentative Lease In Date", name: "leaseInDate", type: "date" },
   { label: "Budget Range", name: "budgetRange", type: "text" },
@@ -214,7 +213,12 @@ export const Add_BookReserve = [
   { label: "Unit Number", name: "unitCount", type: "text" },
   { label: "City", name: "city", type: "text" },
   { label: "Country", name: "country", type: "text" },
-  { label: "Status", name: "status", type: "text" },
+  {
+    label: "Status",
+    name: "status",
+    type: "dropdown",
+    values: ["Open", "Converted To Contract", "Cancelled"],
+  },
   { label: "Date of booking", name: "bookingDate", type: "date" },
   { label: "Name of Customer", name: "tenantName", type: "text" },
   { label: "Contact Number", name: "contact", type: "text" },
@@ -277,7 +281,6 @@ export const Add_TenancyContractProperty = [
   { label: "Location / Area", name: "propertyLocation", type: "text" },
   { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
   { label: "Number of Unit", name: "propertyUnits", type: "text" },
-  { label: "Status", name: "propertyStatus", type: "text" },
 ];
 
 export const Add_TenancyContractTenant = [
