@@ -3,70 +3,125 @@ import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
 import { ChangeEvent, useEffect, useState } from "react";
+import {
+  Add_Tenant,
+  Type_Company,
+  Type_Individual_Tenant,
+} from "../constants/inputdata";
 import Input from "./TextInput";
-import { Add_Units } from "../constants/inputdata";
 import { useLocation, useNavigate } from "react-router-dom";
-import { createProperty, uploadFile } from "../api";
+import { createTenant, fetchTenant, updateTenant, uploadFile } from "../api";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-
+} from "../components/ui/select";
+import CustomDatePicker from "./CustomDatePicker";
+import { formatDateToYYMMDD } from "../lib/utils";
 interface FormData {
-  location: string;
-  city: string;
-  state: string;
-  country: string;
-  status: string;
-  rentPrice: string;
-  sellingPrice: string;
-  sqFoot: string;
-  sqMeter: string;
-  priceSqMeter: string;
-  priceSqFt: string;
-  unitNumber: string;
-  rooms: string;
-  floors: string;
-  bathrooms: string;
-  balcony: string;
-  view: string;
   ownerName: string;
-  tenantName: string;
+  gender: string;
+  city: string;
+  country: string;
+  nationality: string;
+  passportNum: string;
+  passportExpiryDate: Date | null;
+  countryOfIssuance: string;
+  emiratesId: string;
+  emiratesIdExpiryDate: string;
+  companyName: string;
+  tradeLicenseNumner: string;
+  emirate: string;
+  tradeLicense: Date | null;
+  poaHolder: string;
+  description: string;
+  [key: string]: string | Date | null;
 }
 
-// {
-//   "name1": "101",
-//   "is_group": 0,
-//   "parent_property": "Build1",
-//   "company": "Syscort Real Estate",
-//   "cost_center": "Main - SRE",
-//   "custom_number_of_units": 0,
-//   "custom_units_available":"1 BHK",
-//   "custom_location": "Dubai",
-//   "custom_thumbnail_image": "",
-//   "unit_owner": "Saeed",
-//   "rent": 0.0
-// }
-
-const EditUnits = () => {
+const AddTenants = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
-  const [sqmValue, setSqmValue] = useState();
-  const [priceSqFt, setPriceSqFt] = useState();
-  const [priceSqMeter, setPriceSqMeter] = useState();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [ownerType, setOwnerType] = useState(null);
   const location = useLocation();
 
-  useEffect(() => {
-    console.log('dsads',location.state.tenantList)
-    setFormData([...location.state.tenantList]);
-  }, []);
+  const [formData, setFormData] = useState<FormData>({
+    ownerType: "",
+    customerContact: "",
+    ownerContact: "",
+    email: "",
+    ownerName: "",
+    gender: "",
+    city: "",
+    country: "",
+    nationality: "",
+    passportNum: "",
+    passportExpiryDate: null,
+    propertyCount: "",
+    units: "",
+    location: "",
+    countryOfIssuance: "",
+    emiratesId: "",
+    emiratesIdExpiryDate: "",
+    companyName: "",
+    tradeLicenseNumner: "",
+    emirate: "",
+    tradeLicense: null,
+    poaHolder: "",
+    description: "",
+  });
 
-  // const { state } = props.location;x
+  useEffect(() => {
+    console.log("from edit tenant", location.state);
+    const fetchingTenantData = async () => {
+      if (location.state) {
+        try {
+          const res = await fetchTenant(location.state);
+          const item = res?.data?.data;
+          console.log("tenant item", item);
+          if (item) {
+            setOwnerType(item?.customer_type);
+            setFormData((prevData) => {
+              return {
+                ...prevData,
+                // more TODO ---------->
+                ownerType: item?.customer_type,
+                description: item?.supplier_details,
+                ownerName: item?.customer_name,
+                companyName: item?.customer_name,
+                customerContact: item?.custom_phone_number,
+                email: item?.custom_email,
+
+                // company
+                tradeLicenseNumner: item?.custom_trade_license_number,
+                emirate: item?.custom_emirate,
+                tradeLicense: item?.custom_trade_license_expiry_date,
+                poaHolder: item?.custom_power_of_attorney_holder_name,
+
+                // individual
+                gender: item?.custom_gender,
+                city: item?.custom_city,
+                country: item?.country,
+                nationality: item?.custom_nationality,
+                passportNum: item?.custom_passport_number,
+                passportExpiryDate: item?.custom_passport_expiry_date,
+                countryOfIssuance: item?.custom_country_of_issuance,
+                emiratesId: item?.custom_emirates_id,
+                emiratesIdExpiryDate: item?.custom_emirates_id_expiry_date,
+              };
+            });
+            setImgUrl(item?.image || "");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchingTenantData();
+  }, [location.state]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -80,57 +135,26 @@ const EditUnits = () => {
     }
   };
 
-  const [formData, setFormData] = useState<FormData>({
-    location: "",
-    city: "",
-    state: "",
-    country: "",
-    status: "",
-    rentPrice: "",
-    sellingPrice: "",
-    sqFoot: "",
-    sqMeter: "",
-    priceSqMeter: "",
-    priceSqFt: "",
-    unitNumber: "",
-    rooms: "",
-    floors: "",
-    bathrooms: "",
-    balcony: "",
-    view: "",
-    ownerName: "",
-    tenantName: "",
-  });
+  const onSelect = (item) => {
+    if (item === "Individual") {
+      setOwnerType(item);
+    } else if (item === "Company") {
+      setOwnerType(item);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log("dsadas", formData);
-    if (name === "sqFoot" && value) {
-      let sqMeter = value * 0.092903;
-      handleDropDown("sqMeter", value * 0.092903);
-      handleDropDown("priceSqFt", formData["rentPrice"] / value);
-      handleDropDown("priceSqMeter", formData["rentPrice"] / sqMeter);
-
-      // let priceSqFt
-      // let priceSqMeter
-      // setSqmValue(value* 0.092903)
-      setPriceSqFt(priceSqFt);
-      setPriceSqMeter(priceSqMeter);
-    } else if (!value) {
-      handleDropDown("sqMeter", 0);
-      handleDropDown("priceSqFt", 0);
-      handleDropDown("priceSqMeter", 0);
-    }
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleDropDown = (name, item) => {
+  const handleDateChange = (name: string, date: Date | null) => {
     setFormData((prevData) => ({
       ...prevData,
-      [name]: item,
+      [name]: date,
     }));
   };
 
@@ -138,9 +162,42 @@ const EditUnits = () => {
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
-      const res = await createProperty(formData);
+      const res = await updateTenant(location.state, {
+        image: imgUrl,
+        customer_type: ownerType,
+        supplier_details: formData?.description,
+        customer_name:
+          ownerType === "Individual"
+            ? formData?.ownerName
+            : formData?.companyName,
+        custom_phone_number: formData?.customerContact,
+        custom_email: formData?.email,
+
+        // company
+        custom_trade_license_number: formData?.tradeLicenseNumner,
+        custom_emirate: formData?.emirate,
+        custom_trade_license_expiry_date: formatDateToYYMMDD(
+          formData?.tradeLicense
+        ),
+        custom_power_of_attorney_holder_name: formData?.poaHolder,
+
+        //individual
+        custom_gender: formData.gender,
+        custom_city: formData.city,
+        country: formData.country,
+        custom_nationality: formData.nationality,
+        custom_passport_number: formData.passportNum,
+        custom_passport_expiry_date: formatDateToYYMMDD(
+          formData.passportExpiryDate
+        ),
+        custom_country_of_issuance: formData.countryOfIssuance,
+        custom_emirates_id: formData.emiratesId,
+        custom_emirates_id_expiry_date: formatDateToYYMMDD(
+          formData.emiratesIdExpiryDate
+        ),
+      });
       if (res) {
-        navigate("/units");
+        navigate("/tenants");
       }
     } catch (err) {
       console.log(err);
@@ -153,15 +210,17 @@ const EditUnits = () => {
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
-            <Header name="Units" />
+            <Header name="Customer" />
             <div className="flex">
-              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Unit > Edit Customer"}</p>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">
+                {"Customer > Add New"}
+              </p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                    {Add_Units.map(({ label, name, type, values }) =>
+                    {Add_Tenant.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
                           key={name}
@@ -175,14 +234,15 @@ const EditUnits = () => {
                         />
                       ) : type === "dropdown" ? (
                         <Select
-                          onValueChange={(item) => handleDropDown(name, item)}
+                          onValueChange={(item) => onSelect(item)}
+                          value={formData[name]}
                         >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
                           </SelectTrigger>
-                          <SelectContent onChange={() => console.log("hello")}>
+                          <SelectContent>
                             {values?.map((item, i) => (
                               <SelectItem key={i} value={item}>
                                 {item}
@@ -190,10 +250,100 @@ const EditUnits = () => {
                             ))}
                           </SelectContent>
                         </Select>
+                      ) : type === "date" ? (
+                        <CustomDatePicker
+                          selectedDate={formData[name] as Date}
+                          onChange={(date) => handleDateChange(name, date)}
+                          label={label}
+                          placeholder="Select Date"
+                        />
                       ) : (
                         <></>
                       )
                     )}
+                    {ownerType === "Individual" &&
+                      Type_Individual_Tenant.map(
+                        ({ label, name, type, values }) =>
+                          type === "text" ? (
+                            <Input
+                              key={name}
+                              label={label}
+                              name={name}
+                              type={type}
+                              value={formData[name as keyof FormData]}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
+                          ) : type === "dropdown" ? (
+                            <Select onValueChange={(item) => onSelect(item)}>
+                              <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                <div className="flex items-center">
+                                  <SelectValue placeholder={label} />
+                                </div>
+                              </SelectTrigger>
+                              <SelectContent
+                                onChange={() => console.log("hello")}
+                              >
+                                {values?.map((item, i) => (
+                                  <SelectItem key={i} value={item}>
+                                    {item}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : type === "date" ? (
+                            <CustomDatePicker
+                              selectedDate={formData[name] as Date}
+                              onChange={(date) => handleDateChange(name, date)}
+                              label={label}
+                              placeholder="Select Date"
+                            />
+                          ) : (
+                            <></>
+                          )
+                      )}
+                    {ownerType === "Company" &&
+                      Type_Company.map(({ label, name, type }) =>
+                        type === "text" ? (
+                          <Input
+                            key={name}
+                            label={label}
+                            name={name}
+                            type={type}
+                            value={formData[name as keyof FormData]}
+                            onChange={handleChange}
+                            borderd
+                            bgLight
+                          />
+                        ) : type === "dropdown" ? (
+                          <Select onValueChange={(item) => onSelect(item)}>
+                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent
+                              onChange={() => console.log("hello")}
+                            >
+                              {/* {values?.map((item, i) => (
+                                <SelectItem key={i} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))} */}
+                            </SelectContent>
+                          </Select>
+                        ) : type === "date" ? (
+                          <CustomDatePicker
+                            selectedDate={formData[name] as Date}
+                            onChange={(date) => handleDateChange(name, date)}
+                            label={label}
+                            placeholder="Select Date"
+                          />
+                        ) : (
+                          <></>
+                        )
+                      )}
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         <label>Image Attachment</label>
@@ -232,4 +382,4 @@ const EditUnits = () => {
   );
 };
 
-export default EditUnits;
+export default AddTenants;

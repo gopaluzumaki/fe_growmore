@@ -127,7 +127,7 @@ const EditTenancyContracts = () => {
                 sqMeter: item.sq_meter,
                 priceSqMeter: item.price_sq_meter,
                 priceSqFt: item.price_sq_ft,
-                securityDepositAmt: item.security_deposit,
+                securityDepositeAmt: item.security_deposit,
                 brokerageAmt: item.custom_brokerage_amount,
                 notice_period: item.notice_period,
 

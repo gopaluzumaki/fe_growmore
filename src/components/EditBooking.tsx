@@ -93,6 +93,7 @@ const EditBooking = () => {
   };
 
   useEffect(() => {
+    console.log("from edit booking ", location.state);
     const fetchingBookedData = async () => {
       if (location.state) {
         try {

@@ -2,15 +2,15 @@
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
 import {
   Add_Owner,
   Type_Company,
   Type_Individual,
 } from "../constants/inputdata";
 import Input from "./TextInput";
-import { createOwner, uploadFile } from "../api";
-import { useNavigate } from "react-router-dom";
+import { uploadFile, fetchOwner, updateOwner } from "../api";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "./ui/select";
 import CustomDatePicker from "./CustomDatePicker";
-import { formatDateToYYMMDD } from "../lib/utils";
 
 interface FormData {
   ownerName: string;
@@ -46,12 +45,14 @@ interface FormData {
 //   "supplier_type": "Company"
 //   }
 
-const AddOwners = () => {
+const EditOwner = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [ownerType, setOwnerType] = useState(null);
+  const location = useLocation();
+  console.log(location.state);
 
   const [formData, setFormData] = useState<FormData>({
     ownerType: "",
@@ -77,6 +78,56 @@ const AddOwners = () => {
     poaHolder: "",
     description: "",
   });
+
+  useEffect(() => {
+    console.log("from edit owner", location.state);
+    const fetchingOwnerData = async () => {
+      if (location.state) {
+        try {
+          const res = await fetchOwner(location.state);
+          const item = res?.data?.data;
+          console.log("owner item", item);
+          if (item) {
+            setOwnerType(item?.supplier_type);
+            setFormData((prevData) => {
+              return {
+                ...prevData,
+                // more TODO ---------->
+                ownerType: item?.supplier_type,
+                description: item?.supplier_details,
+                ownerName: item?.supplier_name,
+                companyName: item?.supplier_name,
+                ownerContact: item?.custom_phone_number,
+                email: item?.custom_email,
+                propetyCount: item?.custom_number_of_property,
+                units: item?.custom_number_of_units,
+                location: item?.custom_location__area,
+
+                tradeLicenseNumner: item?.custom_trade_license_number,
+                emirate: item?.custom_emirate,
+                tradeLicense: item?.custom_trade_license_expiry_date,
+                poaHolder: item?.custom_power_of_attorney_holder_name,
+
+                gender: item?.custom_gender,
+                city: item?.custom_city,
+                country: item?.country,
+                nationality: item?.custom_nationality,
+                passportNum: item?.custom_passport_number,
+                passportExpiryDate: item?.custom_passport_expiry_date,
+                countryOfIssuance: item?.custom_country_of_issuance,
+                emiratesId: item?.custom_emirates_id,
+                emiratesIdExpiryDate: item?.custom_emirates_id_expiry_date,
+              };
+            });
+            setImgUrl(item?.custom_image_attachment || "");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchingOwnerData();
+  }, [location.state]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -104,14 +155,22 @@ const AddOwners = () => {
     }));
   };
 
+  const formatDateToYYMMDD = (date: string): string => {
+    const dateObj = new Date(date);
+    if (!date) return "";
+    const year = dateObj.getFullYear().toString().slice(-2);
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+    const day = dateObj.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
-      const res = await createOwner({
+      const res = await updateOwner(location.state, {
         image: imgUrl,
         supplier_details: formData?.description,
-        supplier_type: ownerType,
         supplier_name:
           ownerType === "Individual"
             ? formData?.ownerName
@@ -126,7 +185,7 @@ const AddOwners = () => {
         custom_emirate: formData?.emirate,
         custom_trade_license_expiry_date: formatDateToYYMMDD(
           formData?.tradeLicense
-        ),
+        ), //TODO
         custom_power_of_attorney_holder_name: formData?.poaHolder,
 
         custom_gender: formData.gender,
@@ -136,12 +195,12 @@ const AddOwners = () => {
         custom_passport_number: formData.passportNum,
         custom_passport_expiry_date: formatDateToYYMMDD(
           formData.passportExpiryDate
-        ),
+        ), //TODO
         custom_country_of_issuance: formData.countryOfIssuance,
         custom_emirates_id: formData.emiratesId,
         custom_emirates_id_expiry_date: formatDateToYYMMDD(
           formData.emiratesIdExpiryDate
-        ),
+        ), //TODO
       });
       if (res) {
         navigate("/owners");
@@ -178,7 +237,9 @@ const AddOwners = () => {
           <div className="my-5 px-2 ">
             <Header name="Owners" />
             <div className="flex">
-              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Owner > Add New"}</p>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">
+                {"Owner > Edit Owner"}
+              </p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
@@ -199,6 +260,7 @@ const AddOwners = () => {
                       ) : type === "dropdown" ? (
                         <Select
                           onValueChange={(item) => handleDropDown(name, item)}
+                          value={formData[name]}
                         >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
@@ -338,7 +400,7 @@ const AddOwners = () => {
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Update Owner" />
                   </div>
                 </form>
               </div>
@@ -350,4 +412,4 @@ const AddOwners = () => {
   );
 };
 
-export default AddOwners;
+export default EditOwner;
