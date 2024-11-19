@@ -110,9 +110,9 @@ const BookReserve = () => {
           <div className="my-4 p-6 grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] gap-10 border border-[#E6EDFF] rounded-xl">
             {bookingList.map((item, i) => (
               <OwnerCard
-                bookingName={item?.name}
+                redirect="booking"
                 key={i}
-                name={item?.customer}
+                name={item?.name}
                 contact="971 52 489 1755"
                 email="John@gmail.com"
                 location="Downtown, DSO"

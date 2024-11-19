@@ -337,3 +337,52 @@ export const fetchBooking = async (params: any) => {
   });
   return response;
 };
+
+export const updateLead = async (name: string, LeadData: any) => {
+  console.log("updating Lead name", name);
+  const response = await axios.put(API_URL.Create_Lead + `/${name}`, LeadData, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+export const updateTenant = async (name: string, TenantData: any) => {
+  console.log("updating Tenant name", name);
+  const response = await axios.put(
+    API_URL.Create_Tenant + `/${name}`,
+    TenantData,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
+  return response;
+};
+export const updateOwner = async (name: string, OwnerData: any) => {
+  console.log("updating Owner name", name);
+  const response = await axios.put(
+    API_URL.Create_Owner + `/${name}`,
+    OwnerData,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
+  return response;
+};
+
+export const fetchLeads = async (params: any) => {
+  const response = await axios.get(`${API_URL.Create_Lead}/${params}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};

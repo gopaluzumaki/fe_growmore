@@ -26,7 +26,7 @@ const Owners = () => {
 
   const getData = async () => {
     const unitList = await getOwnerList();
-    console.log('dase',unitList)
+    console.log("dase", unitList);
     setOwnerList(unitList?.data?.data);
   };
 
@@ -36,7 +36,7 @@ const Owners = () => {
       <div className="flex">
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-4`}>
-          <Header name="Owners"/>
+          <Header name="Owners" />
           <div className="flex">
             <p className="text-[#7C8DB5] mt-1.5 ml-1">
               Here is the information about all your Owners
@@ -93,6 +93,7 @@ const Owners = () => {
           <div className="my-4 grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] gap-10 rounded-xl">
             {ownerList.map((item, i) => (
               <OwnerCard
+                redirect="owners"
                 key={i}
                 name={item?.supplier_name}
                 contact={item.custom_phone_number}
@@ -101,7 +102,6 @@ const Owners = () => {
                 totalProperty={item.unit_count}
                 totalUnit={item.unit_count}
                 img={demo_avatar}
-                path={`/owner/${item?.property}`}
               />
             ))}
           </div>

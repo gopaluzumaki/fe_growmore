@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import CustomDatePicker from "./CustomDatePicker";
+import { formatDateToYYMMDD } from "../lib/utils";
 interface FormData {
   ownerName: string;
   gender: string;
@@ -114,6 +115,7 @@ const AddTenants = () => {
       const res = await createTenant({
         image: imgUrl,
         supplier_details: formData?.description,
+        customer_type: ownerType,
         customer_name:
           ownerType === "Individual"
             ? formData?.ownerName
@@ -124,7 +126,9 @@ const AddTenants = () => {
         // company
         custom_trade_license_number: formData?.tradeLicenseNumner,
         custom_emirate: formData?.emirate,
-        custom_trade_license_expiry_date: formData?.tradeLicense, // TODO
+        custom_trade_license_expiry_date: formatDateToYYMMDD(
+          formData?.tradeLicense
+        ),
         custom_power_of_attorney_holder_name: formData?.poaHolder,
 
         //individual
@@ -133,10 +137,14 @@ const AddTenants = () => {
         country: formData.country,
         custom_nationality: formData.nationality,
         custom_passport_number: formData.passportNum,
-        custom_passport_expiry_date: formData.passportExpiryDate, //TODO
+        custom_passport_expiry_date: formatDateToYYMMDD(
+          formData.passportExpiryDate
+        ),
         custom_country_of_issuance: formData.countryOfIssuance,
         custom_emirates_id: formData.emiratesId,
-        custom_emirates_id_expiry_date: formData.emiratesIdExpiryDate, //TODO
+        custom_emirates_id_expiry_date: formatDateToYYMMDD(
+          formData.emiratesIdExpiryDate
+        ),
       });
       if (res) {
         navigate("/tenants");

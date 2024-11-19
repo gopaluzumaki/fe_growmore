@@ -479,8 +479,8 @@ const AddTenancyContracts = () => {
         custom_price__rent_annually: formValues.anualPriceRent,
         sq_foot: formValues.sqFoot,
         sq_meter: formValues.sqMeter,
-        price_sq_meter: formValues.priceSqMeter,
-        price_sq_ft: formValues.priceSqFt,
+        custom_price_sq_m: formValues.priceSqMeter,
+        custom_price_sq_ft: formValues.priceSqFt,
         security_deposit: formValues.securityDepositeAmt,
         custom_brokerage_amount: formValues.brokerageAmt,
 
@@ -843,7 +843,7 @@ const AddTenancyContracts = () => {
                           <></>
                         )
                       )}
-                       <div>
+                      <div>
                         <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           <label>Attach Owner Signature</label>
                         </p>

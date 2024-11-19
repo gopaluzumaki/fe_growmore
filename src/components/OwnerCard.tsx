@@ -10,20 +10,19 @@ type OwnerCardProps = {
   totalUnit: string;
   location: string;
   img: string | ReactNode;
-  bookingName: string;
+  redirect: string;
 };
 
 const OwnerCard = ({
   name,
-  bookingName,
   location,
   img,
   contact,
   email,
   totalProperty,
   totalUnit,
+  redirect,
 }: OwnerCardProps) => {
-  console.log("bookingName", bookingName);
   return (
     <main>
       <div className="border border-[#E6EDFF] p-3 px-4 rounded-md">
@@ -32,7 +31,7 @@ const OwnerCard = ({
             <img className="rounded-md" src={img as string} alt="propertyImg" />
             <p className="text-[20px] font-semibold">{name}</p>
           </div>
-          <Link to={`/booking/edit`} state={bookingName}>
+          <Link to={`/${redirect}/edit`} state={name}>
             <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 mr-1.5 rounded cursor-pointer">
               <MdOutlineEdit size={20} className="text-[#D09D4A]" />
             </button>

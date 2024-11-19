@@ -123,11 +123,13 @@ const EditTenancyContracts = () => {
                 startDate: item.start_date,
                 endDate: item.end_date,
                 anualPriceRent: item.custom_price__rent_annually + "",
-                sqFoot: item.sq_foot,
-                sqMeter: item.sq_meter,
-                priceSqMeter: item.price_sq_meter,
-                priceSqFt: item.price_sq_ft,
-                securityDepositAmt: item.security_deposit,
+                sqFoot:
+                  item.custom_price__rent_annually / item.custom_price_sq_ft,
+                sqMeter:
+                  item.custom_price__rent_annually / item.custom_price_sq_m,
+                priceSqMeter: item.custom_price_sq_m,
+                priceSqFt: item.custom_price_sq_ft,
+                securityDepositeAmt: item.security_deposit,
                 brokerageAmt: item.custom_brokerage_amount,
                 notice_period: item.notice_period,
 
@@ -548,8 +550,9 @@ const EditTenancyContracts = () => {
         custom_price__rent_annually: formValues.anualPriceRent,
         sq_foot: formValues.sqFoot,
         sq_meter: formValues.sqMeter,
-        price_sq_meter: formValues.priceSqMeter,
-        price_sq_ft: formValues.priceSqFt,
+        custom_price_sq_m: formValues.priceSqMeter,
+        custom_price_sq_ft: formValues.priceSqFt,
+
         security_deposit: formValues.securityDepositeAmt,
         custom_brokerage_amount: formValues.brokerageAmt,
 

@@ -188,7 +188,7 @@ export const Add_Lead = [
     label: "Lead Type",
     name: "leadType",
     type: "dropdown",
-    values: ["Commercial", "Residential"],
+    values: ["Client", "Channel Partner", "Consultant"],
   },
   { label: "Contact Number", name: "contact", type: "text" },
   { label: "Email", name: "email", type: "text" },
@@ -202,7 +202,7 @@ export const Add_Lead = [
     label: "Lead Status",
     name: "leadStatus",
     type: "dropdown",
-    values: ["Open", "Converted To Booking", "Dropped", "Junk Lead"],
+    values: ["Open", "Lead", "Replied", "Opportunity"],
   },
 ];
 

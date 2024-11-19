@@ -4,9 +4,9 @@ import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
 import Input from "./TextInput";
 import { Add_Lead } from "../constants/inputdata";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createLead, uploadFile } from "../api";
+import { createLead, uploadFile, fetchLeads, updateLead } from "../api";
 import {
   Select,
   SelectContent,
@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import CustomDatePicker from "./CustomDatePicker";
+import { useLocation } from "react-router-dom";
 
 interface FormData {
   leadName: string;
@@ -29,6 +30,7 @@ interface FormData {
   communityPreference: string;
   bedroomPreference: string;
   leadStatus: string;
+  description: string;
   [key: string]: string | Date | null;
 }
 
@@ -43,11 +45,13 @@ interface FormData {
 //   "title": "Saeed",
 // }
 
-const AddLeads = () => {
+const EditLead = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const location = useLocation();
+  console.log("location-state :", location.state);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -73,7 +77,45 @@ const AddLeads = () => {
     communityPreference: "",
     bedroomPreference: "",
     leadStatus: "",
+    description: "",
   });
+
+  useEffect(() => {
+    const fetchingLeadData = async () => {
+      if (location.state) {
+        try {
+          const res = await fetchLeads(location.state);
+          const item = res?.data?.data;
+          console.log("booking item", item);
+          if (item) {
+            setFormData((prevData) => {
+              return {
+                ...prevData,
+                // more TODO ---------->
+                leadName: item?.lead_name || "",
+                leadType: item?.type || "",
+                contact: item?.mobile_no,
+                nationality: "",
+                email: item?.email_id,
+                leaseInDate: "",
+                budgetRange: "",
+                propertyPreference: item?.custom_property || "",
+                areaPreference: "",
+                communityPreference: "",
+                bedroomPreference: "",
+                leadStatus: item?.status || "",
+                description: "",
+              };
+            });
+            setImgUrl(item?.custom_image_attachment || "");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    fetchingLeadData();
+  }, [location.state]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -101,9 +143,8 @@ const AddLeads = () => {
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
-      console.log("image Url : ", imgUrl);
-      const res = await createLead({
-        lead_owner: "saeed.m@syscort.com",
+      const res = await updateLead(location.state, {
+        // lead_owner:formData?.leadName,
         status: formData?.leadStatus,
         type: formData?.leadType,
         mobile_no: formData?.contact,
@@ -126,7 +167,7 @@ const AddLeads = () => {
           <div className="my-5 px-2 ">
             <Header name="Leads" />
             <div className="flex">
-              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Lead > Add New"}</p>
+              <p className="text-[#7C8DB5] mt-1.5 ml-1">{"Lead > Edit Lead"}</p>
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
@@ -196,12 +237,13 @@ const AddLeads = () => {
                     </p>
                     <textarea
                       rows={8}
+                      name="description"
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
-                      onChange={(e) => handleChange(e as any)}
+                      onChange={handleChange}
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Update Lead" />
                   </div>
                 </form>
               </div>
@@ -213,4 +255,4 @@ const AddLeads = () => {
   );
 };
 
-export default AddLeads;
+export default EditLead;
