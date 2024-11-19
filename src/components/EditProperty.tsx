@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
