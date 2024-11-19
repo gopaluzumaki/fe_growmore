@@ -292,6 +292,7 @@ const AddBookReserve = () => {
                           onValueChange={(value) =>
                             handleDropdownChange(name, value)
                           }
+                          value={formData[name]}
                         >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
