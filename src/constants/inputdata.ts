@@ -207,10 +207,10 @@ export const Add_Lead = [
 ];
 
 export const Add_BookReserve = [
-  { label: "Select a Lead", name: "selectALead", type: "text" },
-  { label: "Name Of Property", name: "name1", type: "text" },
+  { label: "Select a Lead", name: "selectALead", type: "matineSelect" },
+  { label: "Name Of Property", name: "name1", type: "matineSelect" },
   { label: "Location / Area", name: "location", type: "text" },
-  { label: "Unit Number", name: "unitCount", type: "text" },
+  { label: "Unit Number", name: "unitCount", type: "matineSelect" },
   { label: "City", name: "city", type: "text" },
   { label: "Country", name: "country", type: "text" },
   {
@@ -220,16 +220,16 @@ export const Add_BookReserve = [
     values: ["Open", "Converted To Contract", "Cancelled"],
   },
   { label: "Date of booking", name: "bookingDate", type: "date" },
-  { label: "Name of Customer", name: "tenantName", type: "text" },
+  { label: "Name of Customer", name: "tenantName", type: "matineSelect" },
   { label: "Contact Number", name: "contact", type: "text" },
   { label: "Nationality", name: "nationality", type: "text" },
-  { label: "Type", name: "type", type: "text" },
+  { label: "Type Of Customer", name: "type", type: "dropdown",values:['Individual','Company'] },
   { label: "Email", name: "email", type: "text" },
   { label: "Booking Start Date", name: "startDate", type: "date" },
   { label: "Booking End Date", name: "endDate", type: "date" },
   { label: "Rent Amount to Pay", name: "payAmount", type: "text" },
   { label: "Booking Amount", name: "bookingAmount", type: "text" },
-  // { label: "Name of Owner", name: "ownerName", type: "text" },
+  { label: "Name of Owner", name: "ownerName", type: "matineSelect" },
   { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
 ];
 
@@ -284,6 +284,7 @@ export const Add_TenancyContractProperty = [
 ];
 
 export const Add_TenancyContractTenant = [
+  { label: "Type Of Owner", name: "ownerType", type: "text" },
   { label: "Contact Number", name: "tenantContact", type: "text" },
   { label: "Email", name: "tenantEmail", type: "text" },
   { label: "City", name: "tenantCity", type: "text" },

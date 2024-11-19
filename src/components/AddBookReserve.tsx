@@ -5,7 +5,14 @@ import { ChangeEvent, useState } from "react";
 import { Add_BookReserve } from "../constants/inputdata";
 import Input from "./TextInput";
 import { useNavigate } from "react-router-dom";
-import { createBooking, uploadFile, getOwnerList } from "../api";
+import {
+  createBooking,
+  uploadFile,
+  getOwnerList,
+  getLeadList,
+  getPropertyList,
+  getTenantList,
+} from "../api";
 import CustomDatePicker from "./CustomDatePicker";
 import { Select as MantineSelect } from "@mantine/core";
 import { useEffect } from "react";
@@ -48,6 +55,9 @@ const AddBookReserve = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [ownerList, setOwnerList] = useState<any[]>([]);
+  const [leadList, setLeadList] = useState<any[]>([]);
+  const [properyList, setPropertyList] = useState();
+  const [tenantList, setTenantList] = useState<any[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
@@ -78,8 +88,32 @@ const AddBookReserve = () => {
   }
 
   useEffect(() => {
+    getLeadData();
     getOwnerData();
+    getProperties();
+    getTenants();
   }, []);
+
+  const getProperties = async () => {
+    const res = await getPropertyList();
+    const item = res?.data?.data;
+    console.log(item);
+    setPropertyList(item);
+  };
+
+  const getTenants = async () => {
+    const res = await getTenantList();
+    const item = res?.data?.data;
+    console.log(item);
+    setTenantList(item);
+  };
+
+  const getLeadData = async () => {
+    const res = await getLeadData();
+    const item = res?.data?.data;
+    console.log("item", item);
+    setLeadList(item);
+  };
 
   const getOwnerData = async () => {
     const res = await getOwnerList();
@@ -110,6 +144,32 @@ const AddBookReserve = () => {
   };
 
   const handleDropdownChange = (name: string, value: string) => {
+    if (name === "selectALead") {
+      // setFormData((prevData) => ({
+      //   ...prevData,
+      //   selectALead: "",
+      //   propertyName: "",
+      //   location: "",
+      //   unitCount: "",
+      //   city: "",
+      //   country: "",
+      //   status: "",
+      //   bookingDate: "",
+      //   tenantName: "",
+      //   contact: "",
+      //   nationality: "",
+      //   type: "",
+      //   email: "",
+      //   startDate: "",
+      //   endDate: "",
+      //   chequesCount: "",
+      //   payAmount: "",
+      //   bookingAmount: "",
+      //   ownerName: "",
+      //   ownerContact: "",
+      //   description: "",
+      // }));
+    }
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -178,6 +238,26 @@ const AddBookReserve = () => {
     }
   };
 
+  const getData = (label) => {
+    console.log("label123", label);
+    // if (label === "ownerName") {
+    return ownerList.map((item) => ({
+      value: item?.supplier_name,
+      label: item?.supplier_name,
+    }));
+    // }
+    //  else if (label === "name1") {
+    //   return properyList?.map((item) => ({
+    //     value: item?.property,
+    //     label: item?.property,
+    //   }));
+    // } else if (label === "tenantName") {
+    //   return tenantList?.map((item) => {
+    //     return value?.name;
+    //   });
+    // }
+  };
+
   return (
     <main>
       <div className="flex">
@@ -232,11 +312,52 @@ const AddBookReserve = () => {
                           label={label}
                           placeholder="Select Date"
                         />
+                      ) : type === "matineSelect" ? (
+                        <MantineSelect
+                          label={label}
+                          placeholder={label}
+                          data={getData(name)}
+                          value={formData.selectALead}
+                          // value={
+                          //   name === "selectALead"
+                          //     ? formData.selectALead
+                          //     : name === "name1"
+                          //     ? formData.propertyName
+                          //     : name === "unitCount"
+                          //     ? formData.unitCount
+                          //     : name === "tenantName"
+                          //     ? formData.tenantName
+                          //     : null
+                          // }
+                          onChange={(value) =>
+                            handleDropdownChange(name, value)
+                          }
+                          styles={{
+                            label: {
+                              marginBottom: "7px",
+                              color: "black",
+                              fontSize: "16px",
+                            },
+                            input: {
+                              border: "1px solid #CCDAFF",
+                              borderRadius: "8px",
+                              padding: "24px",
+                              fontSize: "16px",
+                              color: "#1A202C",
+                            },
+                            dropdown: {
+                              backgroundColor: "white",
+                              borderRadius: "8px",
+                              border: "1px solid #E2E8F0",
+                            },
+                          }}
+                          searchable
+                        />
                       ) : (
                         <></>
                       )
                     )}
-                    <MantineSelect
+                    {/* <MantineSelect
                       label="Name of Owner"
                       placeholder="Select Property"
                       data={ownerList.map((item) => ({
@@ -267,7 +388,7 @@ const AddBookReserve = () => {
                         },
                       }}
                       searchable
-                    />
+                    /> */}
 
                     {/* <MantineSelect
                       label="Contact Number of Owner"
