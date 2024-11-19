@@ -109,9 +109,12 @@ const AddUnits = () => {
     console.log("dsadas", formData);
     if (name === "sqFoot" && value) {
       let sqMeter = value * 0.092903;
-      handleDropDown("sqMeter", value * 0.092903);
-      handleDropDown("priceSqFt", Number(formData["rent"] / value));
-      handleDropDown("priceSqMeter", Number(formData["rent"] / sqMeter));
+      handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
+      handleDropDown("priceSqFt", Number(formData["rent"] / value).toFixed(2));
+      handleDropDown(
+        "priceSqMeter",
+        Number(formData["rent"] / sqMeter).toFixed(2)
+      );
 
       // let priceSqFt
       // let priceSqMeter
@@ -165,8 +168,7 @@ const AddUnits = () => {
           city: propertyData?.custom_city,
           state: propertyData?.custom_state,
           country: propertyData?.custom_country,
-          status:propertyData?.custom_status
-          ,
+          status: propertyData?.custom_status,
           // propertyRent: propertyData?.rent,
           // propertyUnits: propertyData?.custom_number_of_units,
           // propertyStatus: propertyData?.status,

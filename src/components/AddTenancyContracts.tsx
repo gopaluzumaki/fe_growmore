@@ -339,9 +339,15 @@ const AddTenancyContracts = () => {
 
     if (name === "sqFoot" && value) {
       let sqMeter = value * 0.092903;
-      handleDropDown("sqMeter", value * 0.092903);
-      handleDropDown("priceSqFt", formValues["anualPriceRent"] / value);
-      handleDropDown("priceSqMeter", formValues["anualPriceRent"] / sqMeter);
+      handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
+      handleDropDown(
+        "priceSqFt",
+        Number(formValues["anualPriceRent"] / value).toFixed(2)
+      );
+      handleDropDown(
+        "priceSqMeter",
+        Number(formValues["anualPriceRent"] / sqMeter).toFixed(2)
+      );
     } else if (!value) {
       handleDropDown("sqMeter", 0);
       handleDropDown("priceSqFt", 0);
