@@ -7,6 +7,10 @@ import {
   Add_TenancyContractTenant,
   Add_TenancyContractProperty,
   Add_Contract_Details,
+  Owner_Type_Individual,
+  Owner_Type_Company,
+  Tenant_Type_Individual,
+  Tenant_Type_Company,
 } from "../constants/inputdata";
 import Input from "./TextInput";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -399,7 +403,7 @@ const AddTenancyContracts = () => {
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
           ...prevData,
-
+          tenantType: tenantData?.customer_type,
           tenantName: tenantData?.customer_name,
           tenantContact: tenantData?.mobile_no,
           tenantEmail: tenantData?.custom_email,
@@ -860,29 +864,150 @@ const AddTenancyContracts = () => {
                         }}
                         searchable
                       />
-                      {Add_TenancyContractTenant.map(({ label, name, type }) =>
-                        type === "text" ? (
-                          <Input
-                            key={name}
-                            label={label}
-                            name={name}
-                            type={type}
-                            value={formValues[name]}
-                            onChange={handleChange}
-                            borderd
-                            bgLight
-                          />
-                        ) : type === "date" ? (
-                          <CustomDatePicker
-                            selectedDate={selectedDate}
-                            onChange={(date) => handleDateChange(name, date)}
-                            label={label}
-                            placeholder="Select Date"
-                          />
-                        ) : (
-                          <></>
-                        )
+                      {Add_TenancyContractTenant.map(
+                        ({ label, name, type, values }) =>
+                          type === "text" ? (
+                            <Input
+                              key={name}
+                              label={label}
+                              name={name}
+                              type={type}
+                              value={formValues[name as keyof FormData]}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
+                          ) : type === "dropdown" ? (
+                            <Select
+                              onValueChange={(item) =>
+                                handleDropDown(name, item)
+                              }
+                              value={formValues[name]}
+                            >
+                              <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                <div className="flex items-center">
+                                  <SelectValue placeholder={label} />
+                                </div>
+                              </SelectTrigger>
+                              <SelectContent
+                                onChange={() => console.log("hello")}
+                              >
+                                {values?.map((item, i) => (
+                                  <SelectItem key={i} value={item}>
+                                    {item}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : type === "date" ? (
+                            <CustomDatePicker
+                              selectedDate={formValues[name] as Date}
+                              onChange={(date) => handleDateChange(name, date)}
+                              label={label}
+                              placeholder="Select Date"
+                            />
+                          ) : (
+                            <></>
+                          )
                       )}
+                      {formValues?.tenantType === "Individual" &&
+                        Tenant_Type_Individual.map(
+                          ({ label, name, type, values }) =>
+                            type === "text" ? (
+                              <Input
+                                key={name}
+                                label={label}
+                                name={name}
+                                type={type}
+                                value={formValues[name as keyof FormData]}
+                                onChange={handleChange}
+                                borderd
+                                bgLight
+                              />
+                            ) : type === "dropdown" ? (
+                              <Select
+                                onValueChange={(item) =>
+                                  handleDropDown(name, item)
+                                }
+                                value={formValues[name]}
+                              >
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent
+                                  onChange={() => console.log("hello")}
+                                >
+                                  {values?.map((item, i) => (
+                                    <SelectItem key={i} value={item}>
+                                      {item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : type === "date" ? (
+                              <CustomDatePicker
+                                selectedDate={formValues[name] as Date}
+                                onChange={(date) =>
+                                  handleDateChange(name, date)
+                                }
+                                label={label}
+                                placeholder="Select Date"
+                              />
+                            ) : (
+                              <></>
+                            )
+                        )}
+                      {formValues?.tenantType === "Company" &&
+                        Tenant_Type_Company.map(
+                          ({ label, name, type, values }) =>
+                            type === "text" ? (
+                              <Input
+                                key={name}
+                                label={label}
+                                name={name}
+                                type={type}
+                                value={formValues[name as keyof FormData]}
+                                onChange={handleChange}
+                                borderd
+                                bgLight
+                              />
+                            ) : type === "dropdown" ? (
+                              <Select
+                                onValueChange={(item) =>
+                                  handleDropDown(name, item)
+                                }
+                                value={formValues[name]}
+                              >
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent
+                                  onChange={() => console.log("hello")}
+                                >
+                                  {values?.map((item, i) => (
+                                    <SelectItem key={i} value={item}>
+                                      {item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : type === "date" ? (
+                              <CustomDatePicker
+                                selectedDate={formValues[name] as Date}
+                                onChange={(date) =>
+                                  handleDateChange(name, date)
+                                }
+                                label={label}
+                                placeholder="Select Date"
+                              />
+                            ) : (
+                              <></>
+                            )
+                        )}
                       <div>
                         <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           <label>Attach Customer Signature</label>
@@ -940,29 +1065,150 @@ const AddTenancyContracts = () => {
                         }}
                         searchable
                       />
-                      {Add_TenancyContractOwner.map(({ label, name, type }) =>
-                        type === "text" ? (
-                          <Input
-                            key={name}
-                            label={label}
-                            name={name}
-                            type={type}
-                            value={formValues[name]}
-                            onChange={handleChange}
-                            borderd
-                            bgLight
-                          />
-                        ) : type === "date" ? (
-                          <CustomDatePicker
-                            selectedDate={formValues[name] as Date}
-                            onChange={(date) => handleDateChange(name, date)}
-                            label={label}
-                            placeholder="Select Date"
-                          />
-                        ) : (
-                          <></>
-                        )
+                      {Add_TenancyContractOwner.map(
+                        ({ label, name, type, values }) =>
+                          type === "text" ? (
+                            <Input
+                              key={name}
+                              label={label}
+                              name={name}
+                              type={type}
+                              value={formValues[name as keyof FormData]}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
+                          ) : type === "dropdown" ? (
+                            <Select
+                              onValueChange={(item) =>
+                                handleDropDown(name, item)
+                              }
+                              value={formValues[name]}
+                            >
+                              <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                <div className="flex items-center">
+                                  <SelectValue placeholder={label} />
+                                </div>
+                              </SelectTrigger>
+                              <SelectContent
+                                onChange={() => console.log("hello")}
+                              >
+                                {values?.map((item, i) => (
+                                  <SelectItem key={i} value={item}>
+                                    {item}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : type === "date" ? (
+                            <CustomDatePicker
+                              selectedDate={formValues[name] as Date}
+                              onChange={(date) => handleDateChange(name, date)}
+                              label={label}
+                              placeholder="Select Date"
+                            />
+                          ) : (
+                            <></>
+                          )
                       )}
+                      {formValues?.ownerType === "Individual" &&
+                        Owner_Type_Individual.map(
+                          ({ label, name, type, values }) =>
+                            type === "text" ? (
+                              <Input
+                                key={name}
+                                label={label}
+                                name={name}
+                                type={type}
+                                value={formValues[name as keyof FormData]}
+                                onChange={handleChange}
+                                borderd
+                                bgLight
+                              />
+                            ) : type === "dropdown" ? (
+                              <Select
+                                onValueChange={(item) =>
+                                  handleDropDown(name, item)
+                                }
+                                value={formValues[name]}
+                              >
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent
+                                  onChange={() => console.log("hello")}
+                                >
+                                  {values?.map((item, i) => (
+                                    <SelectItem key={i} value={item}>
+                                      {item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : type === "date" ? (
+                              <CustomDatePicker
+                                selectedDate={formValues[name] as Date}
+                                onChange={(date) =>
+                                  handleDateChange(name, date)
+                                }
+                                label={label}
+                                placeholder="Select Date"
+                              />
+                            ) : (
+                              <></>
+                            )
+                        )}
+                      {formValues?.ownerType === "Company" &&
+                        Owner_Type_Company.map(
+                          ({ label, name, type, values }) =>
+                            type === "text" ? (
+                              <Input
+                                key={name}
+                                label={label}
+                                name={name}
+                                type={type}
+                                value={formValues[name as keyof FormData]}
+                                onChange={handleChange}
+                                borderd
+                                bgLight
+                              />
+                            ) : type === "dropdown" ? (
+                              <Select
+                                onValueChange={(item) =>
+                                  handleDropDown(name, item)
+                                }
+                                value={formValues[name]}
+                              >
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent
+                                  onChange={() => console.log("hello")}
+                                >
+                                  {values?.map((item, i) => (
+                                    <SelectItem key={i} value={item}>
+                                      {item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : type === "date" ? (
+                              <CustomDatePicker
+                                selectedDate={formValues[name] as Date}
+                                onChange={(date) =>
+                                  handleDateChange(name, date)
+                                }
+                                label={label}
+                                placeholder="Select Date"
+                              />
+                            ) : (
+                              <></>
+                            )
+                        )}
                       <div>
                         <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           <label>Attach Owner Signature</label>

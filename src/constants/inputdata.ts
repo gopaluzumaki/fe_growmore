@@ -223,7 +223,12 @@ export const Add_BookReserve = [
   { label: "Name of Customer", name: "tenantName", type: "matineSelect" },
   { label: "Contact Number", name: "contact", type: "text" },
   { label: "Nationality", name: "nationality", type: "text" },
-  { label: "Type Of Customer", name: "type", type: "dropdown",values:['Individual','Company'] },
+  {
+    label: "Type Of Customer",
+    name: "type",
+    type: "dropdown",
+    values: ["Individual", "Company"],
+  },
   { label: "Email", name: "email", type: "text" },
   { label: "Booking Start Date", name: "startDate", type: "date" },
   { label: "Booking End Date", name: "endDate", type: "date" },
@@ -284,33 +289,110 @@ export const Add_TenancyContractProperty = [
 ];
 
 export const Add_TenancyContractTenant = [
-  { label: "Type Of Owner", name: "ownerType", type: "text" },
+  {
+    label: "Customer Type",
+    name: "tenantType",
+    type: "dropdown",
+    values: ["Individual", "Company"],
+  },
   { label: "Contact Number", name: "tenantContact", type: "text" },
   { label: "Email", name: "tenantEmail", type: "text" },
-  { label: "City", name: "tenantCity", type: "text" },
-  { label: "Passport Number", name: "tenantPassport", type: "text" },
-  { label: "Passport Expiry Date", name: "tenantPassportExpiry", type: "date" },
-  {
-    label: "Country Of Issuance",
-    name: "tenantCountryOfIssuence",
-    type: "text",
-  },
-  { label: "Emirates ID", name: "tenantEmiratesId", type: "text" },
-  {
-    label: "Emirates ID Expiry Date",
-    name: "tenantEmiratesIdExpiry",
-    type: "date",
-  },
+
   // { label: "Signature of Customer", name: "tenantSignature", type: "text" },
 ];
 
 export const Add_TenancyContractOwner = [
-  { label: "Type Of Owner", name: "ownerType", type: "text" },
+  {
+    label: "Owner Type",
+    name: "ownerType",
+    type: "dropdown",
+    values: ["Individual", "Company"],
+  },
   { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
-  { label: "Emirates ID/Trade License", name: "ownerEmiratesId", type: "text" },
-  { label: "Country", name: "ownerCountry", type: "text" },
   { label: "Email", name: "ownerEmail", type: "text" },
-  { label: "Mobile Number", name: "ownerMobile", type: "text" },
-  { label: "Emirates ID/License Expiry Date", name: "ownerEmiratesIdExpiry", type: "text" },
   // { label: "Signature of Owner", name: "ownerSign", type: "text" },
+];
+
+export const Tenant_Type_Individual = [
+  { label: "Name of Owner", name: "tenantOwnerName", type: "text" },
+
+  { label: "Passport Number", name: "tenantPassportNum", type: "text" },
+  {
+    label: "Passport Expiry Date",
+    name: "tenantPassportExpiryDate",
+    type: "date",
+  },
+  {
+    label: "Country Of Issuance",
+    name: "tenantCountryOfIssuance",
+    type: "text",
+  },
+  { label: "Emirates ID", name: "tenantEmiratesId", type: "text" },
+  {
+    label: "Emirates ID",
+    name: "tenantEmiratesIdExpiryDate",
+    type: "date",
+  },
+];
+
+export const Tenant_Type_Company = [
+  { label: "Name of the company", name: "tenantCompanyName", type: "text" },
+  {
+    label: "Trade license number",
+    name: "tenantTradeLicenseNumner",
+    type: "text",
+  },
+  { label: "Emirate", name: "tenantEmirate", type: "text" },
+  {
+    label: "Trade license expiry date",
+    name: "tenantTradeLicense",
+    type: "date",
+  },
+  {
+    label: "Power Of Attorney Holder Name",
+    name: "tenantPoaHolder",
+    type: "text",
+  },
+];
+
+export const Owner_Type_Individual = [
+  { label: "Name of Owner", name: "ownerName", type: "text" },
+
+  { label: "Passport Number", name: "ownerPassportNum", type: "text" },
+  {
+    label: "Passport Expiry Date",
+    name: "ownerPassportExpiryDate",
+    type: "date",
+  },
+  {
+    label: "Country Of Issuance",
+    name: "ownerCountryOfIssuance",
+    type: "text",
+  },
+  { label: "Emirates ID", name: "ownerEmiratesId", type: "text" },
+  {
+    label: "Emirates ID",
+    name: "ownerEmiratesIdExpiryDate",
+    type: "date",
+  },
+];
+
+export const Owner_Type_Company = [
+  { label: "Name of the company", name: "ownerCompanyName", type: "text" },
+  {
+    label: "Trade license number",
+    name: "ownerTradeLicenseNumner",
+    type: "text",
+  },
+  { label: "Emirate", name: "ownerEmirate", type: "text" },
+  {
+    label: "Trade license expiry date",
+    name: "ownerTradeLicense",
+    type: "date",
+  },
+  {
+    label: "Power Of Attorney Holder Name",
+    name: "ownerPoaHolder",
+    type: "text",
+  },
 ];
