@@ -89,10 +89,10 @@ const AddTenants = () => {
                 ...prevData,
                 // more TODO ---------->
                 ownerType: item?.customer_type,
-                description: item?.supplier_details,
+                description: item?.customer_details,
                 ownerName: item?.customer_name,
                 companyName: item?.customer_name,
-                customerContact: item?.custom_phone_number,
+                customerContact: item?.custom_contact_number_of_customer,
                 email: item?.custom_email,
 
                 // company
@@ -104,7 +104,7 @@ const AddTenants = () => {
                 // individual
                 gender: item?.custom_gender,
                 city: item?.custom_city,
-                country: item?.country,
+                country: item?.custom_country,
                 nationality: item?.custom_nationality,
                 passportNum: item?.custom_passport_number,
                 passportExpiryDate: item?.custom_passport_expiry_date,
@@ -165,12 +165,12 @@ const AddTenants = () => {
       const res = await updateTenant(location.state, {
         image: imgUrl,
         customer_type: ownerType,
-        supplier_details: formData?.description,
+        customer_details: formData?.description,
         customer_name:
           ownerType === "Individual"
             ? formData?.ownerName
             : formData?.companyName,
-        custom_phone_number: formData?.customerContact,
+        custom_contact_number_of_customer: formData?.customerContact,
         custom_email: formData?.email,
 
         // company
@@ -184,7 +184,7 @@ const AddTenants = () => {
         //individual
         custom_gender: formData.gender,
         custom_city: formData.city,
-        country: formData.country,
+        custom_country: formData.country,
         custom_nationality: formData.nationality,
         custom_passport_number: formData.passportNum,
         custom_passport_expiry_date: formatDateToYYMMDD(
@@ -365,6 +365,9 @@ const AddTenants = () => {
                       <label>Description</label>
                     </p>
                     <textarea
+                      name="description"
+                      onChange={handleChange}
+                      value={formData.description}
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                     ></textarea>

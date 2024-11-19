@@ -114,13 +114,13 @@ const AddTenants = () => {
       console.log("API Data => ", formData);
       const res = await createTenant({
         image: imgUrl,
-        supplier_details: formData?.description,
+        customer_details: formData?.description,
         customer_type: ownerType,
         customer_name:
           ownerType === "Individual"
             ? formData?.ownerName
             : formData?.companyName,
-        custom_phone_number: formData?.customerContact,
+        custom_contact_number_of_customer: formData?.customerContact,
         custom_email: formData?.email,
 
         // company
@@ -134,7 +134,7 @@ const AddTenants = () => {
         //individual
         custom_gender: formData.gender,
         custom_city: formData.city,
-        country: formData.country,
+        custom_country: formData.country,
         custom_nationality: formData.nationality,
         custom_passport_number: formData.passportNum,
         custom_passport_expiry_date: formatDateToYYMMDD(
@@ -312,6 +312,8 @@ const AddTenants = () => {
                       <label>Description</label>
                     </p>
                     <textarea
+                      name="description"
+                      onChange={handleChange}
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                     ></textarea>
