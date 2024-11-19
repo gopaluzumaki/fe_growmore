@@ -278,9 +278,9 @@ export const Add_TenancyContractProperty = [
     type: "dropdown",
     values: ["Commercial", "Residential"],
   },
+  { label: "Unit Number", name: "propertyUnits", type: "mantineSelect" },
   { label: "Location / Area", name: "propertyLocation", type: "text" },
   { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
-  { label: "Unit Number", name: "propertyUnits", type: "text" },
 ];
 
 export const Add_TenancyContractTenant = [

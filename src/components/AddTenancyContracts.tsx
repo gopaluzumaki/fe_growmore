@@ -765,6 +765,39 @@ const AddTenancyContracts = () => {
                               label={label}
                               placeholder="Select Date"
                             />
+                          ) : type === "mantineSelect" ? (
+                            <MantineSelect
+                              label={label}
+                              placeholder={label}
+                              data={propertyList.map((item) => ({
+                                value: item?.property,
+                                label: item?.property,
+                              }))}
+                              value={formValues.propertyName}
+                              onChange={(value) =>
+                                handleDropDown("propertyName", value)
+                              }
+                              styles={{
+                                label: {
+                                  marginBottom: "7px",
+                                  color: "#7C8DB5",
+                                  fontSize: "16px",
+                                },
+                                input: {
+                                  border: "1px solid #CCDAFF",
+                                  borderRadius: "8px",
+                                  padding: "24px",
+                                  fontSize: "16px",
+                                  color: "#1A202C",
+                                },
+                                dropdown: {
+                                  backgroundColor: "white",
+                                  borderRadius: "8px",
+                                  border: "1px solid #E2E8F0",
+                                },
+                              }}
+                              searchable
+                            />
                           ) : (
                             <></>
                           )
@@ -851,7 +884,7 @@ const AddTenancyContracts = () => {
                       )}
                       <div>
                         <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          <label>Attach Owner Signature</label>
+                          <label>Attach Customer Signature</label>
                         </p>
                         <div
                           className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
