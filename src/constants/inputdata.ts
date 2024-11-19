@@ -168,7 +168,7 @@ export const Type_Individual = [
   { label: "Country Of Issuance", name: "countryOfIssuance", type: "text" },
   { label: "Emirates ID", name: "emiratesId", type: "text" },
   {
-    label: "Emirates ID",
+    label: "Emirates ID Exipry Date",
     name: "emiratesIdExpiryDate",
     type: "date",
   },
@@ -329,7 +329,7 @@ export const Tenant_Type_Individual = [
   },
   { label: "Emirates ID", name: "tenantEmiratesId", type: "text" },
   {
-    label: "Emirates ID",
+    label: "Emirates ID Expiry Date",
     name: "tenantEmiratesIdExpiryDate",
     type: "date",
   },
@@ -371,7 +371,7 @@ export const Owner_Type_Individual = [
   },
   { label: "Emirates ID", name: "ownerEmiratesId", type: "text" },
   {
-    label: "Emirates ID",
+    label: "Emirates ID Expiry Date",
     name: "ownerEmiratesIdExpiryDate",
     type: "date",
   },

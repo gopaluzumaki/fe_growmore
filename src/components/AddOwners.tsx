@@ -118,7 +118,7 @@ const AddOwners = () => {
             : formData?.companyName,
         custom_phone_number: formData?.ownerContact,
         custom_email: formData?.email,
-        custom_number_of_property: formData?.propetyCount,
+        custom_number_of_property: formData?.propertyCount,
         custom_number_of_units: formData?.units,
         custom_location__area: formData?.location,
 
@@ -333,6 +333,7 @@ const AddOwners = () => {
                     <textarea
                       name="description"
                       onChange={handleChange}
+                      value={formData.description}
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                     ></textarea>
