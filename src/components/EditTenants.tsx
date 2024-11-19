@@ -45,7 +45,6 @@ const AddTenants = () => {
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [ownerType, setOwnerType] = useState(null);
   const location = useLocation();
 
   const [formData, setFormData] = useState<FormData>({
@@ -83,7 +82,6 @@ const AddTenants = () => {
           const item = res?.data?.data;
           console.log("tenant item", item);
           if (item) {
-            setOwnerType(item?.customer_type);
             setFormData((prevData) => {
               return {
                 ...prevData,
@@ -102,7 +100,7 @@ const AddTenants = () => {
                 poaHolder: item?.custom_power_of_attorney_holder_name,
 
                 // individual
-                gender: item?.custom_gender,
+                gender: item?.gender,
                 city: item?.custom_city,
                 country: item?.custom_country,
                 nationality: item?.custom_nationality,
@@ -135,14 +133,6 @@ const AddTenants = () => {
     }
   };
 
-  const onSelect = (item) => {
-    if (item === "Individual") {
-      setOwnerType(item);
-    } else if (item === "Company") {
-      setOwnerType(item);
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -158,16 +148,23 @@ const AddTenants = () => {
     }));
   };
 
+  const handleDropdownChange = (name: string, value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
       const res = await updateTenant(location.state, {
         image: imgUrl,
-        customer_type: ownerType,
+        customer_type: formData.ownerType,
         customer_details: formData?.description,
         customer_name:
-          ownerType === "Individual"
+          formData.ownerType === "Individual"
             ? formData?.ownerName
             : formData?.companyName,
         custom_contact_number_of_customer: formData?.customerContact,
@@ -182,7 +179,7 @@ const AddTenants = () => {
         custom_power_of_attorney_holder_name: formData?.poaHolder,
 
         //individual
-        custom_gender: formData.gender,
+        gender: formData.gender,
         custom_city: formData.city,
         custom_country: formData.country,
         custom_nationality: formData.nationality,
@@ -234,7 +231,9 @@ const AddTenants = () => {
                         />
                       ) : type === "dropdown" ? (
                         <Select
-                          onValueChange={(item) => onSelect(item)}
+                          onValueChange={(item) => {
+                            handleDropdownChange(name, item);
+                          }}
                           value={formData[name]}
                         >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
@@ -261,7 +260,7 @@ const AddTenants = () => {
                         <></>
                       )
                     )}
-                    {ownerType === "Individual" &&
+                    {formData.ownerType === "Individual" &&
                       Type_Individual_Tenant.map(
                         ({ label, name, type, values }) =>
                           type === "text" ? (
@@ -276,7 +275,12 @@ const AddTenants = () => {
                               bgLight
                             />
                           ) : type === "dropdown" ? (
-                            <Select onValueChange={(item) => onSelect(item)}>
+                            <Select
+                              onValueChange={(item) => {
+                                handleDropdownChange(name, item);
+                              }}
+                              value={formData[name]}
+                            >
                               <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                                 <div className="flex items-center">
                                   <SelectValue placeholder={label} />
@@ -303,8 +307,8 @@ const AddTenants = () => {
                             <></>
                           )
                       )}
-                    {ownerType === "Company" &&
-                      Type_Company.map(({ label, name, type }) =>
+                    {formData.ownerType === "Company" &&
+                      Type_Company.map(({ label, name, type, values }) =>
                         type === "text" ? (
                           <Input
                             key={name}
@@ -317,7 +321,12 @@ const AddTenants = () => {
                             bgLight
                           />
                         ) : type === "dropdown" ? (
-                          <Select onValueChange={(item) => onSelect(item)}>
+                          <Select
+                            onValueChange={(item) => {
+                              handleDropdownChange(name, item);
+                            }}
+                            value={formData[name]}
+                          >
                             <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                               <div className="flex items-center">
                                 <SelectValue placeholder={label} />
@@ -326,11 +335,11 @@ const AddTenants = () => {
                             <SelectContent
                               onChange={() => console.log("hello")}
                             >
-                              {/* {values?.map((item, i) => (
+                              {values?.map((item, i) => (
                                 <SelectItem key={i} value={item}>
                                   {item}
                                 </SelectItem>
-                              ))} */}
+                              ))}
                             </SelectContent>
                           </Select>
                         ) : type === "date" ? (

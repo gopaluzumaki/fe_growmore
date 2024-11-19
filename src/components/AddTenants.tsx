@@ -45,7 +45,6 @@ const AddTenants = () => {
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [ownerType, setOwnerType] = useState(null);
 
   const [formData, setFormData] = useState<FormData>({
     ownerType: "",
@@ -85,12 +84,11 @@ const AddTenants = () => {
     }
   };
 
-  const onSelect = (item) => {
-    if (item === "Individual") {
-      setOwnerType(item);
-    } else if (item === "Company") {
-      setOwnerType(item);
-    }
+  const handleDropdownChange = (name: string, value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,9 +113,9 @@ const AddTenants = () => {
       const res = await createTenant({
         image: imgUrl,
         customer_details: formData?.description,
-        customer_type: ownerType,
+        customer_type: formData.ownerType,
         customer_name:
-          ownerType === "Individual"
+          formData.ownerType === "Individual"
             ? formData?.ownerName
             : formData?.companyName,
         custom_contact_number_of_customer: formData?.customerContact,
@@ -132,7 +130,7 @@ const AddTenants = () => {
         custom_power_of_attorney_holder_name: formData?.poaHolder,
 
         //individual
-        custom_gender: formData.gender,
+        gender: formData.gender,
         custom_city: formData.city,
         custom_country: formData.country,
         custom_nationality: formData.nationality,
@@ -183,7 +181,12 @@ const AddTenants = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
-                        <Select onValueChange={(item) => onSelect(item)}>
+                        <Select
+                          onValueChange={(item) => {
+                            handleDropdownChange(name, item);
+                          }}
+                          value={formData[name]}
+                        >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
@@ -208,7 +211,7 @@ const AddTenants = () => {
                         <></>
                       )
                     )}
-                    {ownerType === "Individual" &&
+                    {formData.ownerType === "Individual" &&
                       Type_Individual_Tenant.map(
                         ({ label, name, type, values }) =>
                           type === "text" ? (
@@ -223,7 +226,12 @@ const AddTenants = () => {
                               bgLight
                             />
                           ) : type === "dropdown" ? (
-                            <Select onValueChange={(item) => onSelect(item)}>
+                            <Select
+                              onValueChange={(item) => {
+                                handleDropdownChange(name, item);
+                              }}
+                              value={formData[name]}
+                            >
                               <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                                 <div className="flex items-center">
                                   <SelectValue placeholder={label} />
@@ -250,7 +258,7 @@ const AddTenants = () => {
                             <></>
                           )
                       )}
-                    {ownerType === "Company" &&
+                    {formData.ownerType === "Company" &&
                       Type_Company.map(({ label, name, type }) =>
                         type === "text" ? (
                           <Input
@@ -264,7 +272,12 @@ const AddTenants = () => {
                             bgLight
                           />
                         ) : type === "dropdown" ? (
-                          <Select onValueChange={(item) => onSelect(item)}>
+                          <Select
+                            onValueChange={(item) => {
+                              handleDropdownChange(name, item);
+                            }}
+                            value={formData[name]}
+                          >
                             <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                               <div className="flex items-center">
                                 <SelectValue placeholder={label} />
@@ -273,11 +286,11 @@ const AddTenants = () => {
                             <SelectContent
                               onChange={() => console.log("hello")}
                             >
-                              {/* {values?.map((item, i) => (
+                              {values?.map((item, i) => (
                                 <SelectItem key={i} value={item}>
                                   {item}
                                 </SelectItem>
-                              ))} */}
+                              ))}
                             </SelectContent>
                           </Select>
                         ) : type === "date" ? (

@@ -50,7 +50,6 @@ const EditOwner = () => {
   const [imgUrl, setImgUrl] = useState("");
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [ownerType, setOwnerType] = useState(null);
   const location = useLocation();
   console.log(location.state);
 
@@ -88,7 +87,6 @@ const EditOwner = () => {
           const item = res?.data?.data;
           console.log("owner item", item);
           if (item) {
-            setOwnerType(item?.supplier_type);
             setFormData((prevData) => {
               return {
                 ...prevData,
@@ -172,7 +170,7 @@ const EditOwner = () => {
         image: imgUrl,
         supplier_details: formData?.description,
         supplier_name:
-          ownerType === "Individual"
+          formData.ownerType === "Individual"
             ? formData?.ownerName
             : formData?.companyName,
         custom_phone_number: formData?.ownerContact,
@@ -211,22 +209,10 @@ const EditOwner = () => {
   };
 
   const handleDropDown = async (name, item) => {
-    if (name === "ownerType") {
-      setOwnerType(item);
-    }
-
     setFormData((prevData) => ({
       ...prevData,
       [name]: item,
     }));
-  };
-
-  const onSelect = (item) => {
-    if (item === "Individual") {
-      setOwnerType(item);
-    } else if (item === "Company") {
-      setOwnerType(item);
-    }
   };
 
   return (
@@ -286,7 +272,7 @@ const EditOwner = () => {
                         <></>
                       )
                     )}
-                    {ownerType === "Individual" &&
+                    {formData.ownerType === "Individual" &&
                       Type_Individual.map(({ label, name, type, values }) =>
                         type === "text" ? (
                           <Input
@@ -302,6 +288,7 @@ const EditOwner = () => {
                         ) : type === "dropdown" ? (
                           <Select
                             onValueChange={(item) => handleDropDown(name, item)}
+                            value={formData[name]}
                           >
                             <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                               <div className="flex items-center">
@@ -329,7 +316,7 @@ const EditOwner = () => {
                           <></>
                         )
                       )}
-                    {ownerType === "Company" &&
+                    {formData.ownerType === "Company" &&
                       Type_Company.map(({ label, name, type }) =>
                         type === "text" ? (
                           <Input
@@ -345,6 +332,7 @@ const EditOwner = () => {
                         ) : type === "dropdown" ? (
                           <Select
                             onValueChange={(item) => handleDropDown(name, item)}
+                            value={formData[name]}
                           >
                             <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                               <div className="flex items-center">
