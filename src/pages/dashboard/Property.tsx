@@ -76,7 +76,7 @@ const Property = () => {
                 name={item?.property}
                 location={item?.location}
                 units={item?.number_of_units}
-                availUnits={item?.units_available}
+                availUnits={item?.number_of_units}
                 path={`/property/${item?.property}`}
               />
             ))}

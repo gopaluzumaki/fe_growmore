@@ -18,6 +18,7 @@ const PropertyCard = ({
   img,
   path
 }: PropertyCardProps) => {
+  console.log('asdas',availUnits)
   return (
     <main>
       <div className="overflow-hidden max-w-[330px]">
@@ -41,12 +42,12 @@ const PropertyCard = ({
             <span>No of Units : </span>{" "}
             <span className="font-semibold">{`${units}`}</span>
           </p>
-          <p>
+          {/* <p>
             <span>Units Available : </span>{" "}
             <span className="font-semibold">{`${
               availUnits === null ? "N/A" : availUnits
             }`}</span>
-          </p>
+          </p> */}
         </div>
         <div className="flex mx-1 mb-3">
           <Link

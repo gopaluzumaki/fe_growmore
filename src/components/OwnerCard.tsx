@@ -28,7 +28,7 @@ const OwnerCard = ({
       <div className="border border-[#E6EDFF] p-3 px-4 rounded-md">
         <div className="flex justify-between items-center gap-2">
           <div className="flex items-center gap-2">
-            <img className="rounded-md" src={img as string} alt="propertyImg" />
+            {/* <img className="rounded-md" src={img as string} alt="propertyImg" /> */}
             <p className="text-[20px] font-semibold">{name}</p>
           </div>
           <Link to={`/${redirect}/edit`} state={name}>
@@ -59,14 +59,14 @@ const OwnerCard = ({
             <span className="font-semibold">{location}</span>
           </p>
         </div>
-        <div className="flex mx-1 mb-3">
+        {/* <div className="flex mx-1 mb-3">
           <Link
             className="w-full text-center py-1.5 rounded-md text-[#0E0F11] bg-[#F7F7F7] border border-burlywood"
             to={``}
           >
             View Details
           </Link>
-        </div>
+        </div> */}
       </div>
     </main>
   );
