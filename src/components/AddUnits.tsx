@@ -239,7 +239,8 @@ const AddUnits = () => {
 
       const res = await createProperty({
         name1: formData?.unitNumber,
-        parent_property: "dk2ng6bbug",
+        custom_parent_property_name:formData.parent_property,
+        parent_property: propertyName,
         type: formData?.type,
         custom_location: formData?.location,
         custom_city: formData?.city,
@@ -260,7 +261,7 @@ const AddUnits = () => {
         custom_view: formData?.view,
         unit_owner: formData?.ownerName,
         custom_thumbnail_image: imgUrl,
-        isGroup: 0,
+        is_group: 0,
         cost_center: "Main - SRE",
         description: formData?.description,
       });

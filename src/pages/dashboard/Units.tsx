@@ -26,7 +26,7 @@ const Units = () => {
     "Owner Name",
     "Tenant Name",
     "Status",
-    "Images",
+    // "Images",
     " ",
   ];
 
@@ -62,7 +62,7 @@ const Units = () => {
                   <IoAdd size={20} />
                 </Link>
               </div>
-              <div>
+              {/* <div>
                 <Select>
                   <SelectTrigger className="w-[190px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
                     <div className="flex items-center gap-3">
@@ -79,7 +79,7 @@ const Units = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
             </div>
             <div className="my-4 p-4">
               <div className="overflow-x-auto">
@@ -120,11 +120,11 @@ const Units = () => {
                               {item.status}
                             </div>
                           </td>
-                          <td className="p-2 py-3">
+                          {/* <td className="p-2 py-3">
                             <div className="flex justify-center">
                               <img src={img_group} />
                             </div>
-                          </td>
+                          </td> */}
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
