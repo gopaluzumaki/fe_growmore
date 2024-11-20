@@ -24,7 +24,7 @@ interface FormData {
   area: string;
   city: string;
   country: string;
-  status: string;
+  custom_status: string;
   amenities: string;
   rent: string;
   description: string;
@@ -73,7 +73,7 @@ const AddProperty = () => {
     custom_area: "",
     custom_city: "",
     custom_country: "",
-    status: "",
+    custom_status: "",
     rent: "",
     description: "",
     custom_amenities:"",

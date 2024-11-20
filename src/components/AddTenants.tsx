@@ -304,9 +304,24 @@ const AddTenants = () => {
                           <></>
                         )
                       )}
+                       <div>
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        <label>Upload Customer Signature</label>
+                      </p>
+                      <div
+                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
+                      >
+                        <input
+                          className={`w-full bg-white outline-none`}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                        />
+                      </div>
+                    </div>
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
+                        <label>Attach ID</label>
                       </p>
                       <div
                         className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}

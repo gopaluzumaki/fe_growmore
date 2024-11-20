@@ -43,6 +43,7 @@ interface FormData {
   view: string;
   ownerName: string;
   tenantName: string;
+  description: string;
 }
 
 // {
@@ -102,12 +103,14 @@ const AddUnits = () => {
     balcony: "",
     view: "",
     ownerName: "",
+    description: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log("dsadas", formData);
+    console.log("dsadas", name, value);
     if (name === "sqFoot" && value) {
+      console.log("dasewa");
       let sqMeter = value * 0.092903;
       handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
       handleDropDown("priceSqFt", Number(formData["rent"] / value).toFixed(2));
@@ -122,6 +125,8 @@ const AddUnits = () => {
       setPriceSqFt(priceSqFt);
       setPriceSqMeter(priceSqMeter);
     } else if (!value) {
+      console.log("iadjskn");
+
       handleDropDown("sqMeter", 0);
       handleDropDown("priceSqFt", 0);
       handleDropDown("priceSqMeter", 0);
@@ -135,7 +140,7 @@ const AddUnits = () => {
   const getOwnerData = async () => {
     const res = await getOwnerList();
     const item = res?.data?.data;
-    console.log(item);
+    // console.log(item);
     setOwnerList(item);
   };
 
@@ -153,7 +158,15 @@ const AddUnits = () => {
 
   const handleDropDown = async (name, item) => {
     if (name === "parent_property") {
-      const res = await fetchProperty(item);
+      const propertyList = await getPropertyList();
+      let propertyName;
+      propertyList?.data?.data.forEach((prop) => {
+        if (prop.property === item) {
+          propertyName = prop.name;
+        }
+      });
+
+      const res = await fetchProperty(propertyName);
       const propertyData = res?.data?.data;
 
       console.log("property data", propertyData);
@@ -163,18 +176,19 @@ const AddUnits = () => {
         setFormData((prevData) => ({
           ...prevData,
           // propertyName: propertyData?.name,
-          type: propertyData?.customer_type,
+          type: propertyData?.type,
           location: propertyData?.custom_location,
           city: propertyData?.custom_city,
           state: propertyData?.custom_state,
           country: propertyData?.custom_country,
-          status: propertyData?.custom_status,
+          custom_status: propertyData?.custom_status,
           // propertyRent: propertyData?.rent,
           // propertyUnits: propertyData?.custom_number_of_units,
           // propertyStatus: propertyData?.status,
           // propertyDoc: propertyData?.custom_thumbnail_image,
         }));
       }
+      return;
     }
     setFormData((prevData) => ({
       ...prevData,
@@ -184,10 +198,21 @@ const AddUnits = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("formdata", formData);
+
+    const propertyList = await getPropertyList();
+    let propertyName;
+    propertyList?.data?.data.forEach((prop) => {
+      if (prop.property === formData.parent_property) {
+        propertyName = prop.name;
+      }
+    });
+
     try {
       console.log("API Data => ", {
-        name1: formData.parent_property,
-        parent_property: formData.parent_property,
+        name1: "104",
+        parent_property: propertyName,
+        custom_property:formData.parent_property,
         type: formData?.type,
         custom_location: formData?.location,
         custom_city: formData?.city,
@@ -213,14 +238,14 @@ const AddUnits = () => {
       });
 
       const res = await createProperty({
-        name1: formData.parent_property,
-        parent_property: formData.parent_property,
+        name1: formData?.unitNumber,
+        parent_property: "dk2ng6bbug",
         type: formData?.type,
         custom_location: formData?.location,
         custom_city: formData?.city,
         custom_state: formData?.state,
         custom_country: formData?.country,
-        custom_status: formData?.status,
+        custom_status: formData?.custom_status,
         rent: formData.rent,
         custom_selling_price: formData?.sellingPrice,
         custom_square_ft_of_unit: formData?.sqFoot,
@@ -237,6 +262,7 @@ const AddUnits = () => {
         custom_thumbnail_image: imgUrl,
         isGroup: 0,
         cost_center: "Main - SRE",
+        description: formData?.description,
       });
       if (res) {
         navigate("/units");
@@ -308,6 +334,7 @@ const AddUnits = () => {
                         />
                       ) : type === "dropdown" ? (
                         <Select
+                          value={formData[name as keyof FormData]}
                           onValueChange={(item) => handleDropDown(name, item)}
                         >
                           <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
@@ -380,6 +407,10 @@ const AddUnits = () => {
                       <label>Description</label>
                     </p>
                     <textarea
+                      id="description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                     ></textarea>

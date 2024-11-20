@@ -14,7 +14,6 @@ export const Add_Units = [
   // },
   { label: "Location / Area", name: "location", type: "text" },
   { label: "City", name: "city", type: "text" },
-  { label: "State", name: "state", type: "text" },
   { label: "Country", name: "country", type: "text" },
   {
     label: "Status",
@@ -53,7 +52,7 @@ export const Add_Property = [
   { label: "Country", name: "custom_country", type: "text" },
   {
     label: "Status",
-    name: "status",
+    name: "custom_status",
     type: "dropdown",
     values: ["Vacant", "Legal", "Occupied", "Under Maintenance"],
     // values: [
@@ -71,7 +70,7 @@ export const Add_Property = [
     // ],
   },
   { label: "Amenities", name: "custom_amenities", type: "text" },
-  { label: "Price / Rent", name: "rent", type: "text" },
+  // { label: "Price / Rent", name: "rent", type: "text" },
   { label: "Description", name: "description", type: "textArea" },
 ];
 

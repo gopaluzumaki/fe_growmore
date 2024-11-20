@@ -8,6 +8,8 @@ import Input from "./TextInput";
 import {
   createProperty,
   fetchProperty,
+  fetchProperyForEdit,
+  getPropertyList,
   updateProperty,
   uploadFile,
 } from "../api";
@@ -28,7 +30,7 @@ interface FormData {
   state: string;
   postcode: string;
   country: string;
-  status: string;
+  custom_status: string;
   rent: string;
   doc: string;
   leadName: string;
@@ -72,7 +74,7 @@ const EditProperty = () => {
     custom_area: "",
     custom_city: "",
     custom_country: "",
-    status: "",
+    custom_status: "",
     amenities: "",
     rent: "",
     description: "",
@@ -85,8 +87,15 @@ const EditProperty = () => {
   useEffect(() => {
     const fetchPropertyData = async () => {
       try {
-        const res = await fetchProperty(id); // Fetch the property data
-        console.log("res123", res.data.data);
+        const propertyList = await getPropertyList();
+        let propertyName;
+        propertyList?.data?.data.forEach((prop) => {
+          if (prop.property === id) {
+            propertyName = prop.name;
+          }
+        });
+        const res = await fetchProperty(propertyName); // Fetch the property data
+
         if (res) {
           setFormData({
             type: res.data.data.type || "",
@@ -99,11 +108,11 @@ const EditProperty = () => {
             custom_area: res.data.data.custom_area || "",
             custom_city: res.data.data.custom_city || "",
             custom_country: res.data.data.custom_country || "",
-            status: res.data.data.status || "",
+            custom_status: res.data.data.custom_status || "",
             amenities: res.data.data.amenities || "",
             rent: res.data.data.rent || "",
             description: res.data.data.description || "",
-            custom_amenities:res.data.data.custom_amenities||"",
+            custom_amenities: res.data.data.custom_amenities || "",
             is_group: 1,
           });
           setImgUrl(res.data.data.custom_thumbnail_image || "");

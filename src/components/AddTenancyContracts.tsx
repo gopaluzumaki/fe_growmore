@@ -1022,7 +1022,7 @@ const AddTenancyContracts = () => {
                             onChange={handleOwnerFileChange}
                           />
                         </div>
-                      </div>
+                      </div> 
                     </div>
                   </div>
 
