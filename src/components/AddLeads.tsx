@@ -108,7 +108,16 @@ const AddLeads = () => {
         type: formData?.leadType,
         mobile_no: formData?.contact,
         email_id: formData?.email,
-        // custom_property:formData?.propertyPreference,
+        custom_tentative_lease_data: formData?.leaseInDate,
+        custom_budget_range: formData?.budgetRange,
+        custom_property_preference: formData?.propertyPreference,
+
+        custom_area_preference: formData?.areaPreference,
+        custom_community_preference: formData?.communityPreference,
+        custom_bedroom_preference: formData?.bedroomPreference,
+        custom_description: formData?.description,
+
+        custom_imagephoto: imgUrl,
       });
       if (res) {
         navigate("/leads");
@@ -197,7 +206,9 @@ const AddLeads = () => {
                     <textarea
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
-                      onChange={(e) => handleChange(e as any)}
+                      onChange={(e) => handleChange(e)}
+                      name="description"
+                      value={formData?.description}
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">

@@ -95,16 +95,16 @@ const EditLead = () => {
                 leadName: item?.lead_name || "",
                 leadType: item?.type || "",
                 contact: item?.mobile_no,
-                nationality: "",
+                leadStatus: item?.status,
+
                 email: item?.email_id,
-                leaseInDate: "",
-                budgetRange: "",
-                propertyPreference: item?.custom_property || "",
-                areaPreference: "",
-                communityPreference: "",
-                bedroomPreference: "",
-                leadStatus: item?.status || "",
-                description: "",
+                leaseInDate: item?.custom_tentative_lease_data,
+                budgetRange: item?.custom_budget_range,
+                propertyPreference: item?.custom_property_preference,
+                areaPreference: item?.custom_area_preference,
+                communityPreference: item?.custom_community_preference,
+                bedroomPreference: item?.custom_bedroom_preference,
+                description: item?.custom_description,
               };
             });
             setImgUrl(item?.custom_image_attachment || "");
@@ -150,6 +150,16 @@ const EditLead = () => {
         mobile_no: formData?.contact,
         email_id: formData?.email,
         // custom_property:formData?.propertyPreference,
+        custom_tentative_lease_data: formData?.leaseInDate,
+        custom_budget_range: formData?.budgetRange,
+        custom_property_preference: formData?.propertyPreference,
+
+        custom_area_preference: formData?.areaPreference,
+        custom_community_preference: formData?.communityPreference,
+        custom_bedroom_preference: formData?.bedroomPreference,
+        custom_description: formData?.description,
+
+        custom_imagephoto: imgUrl,
       });
       if (res) {
         navigate("/leads");
@@ -241,6 +251,7 @@ const EditLead = () => {
                       name="description"
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                       onChange={handleChange}
+                      value={formData.description}
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
