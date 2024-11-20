@@ -10,7 +10,7 @@ export const API_URL = {
     "https://propms.erpnext.syscort.com/api/method/frappe.desk.reportview.get_count?doctype=Lease&filters=[[%22Lease%22,%22lease_status%22,%22!=%22,%22Closed%22]]",
   Property_List: "https://propms.erpnext.syscort.com/api/method/property_grid",
   Unit_List:
-    "https://propms.erpnext.syscort.com/api/resource/Property?filters=[[%22is_group%22,%22=%22,0]]&fields=[%22custom_unit_number%20as%20unit_number%22,%22custom_location%20as%20location%22,%22custom_parent_property_name%20as%20property%22,%22unit_owner%22,%22custom_status%22,%22custom_thumbnail_image%20as%20image%22]",
+    "https://propms.erpnext.syscort.com/api/resource/Property?filters=[[%22is_group%22,%22=%22,0]]&fields=[%22name%20as%20name%22,%22custom_unit_number%20as%20unit_number%22,%22custom_location%20as%20location%22,%22custom_parent_property_name%20as%20property%22,%22unit_owner%22,%22custom_status%22,%22custom_thumbnail_image%20as%20image%22]",
   Tenant_List: "https://propms.erpnext.syscort.com/api/method/tenant_list",
   Owner_List: "https://propms.erpnext.syscort.com/api/method/owner_list",
   Lead_List:
@@ -157,7 +157,7 @@ export const createProperty = async (propertyData: any) => {
 
 export const fetchUnit = async (params: any) => {
   const response = await axios.get(
-    `${API_URL.Create_Property}/${params.unit_number}`,
+    `${API_URL.Create_Property}/${params.name}`,
     {
       auth: {
         username: APP_AUTH.USERNAME,

@@ -27,7 +27,7 @@ export const Add_Units = [
   { label: "Square m of unit", name: "sqMeter", type: "text" },
   { label: "Rent Price/ Square m", name: "priceSqMeter", type: "text" },
   { label: "Rent Price/ Square ft", name: "priceSqFt", type: "text" },
-  { label: "Unit Number", name: "unitNumber", type: "text" },
+  { label: "Unit Number", name: "custom_unit_number", type: "text" },
   { label: "No. of Rooms", name: "rooms", type: "text" },
   { label: "No. of Floors", name: "floors", type: "text" },
   { label: "No. of Bathrooms", name: "bathrooms", type: "text" },

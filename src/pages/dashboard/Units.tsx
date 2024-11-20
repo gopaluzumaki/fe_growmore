@@ -110,14 +110,14 @@ const Units = () => {
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${
-                                item.status === "Rented"
+                                item.custom_status === "Occupied"
                                   ? "bg-[#FFEC1C] text-black"
-                                  : item.status === "Available"
+                                  : item.custom_status === "Vacant"
                                   ? "bg-[#34A853] text-white"
-                                  : "bg-[#EB4335] text-white"
+                                  :item.custom_status === "Legal" && "bg-[#EB4335] text-white"
                               }`}
                             >
-                              {item.status}
+                              {item.custom_status}
                             </div>
                           </td>
                           {/* <td className="p-2 py-3">

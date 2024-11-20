@@ -96,7 +96,7 @@ const AddUnits = () => {
     sqMeter: "",
     priceSqMeter: "",
     priceSqFt: "",
-    unitNumber: "",
+    custom_unit_number: "",
     rooms: "",
     floors: "",
     bathrooms: "",
@@ -158,9 +158,11 @@ const AddUnits = () => {
 
   const handleDropDown = async (name, item) => {
     if (name === "parent_property") {
+      console.log('item',item)
       const propertyList = await getPropertyList();
       let propertyName;
       propertyList?.data?.data.forEach((prop) => {
+        console.log('prop132',prop)
         if (prop.property === item) {
           propertyName = prop.name;
         }
@@ -176,6 +178,7 @@ const AddUnits = () => {
         setFormData((prevData) => ({
           ...prevData,
           // propertyName: propertyData?.name,
+          parent_property:propertyData?.name1,
           type: propertyData?.type,
           location: propertyData?.custom_location,
           city: propertyData?.custom_city,
@@ -210,16 +213,16 @@ const AddUnits = () => {
 
     try {
       console.log("API Data => ", {
-        name1: "104",
+        name1: formData?.unitNumber,
+        custom_parent_property_name:formData.parent_property,
         parent_property: propertyName,
-        custom_property:formData.parent_property,
         type: formData?.type,
         custom_location: formData?.location,
         custom_city: formData?.city,
         custom_state: formData?.state,
         custom_country: formData?.country,
         custom_status: formData?.custom_status,
-        rent: formData?.rent,
+        rent: formData.rent,
         custom_selling_price: formData?.sellingPrice,
         custom_square_ft_of_unit: formData?.sqFoot,
         custom_square_m_of_unit: formData?.sqMeter,
@@ -233,8 +236,9 @@ const AddUnits = () => {
         custom_view: formData?.view,
         unit_owner: formData?.ownerName,
         custom_thumbnail_image: imgUrl,
-        isGroup: 0,
+        is_group: 0,
         cost_center: "Main - SRE",
+        description: formData?.description,
       });
 
       const res = await createProperty({

@@ -10,6 +10,7 @@ import {
   createProperty,
   fetchProperty,
   fetchUnit,
+  getPropertyList,
   updateProperty,
   uploadFile,
 } from "../api";
@@ -21,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { Select as MantineSelect, Table } from "@mantine/core";
 
 interface FormData {
   location: string;
@@ -66,7 +68,7 @@ const EditUnits = () => {
   const [priceSqFt, setPriceSqFt] = useState();
   const [priceSqMeter, setPriceSqMeter] = useState();
   const location = useLocation();
-
+  const [propertyList, setPropertyList] = useState<any[]>([]);
   // useEffect(() => {
   //   console.log('dsads',location.state.item)
   //   // setFormData([...location.state.unitList]);
@@ -75,6 +77,7 @@ const EditUnits = () => {
   // const { state } = props.location;x
 
   useEffect(() => {
+    console.log("location.state.item", location.state.item);
     const fetchUnitData = async () => {
       try {
         const res = await fetchUnit(location.state.item); // Fetch the property data
@@ -82,7 +85,7 @@ const EditUnits = () => {
         if (res) {
           setFormData({
             type: res.data.data.type || "",
-            parent_property: res.data.data.name1 || "",
+            parent_property: res.data.data.custom_parent_property_name || "",
             location: res.data.data.custom_location || "",
             city: res.data.data.custom_city || "",
             state: res.data.data.custom_city || "",
@@ -94,7 +97,7 @@ const EditUnits = () => {
             sqMeter: res.data.data.custom_square_m_of_unit || "",
             priceSqMeter: res.data.data.custom_price_square_m || "",
             priceSqFt: res.data.data.custom_price_square_ft || "",
-            unitNumber: res.data.data.custom_unit_number || "",
+            custom_unit_number: res.data.data.custom_unit_number || "",
             rooms: res.data.data.custom_no_of_rooms || "",
             floors: res.data.data.custom_no_of_floors || "",
             bathrooms: res.data.data.common_bathroom || "",
@@ -103,7 +106,7 @@ const EditUnits = () => {
             ownerName: res.data.data.unit_owner || "",
             description: res.data.data.description || "",
             cost_center: "Main - SRE",
-            is_group: 1,
+            is_group: 0,
           });
           setImgUrl(res.data.data.custom_thumbnail_image || "");
         }
@@ -139,7 +142,7 @@ const EditUnits = () => {
     sqMeter: "",
     priceSqMeter: "",
     priceSqFt: "",
-    unitNumber: "",
+    custom_unit_number: "",
     rooms: "",
     floors: "",
     bathrooms: "",
@@ -174,7 +177,54 @@ const EditUnits = () => {
     }));
   };
 
-  const handleDropDown = (name, item) => {
+  useEffect(() => {
+    getProperties();
+  }, []);
+
+  const getProperties = async () => {
+    const res = await getPropertyList();
+    const item = res?.data?.data;
+    console.log(item);
+    setPropertyList(item);
+  };
+
+  const handleDropDown = async (name, item) => {
+    // if (name === "parent_property") {
+    //   console.log('item',item)
+    //   const propertyList = await getPropertyList();
+    //   let propertyName;
+    //   propertyList?.data?.data.forEach((prop) => {
+    //     console.log('prop132',prop)
+    //     if (prop.property === item) {
+    //       propertyName = prop.name;
+    //     }
+    //   });
+
+    //   const res = await fetchProperty(propertyName);
+    //   const propertyData = res?.data?.data;
+
+    //   console.log("property data", propertyData);
+
+    //   if (propertyData) {
+    //     // Fill all the fields with the fetched data
+    //     setFormData((prevData) => ({
+    //       ...prevData,
+    //       // propertyName: propertyData?.name,
+    //       parent_property:propertyData?.name1,
+    //       type: propertyData?.type,
+    //       location: propertyData?.custom_location,
+    //       city: propertyData?.custom_city,
+    //       state: propertyData?.custom_state,
+    //       country: propertyData?.custom_country,
+    //       custom_status: propertyData?.custom_status,
+    //       // propertyRent: propertyData?.rent,
+    //       // propertyUnits: propertyData?.custom_number_of_units,
+    //       // propertyStatus: propertyData?.status,
+    //       // propertyDoc: propertyData?.custom_thumbnail_image,
+    //     }));
+    //   }
+    //   return;
+    // }
     setFormData((prevData) => ({
       ...prevData,
       [name]: item,
@@ -183,11 +233,13 @@ const EditUnits = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       console.log("API Data => ", formData);
+      delete formData.parent_property
       const res = await updateProperty(
-        formData,
-        location.state.item.property as string
+        { ...formData, name1: formData?.unitNumber },
+        location.state.item.name as string
       );
       if (res) {
         navigate("/units");
@@ -211,6 +263,52 @@ const EditUnits = () => {
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(px,1fr))] gap-4">
+                      {/* <MantineSelect
+                        label="Property Name"
+                        placeholder="Select Property"
+                        data={propertyList.map((item) => ({
+                          value: item?.property,
+                          label: item?.property,
+                        }))}
+                        value={formData.parent_property}
+                        // onChange={(value) =>
+                        //   handleDropDown("parent_property", value)
+                        // }
+                        styles={{
+                          label: {
+                            marginBottom: "7px",
+                            color: "#7C8DB5",
+                            fontSize: "16px",
+                          },
+                          input: {
+                            border: "1px solid #CCDAFF",
+                            borderRadius: "8px",
+                            padding: "24px",
+                            fontSize: "16px",
+                            color: "#1A202C",
+                          },
+                          dropdown: {
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            border: "1px solid #E2E8F0",
+                          },
+                        }}
+                        searchable
+                      /> */}
+
+                      <Input
+                        key={"Property Name"}
+                        label="Property Name"
+                        name={"Property Name"}
+                        // type={type}
+                        value={formData.parent_property}
+                        // onChange={handleChange}
+                        borderd
+                        disabled
+                        bgLight
+                      />
+                    </div>
                     {Add_Units.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
