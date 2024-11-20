@@ -15,7 +15,7 @@ type OwnerCardProps = {
 
 const OwnerCard = ({
   name,
-  location,
+  // location,
   img,
   contact,
   email,
@@ -54,10 +54,10 @@ const OwnerCard = ({
             <span className="text-sonicsilver">Total Unit Number :</span>
             <span className="font-semibold">{totalUnit}</span>
           </p>
-          <p className="flex gap-2 py-3">
+          {/* <p className="flex gap-2 py-3">
             <span className="text-sonicsilver">Location :</span>
             <span className="font-semibold">{location}</span>
-          </p>
+          </p> */}
         </div>
         {/* <div className="flex mx-1 mb-3">
           <Link

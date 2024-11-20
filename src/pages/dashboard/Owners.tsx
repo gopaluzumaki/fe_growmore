@@ -98,7 +98,7 @@ const Owners = () => {
                 name={item?.supplier_name}
                 contact={item.custom_phone_number}
                 email={item.custom_email}
-                location="Downtown, DSO"
+                // location="Downtown, DSO"
                 totalProperty={item.custom_number_of_property}
                 totalUnit={item.custom_number_of_units}
                 img={demo_avatar}
