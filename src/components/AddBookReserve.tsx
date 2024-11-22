@@ -18,7 +18,7 @@ import {
   fetchOwner,
 } from "../api";
 import CustomDatePicker from "./CustomDatePicker";
-import { Select as MantineSelect } from "@mantine/core";
+import { FileInput, Select as MantineSelect } from "@mantine/core";
 import { useEffect } from "react";
 
 import {
@@ -128,6 +128,10 @@ const AddBookReserve = () => {
         setImgUrl(res?.data?.message?.file_url);
       }
     }
+  };
+
+  const handleFileChanges = async (files) => {
+    console.log("files", files);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -468,16 +472,12 @@ const AddBookReserve = () => {
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         <label>Image Attachment</label>
                       </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                      </div>
+                      <FileInput
+                        onChange={handleFileChanges}
+                        accept="image/*"
+                        placeholder="Upload files"
+                        multiple
+                      />
                     </div>
                   </div>
                   <div className="mt-5">
