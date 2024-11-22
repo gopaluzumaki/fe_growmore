@@ -12,6 +12,9 @@ import {
   getOwnerList,
   fetchBooking,
   updateBooking,
+  fetchProperty,
+  fetchTenant,
+  fetchOwner,
 } from "../api";
 import CustomDatePicker from "./CustomDatePicker";
 import { Select as MantineSelect } from "@mantine/core";
@@ -83,13 +86,33 @@ const EditBooking = () => {
   });
 
   useEffect(() => {
+    getLeadData();
     getOwnerData();
+    getProperties();
+    getTenants();
   }, []);
+
+  const getProperties = async () => {
+    const res = await getPropertyList();
+    const item = res?.data?.data;
+    setPropertyList(item);
+  };
+
+  const getTenants = async () => {
+    const res = await getTenantList();
+    const item = res?.data?.data;
+    setTenantList(item);
+  };
+
+  const getLeadData = async () => {
+    const res = await getLeadData();
+    const item = res?.data?.data;
+    setLeadList(item);
+  };
 
   const getOwnerData = async () => {
     const res = await getOwnerList();
     const item = res?.data?.data;
-    console.log(item);
     setOwnerList(item);
   };
 
@@ -160,11 +183,76 @@ const EditBooking = () => {
     }));
   };
 
-  const handleDropdownChange = (name: string, value: string) => {
+  const fetchAndSetFormData = async (name: string, value: string) => {
+    const fetchConfig: Record<
+      string,
+      {
+        fetchFunction: (value: string) => Promise<any>;
+        extractData: (data: any) => Record<string, any>;
+      }
+    > = {
+      name1: {
+        fetchFunction: () => fetchProperty("iohr6g0uud"),
+        extractData: (data) => ({
+          location: data?.custom_location,
+          unitCount: data?.custom_number_of_units,
+          city: data?.custom_city,
+          country: data?.custom_country,
+          status: data?.custom_status,
+        }),
+      },
+      tenantName: {
+        fetchFunction: fetchTenant,
+        extractData: (data) => ({
+          tenantName: data?.customer_name,
+          contact: data?.custom_contact_number_of_customer,
+          nationality: data?.custom_nationality,
+          type: data?.customer_type,
+          email: data?.custom_email,
+        }),
+      },
+      ownerName: {
+        fetchFunction: fetchOwner,
+        extractData: (data) => ({
+          ownerName: data?.supplier_name,
+          ownerContact: data?.custom_phone_number,
+        }),
+      },
+    };
+
+    if (fetchConfig[name]) {
+      const { fetchFunction, extractData } = fetchConfig[name];
+      try {
+        const response = await fetchFunction(value);
+        const data = response?.data?.data;
+        const extractedData = extractData(data);
+
+        setFormData((prevData) => ({
+          ...prevData,
+          ...extractedData,
+          selectALead: "",
+          propertyName: "",
+          bookingDate: "",
+          startDate: "",
+          endDate: "",
+          chequesCount: "",
+          payAmount: "",
+          bookingAmount: "",
+          description: "",
+        }));
+      } catch (error) {
+        console.error(`Error fetching data for ${name}:`, error);
+      }
+    }
+    // Always update the specific field value
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleDropdownChange = async (name: string, value: string) => {
+    fetchAndSetFormData(name, value);
   };
 
   const handleDateChange = (name: string, date: Date | null) => {
@@ -229,6 +317,30 @@ const EditBooking = () => {
     }
   };
 
+  const getData = (label) => {
+    console.log("label123", label);
+    if (label === "selectALead") {
+      return leadList.map((item) => ({
+        value: item?.supplier_name,
+        label: item?.supplier_name,
+      }));
+    } else if (label === "ownerName") {
+      return ownerList.map((item) => ({
+        value: item?.supplier_name,
+        label: item?.supplier_name,
+      }));
+    } else if (label === "name1") {
+      return properyList?.map((item) => ({
+        value: item?.name,
+        label: item?.property,
+      }));
+    } else if (label === "tenantName") {
+      return tenantList?.map((item) => ({
+        value: item?.name,
+      }));
+    }
+  };
+
   return (
     <main>
       <div className="flex">
@@ -284,75 +396,53 @@ const EditBooking = () => {
                           label={label}
                           placeholder="Select Date"
                         />
+                      ) : type === "matineSelect" ? (
+                        <MantineSelect
+                          label={label}
+                          placeholder={label}
+                          data={getData(name)}
+                          // value={formData.selectALead}
+                          value={
+                            name === "selectALead"
+                              ? formData?.selectALead
+                              : name === "name1"
+                              ? formData?.name1
+                              : name === "ownerName"
+                              ? formData?.ownerName
+                              : name === "unitCount"
+                              ? formData?.unitCount
+                              : name === "tenantName"
+                              ? formData?.tenantName
+                              : null
+                          }
+                          onChange={(value) =>
+                            handleDropdownChange(name, value)
+                          }
+                          styles={{
+                            label: {
+                              marginBottom: "7px",
+                              color: "black",
+                              fontSize: "16px",
+                            },
+                            input: {
+                              border: "1px solid #CCDAFF",
+                              borderRadius: "8px",
+                              padding: "24px",
+                              fontSize: "16px",
+                              color: "#1A202C",
+                            },
+                            dropdown: {
+                              backgroundColor: "white",
+                              borderRadius: "8px",
+                              border: "1px solid #E2E8F0",
+                            },
+                          }}
+                          searchable
+                        />
                       ) : (
                         <></>
                       )
                     )}
-                    <MantineSelect
-                      label="Name of Owner"
-                      placeholder="Select Property"
-                      data={ownerList.map((item) => ({
-                        value: item?.supplier_name,
-                        label: item?.supplier_name,
-                      }))}
-                      value={formData.ownerName}
-                      onChange={(value) =>
-                        handleDropdownChange("ownerName", value)
-                      }
-                      styles={{
-                        label: {
-                          marginBottom: "7px",
-                          color: "black",
-                          fontSize: "16px",
-                        },
-                        input: {
-                          border: "1px solid #CCDAFF",
-                          borderRadius: "8px",
-                          padding: "24px",
-                          fontSize: "16px",
-                          color: "#1A202C",
-                        },
-                        dropdown: {
-                          backgroundColor: "white",
-                          borderRadius: "8px",
-                          border: "1px solid #E2E8F0",
-                        },
-                      }}
-                      searchable
-                    />
-
-                    {/* <MantineSelect
-                      label="Contact Number of Owner"
-                      placeholder="Select Property"
-                      data={ownerList.map((item) => ({
-                        value: item?.supplier_name,
-                        label: item?.supplier_name,
-                      }))}
-                      value={formData.propertyName}
-                      onChange={(value) =>
-                        handleDropDown("propertyName", value)
-                      }
-                      styles={{
-                        label: {
-                          marginBottom: "7px",
-                          color: "black",
-                          fontSize: "16px",
-                        },
-                        input: {
-                          border: "1px solid #CCDAFF",
-                          borderRadius: "8px",
-                          padding: "24px",
-                          fontSize: "16px",
-                          color: "#1A202C",
-                        },
-                        dropdown: {
-                          backgroundColor: "white",
-                          borderRadius: "8px",
-                          border: "1px solid #E2E8F0",
-                        },
-                      }}
-                      searchable
-                    /> */}
 
                     <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">

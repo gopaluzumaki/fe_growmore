@@ -168,15 +168,20 @@ export const fetchUnit = async (params: any) => {
   return response;
 };
 
-
-export const fetchProperyForEdit=async (params: any) => {
-  console.log('redas',`https://propms.erpnext.syscort.com/app/property/view/List?name1=${params}`)
-  const response = await axios.get(`https://propms.erpnext.syscort.com/app/property/view/List?name1=${params}`, {
-    auth: {
-      username: APP_AUTH.USERNAME,
-      password: APP_AUTH.PASSWORD,
-    },
-  });
+export const fetchProperyForEdit = async (params: any) => {
+  console.log(
+    "redas",
+    `https://propms.erpnext.syscort.com/app/property/view/List?name1=${params}`
+  );
+  const response = await axios.get(
+    `https://propms.erpnext.syscort.com/app/property/view/List?name1=${params}`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
   return response;
 };
 
