@@ -461,12 +461,13 @@ const EditTenancyContracts = () => {
       const res = await fetchTenant(item);
       const tenantData = res?.data?.data;
       if (tenantData) {
+        console.log("tenantData", tenantData);
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
           ...prevData,
-
+          tenantType: tenantData?.customer_type,
           tenantName: tenantData?.customer_name,
-          tenantContact: tenantData?.mobile_no,
+          tenantContact: tenantData?.custom_contact_number_of_customer,
           tenantEmail: tenantData?.custom_email,
           tenantCity: tenantData?.custom_city,
           tenantPassport: tenantData?.custom_passport_number,
@@ -475,6 +476,19 @@ const EditTenancyContracts = () => {
           tenantEmiratesId: tenantData?.custom_emirates_id,
           tenantEmiratesIdExpiry: tenantData?.emiratesIdExpiry,
           tenantSignature: tenantData?.signature,
+          // individual
+          tenantOwnerName: tenantData?.name,
+          tenantPassportNum: tenantData?.custom_passport_number,
+          tenantPassportExpiryDate: tenantData?.custom_passport_expiry_date,
+          tenantCountryOfIssuance: tenantData?.custom_country_of_issuance,
+          tenantEmiratesIdExpiryDate:
+            tenantData?.custom_emirates_id_expiry_date,
+          // company
+          tenantCompanyName: tenantData?.name,
+          tenantTradeLicenseNumner: tenantData?.custom_trade_license_number,
+          tenantEmirate: tenantData?.custom_emirate,
+          tenantTradeLicense: tenantData?.custom_trade_license_number,
+          tenantPoaHolder: tenantData?.custom_power_of_attorney_holder_name,
         }));
       }
     }
@@ -492,10 +506,21 @@ const EditTenancyContracts = () => {
           ownerContact: ownerData?.custom_phone_number,
           ownerEmail: ownerData?.custom_email,
           ownerCountry: ownerData?.country,
-          ownerEmiratesId: ownerData?.custom_trade_license_number,
           ownerMobile: ownerData?.custom_phone_number,
           ownerDoc: ownerData?.doc,
           ownerSign: ownerData?.custom_signature_of_owner,
+          //individual
+          ownerPassportNum: ownerData?.custom_passport_number,
+          ownerPassportExpiryDate: ownerData?.custom_passport_expiry_date,
+          ownerCountryOfIssuance: ownerData?.custom_country_of_issuance,
+          ownerEmiratesId: ownerData?.custom_emirates_id,
+          ownerEmiratesIdExpiryDate: ownerData?.custom_emirates_id_expiry_date,
+          // company
+          ownerCompanyName: ownerData?.name,
+          ownerTradeLicenseNumner: ownerData?.custom_trade_license_number,
+          ownerEmirate: ownerData?.custom_emirate,
+          ownerTradeLicense: ownerData?.custom_trade_license_number,
+          ownerPoaHolder: ownerData?.custom_power_of_attorney_holder_name,
         }));
       }
     }
@@ -513,7 +538,7 @@ const EditTenancyContracts = () => {
   const handleDateChange = (name: string, date: Date | null) => {
     setFormValues((prevData) => ({
       ...prevData,
-      [name]: date.toISOString(),
+      [name]: date,
     }));
   };
 
@@ -649,6 +674,37 @@ const EditTenancyContracts = () => {
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                    <MantineSelect
+                      label="Status"
+                      placeholder="Status"
+                      data={["Active", "Closed"]}
+                      value={"Closed"}
+                      disabled
+                      styles={{
+                        label: {
+                          marginBottom: "7px",
+                          color: "#7C8DB5",
+                          fontSize: "16px",
+                        },
+                        input: {
+                          border: "1px solid #CCDAFF",
+                          borderRadius: "8px",
+                          padding: "24px",
+                          fontSize: "16px",
+                          color: "#1A202C",
+                        },
+                        dropdown: {
+                          backgroundColor: "white",
+                          borderRadius: "8px",
+                          border: "1px solid #E2E8F0",
+                        },
+                      }}
+                    />
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
                   {/* Contract Details */}
                   <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
@@ -697,10 +753,11 @@ const EditTenancyContracts = () => {
                             </Select>
                           ) : type === "date" ? (
                             <CustomDatePicker
-                              selectedDate={selectedDate}
+                              selectedDate={formValues[name] as Date}
                               onChange={(date) => handleDateChange(name, date)}
                               label={label}
                               placeholder="Select Date"
+                              value={formValues[name]}
                             />
                           ) : (
                             <></>
@@ -828,10 +885,11 @@ const EditTenancyContracts = () => {
                             </Select>
                           ) : type === "date" ? (
                             <CustomDatePicker
-                              selectedDate={selectedDate}
+                              selectedDate={formValues[name] as Date}
                               onChange={(date) => handleDateChange(name, date)}
                               label={label}
                               placeholder="Select Date"
+                              value={formValues[name]}
                             />
                           ) : (
                             <></>
@@ -908,10 +966,11 @@ const EditTenancyContracts = () => {
                           />
                         ) : type === "date" ? (
                           <CustomDatePicker
-                            selectedDate={selectedDate}
+                            selectedDate={formValues[name] as Date}
                             onChange={(date) => handleDateChange(name, date)}
                             label={label}
                             placeholder="Select Date"
+                            value={formValues[name]}
                           />
                         ) : (
                           <></>
@@ -977,6 +1036,7 @@ const EditTenancyContracts = () => {
                             onChange={(date) => handleDateChange(name, date)}
                             label={label}
                             placeholder="Select Date"
+                            value={formValues[name]}
                           />
                         ) : (
                           <></>

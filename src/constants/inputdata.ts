@@ -237,7 +237,7 @@ export const Add_BookReserve = [
   { label: "Contact Number of Owner", name: "ownerContact", type: "text" },
 ];
 
-export const Add_Contract_Details = [
+export const payment_details = [
   {
     label: "No Of Cheques",
     name: "numberOfChecks",
@@ -259,9 +259,12 @@ export const Add_Contract_Details = [
     name: "chequeDate",
     type: "date",
   },
+  { label: "Price / Rent Annually", name: "anualPriceRent", type: "text" },
+];
+
+export const Add_Contract_Details = [
   { label: "Start Date", name: "startDate", type: "date" },
   { label: "End Date", name: "endDate", type: "date" },
-  { label: "Price / Rent Annually", name: "anualPriceRent", type: "text" },
   { label: "Square ft of unit", name: "sqFoot", type: "text" },
   { label: "Square m of unit", name: "sqMeter", type: "text" },
   { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
@@ -314,7 +317,6 @@ export const Add_TenancyContractOwner = [
 
 export const Tenant_Type_Individual = [
   { label: "Name of Owner", name: "tenantOwnerName", type: "text" },
-
   { label: "Passport Number", name: "tenantPassportNum", type: "text" },
   {
     label: "Passport Expiry Date",

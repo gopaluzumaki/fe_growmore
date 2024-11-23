@@ -34,7 +34,7 @@ import {
 } from "../components/ui/select";
 import Checkbox from "./CheckBox";
 import CustomDatePicker from "./CustomDatePicker";
-import { Select as MantineSelect, Table } from "@mantine/core";
+import { em, Select as MantineSelect, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
@@ -400,12 +400,13 @@ const AddTenancyContracts = () => {
       const res = await fetchTenant(item);
       const tenantData = res?.data?.data;
       if (tenantData) {
+        console.log("tenantData", tenantData);
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
           ...prevData,
           tenantType: tenantData?.customer_type,
           tenantName: tenantData?.customer_name,
-          tenantContact: tenantData?.mobile_no,
+          tenantContact: tenantData?.custom_contact_number_of_customer,
           tenantEmail: tenantData?.custom_email,
           tenantCity: tenantData?.custom_city,
           tenantPassport: tenantData?.custom_passport_number,
@@ -414,6 +415,19 @@ const AddTenancyContracts = () => {
           tenantEmiratesId: tenantData?.custom_emirates_id,
           tenantEmiratesIdExpiry: tenantData?.emiratesIdExpiry,
           tenantSignature: tenantData?.signature,
+          // individual
+          tenantOwnerName: tenantData?.name,
+          tenantPassportNum: tenantData?.custom_passport_number,
+          tenantPassportExpiryDate: tenantData?.custom_passport_expiry_date,
+          tenantCountryOfIssuance: tenantData?.custom_country_of_issuance,
+          tenantEmiratesIdExpiryDate:
+            tenantData?.custom_emirates_id_expiry_date,
+          // company
+          tenantCompanyName: tenantData?.name,
+          tenantTradeLicenseNumner: tenantData?.custom_trade_license_number,
+          tenantEmirate: tenantData?.custom_emirate,
+          tenantTradeLicense: tenantData?.custom_trade_license_number,
+          tenantPoaHolder: tenantData?.custom_power_of_attorney_holder_name,
         }));
       }
     }
@@ -431,10 +445,21 @@ const AddTenancyContracts = () => {
           ownerContact: ownerData?.custom_phone_number,
           ownerEmail: ownerData?.custom_email,
           ownerCountry: ownerData?.country,
-          ownerEmiratesId: ownerData?.custom_trade_license_number,
           ownerMobile: ownerData?.custom_phone_number,
           ownerDoc: ownerData?.doc,
           ownerSign: ownerData?.custom_signature_of_owner,
+          //individual
+          ownerPassportNum: ownerData?.custom_passport_number,
+          ownerPassportExpiryDate: ownerData?.custom_passport_expiry_date,
+          ownerCountryOfIssuance: ownerData?.custom_country_of_issuance,
+          ownerEmiratesId: ownerData?.custom_emirates_id,
+          ownerEmiratesIdExpiryDate: ownerData?.custom_emirates_id_expiry_date,
+          // company
+          ownerCompanyName: ownerData?.name,
+          ownerTradeLicenseNumner: ownerData?.custom_trade_license_number,
+          ownerEmirate: ownerData?.custom_emirate,
+          ownerTradeLicense: ownerData?.custom_trade_license_number,
+          ownerPoaHolder: ownerData?.custom_power_of_attorney_holder_name,
         }));
       }
     }
@@ -452,7 +477,7 @@ const AddTenancyContracts = () => {
   const handleDateChange = (name: string, date: Date | null) => {
     setFormValues((prevData) => ({
       ...prevData,
-      [name]: date.toISOString(),
+      [name]: date,
     }));
   };
 
@@ -480,6 +505,7 @@ const AddTenancyContracts = () => {
       console.log("API Data => ", formValues);
       const res = await createTanencyContract({
         ...formValues,
+        lease_status: "Closed", // will chagne to Draft once it is added in backend.
         //contract details
         custom_no_of__cheques: formValues.numberOfChecks,
         bank_name: formValues.bankName,
@@ -497,26 +523,12 @@ const AddTenancyContracts = () => {
 
         notice_period: formValues.notice_period,
 
-        lease_item: tableData.map((item) => {
-          return {
-            lease_item: "Rent",
-            frequency: "Monthly",
-            custom_annual_amount: 0,
-            currency_code: "AED",
-            document_type: "Sales Invoice",
-            amount: formValues.anualPriceRent,
-            parentfield: "lease_item",
-            parenttype: "Lease",
-            doctype: "Lease Item",
-          };
-        }),
         // property details
         property: formValues.propertyName,
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
         custom_number_of_unit: formValues.propertyUnits,
-        lease_status: formValues.propertyStatus,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,
@@ -587,6 +599,37 @@ const AddTenancyContracts = () => {
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <form onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                    <MantineSelect
+                      label="Status"
+                      placeholder="Status"
+                      data={["Active", "Closed"]}
+                      value={"Closed"}
+                      disabled
+                      styles={{
+                        label: {
+                          marginBottom: "7px",
+                          color: "#7C8DB5",
+                          fontSize: "16px",
+                        },
+                        input: {
+                          border: "1px solid #CCDAFF",
+                          borderRadius: "8px",
+                          padding: "24px",
+                          fontSize: "16px",
+                          color: "#1A202C",
+                        },
+                        dropdown: {
+                          backgroundColor: "white",
+                          borderRadius: "8px",
+                          border: "1px solid #E2E8F0",
+                        },
+                      }}
+                    />
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
                   {/* Contract Details */}
                   <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
@@ -634,10 +677,11 @@ const AddTenancyContracts = () => {
                             </Select>
                           ) : type === "date" ? (
                             <CustomDatePicker
-                              selectedDate={selectedDate}
+                              selectedDate={formValues[name] as Date}
                               onChange={(date) => handleDateChange(name, date)}
                               label={label}
                               placeholder="Select Date"
+                              value={formValues[name]}
                             />
                           ) : (
                             <></>
@@ -765,10 +809,11 @@ const AddTenancyContracts = () => {
                             </Select>
                           ) : type === "date" ? (
                             <CustomDatePicker
-                              selectedDate={selectedDate}
+                              selectedDate={formValues[name] as Date}
                               onChange={(date) => handleDateChange(name, date)}
                               label={label}
                               placeholder="Select Date"
+                              value={formValues[name]}
                             />
                           ) : type === "mantineSelect" ? (
                             <MantineSelect
@@ -905,6 +950,7 @@ const AddTenancyContracts = () => {
                               onChange={(date) => handleDateChange(name, date)}
                               label={label}
                               placeholder="Select Date"
+                              value={formValues[name]}
                             />
                           ) : (
                             <></>
@@ -954,6 +1000,7 @@ const AddTenancyContracts = () => {
                                 }
                                 label={label}
                                 placeholder="Select Date"
+                                value={formValues[name]}
                               />
                             ) : (
                               <></>
@@ -1003,6 +1050,7 @@ const AddTenancyContracts = () => {
                                 }
                                 label={label}
                                 placeholder="Select Date"
+                                value={formValues[name]}
                               />
                             ) : (
                               <></>
@@ -1022,7 +1070,7 @@ const AddTenancyContracts = () => {
                             onChange={handleOwnerFileChange}
                           />
                         </div>
-                      </div> 
+                      </div>
                     </div>
                   </div>
 
@@ -1106,6 +1154,7 @@ const AddTenancyContracts = () => {
                               onChange={(date) => handleDateChange(name, date)}
                               label={label}
                               placeholder="Select Date"
+                              value={formValues[name]}
                             />
                           ) : (
                             <></>
@@ -1155,6 +1204,7 @@ const AddTenancyContracts = () => {
                                 }
                                 label={label}
                                 placeholder="Select Date"
+                                value={formValues[name]}
                               />
                             ) : (
                               <></>
@@ -1204,6 +1254,7 @@ const AddTenancyContracts = () => {
                                 }
                                 label={label}
                                 placeholder="Select Date"
+                                value={formValues[name]}
                               />
                             ) : (
                               <></>
