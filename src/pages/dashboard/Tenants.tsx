@@ -14,7 +14,7 @@ import { VscFilter } from "react-icons/vsc";
 import { img_group } from "../../assets";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { getTenantList } from "../../api";
+import { getTenantList, getTenants } from "../../api";
 
 const Tenants = () => {
   const [tenantList, setTenantList] = useState<any[]>([]);
@@ -24,7 +24,8 @@ const Tenants = () => {
   }, []);
 
   const getData = async () => {
-    const unitList = await getTenantList();
+    const unitList = await getTenants();
+    console.log('unitlist',unitList)
     setTenantList(unitList?.data?.data);
   };
 

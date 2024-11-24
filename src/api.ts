@@ -65,6 +65,16 @@ export const getUnitCount = async () => {
   return response;
 };
 
+export const getTenants = async () => {
+  const response = await axios.get(API_URL.Tenant_List, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
 export const getTenantCount = async () => {
   const response = await axios.get(API_URL.Tenant_Count, {
     auth: {
