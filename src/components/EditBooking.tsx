@@ -15,6 +15,9 @@ import {
   fetchProperty,
   fetchTenant,
   fetchOwner,
+  getLeadList,
+  getTenantList,
+  getPropertyList,
 } from "../api";
 import CustomDatePicker from "./CustomDatePicker";
 import { Select as MantineSelect } from "@mantine/core";
@@ -59,6 +62,9 @@ const EditBooking = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [ownerList, setOwnerList] = useState<any[]>([]);
+  const [leadList, setLeadList] = useState<any[]>([]);
+  const [properyList, setPropertyList] = useState();
+  const [tenantList, setTenantList] = useState<any[]>([]);
   const location = useLocation();
 
   const [formData, setFormData] = useState<FormData>({
@@ -85,12 +91,7 @@ const EditBooking = () => {
     description: "",
   });
 
-  useEffect(() => {
-    getLeadData();
-    getOwnerData();
-    getProperties();
-    getTenants();
-  }, []);
+  useEffect(() => {}, []);
 
   const getProperties = async () => {
     const res = await getPropertyList();
@@ -105,7 +106,7 @@ const EditBooking = () => {
   };
 
   const getLeadData = async () => {
-    const res = await getLeadData();
+    const res = await getLeadList();
     const item = res?.data?.data;
     setLeadList(item);
   };
@@ -117,6 +118,11 @@ const EditBooking = () => {
   };
 
   useEffect(() => {
+    getLeadData();
+    getOwnerData();
+    getProperties();
+    getTenants();
+
     console.log("from edit booking ", location.state);
     const fetchingBookedData = async () => {
       if (location.state) {
@@ -128,16 +134,16 @@ const EditBooking = () => {
             setFormData((prevData) => {
               return {
                 ...prevData,
-
-                propertyName: item?.property || "",
+                tenantName: item?.custom_name_of_customer || "",
+                name1: item?.custom_property || "",
                 selectALead: item?.custom_select_a_lead || "",
+                propertyName: item?.property || "",
                 location: item?.custom_location__area || "",
                 unitCount: item?.custom_unit_number || "",
                 city: item?.custom_city || "",
                 country: item?.custom_country || "",
                 status: item?.custom_status || "",
                 bookingDate: item?.custom_date_of_booking || "",
-                tenantName: item?.custom_name_of_customer || "",
                 contact: item?.custom_contact_number || "",
                 nationality: item?.custom_nationality || "",
                 type: item?.custom_type || "",
@@ -230,15 +236,6 @@ const EditBooking = () => {
         setFormData((prevData) => ({
           ...prevData,
           ...extractedData,
-          selectALead: "",
-          propertyName: "",
-          bookingDate: "",
-          startDate: "",
-          endDate: "",
-          chequesCount: "",
-          payAmount: "",
-          bookingAmount: "",
-          description: "",
         }));
       } catch (error) {
         console.error(`Error fetching data for ${name}:`, error);
@@ -287,6 +284,8 @@ const EditBooking = () => {
       const res = await updateBooking(location.state, {
         property: formData.propertyName,
         custom_select_a_lead: formData.selectALead,
+        custom_property: formData.name1,
+
         custom_location__area: formData.location,
         custom_unit_number: formData.unitCount,
         custom_city: formData.city,
@@ -321,8 +320,8 @@ const EditBooking = () => {
     console.log("label123", label);
     if (label === "selectALead") {
       return leadList.map((item) => ({
-        value: item?.supplier_name,
-        label: item?.supplier_name,
+        value: item?.name,
+        label: item?.name,
       }));
     } else if (label === "ownerName") {
       return ownerList.map((item) => ({

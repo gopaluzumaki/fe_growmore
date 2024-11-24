@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 interface FormData {
   selectALead: string;
@@ -56,6 +57,7 @@ interface FormData {
 const AddBookReserve = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState<string[]>([]);
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [ownerList, setOwnerList] = useState<any[]>([]);
@@ -107,7 +109,7 @@ const AddBookReserve = () => {
   };
 
   const getLeadData = async () => {
-    const res = await getLeadData();
+    const res = await getLeadList();
     const item = res?.data?.data;
     setLeadList(item);
   };
@@ -189,15 +191,6 @@ const AddBookReserve = () => {
         setFormData((prevData) => ({
           ...prevData,
           ...extractedData,
-          selectALead: "",
-          propertyName: "",
-          bookingDate: "",
-          startDate: "",
-          endDate: "",
-          chequesCount: "",
-          payAmount: "",
-          bookingAmount: "",
-          description: "",
         }));
       } catch (error) {
         console.error(`Error fetching data for ${name}:`, error);
@@ -246,6 +239,7 @@ const AddBookReserve = () => {
       const res = await createBooking({
         property: formData.propertyName,
         custom_select_a_lead: formData.selectALead,
+        custom_property: formData.name1,
         custom_location__area: formData.location,
         custom_unit_number: formData.unitCount,
         custom_city: formData.city,
@@ -280,8 +274,8 @@ const AddBookReserve = () => {
     console.log("label123", label);
     if (label === "selectALead") {
       return leadList.map((item) => ({
-        value: item?.supplier_name,
-        label: item?.supplier_name,
+        value: item?.name,
+        label: item?.name,
       }));
     } else if (label === "ownerName") {
       return ownerList.map((item) => ({
@@ -368,8 +362,8 @@ const AddBookReserve = () => {
                               ? formData?.name1
                               : name === "ownerName"
                               ? formData?.ownerName
-                              : name === "unitCount"
-                              ? formData?.unitCount
+                              : name === "selectALead"
+                              ? formData?.selectALead
                               : name === "tenantName"
                               ? formData?.tenantName
                               : null
@@ -468,17 +462,11 @@ const AddBookReserve = () => {
                       searchable
                     /> */}
 
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
-                      </p>
-                      <FileInput
-                        onChange={handleFileChanges}
-                        accept="image/*"
-                        placeholder="Upload files"
-                        multiple
-                      />
-                    </div>
+                    <CustomFileUpload
+                      onFilesUpload={(urls) => {
+                        setImgUrls(urls);
+                      }}
+                    />
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
