@@ -241,7 +241,7 @@ export const payment_details = [
   {
     label: "No Of Cheques",
     name: "numberOfChecks",
-    type: "dropdown",
+    type: "mantineSelect",
     values: ["1", "2", "3", "6"],
   },
   {

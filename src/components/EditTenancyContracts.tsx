@@ -7,6 +7,7 @@ import {
   Add_TenancyContractTenant,
   Add_TenancyContractProperty,
   Add_Contract_Details,
+  payment_details,
 } from "../constants/inputdata";
 import Input from "./TextInput";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -33,7 +34,12 @@ import {
 } from "../components/ui/select";
 import Checkbox from "./CheckBox";
 import CustomDatePicker from "./CustomDatePicker";
-import { Select as MantineSelect, Table } from "@mantine/core";
+import {
+  Select as MantineSelect,
+  Modal,
+  ScrollArea,
+  Table,
+} from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
@@ -56,6 +62,7 @@ const EditTenancyContracts = () => {
       bankName: string;
     }[]
   >([]);
+  const [paymentDetailsModalOpen, setPaymentDetailsModalOpen] = useState(false);
   const [ownerImgUrl, setOwnerImgUrl] = useState("");
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const location = useLocation();
@@ -640,6 +647,42 @@ const EditTenancyContracts = () => {
     }
   };
 
+  const handlePaymentDetailsSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+    try {
+      console.log("API Data => ", formValues);
+      const res = await updateTanencyContract(location.state, {
+        ...formValues,
+        lease_status: "Active",
+        //payment details
+        custom_no_of__cheques: formValues.numberOfChecks,
+        bank_name: formValues.bankName,
+        cheque_no: formValues.chequeNo,
+
+        lease_item: tableData.map((item) => {
+          return {
+            lease_item: "Rent",
+            frequency: "Monthly",
+            custom_annual_amount: 0,
+            currency_code: "AED",
+            document_type: "Sales Invoice",
+            amount: formValues.anualPriceRent,
+            parentfield: "lease_item",
+            parenttype: "Lease",
+            doctype: "Lease Item",
+          };
+        }),
+      }); //import from API
+      if (res) {
+        navigate("/contracts");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const getChequeData = (name, label, type) => {
     // console.log('nuda',numberOfChecks)
 
@@ -673,6 +716,12 @@ const EditTenancyContracts = () => {
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
+                <div>
+                  <PrimaryButton
+                    title="Add Payment Details"
+                    onClick={() => setPaymentDetailsModalOpen(true)}
+                  />
+                </div>
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
                     <MantineSelect
@@ -1068,6 +1117,120 @@ const EditTenancyContracts = () => {
           </div>
         </div>
       </div>
+      <Modal
+        opened={paymentDetailsModalOpen}
+        onClose={() => setPaymentDetailsModalOpen(false)}
+        title=""
+        scrollAreaComponent={ScrollArea.Autosize}
+        fullscreen={true}
+        radius={0}
+        transitionProps={{ transition: "fade", duration: 200 }}
+      >
+        <form onSubmit={handlePaymentDetailsSubmit}>
+          <div>
+            <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+              <span className="pb-1 border-b border-[#7C8DB5]">Payment</span>
+              <span className="pb-1">Details</span>
+            </p>
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+              {payment_details.map(({ label, name, type, values }) =>
+                type === "text" ? (
+                  <Input
+                    key={name}
+                    label={label}
+                    name={name}
+                    type={type}
+                    value={formValues[name]}
+                    onChange={handleChange}
+                    borderd
+                    bgLight
+                  />
+                ) : type === "dropdown" ? (
+                  <Select onValueChange={(item) => handleDropDown(name, item)}>
+                    <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                      <div className="flex items-center">
+                        <SelectValue placeholder={label} />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {values?.map((item, i) => (
+                        <SelectItem key={i} value={item}>
+                          {item}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : type === "date" ? (
+                  <CustomDatePicker
+                    selectedDate={formValues[name] as Date}
+                    onChange={(date) =>
+                      handleDateChange(name, date.toDateString())
+                    }
+                    label={label}
+                    placeholder="Select Date"
+                    value={formValues[name]}
+                  />
+                ) : type === "mantineSelect" ? (
+                  <MantineSelect
+                    label={label}
+                    placeholder={label}
+                    data={values}
+                    value={formValues[name]}
+                    onChange={(value) => handleDropDown(name, value)}
+                    styles={{
+                      label: {
+                        marginBottom: "7px",
+                        color: "#7C8DB5",
+                        fontSize: "16px",
+                      },
+                      input: {
+                        border: "1px solid #CCDAFF",
+                        borderRadius: "8px",
+                        padding: "24px",
+                        fontSize: "16px",
+                        color: "#1A202C",
+                      },
+                      dropdown: {
+                        backgroundColor: "white",
+                        borderRadius: "8px",
+                        border: "1px solid #E2E8F0",
+                      },
+                    }}
+                    searchable
+                  />
+                ) : (
+                  <></>
+                )
+              )}
+            </div>
+          </div>
+          {tableData?.length > 0 && (
+            <Table>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Rent</Table.Th>
+                  <Table.Th>Cheque Number</Table.Th>
+                  <Table.Th>Cheque Date</Table.Th>
+                  <Table.Th>Bank Name</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {tableData?.map((item, i) => (
+                  <Table.Tr key={i}>
+                    <Table.Td>{item.rent}</Table.Td>
+                    <Table.Td>{item.chequeNumber}</Table.Td>
+                    <Table.Td>{item.chequeDate}</Table.Td>
+                    <Table.Td>{item.bankName}</Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          )}
+          <div className="pt-4">
+            <PrimaryButton type="submit" title="Save Payment Details" />
+          </div>
+        </form>
+      </Modal>
     </main>
   );
 };
