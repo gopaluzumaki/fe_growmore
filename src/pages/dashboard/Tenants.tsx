@@ -98,6 +98,7 @@ const Tenants = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {tenantList.map((item, i) => {
+                      {console.log('tem213',item)}
                       return (
                         <tr
                           key={i}
@@ -125,7 +126,7 @@ const Tenants = () => {
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
-                                <Link to={"/tenants/edit"} state={item.name}>
+                                <Link to={"/tenants/edit"} state={item.tenant}>
                                   <MdOutlineEdit
                                     size={20}
                                     className="text-[#D09D4A]"
