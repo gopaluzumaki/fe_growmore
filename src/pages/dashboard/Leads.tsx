@@ -114,7 +114,7 @@ const Leads = () => {
                               className={`p-1 rounded ${
                                 item.status === "Rented"
                                   ? "bg-[#FFEC1C] text-black"
-                                  : item.status === "Available"
+                                  : item.status === "Open"
                                   ? "bg-[#34A853] text-white"
                                   : "bg-[#EB4335] text-white"
                               }`}
