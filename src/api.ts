@@ -65,8 +65,9 @@ export const getUnitCount = async () => {
   return response;
 };
 
-export const getTenants = async () => {
-  const response = await axios.get(API_URL.Tenant_List, {
+export const getTenantsFromAPI = async (params) => {
+  console.log('getTenantsFromAPI',`${API_URL.Create_Tenant}/${params}`)
+  const response = await axios.get(`${API_URL.Create_Tenant}${params}`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -105,8 +106,8 @@ export const getUnitList = async () => {
   return response;
 };
 
-export const getTenantList = async () => {
-  const response = await axios.get(API_URL.Create_Tenant, {
+export const getTenantList = async (params) => {
+  const response = await axios.get(`${API_URL.Create_Property}/${params}`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,

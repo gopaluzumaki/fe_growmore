@@ -14,7 +14,7 @@ import { VscFilter } from "react-icons/vsc";
 import { img_group } from "../../assets";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { getTenantList, getTenants } from "../../api";
+import { getTenantList, getTenants, getTenantsFromAPI } from "../../api";
 
 const Tenants = () => {
   const [tenantList, setTenantList] = useState<any[]>([]);
@@ -24,7 +24,7 @@ const Tenants = () => {
   }, []);
 
   const getData = async () => {
-    const unitList = await getTenants();
+    const unitList = await getTenantsFromAPI(`?fields=["*"]`);
     console.log('unitlist',unitList)
     setTenantList(unitList?.data?.data);
   };
@@ -34,11 +34,13 @@ const Tenants = () => {
   const headers = [
     "Sr. No",
     "Customer Name",
-    "Property Name",
-    "Owner Name",
-    "Unit Number",
-    "Location",
-    "status",
+    "Customer Type",
+    "Customer Email",
+    // "Property Name",
+    // "Owner Name",
+    // "Unit Number",
+    // "Location",
+    // "status",
     " ",
   ];
 
@@ -105,12 +107,14 @@ const Tenants = () => {
                           className="hover:bg-gray-50 text-center text-[15px]"
                         >
                           <td className="p-2 py-3">{i + 1}</td>
-                          <td className="p-2 py-3">{item.tenant}</td>
-                          <td className="p-2 py-3">{item.property}</td>
+                          <td className="p-2 py-3">{item.customer_name}</td>
+                          <td className="p-2 py-3">{item.customer_type}</td>
+                          <td className="p-2 py-3">{item.custom_email}</td>
+                          {/* <td className="p-2 py-3">{item.property}</td>
                           <td className="p-2 py-3">{item.owner}</td>
                           <td className="p-2 py-3">{item.unit}</td>
-                          <td className="p-2 py-3">{item.location}</td>
-                          <td className="p-2 py-3">
+                          <td className="p-2 py-3">{item.location}</td> */}
+                          {/* <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${
                                 item.status === "Rented"
@@ -122,11 +126,11 @@ const Tenants = () => {
                             >
                               {item.status}
                             </div>
-                          </td>
+                          </td> */}
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
-                                <Link to={"/tenants/edit"} state={item.tenant}>
+                                <Link to={"/tenants/edit"} state={item.customer_name}>
                                   <MdOutlineEdit
                                     size={20}
                                     className="text-[#D09D4A]"
