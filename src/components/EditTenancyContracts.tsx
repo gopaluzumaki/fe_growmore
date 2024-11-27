@@ -123,11 +123,15 @@ const EditTenancyContracts = () => {
             setFormValues((prevData) => {
               return {
                 ...prevData,
+                tenancyStatus: item?.lease_status,
 
                 numberOfChecks: item.lease_item.length,
-                bankName: item.bank_name || "xyz bank",
-                chequeNo: item.cheque_no || "11,13,15,17,19,21",
-                chequeDate: item.cheque_date || "2024-12-12",
+                bankName: item.custom_bank_name,
+                numberOfChecks: item?.custom_no_of__cheques,
+                chequeNo: item.lease_item
+                  .map((item) => item.custom_cheque_no)
+                  .join(","),
+                chequeDate: item.lease_item[0]?.custom_cheque_date,
                 startDate: item.start_date,
                 endDate: item.end_date,
                 anualPriceRent: item.custom_price__rent_annually + "",
@@ -453,7 +457,7 @@ const EditTenancyContracts = () => {
         setFormValues((prevData) => ({
           ...prevData,
           propertyName: propertyData?.name,
-          propertyType: propertyData?.customer_type,
+          propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
           propertyRent: propertyData?.rent,
           propertyUnits: propertyData?.custom_number_of_units,
@@ -580,7 +584,6 @@ const EditTenancyContracts = () => {
         cheque_date: formatDateToYYMMDD(formValues.chequeDate),
         start_date: formatDateToYYMMDD(formValues.startDate),
         end_date: formatDateToYYMMDD(formValues.endDate),
-        custom_price__rent_annually: formValues.anualPriceRent,
         sq_foot: formValues.sqFoot,
         sq_meter: formValues.sqMeter,
         custom_price_sq_m: formValues.priceSqMeter,
@@ -591,19 +594,6 @@ const EditTenancyContracts = () => {
 
         notice_period: formValues.notice_period,
 
-        lease_item: tableData.map((item) => {
-          return {
-            lease_item: "Rent",
-            frequency: "Monthly",
-            custom_annual_amount: 0,
-            currency_code: "AED",
-            document_type: "Sales Invoice",
-            amount: formValues.anualPriceRent,
-            parentfield: "lease_item",
-            parenttype: "Lease",
-            doctype: "Lease Item",
-          };
-        }),
         // property details
         property: formValues.propertyName,
         custom_type: formValues.propertyType,
@@ -658,8 +648,8 @@ const EditTenancyContracts = () => {
         lease_status: "Active",
         //payment details
         custom_no_of__cheques: formValues.numberOfChecks,
-        bank_name: formValues.bankName,
-        cheque_no: formValues.chequeNo,
+        custom_bank_name: formValues.bankName,
+        custom_price__rent_annually: formValues.anualPriceRent,
 
         lease_item: tableData.map((item) => {
           return {
@@ -672,6 +662,10 @@ const EditTenancyContracts = () => {
             parentfield: "lease_item",
             parenttype: "Lease",
             doctype: "Lease Item",
+            custom_cheque_no: item.chequeNumber,
+            custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
+            amount: item.rent,
+            custom_annual_amount: formValues.anualPriceRent,
           };
         }),
       }); //import from API
@@ -718,7 +712,11 @@ const EditTenancyContracts = () => {
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
                 <div>
                   <PrimaryButton
-                    title="Add Payment Details"
+                    title={
+                      formValues?.tenancyStatus !== "Active"
+                        ? "Add Payment Details"
+                        : "Show Payment Details"
+                    }
                     onClick={() => setPaymentDetailsModalOpen(true)}
                   />
                 </div>
@@ -727,8 +725,8 @@ const EditTenancyContracts = () => {
                     <MantineSelect
                       label="Status"
                       placeholder="Status"
-                      data={["Active", "Closed"]}
-                      value={"Closed"}
+                      data={["Active", "Draft"]}
+                      value={formValues.tenancyStatus}
                       disabled
                       styles={{
                         label: {
@@ -813,7 +811,7 @@ const EditTenancyContracts = () => {
                           )
                       )}
                     </div>
-                    <div className="pt-6 pb-20">
+                    {/* <div className="pt-6 pb-20">
                       {tableData?.length > 0 && (
                         <Table>
                           <Table.Thead>
@@ -836,7 +834,7 @@ const EditTenancyContracts = () => {
                           </Table.Tbody>
                         </Table>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                   {/* property details */}
                   <div>
@@ -871,7 +869,7 @@ const EditTenancyContracts = () => {
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
-                          value: item?.property,
+                          value: item?.name,
                           label: item?.property,
                         }))}
                         value={formValues.propertyName}

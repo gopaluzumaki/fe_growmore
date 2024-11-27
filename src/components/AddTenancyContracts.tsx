@@ -61,6 +61,8 @@ const AddTenancyContracts = () => {
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
+    tenancyStatus: "Draft",
+
     numberOfChecks: "",
     bankName: "",
     chequeNo: "",
@@ -385,7 +387,7 @@ const AddTenancyContracts = () => {
         setFormValues((prevData) => ({
           ...prevData,
           propertyName: propertyData?.name,
-          propertyType: propertyData?.customer_type,
+          propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
           propertyRent: propertyData?.rent,
           propertyUnits: propertyData?.custom_number_of_units,
@@ -505,7 +507,7 @@ const AddTenancyContracts = () => {
       console.log("API Data => ", formValues);
       const res = await createTanencyContract({
         ...formValues,
-        lease_status: "Closed", // will chagne to Draft once it is added in backend.
+        lease_status: "Draft",
         //contract details
         custom_no_of__cheques: formValues.numberOfChecks,
         bank_name: formValues.bankName,
@@ -522,6 +524,19 @@ const AddTenancyContracts = () => {
         custom_brokerage_amount: formValues.brokerageAmt,
 
         notice_period: formValues.notice_period,
+        lease_item: [
+          {
+            lease_item: "",
+            frequency: "",
+            custom_annual_amount: 0,
+            currency_code: "",
+            document_type: "Sales Invoice",
+            amount: 0,
+            parentfield: "",
+            parenttype: "",
+            doctype: "",
+          },
+        ],
 
         // property details
         property: formValues.propertyName,
@@ -603,8 +618,8 @@ const AddTenancyContracts = () => {
                     <MantineSelect
                       label="Status"
                       placeholder="Status"
-                      data={["Active", "Closed"]}
-                      value={"Closed"}
+                      data={["Active", "Draft"]}
+                      value={formValues.tenancyStatus}
                       disabled
                       styles={{
                         label: {
@@ -746,7 +761,7 @@ const AddTenancyContracts = () => {
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
-                          value: item?.property,
+                          value: item?.name,
                           label: item?.property,
                         }))}
                         value={formValues.propertyName}
@@ -793,6 +808,7 @@ const AddTenancyContracts = () => {
                               onValueChange={(item) =>
                                 handleDropDown(name, item)
                               }
+                              value={formValues[name]}
                             >
                               <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                                 <div className="flex items-center">
