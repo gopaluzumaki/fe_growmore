@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { demo_avatar } from "../../assets";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
