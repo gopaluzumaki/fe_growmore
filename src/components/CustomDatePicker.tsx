@@ -9,6 +9,7 @@ interface CustomDatePickerProps {
   selectedDate: Date | null;
   label?: string;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export default function CustomDatePicker({
@@ -16,6 +17,7 @@ export default function CustomDatePicker({
   selectedDate,
   label = "Select date",
   placeholder = "Pick a date",
+  disabled = false,
 }: CustomDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,6 +33,7 @@ export default function CustomDatePicker({
       )}
       <div className="relative">
         <button
+          disabled={disabled}
           type="button"
           className={`w-full px-4 py-2 text-left border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
             isOpen ? "border-blue-500" : "border-gray-300"

@@ -16,6 +16,7 @@ import {
   fetchProperty,
   fetchTenant,
   fetchOwner,
+  fetchUnitsfromProperty,
 } from "../api";
 import CustomDatePicker from "./CustomDatePicker";
 import { FileInput, Select as MantineSelect } from "@mantine/core";
@@ -64,6 +65,7 @@ const AddBookReserve = () => {
   const [leadList, setLeadList] = useState<any[]>([]);
   const [properyList, setPropertyList] = useState();
   const [tenantList, setTenantList] = useState<any[]>([]);
+  const [propertyUnits, setPropertyUnits] = useState([]);
 
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
@@ -153,10 +155,10 @@ const AddBookReserve = () => {
       }
     > = {
       name1: {
-        fetchFunction: () => fetchProperty("iohr6g0uud"),
+        fetchFunction: fetchProperty,
         extractData: (data) => ({
           location: data?.custom_location,
-          unitCount: data?.custom_number_of_units,
+          unitCount: data?.custom_unit_number,
           city: data?.custom_city,
           country: data?.custom_country,
           status: data?.custom_status,
@@ -180,6 +182,15 @@ const AddBookReserve = () => {
         }),
       },
     };
+
+    if (name === "name1") {
+      const response = await fetchUnitsfromProperty(value);
+      const data = response?.data?.data;
+      const values = data?.map((item) => item.custom_unit_number);
+      setPropertyUnits((prev) => {
+        return values;
+      });
+    }
 
     if (fetchConfig[name]) {
       const { fetchFunction, extractData } = fetchConfig[name];
@@ -237,7 +248,7 @@ const AddBookReserve = () => {
       console.log("API Data => ", formData);
 
       const res = await createBooking({
-        property: formData.propertyName,
+        property: formData.name1,
         custom_select_a_lead: formData.selectALead,
         custom_property: formData.name1,
         custom_location__area: formData.location,
@@ -353,7 +364,9 @@ const AddBookReserve = () => {
                         <MantineSelect
                           label={label}
                           placeholder={label}
-                          data={getData(name)}
+                          data={
+                            name !== "unitCount" ? getData(name) : propertyUnits
+                          }
                           // value={formData.selectALead}
                           value={
                             name === "selectALead"
@@ -366,6 +379,8 @@ const AddBookReserve = () => {
                               ? formData?.selectALead
                               : name === "tenantName"
                               ? formData?.tenantName
+                              : name === "unitCount"
+                              ? formData?.unitCount
                               : null
                           }
                           onChange={(value) =>

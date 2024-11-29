@@ -18,6 +18,7 @@ import {
   getLeadList,
   getTenantList,
   getPropertyList,
+  fetchUnitsfromProperty,
 } from "../api";
 import CustomDatePicker from "./CustomDatePicker";
 import { Select as MantineSelect } from "@mantine/core";
@@ -66,6 +67,7 @@ const EditBooking = () => {
   const [properyList, setPropertyList] = useState();
   const [tenantList, setTenantList] = useState<any[]>([]);
   const location = useLocation();
+  const [propertyUnits, setPropertyUnits] = useState([]);
 
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
@@ -90,8 +92,6 @@ const EditBooking = () => {
     ownerContact: "",
     description: "",
   });
-
-  useEffect(() => {}, []);
 
   const getProperties = async () => {
     const res = await getPropertyList();
@@ -135,9 +135,8 @@ const EditBooking = () => {
               return {
                 ...prevData,
                 tenantName: item?.custom_name_of_customer || "",
-                name1: item?.custom_property || "",
                 selectALead: item?.custom_select_a_lead || "",
-                propertyName: item?.property || "",
+                name1: item?.property || "",
                 location: item?.custom_location__area || "",
                 unitCount: item?.custom_unit_number || "",
                 city: item?.custom_city || "",
@@ -159,6 +158,14 @@ const EditBooking = () => {
               };
             });
             setImgUrl(item?.custom_image_attachment || "");
+            if (item?.property) {
+              const response = await fetchUnitsfromProperty(item?.property);
+              const data = response?.data?.data;
+              const values = data?.map((item) => item.custom_unit_number);
+              setPropertyUnits((prev) => {
+                return values;
+              });
+            }
           }
         } catch (error) {
           console.log(error);
@@ -198,10 +205,10 @@ const EditBooking = () => {
       }
     > = {
       name1: {
-        fetchFunction: () => fetchProperty("iohr6g0uud"),
+        fetchFunction: fetchProperty,
         extractData: (data) => ({
           location: data?.custom_location,
-          unitCount: data?.custom_number_of_units,
+          unitCount: data?.custom_unit_number,
           city: data?.custom_city,
           country: data?.custom_country,
           status: data?.custom_status,
@@ -225,6 +232,16 @@ const EditBooking = () => {
         }),
       },
     };
+
+    if (name === "name1") {
+      const response = await fetchUnitsfromProperty(value);
+      const data = response?.data?.data;
+      console.log("unit numbers", data);
+      const values = data?.map((item) => item.custom_unit_number);
+      setPropertyUnits((prev) => {
+        return values;
+      });
+    }
 
     if (fetchConfig[name]) {
       const { fetchFunction, extractData } = fetchConfig[name];
@@ -282,7 +299,7 @@ const EditBooking = () => {
       console.log("API Data => ", formData);
 
       const res = await updateBooking(location.state, {
-        property: formData.propertyName,
+        property: formData.name1,
         custom_select_a_lead: formData.selectALead,
         custom_property: formData.name1,
 
@@ -399,8 +416,9 @@ const EditBooking = () => {
                         <MantineSelect
                           label={label}
                           placeholder={label}
-                          data={getData(name)}
-                          // value={formData.selectALead}
+                          data={
+                            name !== "unitCount" ? getData(name) : propertyUnits
+                          } // value={formData.selectALead}
                           value={
                             name === "selectALead"
                               ? formData?.selectALead
@@ -412,6 +430,8 @@ const EditBooking = () => {
                               ? formData?.unitCount
                               : name === "tenantName"
                               ? formData?.tenantName
+                              : name === "unitCount"
+                              ? formData?.unitCount
                               : null
                           }
                           onChange={(value) =>

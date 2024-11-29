@@ -23,6 +23,7 @@ import {
   fetchOwner,
   createTanencyContract,
   uploadFile,
+  fetchUnitsfromProperty,
 } from "../api";
 import {
   Select,
@@ -59,6 +60,7 @@ const AddTenancyContracts = () => {
   >([]);
   const [ownerImgUrl, setOwnerImgUrl] = useState("");
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
+  const [propertyUnits, setPropertyUnits] = useState([]);
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "Draft",
@@ -394,6 +396,12 @@ const AddTenancyContracts = () => {
           propertyStatus: propertyData?.status,
           propertyDoc: propertyData?.custom_thumbnail_image,
         }));
+        const response = await fetchUnitsfromProperty(propertyData?.name);
+        const data = response?.data?.data;
+        const values = data?.map((item) => item.custom_unit_number);
+        setPropertyUnits((prev) => {
+          return values;
+        });
       }
     }
 
@@ -835,13 +843,10 @@ const AddTenancyContracts = () => {
                             <MantineSelect
                               label={label}
                               placeholder={label}
-                              data={propertyList.map((item) => ({
-                                value: item?.property,
-                                label: item?.property,
-                              }))}
-                              value={formValues.propertyName}
+                              data={propertyUnits}
+                              value={formValues.propertyUnits}
                               onChange={(value) =>
-                                handleDropDown("propertyName", value)
+                                handleDropDown("propertyUnits", value)
                               }
                               styles={{
                                 label: {
@@ -985,6 +990,7 @@ const AddTenancyContracts = () => {
                                 onChange={handleChange}
                                 borderd
                                 bgLight
+                                disabled
                               />
                             ) : type === "dropdown" ? (
                               <Select
@@ -992,6 +998,7 @@ const AddTenancyContracts = () => {
                                   handleDropDown(name, item)
                                 }
                                 value={formValues[name]}
+                                disabled
                               >
                                 <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                                   <div className="flex items-center">
@@ -1010,6 +1017,7 @@ const AddTenancyContracts = () => {
                               </Select>
                             ) : type === "date" ? (
                               <CustomDatePicker
+                                disabled
                                 selectedDate={formValues[name] as Date}
                                 onChange={(date) =>
                                   handleDateChange(name, date)
@@ -1027,6 +1035,7 @@ const AddTenancyContracts = () => {
                           ({ label, name, type, values }) =>
                             type === "text" ? (
                               <Input
+                                disabled
                                 key={name}
                                 label={label}
                                 name={name}
@@ -1038,6 +1047,7 @@ const AddTenancyContracts = () => {
                               />
                             ) : type === "dropdown" ? (
                               <Select
+                                disabled
                                 onValueChange={(item) =>
                                   handleDropDown(name, item)
                                 }
@@ -1060,6 +1070,7 @@ const AddTenancyContracts = () => {
                               </Select>
                             ) : type === "date" ? (
                               <CustomDatePicker
+                                disabled
                                 selectedDate={formValues[name] as Date}
                                 onChange={(date) =>
                                   handleDateChange(name, date)
@@ -1181,6 +1192,7 @@ const AddTenancyContracts = () => {
                           ({ label, name, type, values }) =>
                             type === "text" ? (
                               <Input
+                                disabled
                                 key={name}
                                 label={label}
                                 name={name}
@@ -1192,6 +1204,7 @@ const AddTenancyContracts = () => {
                               />
                             ) : type === "dropdown" ? (
                               <Select
+                                disabled
                                 onValueChange={(item) =>
                                   handleDropDown(name, item)
                                 }
@@ -1214,6 +1227,7 @@ const AddTenancyContracts = () => {
                               </Select>
                             ) : type === "date" ? (
                               <CustomDatePicker
+                                disabled
                                 selectedDate={formValues[name] as Date}
                                 onChange={(date) =>
                                   handleDateChange(name, date)
@@ -1231,6 +1245,7 @@ const AddTenancyContracts = () => {
                           ({ label, name, type, values }) =>
                             type === "text" ? (
                               <Input
+                                disabled
                                 key={name}
                                 label={label}
                                 name={name}
@@ -1242,6 +1257,7 @@ const AddTenancyContracts = () => {
                               />
                             ) : type === "dropdown" ? (
                               <Select
+                                disabled
                                 onValueChange={(item) =>
                                   handleDropDown(name, item)
                                 }
@@ -1264,6 +1280,7 @@ const AddTenancyContracts = () => {
                               </Select>
                             ) : type === "date" ? (
                               <CustomDatePicker
+                                disabled
                                 selectedDate={formValues[name] as Date}
                                 onChange={(date) =>
                                   handleDateChange(name, date)

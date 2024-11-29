@@ -19,6 +19,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     icon,
     bgLight,
     borderd,
+    disabled = false,
   }) => {
     return (
       <div>
@@ -36,6 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         >
           {icon && <img src={icon as string} alt="iconImg" />}
           <input
+            disabled={disabled}
             className={`w-full ${
               bgLight ? "bg-white" : "bg-brightgray"
             } outline-none`}
