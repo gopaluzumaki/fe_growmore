@@ -626,7 +626,18 @@ const AddTenancyContracts = () => {
                     <MantineSelect
                       label="Status"
                       placeholder="Status"
-                      data={["Active", "Draft"]}
+                      data={[
+                        "Active",
+                        "Closed",
+                        "Draft",
+                        "Not Materialized",
+                        "Renewal to Previous Lease",
+                        "Adendum to Previous Lease",
+                        "Vacating",
+                        "Legal",
+                        "Move In",
+                        "Move Out",
+                      ]}
                       value={formValues.tenancyStatus}
                       disabled
                       styles={{

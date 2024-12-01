@@ -208,7 +208,7 @@ export const fetchProperty = async (params: any) => {
 
 export const fetchUnitsfromProperty = async (params: any) => {
   const response = await axios.get(
-    `${API_URL.Create_Property}?filters=[["parent_property","=","${params}"]]&fields=["custom_unit_number"]`,
+    `${API_URL.Create_Property}?filters=[["parent_property","=","${params}"]]&fields=["custom_unit_number","name"]`,
     {
       auth: {
         username: APP_AUTH.USERNAME,

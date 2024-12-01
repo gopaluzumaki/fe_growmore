@@ -150,11 +150,11 @@ const TenancyContracts = () => {
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${
-                                item.lease_status === "Rented"
-                                  ? "bg-[#FFEC1C] text-black"
-                                  : item.lease_status === "Available"
+                                item.lease_status === "Draft"
+                                  ? "bg-red-400 text-black"
+                                  : item.lease_status === "Active"
                                   ? "bg-[#34A853] text-white"
-                                  : "bg-[#EB4335] text-white"
+                                  : "bg-blue-400 text-white"
                               }`}
                             >
                               {item.lease_status}

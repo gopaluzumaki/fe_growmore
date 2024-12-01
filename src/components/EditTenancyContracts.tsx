@@ -28,6 +28,7 @@ import {
   fetchTenancyContract,
   updateTanencyContract,
   fetchUnitsfromProperty,
+  updateProperty,
 } from "../api";
 import {
   Select,
@@ -477,7 +478,10 @@ const EditTenancyContracts = () => {
         }));
         const response = await fetchUnitsfromProperty(propertyData?.name);
         const data = response?.data?.data;
-        const values = data?.map((item) => item.custom_unit_number);
+        const values = data?.map((item) => ({
+          label: item.custom_unit_number,
+          value: item.name,
+        }));
         setPropertyUnits((prev) => {
           return values;
         });
@@ -593,8 +597,21 @@ const EditTenancyContracts = () => {
     e.preventDefault();
     try {
       console.log("API Data => ", formValues);
+      if (formValues.tenancyStatus === "Move In") {
+        const response = await updateProperty(
+          { custom_status: "Occupied" },
+          formValues.propertyUnits
+        );
+      } else if (formValues.tenancyStatus === "Move Out") {
+        const response = await updateProperty(
+          { custom_status: "Vacant" },
+          formValues.propertyUnits
+        );
+      }
       const res = await updateTanencyContract(location.state, {
         ...formValues,
+        lease_status: formValues.tenancyStatus,
+
         //contract details
         custom_no_of__cheques: formValues.numberOfChecks,
         bank_name: formValues.bankName,
@@ -740,9 +757,23 @@ const EditTenancyContracts = () => {
                     <MantineSelect
                       label="Status"
                       placeholder="Status"
-                      data={["Active", "Draft"]}
+                      data={[
+                        "Active",
+                        "Closed",
+                        "Draft",
+                        "Not Materialized",
+                        "Renewal to Previous Lease",
+                        "Adendum to Previous Lease",
+                        "Vacating",
+                        "Legal",
+                        "Move In",
+                        "Move Out",
+                      ]}
+                      onChange={(value) =>
+                        handleDropDown("tenancyStatus", value)
+                      }
                       value={formValues.tenancyStatus}
-                      disabled
+                      disabled={formValues.tenancyStatus === "Draft"}
                       styles={{
                         label: {
                           marginBottom: "7px",
