@@ -86,6 +86,7 @@ const AddUnits = () => {
     parent_property: "",
     type: "",
     location: "",
+    unitNumber:"",
     city: "",
     state: "",
     country: "",
@@ -211,9 +212,11 @@ const AddUnits = () => {
       }
     });
 
+    console.log('formData?.unitNumber',formData?.unitNumber)
+
     try {
       console.log("API Data => ", {
-        name1: formData?.unitNumber,
+        name1: formData?.custom_unit_number,
         custom_parent_property_name:formData.parent_property,
         parent_property: propertyName,
         type: formData?.type,
@@ -242,7 +245,7 @@ const AddUnits = () => {
       });
 
       const res = await createProperty({
-        name1: formData?.unitNumber,
+        name1: formData?.custom_unit_number,
         custom_parent_property_name:formData.parent_property,
         parent_property: propertyName,
         type: formData?.type,
