@@ -144,9 +144,7 @@ const EditProperty = () => {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -161,7 +159,7 @@ const EditProperty = () => {
       custom_thumbnail_image: imgUrl,
     };
     console.log("API Data => ", apiData);
-    const res = await updateProperty(apiData, id as string);
+    const res = await updateProperty(apiData, formData.name);
     if (res) {
       navigate("/property");
     }
@@ -235,9 +233,9 @@ const EditProperty = () => {
                     <textarea
                       rows={8}
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
-                      value={formData.description} // Binding to doc field
+                      value={formData?.description ?? ""} // Binding to doc field
                       onChange={handleChange}
-                      name="doc" // Set name to match state
+                      name="description" // Set name to match state
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
