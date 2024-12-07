@@ -150,6 +150,9 @@ const EditTenancyContracts = () => {
                 securityDepositeAmt: item.security_deposit,
                 brokerageAmt: item.custom_brokerage_amount,
                 notice_period: item.notice_period,
+                custom_property_no: item.custom_property_no,
+                custom_premises_no: item.custom_premises_no,
+                custom_mode_of_payment: item.custom_mode_of_payment,
 
                 propertyName: item.property,
                 propertyType: item.custom_type,
@@ -628,6 +631,9 @@ const EditTenancyContracts = () => {
         custom_brokerage_amount: formValues.brokerageAmt,
 
         notice_period: formValues.notice_period,
+        custom_property_no: formValues.custom_property_no,
+        custom_premises_no: formValues.custom_premises_no,
+        custom_mode_of_payment: formValues.custom_mode_of_payment,
 
         // property details
         property: formValues.propertyName,

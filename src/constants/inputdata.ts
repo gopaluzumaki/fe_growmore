@@ -276,6 +276,9 @@ export const Add_Contract_Details = [
   },
   { label: "Brokerage Amount", name: "brokerageAmt", type: "text" },
   { label: "Notice Period", name: "notice_period", type: "text" },
+  { label: "Property no", name: "custom_property_no", type: "text" },
+  { label: "Premises no", name: "custom_premises_no", type: "text" },
+  { label: "Mode of Payment", name: "custom_mode_of_payment", type: "text" },
 ];
 
 export const Add_TenancyContractProperty = [

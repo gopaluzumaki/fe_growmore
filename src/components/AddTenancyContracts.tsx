@@ -532,6 +532,9 @@ const AddTenancyContracts = () => {
         custom_brokerage_amount: formValues.brokerageAmt,
 
         notice_period: formValues.notice_period,
+        custom_property_no: formValues.custom_property_no,
+        custom_premises_no: formValues.custom_premises_no,
+        custom_mode_of_payment: formValues.custom_mode_of_payment,
         lease_item: [
           {
             lease_item: "",
