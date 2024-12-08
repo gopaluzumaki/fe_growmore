@@ -35,7 +35,7 @@ interface FormData {
   sqMeter: string;
   priceSqMeter: string;
   priceSqFt: string;
-  unitNumber: string;
+  custom_unit_number: string;
   rooms: string;
   floors: string;
   bathrooms: string;
@@ -86,7 +86,7 @@ const AddUnits = () => {
     parent_property: "",
     type: "",
     location: "",
-    unitNumber:"",
+    unitNumber: "",
     city: "",
     state: "",
     country: "",
@@ -159,11 +159,11 @@ const AddUnits = () => {
 
   const handleDropDown = async (name, item) => {
     if (name === "parent_property") {
-      console.log('item',item)
+      console.log("item", item);
       const propertyList = await getPropertyList();
       let propertyName;
       propertyList?.data?.data.forEach((prop) => {
-        console.log('prop132',prop)
+        console.log("prop132", prop);
         if (prop.property === item) {
           propertyName = prop.name;
         }
@@ -179,7 +179,7 @@ const AddUnits = () => {
         setFormData((prevData) => ({
           ...prevData,
           // propertyName: propertyData?.name,
-          parent_property:propertyData?.name1,
+          parent_property: propertyData?.name1,
           type: propertyData?.type,
           location: propertyData?.custom_location,
           city: propertyData?.custom_city,
@@ -212,12 +212,12 @@ const AddUnits = () => {
       }
     });
 
-    console.log('formData?.unitNumber',formData?.unitNumber)
+    console.log("formData?.unitNumber", formData?.unitNumber);
 
     try {
       console.log("API Data => ", {
         name1: formData?.custom_unit_number,
-        custom_parent_property_name:formData.parent_property,
+        custom_parent_property_name: formData.parent_property,
         parent_property: propertyName,
         type: formData?.type,
         custom_location: formData?.location,
@@ -231,7 +231,7 @@ const AddUnits = () => {
         custom_square_m_of_unit: formData?.sqMeter,
         custom_price_square_m: formData?.priceSqMeter,
         custom_price_square_ft: formData?.priceSqFt,
-        custom_unit_number: formData?.unitNumber,
+        custom_unit_number: formData?.custom_unit_number,
         custom_no_of_rooms: formData.rooms,
         custom_no_of_floors: formData.floors,
         common_bathroom: formData?.bathrooms,
@@ -246,7 +246,7 @@ const AddUnits = () => {
 
       const res = await createProperty({
         name1: formData?.custom_unit_number,
-        custom_parent_property_name:formData.parent_property,
+        custom_parent_property_name: formData.parent_property,
         parent_property: propertyName,
         type: formData?.type,
         custom_location: formData?.location,
@@ -260,7 +260,7 @@ const AddUnits = () => {
         custom_square_m_of_unit: formData?.sqMeter,
         custom_price_square_m: formData?.priceSqMeter,
         custom_price_square_ft: formData?.priceSqFt,
-        custom_unit_number: formData?.unitNumber,
+        custom_unit_number: formData?.custom_unit_number,
         custom_no_of_rooms: formData.rooms,
         custom_no_of_floors: formData.floors,
         common_bathroom: formData?.bathrooms,
