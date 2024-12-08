@@ -522,7 +522,8 @@ const EditTenancyContracts = () => {
           tenantCompanyName: tenantData?.name,
           tenantTradeLicenseNumner: tenantData?.custom_trade_license_number,
           tenantEmirate: tenantData?.custom_emirate,
-          tenantTradeLicense: tenantData?.custom_trade_license_number,
+          tenantTradeLicenseExpiryDate:
+            tenantData?.custom_trade_license_expiry_date,
           tenantPoaHolder: tenantData?.custom_power_of_attorney_holder_name,
         }));
       }
@@ -555,7 +556,8 @@ const EditTenancyContracts = () => {
           ownerCompanyName: ownerData?.name,
           ownerTradeLicenseNumner: ownerData?.custom_trade_license_number,
           ownerEmirate: ownerData?.custom_emirate,
-          ownerTradeLicense: ownerData?.custom_trade_license_number,
+          ownerTradeLicenseExpiryDate:
+            ownerData?.custom_trade_license_expiry_date,
           ownerPoaHolder: ownerData?.custom_power_of_attorney_holder_name,
         }));
       }

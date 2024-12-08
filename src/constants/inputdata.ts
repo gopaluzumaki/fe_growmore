@@ -349,7 +349,7 @@ export const Tenant_Type_Company = [
   { label: "Emirate", name: "tenantEmirate", type: "text" },
   {
     label: "Trade license expiry date",
-    name: "tenantTradeLicense",
+    name: "tenantTradeLicenseExpiryDate",
     type: "date",
   },
   {
@@ -391,7 +391,7 @@ export const Owner_Type_Company = [
   { label: "Emirate", name: "ownerEmirate", type: "text" },
   {
     label: "Trade license expiry date",
-    name: "ownerTradeLicense",
+    name: "ownerTradeLicenseExpiryDate",
     type: "date",
   },
   {
