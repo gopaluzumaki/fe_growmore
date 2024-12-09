@@ -14,8 +14,9 @@ import { VscFilter } from "react-icons/vsc";
 import PrimaryButton from "../../components/PrimaryButton";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { img_group } from "../../assets";
-import { getTenancyContractList } from "../../api";
+import { API_URL, getTenancyContractList } from "../../api";
 import { useEffect, useState } from "react";
+import { FaRegEye } from "react-icons/fa";
 
 const TenancyContracts = () => {
   const [unitList, setUnitList] = useState<any[]>([]);
@@ -177,6 +178,17 @@ const TenancyContracts = () => {
                                   className="text-[#D09D4A]"
                                 />
                               </Link>
+                              <a
+                                href={API_URL.Tenancy_contract_pdf + item.name}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
+                              >
+                                <FaRegEye
+                                  size={20}
+                                  className="text-[#D09D4A]"
+                                />
+                              </a>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
                                 <MdDeleteForever
                                   size={20}

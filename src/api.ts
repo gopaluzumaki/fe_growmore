@@ -28,6 +28,8 @@ export const API_URL = {
   Create_Lease: "https://propms.erpnext.syscort.com/api/resource/Lease",
   Lease_list:
     "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22]",
+  Tenancy_contract_pdf:
+    "http://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=",
 };
 
 export const loginUser = async (credentials: { usr: string; pwd: string }) => {
