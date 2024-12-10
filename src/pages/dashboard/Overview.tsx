@@ -36,7 +36,7 @@ const Overview = () => {
     "Customer Name",
     "Units",
     "Available Units",
-    "Teannts",
+    "Tenants",
     "Maintenance",
   ];
 
@@ -99,7 +99,7 @@ const Overview = () => {
         <Sidebar />
         <div className={`flex-grow ml-80`}>
           <div className="my-5 px-2">
-            <Header name="Welcome Back!"/>
+            <Header name="Welcome Back!" />
             <div className="p-4 py-6 grid grid-cols-4 border border-[#E6EDFF] rounded-xl">
               <DataCard
                 amount={propertyCount}
@@ -108,14 +108,16 @@ const Overview = () => {
                 weeklyAmount="1.01"
                 icon={icon_property}
                 isUp
+                link="/property"
               />
               <DataCard
                 amount={unitCount}
-                title="Total Unites"
+                title="Total Units"
                 marginValue="3.1"
                 weeklyAmount="0.48"
                 icon={icon_unit}
                 isUp
+                link="/units"
               />
               <DataCard
                 amount={tenantCount}
@@ -124,14 +126,16 @@ const Overview = () => {
                 weeklyAmount="0.91"
                 icon={icon_tenants}
                 isUp={false}
+                link="/tenants"
               />
               <DataCard
                 amount="6"
-                title="Total Maintainer"
+                title="Total Owners"
                 marginValue="7.2"
                 weeklyAmount="1.51"
                 icon={icon_maintainer}
                 isUp
+                link="/owners"
               />
             </div>
             <div className="my-4 p-4 border border-[#E6EDFF] rounded-md">
