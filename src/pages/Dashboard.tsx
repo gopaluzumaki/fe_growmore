@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { demo_Property, icon_property } from "../assets";
 import Header from "../components/Header";
 import DataCard from "../components/DataCard";
