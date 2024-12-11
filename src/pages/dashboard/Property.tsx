@@ -24,7 +24,7 @@ const Property = () => {
 
   const getData = async () => {
     const propertyList = await getPropertyList();
-    console.log('nbv',propertyList.data.data)
+    console.log("nbv", propertyList.data.data);
     setPropertyList(propertyList?.data?.data);
   };
 
@@ -33,7 +33,7 @@ const Property = () => {
       <div className="flex">
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-4`}>
-          <Header name="Property"/>
+          <Header name="Property" />
           <div className="flex">
             <p className="text-[#7C8DB5] mt-1.5 ml-1">
               Here is the information about all your Property
@@ -72,7 +72,11 @@ const Property = () => {
             {propertyList?.map((item: any, i) => (
               <PropertyCard
                 key={i}
-                img={`https://propms.erpnext.syscort.com/${item?.image}`}
+                img={
+                  item?.image
+                    ? `https://propms.erpnext.syscort.com/${item?.image}`
+                    : "/defaultProperty.jpeg"
+                }
                 name={item?.property}
                 location={item?.location}
                 units={item?.number_of_units}

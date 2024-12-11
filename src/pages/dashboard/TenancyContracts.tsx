@@ -56,7 +56,7 @@ const TenancyContracts = () => {
               </p>
             </div>
             <div className="flex justify-between items-center my-8 mx-4">
-              <div className="max-w-fit">
+              <div className="min-w-fit mr-2">
                 <Link
                   to={"/contracts/add"}
                   className="flex items-center gap-2 text-sonicsilver p-3 px-6 border rounded-lg bg-slate-100"
