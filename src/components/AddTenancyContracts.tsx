@@ -637,7 +637,7 @@ const AddTenancyContracts = () => {
                         "Draft",
                         "Not Materialized",
                         "Renewal to Previous Lease",
-                        "addendum to Previous Lease",
+                        "Addendum to Previous Lease",
                         "Vacating",
                         "Legal",
                         "Move In",

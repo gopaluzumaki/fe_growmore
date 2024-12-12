@@ -745,7 +745,7 @@ const EditTenancyContracts = () => {
             <Header name="Tenancy Contracts" />
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
-                {"Tenancy Cotract > Add New"}
+                {"Tenancy Contract > Add New"}
               </p>
             </div>
             <div>
@@ -771,7 +771,7 @@ const EditTenancyContracts = () => {
                         "Draft",
                         "Not Materialized",
                         "Renewal to Previous Lease",
-                        "addendum to Previous Lease",
+                        "Addendum to Previous Lease",
                         "Vacating",
                         "Legal",
                         "Move In",

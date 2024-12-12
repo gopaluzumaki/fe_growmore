@@ -29,7 +29,7 @@ const TenancyContracts = () => {
     "Tenant Name",
     "Status",
     "Images",
-    " ",
+    "Actions ",
   ];
 
   useEffect(() => {
