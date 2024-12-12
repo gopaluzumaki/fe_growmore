@@ -28,7 +28,7 @@ const TenancyContracts = () => {
     "Owner Name",
     "Tenant Name",
     "Status",
-    "Images",
+    // "Images",
     "Actions ",
   ];
 
@@ -161,11 +161,11 @@ const TenancyContracts = () => {
                               {item.lease_status}
                             </div>
                           </td>
-                          <td className="p-2 py-3">
+                          {/* <td className="p-2 py-3">
                             <div className="flex justify-center">
                               <img src={img_group} />
                             </div>
-                          </td>
+                          </td> */}
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link
