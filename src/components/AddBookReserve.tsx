@@ -372,16 +372,16 @@ const AddBookReserve = () => {
                             name === "selectALead"
                               ? formData?.selectALead
                               : name === "name1"
-                              ? formData?.name1
-                              : name === "ownerName"
-                              ? formData?.ownerName
-                              : name === "selectALead"
-                              ? formData?.selectALead
-                              : name === "tenantName"
-                              ? formData?.tenantName
-                              : name === "unitCount"
-                              ? formData?.unitCount
-                              : null
+                                ? formData?.name1
+                                : name === "ownerName"
+                                  ? formData?.ownerName
+                                  : name === "selectALead"
+                                    ? formData?.selectALead
+                                    : name === "tenantName"
+                                      ? formData?.tenantName
+                                      : name === "unitCount"
+                                        ? formData?.unitCount
+                                        : null
                           }
                           onChange={(value) =>
                             handleDropdownChange(name, value)
@@ -481,6 +481,7 @@ const AddBookReserve = () => {
                       onFilesUpload={(urls) => {
                         setImgUrls(urls);
                       }}
+                      type="image/*"
                     />
                   </div>
                   <div className="mt-5">
