@@ -38,8 +38,7 @@ const Leads = () => {
     "Unit Number",
     "Company",
     "status",
-    "Images",
-    " ",
+    "Actions",
   ];
 
   return (
@@ -122,11 +121,7 @@ const Leads = () => {
                               {item.status}
                             </div>
                           </td>
-                          <td className="p-2 py-3">
-                            <div className="flex justify-center">
-                              <img src={img_group} />
-                            </div>
-                          </td>
+                         
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link to={"/leads/edit"} state={item.name}>
