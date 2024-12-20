@@ -2,33 +2,72 @@ import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { IoAdd } from "react-icons/io5";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
+import { Select } from "@mantine/core";
 import { VscFilter } from "react-icons/vsc";
-import PrimaryButton from "../../components/PrimaryButton";
-import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
-import { img_group } from "../../assets";
-import { API_URL, getTenancyContractList } from "../../api";
 import { useEffect, useState } from "react";
 import { FaRegEye } from "react-icons/fa";
+import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
+import { Input } from "@mantine/core";
+import { CiSearch } from "react-icons/ci";
+
+import {
+  API_URL,
+  getTenancyContractList,
+  getPropertyList,
+  getTenantList,
+  getOwnerList,
+} from "../../api";
+
+interface Unit {
+  start_date: string;
+  end_date: string;
+  custom_number_of_unit: string;
+  custom_location__area: string;
+  custom_name_of_owner: string;
+  lease_customer: string;
+  custom_rent_amount_to_pay: string;
+  property: string;
+  lease_status: string;
+  name: string;
+}
+
+interface Property {
+  property: string;
+}
+
+interface Tenant {
+  name: string;
+}
 
 const TenancyContracts = () => {
-  const [unitList, setUnitList] = useState<any[]>([]);
+  const [unitList, setUnitList] = useState<Unit[]>([]);
+  const [propertyList, setPropertyList] = useState<Property[]>([]);
+  const [tenantList, setTenantList] = useState<Tenant[]>([]);
+  const [ownerList, setOwnerList] = useState<Tenant[]>([]);
+
+  const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
+  const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
+  const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
+  const [selectedOwner, setSelectedOwner] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedExpiry, setSelectedExpiry] = useState<string | null>(null);
+  const [searchValue, setSearchvalue] = useState<string | null>(null);
+
+  console.log("Owner_list : ", ownerList);
+  console.log("unit_list : ", unitList);
+
   const headers = [
     "Sr. No",
     "Property Name",
     "Unit Number",
     "Location / Area",
     "Owner Name",
-    "Tenant Name",
+    "Customer Name",
+    "Rent amount",
+    "Start-date",
+    "End-Date",
+    "Expiry Days",
     "Status",
-    // "Images",
     "Actions ",
   ];
 
@@ -37,11 +76,84 @@ const TenancyContracts = () => {
   }, []);
 
   const getData = async () => {
-    const unitList = await getTenancyContractList();
-    setUnitList(unitList?.data?.data);
+    const unitListRes = await getTenancyContractList();
+    const propertyListRes = await getPropertyList();
+    const tenantListRes = await getTenantList();
+    const ownerListRes = await getOwnerList();
+
+    setUnitList(unitListRes?.data?.data || []);
+    setPropertyList(propertyListRes?.data?.data || []);
+    setTenantList(tenantListRes?.data?.data || []);
+    setOwnerList(ownerListRes?.data?.data || []);
   };
 
-  console.log("unitList => ", unitList);
+  const calculateExpiryDays = (startDate: string, endDate: string): number => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const differenceInTime = end.getTime() - start.getTime();
+    return Math.max(differenceInTime / (1000 * 3600 * 24), 0);
+  };
+
+  const statusOptions = [
+    "Active",
+    "Closed",
+    "Draft",
+    "Extend",
+    "Renewal",
+    "Termination",
+  ];
+
+  const expiry_Options = ["This Week", "This Month", "This Year"];
+
+  const filteredUnits = unitList.filter((item) => {
+    const expiryDays = calculateExpiryDays(item.start_date, item.end_date);
+  
+    const matchesSearch =
+      !searchValue ||
+      item.property.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item.lease_customer.toLowerCase().includes(searchValue.toLowerCase());
+  
+    return (
+      matchesSearch &&
+      (!selectedProperty || item.property === selectedProperty) &&
+      (!selectedUnit || item.name === selectedUnit) &&
+      (!selectedTenant || item.lease_customer === selectedTenant) &&
+      (!selectedOwner || item.custom_name_of_owner === selectedOwner) &&
+      (!selectedStatus || item.lease_status === selectedStatus) &&
+      (!selectedExpiry ||
+        (selectedExpiry === "This Week" && expiryDays <= 7) ||
+        (selectedExpiry === "This Month" && expiryDays <= 31) ||
+        (selectedExpiry === "This Year" && expiryDays <= 365))
+    );
+  });
+  
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+  };
+  
+
+  console.log("search value:", searchValue);
+
+  const searchStyle={
+    input:{
+      border:"1px solid gray",
+      width:"30vw"
+    }
+  }
+
+  const selectStyle = {
+    input: {
+      border: "1px solid gray",
+      backgroundColor: "#F5F5F5",
+      color: "#000",
+      padding: "20px 12px",
+      borderRadius: "5px",
+    },
+    dropdown: {
+      backgroundColor: "#F5F5F5",
+      color: "#000",
+    },
+  };
 
   return (
     <main>
@@ -55,7 +167,7 @@ const TenancyContracts = () => {
                 Here is the information about all your Tenancy Contract
               </p>
             </div>
-            <div className="flex justify-between items-center my-8 mx-4">
+            <div className="flex justify-between flex-wrap items-center my-8 mx-4 gap-5">
               <div className="min-w-fit mr-2">
                 <Link
                   to={"/contracts/add"}
@@ -65,55 +177,63 @@ const TenancyContracts = () => {
                   <IoAdd size={20} />
                 </Link>
               </div>
-              <div className="flex gap-2 items-center">
-                <Select>
-                  <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                    <div className="flex items-center gap-3">
-                      <VscFilter size={18} />
-                      <SelectValue placeholder="Select Properties" />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="Property1">Property 1</SelectItem>
-                      <SelectItem value="Property2">Property 2</SelectItem>
-                      <SelectItem value="Property3">Property 3</SelectItem>
-                      <SelectItem value="Property4">Property 4</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                    <div className="flex items-center gap-3">
-                      <VscFilter size={18} />
-                      <SelectValue placeholder="Select Unit" />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="Unit1">Unit 1</SelectItem>
-                      <SelectItem value="Unit2">Unit 2</SelectItem>
-                      <SelectItem value="Unit3">Unit 3</SelectItem>
-                      <SelectItem value="Unit4">Unit 4</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                    <div className="flex items-center gap-3">
-                      <VscFilter size={18} />
-                      <SelectValue placeholder="Select Tenant" />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="Tenant1">Tenant 1</SelectItem>
-                      <SelectItem value="Tenant2">Tenant 2</SelectItem>
-                      <SelectItem value="Tenant3">Tenant 3</SelectItem>
-                      <SelectItem value="Tenant4">Tenant 4</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+              <div className="flex gap-2 items-center flex-wrap">
+                <Select
+                  placeholder="Select Properties"
+                  data={propertyList.map((p) => p.property)}
+                  clearable
+                  value={selectedProperty}
+                  onChange={setSelectedProperty}
+                  styles={selectStyle}
+                />
+                <Select
+                  placeholder="Select Unit"
+                  data={[...new Set(unitList.map((u) => u.name))]}
+                  clearable
+                  value={selectedUnit}
+                  onChange={setSelectedUnit}
+                  styles={selectStyle}
+                />
+                <Select
+                  placeholder="Select Customer"
+                  data={tenantList.map((t) => t.name)}
+                  clearable
+                  value={selectedTenant}
+                  onChange={setSelectedTenant}
+                  styles={selectStyle}
+                />
+                <Select
+                  placeholder="Select Owner"
+                  data={ownerList.map((o) => o.supplier_name)}
+                  clearable
+                  value={selectedOwner}
+                  onChange={setSelectedOwner}
+                  styles={selectStyle}
+                />
+                <Select
+                  placeholder="Select Status"
+                  data={statusOptions}
+                  clearable
+                  value={selectedStatus}
+                  onChange={setSelectedStatus}
+                  styles={selectStyle}
+                />
+
+                <Select
+                  placeholder="Select Expiry"
+                  data={expiry_Options}
+                  clearable
+                  value={selectedExpiry}
+                  onChange={setSelectedExpiry}
+                  styles={selectStyle}
+                />
+                <Input
+                onChange={handleSearchValue}
+                value={searchValue}
+                styles={searchStyle}
+                  placeholder="search"
+                  leftSection={<CiSearch size={16} />}
+                />
               </div>
             </div>
             <div className="my-4 p-4">
@@ -126,18 +246,21 @@ const TenancyContracts = () => {
                           {header}
                         </th>
                       ))}
-                      <th className="p-2 py-3 font-normal"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {unitList.map((item, i) => {
+                    {filteredUnits.map((item, i) => {
+                      const expiryDays = calculateExpiryDays(
+                        item.start_date,
+                        item.end_date
+                      );
                       return (
                         <tr
                           key={i}
                           className="hover:bg-gray-50 text-center text-[15px]"
                         >
                           <td className="p-2 py-3">{i + 1}</td>
-                          <td className="p-2 py-3">{item?.property}</td>
+                          <td className="p-2 py-3">{item.property}</td>
                           <td className="p-2 py-3">
                             {item.custom_number_of_unit}
                           </td>
@@ -148,6 +271,12 @@ const TenancyContracts = () => {
                             {item.custom_name_of_owner}
                           </td>
                           <td className="p-2 py-3">{item.lease_customer}</td>
+                          <td className="p-2 py-3">
+                            {item.custom_rent_amount_to_pay}
+                          </td>
+                          <td className="p-2 py-3">{item.start_date}</td>
+                          <td className="p-2 py-3">{item.end_date}</td>
+                          <td className="p-2 py-3">{expiryDays}</td>
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${
@@ -161,11 +290,6 @@ const TenancyContracts = () => {
                               {item.lease_status}
                             </div>
                           </td>
-                          {/* <td className="p-2 py-3">
-                            <div className="flex justify-center">
-                              <img src={img_group} />
-                            </div>
-                          </td> */}
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link

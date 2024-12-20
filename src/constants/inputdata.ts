@@ -262,6 +262,36 @@ export const payment_details = [
   { label: "Price / Rent Annually", name: "anualPriceRent", type: "text" },
 ];
 
+export const cheque_number_form_details = [
+  {
+    label: "Name",
+    name: "cheque",
+    type: "text",
+  },
+  {
+    label: "Status",
+    name: "status",
+    type: "mantineSelect",
+    values: ["Clear", "Hold"],
+  },
+  {
+    label: "Duration",
+    name: "duration",
+    type: "text",
+  },
+  {
+    label: "Comments",
+    name: "comments",
+    type: "text-area",
+  },
+  {
+    label: "Approval Status",
+    name: "approvalStatus",
+    type: "mantineSelect",
+    values: ["Approved", "Not Approved"],
+  },
+];
+
 export const Add_Contract_Details = [
   { label: "Start Date", name: "startDate", type: "date" },
   { label: "End Date", name: "endDate", type: "date" },
@@ -276,9 +306,9 @@ export const Add_Contract_Details = [
   },
   { label: "Brokerage Amount", name: "brokerageAmt", type: "text" },
   { label: "Notice Period", name: "notice_period", type: "text" },
-  { label: "Property no", name: "custom_property_no", type: "text" },
+  // { label: "Property no", name: "custom_property_no", type: "text" },
   { label: "Premises no", name: "custom_premises_no", type: "text" },
-  { label: "Mode of Payment", name: "custom_mode_of_payment", type: "text" },
+  { label: "Mode of Payment", name: "custom_mode_of_payment", type: "text", values:["Cash", "Cheque"] },
 ];
 
 export const Add_TenancyContractProperty = [
