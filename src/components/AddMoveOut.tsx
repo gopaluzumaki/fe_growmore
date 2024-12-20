@@ -438,7 +438,7 @@ const AddMoveOut = () => {
                     <div className="grid grid-cols-2 gap-4">
 
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Name :C{formValues.ownerName}</label>
+                        <label className="block">Owner Name :{formValues.ownerName}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                         <label className="block">Owner Email : {formValues.ownerEmail}</label>
