@@ -29,6 +29,16 @@ import EditBooking from "./components/EditBooking";
 import EditTenancyContracts from "./components/EditTenancyContracts";
 import EditLead from "./components/EditLead";
 import EditOwner from "./components/EditOwner";
+import MoveIn from "./pages/dashboard/MoveIn";
+import MoveOut from "./pages/dashboard/MoveOut";
+import Maintenance from "./pages/dashboard/Maintenance";
+import Legal from "./pages/dashboard/Legal";
+import AddMoveIn from "./components/AddMoveIn";
+import AddMoveOut from "./components/AddMoveOut";
+import AddLegal from "./components/AddLegal";
+import AddMaintenance from "./components/AddMaintenance";
+import EditMoveIn from "./components/EditMoveIn";
+import EditMoveOut from "./components/EditMoveOut";
 
 function App() {
   const router = createBrowserRouter(
@@ -60,6 +70,18 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forget-password" element={<ForgetPasswd />} />
+        <Route path="/movein" element={<MoveIn />} />
+        <Route path="/moveout" element={<MoveOut />} />
+        <Route path="/maintenance" element={<Maintenance />} />
+        <Route path="/legal" element={<Legal />} />
+        <Route path="/movein/add" element={<AddMoveIn />} />
+        <Route path="/movein/edit" element={<EditMoveIn />} />
+        <Route path="/moveout/add" element={<AddMoveOut />} />
+        <Route path="/moveout/edit" element={<EditMoveOut />} />
+        <Route path="/legal/add" element={<AddLegal />} />
+        <Route path="/legal/edit" element={<EditTenancyContracts />} />
+        <Route path="/maintenance/add" element={<AddMaintenance />} />
+        <Route path="/maintenance/edit" element={<EditTenancyContracts />} />
       </Route>
     )
   );

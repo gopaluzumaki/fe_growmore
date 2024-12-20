@@ -17,7 +17,7 @@ import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
   let { pathname } = useLocation();
-  
+
   const sidebarItems = [
     { name: "Overview", icon: <BsBarChart size={22} />, path: "/overview" },
     {
@@ -48,6 +48,31 @@ const Sidebar = () => {
       icon: <FaFileContract size={22} />,
       path: "/contracts",
     },
+    {
+      name: "Cases",
+      icon: <FaFileContract size={22} />,
+      path: "/cases",
+    },
+    {
+      name: "Move In",
+      icon: <FaFileContract size={22} />,
+      path: "/movein",
+    },
+    {
+      name: "Move Out",
+      icon: <FaFileContract size={22} />,
+      path: "/moveout",
+    },
+    {
+      name: "Maintenance",
+      icon: <FaFileContract size={22} />,
+      path: "/maintenance",
+    },
+    {
+      name: "Legal",
+      icon: <FaFileContract size={22} />,
+      path: "/legal",
+    },
     { name: "Profile", icon: <FaRegClipboard size={22} />, path: "/profile" },
     {
       name: "Settings",
@@ -67,9 +92,8 @@ const Sidebar = () => {
             {sidebarItems.map((item) => (
               <li
                 key={item.name}
-                className={`flex items-center p-4 pl-8 cursor-pointer [&:nth-child(n+7):nth-last-child(n+3)]:ml-4 [&:nth-child(n+7):nth-last-child(n+3)]:py-2 [&:nth-child(10)]:mt-2 [&:nth-child(6)]:pointer-events-none [&:nth-child(10)]:pointer-events-none [&:nth-child(11)]:pointer-events-none ${
-                  pathname.includes(item.path) ? "text-burlywood" : "text-Weldonblue"
-                } text-Weldonblue`}
+                className={`flex items-center p-4 pl-8 cursor-pointer [&:nth-child(n+7):nth-last-child(n+8)]:ml-4 [&:nth-child(n+7):nth-last-child(n+8)]:py-2  [&:nth-child(n+11):nth-last-child(n+3)]:ml-4 [&:nth-child(n+11):nth-last-child(n+3)]:py-2   [&:nth-child(10)]:mt-2 [&:nth-child(6)]:pointer-events-none [&:nth-child(10)]:pointer-events-none [&:nth-child(15)]:pointer-events-none [&:nth-child(16)]:pointer-events-none ${pathname.includes(item.path) ? "text-burlywood" : "text-Weldonblue"
+                  } text-Weldonblue`}
               >
                 <Link to={item.path} className="flex items-center w-full">
                   <span className="mr-5">{item.icon}</span>
