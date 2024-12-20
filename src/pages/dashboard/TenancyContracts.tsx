@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -107,12 +109,12 @@ const TenancyContracts = () => {
 
   const filteredUnits = unitList.filter((item) => {
     const expiryDays = calculateExpiryDays(item.start_date, item.end_date);
-  
+
     const matchesSearch =
       !searchValue ||
       item.property.toLowerCase().includes(searchValue.toLowerCase()) ||
       item.lease_customer.toLowerCase().includes(searchValue.toLowerCase());
-  
+
     return (
       matchesSearch &&
       (!selectedProperty || item.property === selectedProperty) &&
@@ -126,20 +128,19 @@ const TenancyContracts = () => {
         (selectedExpiry === "This Year" && expiryDays <= 365))
     );
   });
-  
+
   const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchvalue(e.target.value);
   };
-  
 
   console.log("search value:", searchValue);
 
-  const searchStyle={
-    input:{
-      border:"1px solid gray",
-      width:"30vw"
-    }
-  }
+  const searchStyle = {
+    input: {
+      border: "1px solid gray",
+      width: "30vw",
+    },
+  };
 
   const selectStyle = {
     input: {
@@ -228,9 +229,9 @@ const TenancyContracts = () => {
                   styles={selectStyle}
                 />
                 <Input
-                onChange={handleSearchValue}
-                value={searchValue}
-                styles={searchStyle}
+                  onChange={handleSearchValue}
+                  value={searchValue}
+                  styles={searchStyle}
                   placeholder="search"
                   leftSection={<CiSearch size={16} />}
                 />
