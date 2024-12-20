@@ -7,14 +7,15 @@ import {
   FaFileContract,
 } from "react-icons/fa";
 import { BsBarChart } from "react-icons/bs";
-import { MdOutlineHomeWork } from "react-icons/md";
+import { MdOutlineHomeWork,MdOutlineDriveFileMove, MdOutlineDriveFileMoveRtl,MdOutlineCases } from "react-icons/md";
 import { TbHomeSignal } from "react-icons/tb";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { BiUserPin } from "react-icons/bi";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { GMLogo } from "../assets";
 import { Link, useLocation } from "react-router-dom";
-
+import { GrHostMaintenance } from "react-icons/gr";
+import { SiAuthelia } from "react-icons/si";
 const Sidebar = () => {
   let { pathname } = useLocation();
 
@@ -50,27 +51,27 @@ const Sidebar = () => {
     },
     {
       name: "Cases",
-      icon: <FaFileContract size={22} />,
+      icon: <MdOutlineCases size={22} />,
       path: "/cases",
     },
     {
       name: "Move In",
-      icon: <FaFileContract size={22} />,
+      icon: <MdOutlineDriveFileMove size={22} />,
       path: "/movein",
     },
     {
       name: "Move Out",
-      icon: <FaFileContract size={22} />,
+      icon: <MdOutlineDriveFileMoveRtl size={22} />,
       path: "/moveout",
     },
     {
       name: "Maintenance",
-      icon: <FaFileContract size={22} />,
+      icon: <GrHostMaintenance size={22} />,
       path: "/maintenance",
     },
     {
       name: "Legal",
-      icon: <FaFileContract size={22} />,
+      icon: <SiAuthelia size={22} />,
       path: "/legal",
     },
     { name: "Profile", icon: <FaRegClipboard size={22} />, path: "/profile" },
