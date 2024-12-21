@@ -7,17 +7,18 @@ import {
   FaFileContract,
 } from "react-icons/fa";
 import { BsBarChart } from "react-icons/bs";
-import { MdOutlineHomeWork } from "react-icons/md";
+import { MdOutlineHomeWork,MdOutlineDriveFileMove, MdOutlineDriveFileMoveRtl,MdOutlineCases } from "react-icons/md";
 import { TbHomeSignal } from "react-icons/tb";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { BiUserPin } from "react-icons/bi";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { GMLogo } from "../assets";
 import { Link, useLocation } from "react-router-dom";
-
+import { GrHostMaintenance } from "react-icons/gr";
+import { SiAuthelia } from "react-icons/si";
 const Sidebar = () => {
   let { pathname } = useLocation();
-  
+
   const sidebarItems = [
     { name: "Overview", icon: <BsBarChart size={22} />, path: "/overview" },
     {
@@ -48,6 +49,31 @@ const Sidebar = () => {
       icon: <FaFileContract size={22} />,
       path: "/contracts",
     },
+    {
+      name: "Cases",
+      icon: <MdOutlineCases size={22} />,
+      path: "/cases",
+    },
+    {
+      name: "Move In",
+      icon: <MdOutlineDriveFileMove size={22} />,
+      path: "/movein",
+    },
+    {
+      name: "Move Out",
+      icon: <MdOutlineDriveFileMoveRtl size={22} />,
+      path: "/moveout",
+    },
+    {
+      name: "Maintenance",
+      icon: <GrHostMaintenance size={22} />,
+      path: "/maintenance",
+    },
+    {
+      name: "Legal",
+      icon: <SiAuthelia size={22} />,
+      path: "/legal",
+    },
     { name: "Profile", icon: <FaRegClipboard size={22} />, path: "/profile" },
     {
       name: "Settings",
@@ -67,9 +93,8 @@ const Sidebar = () => {
             {sidebarItems.map((item) => (
               <li
                 key={item.name}
-                className={`flex items-center p-4 pl-8 cursor-pointer [&:nth-child(n+7):nth-last-child(n+3)]:ml-4 [&:nth-child(n+7):nth-last-child(n+3)]:py-2 [&:nth-child(10)]:mt-2 [&:nth-child(6)]:pointer-events-none [&:nth-child(10)]:pointer-events-none [&:nth-child(11)]:pointer-events-none ${
-                  pathname.includes(item.path) ? "text-burlywood" : "text-Weldonblue"
-                } text-Weldonblue`}
+                className={`flex items-center p-4 pl-8 cursor-pointer [&:nth-child(n+7):nth-last-child(n+8)]:ml-4 [&:nth-child(n+7):nth-last-child(n+8)]:py-2  [&:nth-child(n+11):nth-last-child(n+3)]:ml-4 [&:nth-child(n+11):nth-last-child(n+3)]:py-2   [&:nth-child(10)]:mt-2 [&:nth-child(6)]:pointer-events-none [&:nth-child(10)]:pointer-events-none [&:nth-child(15)]:pointer-events-none [&:nth-child(16)]:pointer-events-none ${pathname.includes(item.path) ? "text-burlywood" : "text-Weldonblue"
+                  } text-Weldonblue`}
               >
                 <Link to={item.path} className="flex items-center w-full">
                   <span className="mr-5">{item.icon}</span>
