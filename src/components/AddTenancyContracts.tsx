@@ -765,7 +765,7 @@ const AddTenancyContracts = () => {
                         }
                       )}
                     </div>
-                    <div className="pt-6 pb-20">
+                    {/* <div className="pt-6 pb-20">
                       {tableData?.length > 0 && (
                         <Table>
                           <Table.Thead>
@@ -788,7 +788,7 @@ const AddTenancyContracts = () => {
                           </Table.Tbody>
                         </Table>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                  
                   {/* property details */}

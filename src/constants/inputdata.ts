@@ -264,7 +264,7 @@ export const payment_details = [
 
 export const cheque_number_form_details = [
   {
-    label: "Name",
+    label: "Cheque Name",
     name: "cheque",
     type: "text",
   },
@@ -295,10 +295,6 @@ export const cheque_number_form_details = [
 export const Add_Contract_Details = [
   { label: "Start Date", name: "startDate", type: "date" },
   { label: "End Date", name: "endDate", type: "date" },
-  { label: "Square ft of unit", name: "sqFoot", type: "text" },
-  { label: "Square m of unit", name: "sqMeter", type: "text" },
-  { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
-  { label: "Price/ Square ft", name: "priceSqFt", type: "text" },
   {
     label: "Security Deposit Amount",
     name: "securityDepositeAmt",
@@ -307,7 +303,6 @@ export const Add_Contract_Details = [
   { label: "Brokerage Amount", name: "brokerageAmt", type: "text" },
   { label: "Notice Period", name: "notice_period", type: "text" },
   // { label: "Property no", name: "custom_property_no", type: "text" },
-  { label: "Premises no", name: "custom_premises_no", type: "text" },
   { label: "Mode of Payment", name: "custom_mode_of_payment", type: "text", values:["Cash", "Cheque"] },
 ];
 
@@ -321,6 +316,11 @@ export const Add_TenancyContractProperty = [
   { label: "Unit Number", name: "propertyUnits", type: "mantineSelect" },
   { label: "Location / Area", name: "propertyLocation", type: "text" },
   { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
+  { label: "Square ft of unit", name: "sqFoot", type: "text" },
+  { label: "Square m of unit", name: "sqMeter", type: "text" },
+  { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
+  { label: "Price/ Square ft", name: "priceSqFt", type: "text" },
+  { label: "Premises no", name: "custom_premises_no", type: "text" },
 ];
 
 export const Add_TenancyContractTenant = [

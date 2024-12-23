@@ -113,7 +113,23 @@ const TenancyContracts = () => {
     const matchesSearch =
       !searchValue ||
       item.property.toLowerCase().includes(searchValue.toLowerCase()) ||
-      item.lease_customer.toLowerCase().includes(searchValue.toLowerCase());
+      item.lease_customer.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item.custom_location__area
+        .toLowerCase()
+        .includes(searchValue.toLowerCase()) ||
+      item.custom_name_of_owner
+        .toLowerCase()
+        .includes(searchValue.toLowerCase()) ||
+      item.custom_number_of_unit
+        .toLowerCase()
+        .includes(searchValue.toLowerCase()) ||
+      item.custom_rent_amount_to_pay
+        .toLowerCase()
+        .includes(searchValue.toLowerCase()) ||
+      item.lease_status.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item.start_date.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item.end_date.toLowerCase().includes(searchValue.toLowerCase());
 
     return (
       matchesSearch &&
@@ -134,6 +150,25 @@ const TenancyContracts = () => {
   };
 
   console.log("search value:", searchValue);
+
+  const formatDate = (dateString) => {
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const [year, month, day] = dateString.split("-");
+    return `${day}-${months[parseInt(month, 10) - 1]}-${year}`;
+  };
 
   const searchStyle = {
     input: {
@@ -275,8 +310,12 @@ const TenancyContracts = () => {
                           <td className="p-2 py-3">
                             {item.custom_rent_amount_to_pay}
                           </td>
-                          <td className="p-2 py-3">{item.start_date}</td>
-                          <td className="p-2 py-3">{item.end_date}</td>
+                          <td className="p-2 py-3">
+                            {formatDate(item.start_date)}
+                          </td>
+                          <td className="p-2 py-3">
+                            {formatDate(item.end_date)}
+                          </td>
                           <td className="p-2 py-3">{expiryDays}</td>
                           <td className="p-2 py-3">
                             <div

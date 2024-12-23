@@ -68,9 +68,16 @@ const EditTenancyContracts = () => {
       chequeNumber: string;
       chequeDate: string;
       bankName: string;
+      cheque: string;
+      status: string;
+      duration: string;
+      comments: string;
+      approvalStatus: string;
     }[]
   >([]);
-  const [paymentDetailsModalOpen, setPaymentDetailsModalOpen] = useState(false);
+  const [paymentDetailsModalOpen, setPaymentDetailsModalOpen] = useState<
+    number | null
+  >(null);
   const [ownerImgUrl, setOwnerImgUrl] = useState("");
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const location = useLocation();
@@ -135,61 +142,67 @@ const EditTenancyContracts = () => {
           const res = await fetchTenancyContract(location.state);
           const item = res?.data?.data;
           console.log("tenancy contract item", item);
+
           if (item) {
-            setFormValues((prevData) => {
-              return {
-                ...prevData,
-                tenancyStatus: item?.lease_status,
+            // Map lease items for nested fields
 
-                bankName: item.custom_bank_name,
-                numberOfChecks: item?.custom_no_of__cheques,
-                chequeNo: item.lease_item
-                  .map((item) => item.custom_cheque_no)
-                  .join(","),
-                chequeDate: item.lease_item[0]?.custom_cheque_date,
-                startDate: item.start_date,
-                endDate: item.end_date,
-                anualPriceRent: item.custom_price__rent_annually + "",
-                sqFoot:
-                  item.custom_price__rent_annually / item.custom_price_sq_ft,
-                sqMeter:
-                  item.custom_price__rent_annually / item.custom_price_sq_m,
-                priceSqMeter: item.custom_price_sq_m,
-                priceSqFt: item.custom_price_sq_ft,
-                securityDepositeAmt: item.security_deposit,
-                brokerageAmt: item.custom_brokerage_amount,
-                notice_period: item.notice_period,
-                custom_property_no: item.custom_property_no,
-                custom_premises_no: item.custom_premises_no,
-                custom_mode_of_payment: item.custom_mode_of_payment,
+            setFormValues((prevData) => ({
+              ...prevData,
+              tenancyStatus: item?.lease_status,
+              bankName: item.custom_bank_name,
+              numberOfChecks: item?.custom_no_of__cheques,
+              chequeNo: item.lease_item
+                .map((lease) => lease.custom_cheque_no)
+                .join(","),
+              chequeDate: item.lease_item[0]?.custom_cheque_date,
+              startDate: item.start_date,
+              endDate: item.end_date,
+              anualPriceRent: item.custom_price__rent_annually + "",
+              sqFoot:
+                item.custom_price__rent_annually / item.custom_price_sq_ft || 0,
+              sqMeter:
+                item.custom_price__rent_annually / item.custom_price_sq_m || 0,
+              priceSqMeter: item.custom_price_sq_m,
+              priceSqFt: item.custom_price_sq_ft,
+              securityDepositeAmt: item.security_deposit,
+              brokerageAmt: item.custom_brokerage_amount,
+              notice_period: item.notice_period,
+              custom_property_no: item.custom_property_no,
+              custom_premises_no: item.custom_premises_no,
+              custom_mode_of_payment: item.custom_mode_of_payment,
+              propertyName: item.property,
+              propertyType: item.custom_type,
+              propertyLocation: item.custom_location__area,
+              propertyRent: item.custom_rent_amount_to_pay,
+              propertyUnits: item.custom_number_of_unit,
+              propertyDoc: item.propertyDoc,
+              tenantName: item.lease_customer,
+              tenantContact: item.custom_contact_number,
+              tenantEmail: item.custom_email,
+              tenantCity: item.custom_city,
+              tenantPassport: item.custom_passport_number,
+              tenantPassportExpiry: item.custom_passport_expiry_date,
+              tenantCountryOfIssuance: item.custom_country_of_issuance,
+              tenantEmiratesId: item.custom_emirates_id,
+              tenantEmiratesIdExpiry: item.custom_emirates_id_expiry_date,
+              tenantSignature: item.custom_signature_of_customer,
+              ownerName: item.custom_name_of_owner,
+              ownerType: item.custom_type_of_owner,
+              ownerContact: item.custom_contact_number_of_owner,
+              ownerEmiratesId: item.custom_emirates_idtrade_license,
+              ownerCountry: item.custom_owner_country,
+              ownerEmail: item.custom_owner_email,
+              ownerMobile: item.custom_mobile_number,
+              ownerImage: item.custom_image,
+              ownerSignature: item.custom_signature_of_owner,
 
-                propertyName: item.property,
-                propertyType: item.custom_type,
-                propertyLocation: item.custom_location__area,
-                propertyRent: item.custom_rent_amount_to_pay,
-                propertyUnits: item.custom_number_of_unit,
-                propertyDoc: item.propertyDoc,
-                tenantName: item.lease_customer,
-                tenantContact: item.custom_contact_number,
-                tenantEmail: item.custom_email,
-                tenantCity: item.custom_city,
-                tenantPassport: item.custom_passport_number,
-                tenantPassportExpiry: item.custom_passport_expiry_date,
-                tenantCountryOfIssuance: item.custom_country_of_issuance,
-                tenantEmiratesId: item.custom_emirates_id,
-                tenantEmiratesIdExpiry: item.custom_emirates_id_expiry_date,
-                tenantSignature: item.custom_signature_of_customer,
-                ownerName: item.custom_name_of_owner,
-                ownerType: item.custom_type_of_owner,
-                ownerContact: item.custom_contact_number_of_owner,
-                ownerEmiratesId: item.custom_emirates_idtrade_license,
-                ownerCountry: item.custom_owner_country,
-                ownerEmail: item.custom_owner_email,
-                ownerMobile: item.custom_mobile_number,
-                ownerImage: item.custom_image,
-                ownerSignature: item.custom_signature_of_owner,
-              };
-            });
+              cheque: item.lease_item[0].custom_name_on_the_cheque,
+              status: item.lease_item[0].custom_status,
+              duration: item.lease_item[0].custom_duration,
+              comments: item.lease_item[0].custom_comments,
+              approvalStatus: item.lease_item[0].custom_approval_status,
+            }));
+
             if (item?.lease_customer)
               await handleDropDown("tenantName", item.lease_customer);
             if (item?.custom_name_of_owner)
@@ -202,10 +215,11 @@ const EditTenancyContracts = () => {
             setPropertyImgUrl(item?.propertyDoc || "");
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }
     };
+
     fetchingBookedData();
   }, [location.state]);
 
@@ -430,6 +444,11 @@ const EditTenancyContracts = () => {
             chequeDate: chequeDate[i],
             bankName: formValues.bankName,
             Sno: i,
+            cheque: formValues.cheque,
+            status: formValues.status,
+            duration: formValues.duration,
+            comments: formValues.comments,
+            approvalStatus: formValues.approvalStatus,
           });
         }
         return newData;
@@ -792,7 +811,7 @@ const EditTenancyContracts = () => {
     },
   };
 
-  console.log("checking form values : ", formValues);
+  console.log("checking table data : ", tableData);
 
   return (
     <main>
@@ -861,7 +880,6 @@ const EditTenancyContracts = () => {
                     <div></div>
                   </div>
 
-                  
                   {/* Contract Details */}
                   <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
@@ -965,7 +983,6 @@ const EditTenancyContracts = () => {
                       )}
                     </div> */}
                   </div>
-
 
                   {/* property details */}
                   <div>
@@ -1634,8 +1651,18 @@ const EditTenancyContracts = () => {
                                 <Table.Td>{item.Sno}</Table.Td>
                                 <Table.Td
                                   onClick={() => {
-                                    setSelectedCheque(item);
-                                    setPaymentDetailsModalOpen(true);
+                                    setFormValues({
+                                      ...formValues,
+                                      chequeNumber: item.chequeNumber,
+                                      bankName: item.bankName,
+                                      rent: item.rent.toString(),
+                                      chequeDate: item.chequeDate,
+                                      status: item.status,
+                                      duration: item.duration,
+                                      comments: item.comments,
+                                      approvalStatus: item.approvalStatus,
+                                    });
+                                    setPaymentDetailsModalOpen(i);
                                   }}
                                   className="text-blue-600 cursor-pointer "
                                 >
@@ -1663,8 +1690,8 @@ const EditTenancyContracts = () => {
         </div>
       </div>
       <Modal
-        opened={paymentDetailsModalOpen}
-        onClose={() => setPaymentDetailsModalOpen(false)}
+        opened={paymentDetailsModalOpen !== null}
+        onClose={() => setPaymentDetailsModalOpen(null)}
         title=""
         // scrollAreaComponent={ScrollArea.Autosize}
         fullscreen={false}
@@ -1735,6 +1762,7 @@ const EditTenancyContracts = () => {
                   />
                 ) : type === "text-area" ? (
                   <Textarea
+                    value={formValues[name] || ""}
                     onChange={(e) =>
                       setFormValues({ ...formValues, [name]: e.target.value })
                     }
@@ -1746,6 +1774,27 @@ const EditTenancyContracts = () => {
                 ) : null
               )}
             </div>
+            <button
+              onClick={() => {
+                const updatedTableData = tableData;
+
+                updatedTableData[paymentDetailsModalOpen].cheque =
+                  formValues.cheque;
+                updatedTableData[paymentDetailsModalOpen].status =
+                  formValues.status;
+                updatedTableData[paymentDetailsModalOpen].duration =
+                  formValues.duration;
+                updatedTableData[paymentDetailsModalOpen].comments =
+                  formValues.comments;
+                updatedTableData[paymentDetailsModalOpen].approvalStatus =
+                  formValues.approvalStatus;
+                setTableData(updatedTableData);
+                setPaymentDetailsModalOpen(null);
+              }}
+              type="button"
+            >
+              Save
+            </button>
           </div>
           {/* <div className="pt-4">
             <PrimaryButton type="submit" title="Save Details" />
