@@ -291,27 +291,6 @@ const EditTenancyContracts = () => {
     fetchingBookedData();
   }, [location.state]);
 
-  useEffect(() => {
-    if (formValues.tenancyStatus === "Draft") {
-      const updatedValues = values.map((item) => {
-        return {
-          ...item,
-          checked: false,
-        };
-      });
-      handlers.setState(updatedValues);
-    } else {
-      const updatedValues = values.map((item) => {
-        return {
-          ...item,
-          checked: true,
-        };
-      });
-      handlers.setState(updatedValues);
-    }
-    return () => {};
-  }, [formValues.tenancyStatus]);
-
   const handleOwnerFileChange = async (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -738,6 +717,24 @@ const EditTenancyContracts = () => {
         });
 
         setTableData([]);
+      }
+
+      if (formValues.tenancyStatus === "Draft") {
+        const updatedValues = values.map((item) => {
+          return {
+            ...item,
+            checked: false,
+          };
+        });
+        handlers.setState(updatedValues);
+      } else {
+        const updatedValues = values.map((item) => {
+          return {
+            ...item,
+            checked: true,
+          };
+        });
+        handlers.setState(updatedValues);
       }
     }
     setFormValues((prevData) => ({
