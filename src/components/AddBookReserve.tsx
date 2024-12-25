@@ -272,7 +272,6 @@ const AddBookReserve = () => {
         custom_image_attachment: imgUrl,
         custom_description: formData.description,
       });
-      console.log(res);
       if (res) {
         navigate("/booking");
       }
@@ -282,7 +281,6 @@ const AddBookReserve = () => {
   };
 
   const getData = (label) => {
-    console.log("label123", label);
     if (label === "selectALead") {
       return leadList.map((item) => ({
         value: item?.name,
@@ -372,16 +370,16 @@ const AddBookReserve = () => {
                             name === "selectALead"
                               ? formData?.selectALead
                               : name === "name1"
-                                ? formData?.name1
-                                : name === "ownerName"
-                                  ? formData?.ownerName
-                                  : name === "selectALead"
-                                    ? formData?.selectALead
-                                    : name === "tenantName"
-                                      ? formData?.tenantName
-                                      : name === "unitCount"
-                                        ? formData?.unitCount
-                                        : null
+                              ? formData?.name1
+                              : name === "ownerName"
+                              ? formData?.ownerName
+                              : name === "selectALead"
+                              ? formData?.selectALead
+                              : name === "tenantName"
+                              ? formData?.tenantName
+                              : name === "unitCount"
+                              ? formData?.unitCount
+                              : null
                           }
                           onChange={(value) =>
                             handleDropdownChange(name, value)

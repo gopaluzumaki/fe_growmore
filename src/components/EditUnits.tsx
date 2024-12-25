@@ -42,6 +42,7 @@ interface FormData {
   bathrooms: string;
   balcony: string;
   view: string;
+  premises: string;
   ownerName: string;
   tenantName: string;
 }
@@ -103,6 +104,7 @@ const EditUnits = () => {
             bathrooms: res.data.data.common_bathroom || "",
             balcony: res.data.data.custom_balcony_available || "",
             view: res.data.data.custom_view,
+            premises: res.data.data.custom_premise_no || "",
             ownerName: res.data.data.unit_owner || "",
             description: res.data.data.description || "",
             cost_center: "Main - SRE",
@@ -148,6 +150,7 @@ const EditUnits = () => {
     bathrooms: "",
     balcony: "",
     view: "",
+    premises: "",
     ownerName: "",
     tenantName: "",
   });
@@ -236,9 +239,13 @@ const EditUnits = () => {
 
     try {
       console.log("API Data => ", formData);
-      delete formData.parent_property
+      delete formData.parent_property;
       const res = await updateProperty(
-        { ...formData, name1: formData?.unitNumber },
+        {
+          ...formData,
+          name1: formData?.unitNumber,
+          custom_premise_no: formData?.premises,
+        },
         location.state.item.name as string
       );
       if (res) {

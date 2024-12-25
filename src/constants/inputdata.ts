@@ -33,6 +33,7 @@ export const Add_Units = [
   { label: "No. of Bathrooms", name: "bathrooms", type: "text" },
   { label: "Balcony Available", name: "balcony", type: "text" },
   { label: "View", name: "view", type: "text" },
+  { label: "Premises Number", name: "premises", type: "text" },
   // { label: "Name of Owner", name: "ownerName", type: "text" },
 ];
 
@@ -264,7 +265,7 @@ export const payment_details = [
 
 export const cheque_number_form_details = [
   {
-    label: "Name",
+    label: "Cheque Name",
     name: "cheque",
     type: "text",
   },
@@ -277,7 +278,7 @@ export const cheque_number_form_details = [
   {
     label: "Duration",
     name: "duration",
-    type: "text",
+    type: "number",
   },
   {
     label: "Comments",
@@ -295,10 +296,6 @@ export const cheque_number_form_details = [
 export const Add_Contract_Details = [
   { label: "Start Date", name: "startDate", type: "date" },
   { label: "End Date", name: "endDate", type: "date" },
-  { label: "Square ft of unit", name: "sqFoot", type: "text" },
-  { label: "Square m of unit", name: "sqMeter", type: "text" },
-  { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
-  { label: "Price/ Square ft", name: "priceSqFt", type: "text" },
   {
     label: "Security Deposit Amount",
     name: "securityDepositeAmt",
@@ -307,8 +304,12 @@ export const Add_Contract_Details = [
   { label: "Brokerage Amount", name: "brokerageAmt", type: "text" },
   { label: "Notice Period", name: "notice_period", type: "text" },
   // { label: "Property no", name: "custom_property_no", type: "text" },
-  { label: "Premises no", name: "custom_premises_no", type: "text" },
-  { label: "Mode of Payment", name: "custom_mode_of_payment", type: "text", values:["Cash", "Cheque"] },
+  {
+    label: "Mode of Payment",
+    name: "custom_mode_of_payment",
+    type: "text",
+    values: ["Cash", "Cheque"],
+  },
 ];
 
 export const Add_TenancyContractProperty = [
@@ -321,6 +322,11 @@ export const Add_TenancyContractProperty = [
   { label: "Unit Number", name: "propertyUnits", type: "mantineSelect" },
   { label: "Location / Area", name: "propertyLocation", type: "text" },
   { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
+  { label: "Square ft of unit", name: "sqFoot", type: "text" },
+  { label: "Square m of unit", name: "sqMeter", type: "text" },
+  { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
+  { label: "Price/ Square ft", name: "priceSqFt", type: "text" },
+  { label: "Premises no", name: "custom_premises_no", type: "text" },
 ];
 
 export const Add_TenancyContractTenant = [
@@ -429,4 +435,20 @@ export const Owner_Type_Company = [
     name: "ownerPoaHolder",
     type: "text",
   },
+];
+
+export const Extend_TenancyContractProperty = [
+  { label: "Duration", name: "custom_duration", type: "number" },
+  { label: "Day Rate", name: "custom_day_rate", type: "number" },
+];
+
+export const Termination_TenancyContractProperty = [
+  { label: "Termination Date", name: "custom_termination_date", type: "date" },
+  {
+    label: "Serve the notice period",
+    name: "custom_serve_the_notice_period",
+    type: "mantineSelect",
+  },
+
+  { label: "Overstay Check", name: "custom_overstay_check", type: "text" },
 ];

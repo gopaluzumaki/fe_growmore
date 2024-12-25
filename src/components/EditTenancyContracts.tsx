@@ -13,6 +13,8 @@ import {
   Tenant_Type_Company,
   Tenant_Type_Individual,
   cheque_number_form_details,
+  Extend_TenancyContractProperty,
+  Termination_TenancyContractProperty,
 } from "../constants/inputdata";
 import Input from "./TextInput";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -30,6 +32,7 @@ import {
   updateTanencyContract,
   fetchUnitsfromProperty,
   updateProperty,
+  fetchUnit,
 } from "../api";
 import {
   Select,
@@ -47,10 +50,21 @@ import {
   ScrollArea,
   Table,
   Textarea,
+  Checkbox as MantineCkeckbox,
 } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
+import { useListState, randomId } from "@mantine/hooks";
+
+const initialValues = [
+  { label: "Move In", checked: true, key: randomId() },
+  { label: "Move Out", checked: true, key: randomId() },
+  { label: "Payment Remainder", checked: true, key: randomId() },
+  { label: "Birthday Message", checked: true, key: randomId() },
+  { label: "60 Days Renewal Notice", checked: true, key: randomId() },
+  { label: "90 Days Renewal Notice", checked: true, key: randomId() },
+];
 
 const EditTenancyContracts = () => {
   const navigate = useNavigate();
@@ -68,9 +82,16 @@ const EditTenancyContracts = () => {
       chequeNumber: string;
       chequeDate: string;
       bankName: string;
+      cheque: string;
+      status: string;
+      duration: string;
+      comments: string;
+      approvalStatus: string;
     }[]
   >([]);
-  const [paymentDetailsModalOpen, setPaymentDetailsModalOpen] = useState(false);
+  const [paymentDetailsModalOpen, setPaymentDetailsModalOpen] = useState<
+    number | null
+  >(null);
   const [ownerImgUrl, setOwnerImgUrl] = useState("");
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const location = useLocation();
@@ -95,6 +116,12 @@ const EditTenancyContracts = () => {
     propertyUnits: "",
     propertyStatus: "",
     propertyDoc: "",
+
+    sqFoot: "",
+    sqMeter: "",
+    priceSqMeter: "",
+    priceSqFt: "",
+    custom_premises_no: "",
 
     tenantName: "",
     tenantContact: "",
@@ -127,6 +154,7 @@ const EditTenancyContracts = () => {
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [selectedCheque, setSelectedCheque] = useState(null);
+  const [values, handlers] = useListState(initialValues);
 
   useEffect(() => {
     const fetchingBookedData = async () => {
@@ -134,62 +162,115 @@ const EditTenancyContracts = () => {
         try {
           const res = await fetchTenancyContract(location.state);
           const item = res?.data?.data;
-          console.log("tenancy contract item", item);
+
           if (item) {
-            setFormValues((prevData) => {
-              return {
-                ...prevData,
-                tenancyStatus: item?.lease_status,
+            // Map lease items for nested fields
+            const mappedLeaseItems = item.lease_item.map((lease) => ({
+              chequeNo: lease.custom_cheque_no,
+              chequeDate: lease.custom_cheque_date,
+              cheque: lease.custom_name_on_the_cheque,
+              status: lease.custom_status,
+              duration: lease.custom_duration,
+              comments: lease.custom_comments,
+              approvalStatus: lease.custom_approval_status,
+            }));
 
-                bankName: item.custom_bank_name,
-                numberOfChecks: item?.custom_no_of__cheques,
-                chequeNo: item.lease_item
-                  .map((item) => item.custom_cheque_no)
-                  .join(","),
-                chequeDate: item.lease_item[0]?.custom_cheque_date,
-                startDate: item.start_date,
-                endDate: item.end_date,
-                anualPriceRent: item.custom_price__rent_annually + "",
-                sqFoot:
-                  item.custom_price__rent_annually / item.custom_price_sq_ft,
-                sqMeter:
-                  item.custom_price__rent_annually / item.custom_price_sq_m,
-                priceSqMeter: item.custom_price_sq_m,
-                priceSqFt: item.custom_price_sq_ft,
-                securityDepositeAmt: item.security_deposit,
-                brokerageAmt: item.custom_brokerage_amount,
-                notice_period: item.notice_period,
-                custom_property_no: item.custom_property_no,
-                custom_premises_no: item.custom_premises_no,
-                custom_mode_of_payment: item.custom_mode_of_payment,
+            const updatedValues = [
+              {
+                label: "Move In",
+                checked: item.custom_move_in === 1,
+                key: randomId(),
+              },
+              {
+                label: "Move Out",
+                checked: item.custom_move_out === 1,
+                key: randomId(),
+              },
+              {
+                label: "Payment Remainder",
+                checked: item.custom_payment_remainder === 1,
+                key: randomId(),
+              },
+              {
+                label: "Birthday Message",
+                checked: item.custom_birthday_message === 1,
+                key: randomId(),
+              },
+              {
+                label: "60 Days Renewal Notice",
+                checked: item.custom_60_days_renewal_notice === 1,
+                key: randomId(),
+              },
+              {
+                label: "90 Days Renewal Notice",
+                checked: item.custom_90_days_renewal_notice === 1,
+                key: randomId(),
+              },
+            ];
 
-                propertyName: item.property,
-                propertyType: item.custom_type,
-                propertyLocation: item.custom_location__area,
-                propertyRent: item.custom_rent_amount_to_pay,
-                propertyUnits: item.custom_number_of_unit,
-                propertyDoc: item.propertyDoc,
-                tenantName: item.lease_customer,
-                tenantContact: item.custom_contact_number,
-                tenantEmail: item.custom_email,
-                tenantCity: item.custom_city,
-                tenantPassport: item.custom_passport_number,
-                tenantPassportExpiry: item.custom_passport_expiry_date,
-                tenantCountryOfIssuance: item.custom_country_of_issuance,
-                tenantEmiratesId: item.custom_emirates_id,
-                tenantEmiratesIdExpiry: item.custom_emirates_id_expiry_date,
-                tenantSignature: item.custom_signature_of_customer,
-                ownerName: item.custom_name_of_owner,
-                ownerType: item.custom_type_of_owner,
-                ownerContact: item.custom_contact_number_of_owner,
-                ownerEmiratesId: item.custom_emirates_idtrade_license,
-                ownerCountry: item.custom_owner_country,
-                ownerEmail: item.custom_owner_email,
-                ownerMobile: item.custom_mobile_number,
-                ownerImage: item.custom_image,
-                ownerSignature: item.custom_signature_of_owner,
-              };
-            });
+            handlers.setState(updatedValues);
+
+            setFormValues((prevData) => ({
+              ...prevData,
+              chequeNo: mappedLeaseItems.map((item) => item.chequeNo).join(","),
+              chequeDate: mappedLeaseItems[0].chequeDate,
+              tenancyStatus: item?.lease_status,
+              bankName: item.custom_bank_name,
+              numberOfChecks: item?.custom_no_of__cheques,
+              startDate: item.start_date,
+              endDate: item.end_date,
+              anualPriceRent: item.custom_price__rent_annually + "",
+              sqFoot:
+                item.custom_price__rent_annually / item.custom_price_sq_ft || 0,
+              sqMeter:
+                item.custom_price__rent_annually / item.custom_price_sq_m || 0,
+              priceSqMeter: item.custom_price_sq_m,
+              priceSqFt: item.custom_price_sq_ft,
+              securityDepositeAmt: item.security_deposit,
+              brokerageAmt: item.custom_brokerage_amount,
+              notice_period: item.notice_period,
+              custom_property_no: item.custom_property_no,
+              custom_premises_no: item.custom_premises_no,
+              custom_mode_of_payment: item.custom_mode_of_payment,
+              propertyName: item.property,
+              propertyType: item.custom_type,
+              propertyLocation: item.custom_location__area,
+              propertyRent: item.custom_rent_amount_to_pay,
+              propertyUnits: item.custom_number_of_unit,
+              propertyDoc: item.propertyDoc,
+              tenantName: item.lease_customer,
+              tenantContact: item.custom_contact_number,
+              tenantEmail: item.custom_email,
+              tenantCity: item.custom_city,
+              tenantPassport: item.custom_passport_number,
+              tenantPassportExpiry: item.custom_passport_expiry_date,
+              tenantCountryOfIssuance: item.custom_country_of_issuance,
+              tenantEmiratesId: item.custom_emirates_id,
+              tenantEmiratesIdExpiry: item.custom_emirates_id_expiry_date,
+              tenantSignature: item.custom_signature_of_customer,
+              ownerName: item.custom_name_of_owner,
+              ownerType: item.custom_type_of_owner,
+              ownerContact: item.custom_contact_number_of_owner,
+              ownerEmiratesId: item.custom_emirates_idtrade_license,
+              ownerCountry: item.custom_owner_country,
+              ownerEmail: item.custom_owner_email,
+              ownerMobile: item.custom_mobile_number,
+              ownerImage: item.custom_image,
+              ownerSignature: item.custom_signature_of_owner,
+
+              leaseItems: mappedLeaseItems, // Store mapped lease items
+
+              custom_duration: item.custom_duration,
+              custom_day_rate:
+                item.custom_day_rate ??
+                parseFloat(item.custom_price__rent_annually / 365).toFixed(2),
+              custom_termination_date: item.custom_termination_date,
+              custom_serve_the_notice_period:
+                item.custom_serve_the_notice_period,
+              custom_overstay_check: item.custom_overstay_check,
+            }));
+
+            // Handle dropdowns
             if (item?.lease_customer)
               await handleDropDown("tenantName", item.lease_customer);
             if (item?.custom_name_of_owner)
@@ -202,12 +283,34 @@ const EditTenancyContracts = () => {
             setPropertyImgUrl(item?.propertyDoc || "");
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }
     };
+
     fetchingBookedData();
   }, [location.state]);
+
+  useEffect(() => {
+    if (formValues.tenancyStatus === "Draft") {
+      const updatedValues = values.map((item) => {
+        return {
+          ...item,
+          checked: false,
+        };
+      });
+      handlers.setState(updatedValues);
+    } else {
+      const updatedValues = values.map((item) => {
+        return {
+          ...item,
+          checked: true,
+        };
+      });
+      handlers.setState(updatedValues);
+    }
+    return () => {};
+  }, [formValues.tenancyStatus]);
 
   const handleOwnerFileChange = async (
     event: ChangeEvent<HTMLInputElement>
@@ -330,27 +433,23 @@ const EditTenancyContracts = () => {
   const getProperties = async () => {
     const res = await getPropertyList();
     const item = res?.data?.data;
-    console.log(item);
     setPropertyList(item);
   };
 
   const getTenants = async () => {
     const res = await getTenantList();
     const item = res?.data?.data;
-    console.log(item);
     setTenantList(item);
   };
 
   const getOwnerData = async () => {
     const res = await getOwnerList();
     const item = res?.data?.data;
-    console.log(item);
     setOwnerList(item);
   };
 
   useEffect(() => {
     let chequeDate: any = [];
-    // console.log("formValues.chequeDate", formValues.chequeDate);
     chequeDate.push(formValues.chequeDate);
     if (formValues.numberOfChecks === "2") {
       let currentDate = new Date(formValues.chequeDate);
@@ -418,20 +517,48 @@ const EditTenancyContracts = () => {
       formValues?.anualPriceRent &&
       formValues?.bankName &&
       formValues?.chequeNo &&
-      formValues?.chequeDate
+      formValues?.chequeDate &&
+      formValues?.leaseItems?.length > 0
     ) {
-      setTableData((prevData) => {
+      // setTableData((prevData) => {
+      //   const newData = [];
+
+      //   for (let i = 0; i < +formValues.numberOfChecks; i++) {
+      //     newData.push({
+      //       rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+      //       chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
+      //       chequeDate: chequeDate[i],
+      //       bankName: formValues.bankName,
+      //       Sno: i,
+      //       cheque: formValues.cheque,
+      //       status: formValues.status,
+      //       duration: formValues.duration,
+      //       comments: formValues.comments,
+      //       approvalStatus: formValues.approvalStatus,
+      //     });
+      //   }
+      //   return newData;
+      // });
+
+      setTableData(() => {
         const newData = [];
 
-        for (let i = 0; i < +formValues.numberOfChecks; i++) {
+        // Populate table data from leaseItems
+        formValues.leaseItems.forEach((lease, index) => {
           newData.push({
             rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
-            chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
-            chequeDate: chequeDate[i],
+            chequeNumber: formValues.chequeNo.split(",")[index] ?? "",
+            chequeDate: chequeDate[index] ?? lease.chequeDate,
             bankName: formValues.bankName,
-            Sno: i,
+            Sno: index + 1,
+            cheque: lease.cheque,
+            status: lease.status,
+            duration: lease.duration,
+            comments: lease.comments,
+            approvalStatus: lease.approvalStatus,
           });
-        }
+        });
+
         return newData;
       });
     }
@@ -441,6 +568,7 @@ const EditTenancyContracts = () => {
     formValues?.bankName,
     formValues?.chequeNo,
     formValues?.chequeDate,
+    formValues?.leaseItems,
   ]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -477,7 +605,6 @@ const EditTenancyContracts = () => {
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
 
-      console.log("property data", propertyData);
       if (propertyData) {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
@@ -491,13 +618,12 @@ const EditTenancyContracts = () => {
         }));
         const response = await fetchUnitsfromProperty(propertyData?.name);
         const data = response?.data?.data;
-        const values = data?.map((item) => ({
-          label: item.custom_unit_number,
-          value: item.name,
+        const val = data?.map((item) => ({
+          custom_unit_number: item.custom_unit_number,
+          name: item.name,
         }));
-        setPropertyUnits((prev) => {
-          return values;
-        });
+
+        setPropertyUnits(val);
       }
     }
 
@@ -506,7 +632,6 @@ const EditTenancyContracts = () => {
       const res = await fetchTenant(item);
       const tenantData = res?.data?.data;
       if (tenantData) {
-        console.log("tenantData", tenantData);
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
           ...prevData,
@@ -543,7 +668,6 @@ const EditTenancyContracts = () => {
       // Fetch tenant data based on the selected tenant
       const res = await fetchOwner(item);
       const ownerData = res?.data?.data;
-      console.log("ownerData", ownerData);
       if (ownerData) {
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
@@ -573,9 +697,48 @@ const EditTenancyContracts = () => {
       }
     }
 
-    console.log("name", name, item);
+    if (name === "propertyUnits" && item != undefined) {
+      const unit_List = await fetchUnit(item);
+      const unit_List_Data = unit_List?.data?.data;
+      if (unit_List_Data) {
+        setFormValues((prevData) => ({
+          ...prevData,
+          sqFoot: unit_List_Data?.custom_square_ft_of_unit,
+          sqMeter: unit_List_Data?.custom_square_m_of_unit,
+          priceSqMeter: unit_List_Data?.custom_price_square_m,
+          priceSqFt: unit_List_Data?.custom_price_square_ft,
+          custom_premises_no: unit_List_Data?.custom_premise_no,
+        }));
+      }
+    }
+
     if (name === "numberOfChecks") {
       setNumberOfChecks(item);
+    }
+    if (name === "tenancyStatus") {
+      if (item === "Renewal") {
+        setFormValues((prevData) => {
+          console.log("startDate", prevData.startDate);
+          console.log("endDate", prevData.endDate);
+          const startDate = new Date(prevData.startDate);
+          startDate.setFullYear(startDate.getFullYear() + 1);
+          const endDate = new Date(prevData.endDate);
+          endDate.setFullYear(endDate.getFullYear() + 1);
+
+          return {
+            ...prevData,
+            startDate: startDate,
+            endDate: endDate,
+            numberOfChecks: "",
+            bankName: "",
+            chequeNo: "",
+            chequeDate: "",
+            anualPriceRent: 0,
+          };
+        });
+
+        setTableData([]);
+      }
     }
     setFormValues((prevData) => ({
       ...prevData,
@@ -600,7 +763,6 @@ const EditTenancyContracts = () => {
     if (value === "Select Owner") {
       return;
     }
-    console.log(value);
 
     setFormValues((prevData) => ({
       ...prevData,
@@ -611,7 +773,6 @@ const EditTenancyContracts = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log("API Data => ", formValues);
       if (formValues.tenancyStatus === "Move In") {
         const response = await updateProperty(
           { custom_status: "Occupied" },
@@ -623,12 +784,39 @@ const EditTenancyContracts = () => {
           formValues.propertyUnits
         );
       }
-      const res = await updateTanencyContract(location.state, {
+
+      const remindersMapping = {
+        "Move In": "custom_move_in",
+        "Move Out": "custom_move_out",
+        "Payment Remainder": "custom_payment_remainder",
+        "Birthday Message": "custom_birthday_message",
+        "60 Days Renewal Notice": "custom_60_days_renewal_notice",
+        "90 Days Renewal Notice": "custom_90_days_renewal_notice",
+      };
+
+      const reminderValues = values.reduce((acc, value) => {
+        const fieldName = remindersMapping[value.label];
+        if (fieldName) {
+          acc[fieldName] = value.checked ? 1 : 0;
+        }
+        return acc;
+      }, {});
+
+      const payload = {
         ...formValues,
+        ...reminderValues,
         lease_status: formValues.tenancyStatus,
 
+        custom_duration: formValues.custom_duration,
+        custom_day_rate: formValues.custom_day_rate,
+        custom_termination_date: formatDateToYYMMDD(
+          formValues.custom_termination_date
+        ),
+        custom_serve_the_notice_period:
+          formValues.custom_serve_the_notice_period,
+        custom_overstay_check: formValues.custom_overstay_check,
+
         //contract details
-        custom_no_of__cheques: formValues.numberOfChecks,
         bank_name: formValues.bankName,
         cheque_no: formValues.chequeNo,
         cheque_date: formatDateToYYMMDD(formValues.chequeDate),
@@ -652,7 +840,7 @@ const EditTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_number_of_unit: formValues.propertyUnits,
+        custom_number_of_unit: formValues.propertyUnits?.name,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,
@@ -683,8 +871,6 @@ const EditTenancyContracts = () => {
 
         // payment-details
 
-        custom_price__rent_annually: formValues.anualPriceRent,
-        lease_status: "Active",
         //payment details
         custom_no_of__cheques: formValues.numberOfChecks,
         custom_bank_name: formValues.bankName,
@@ -704,18 +890,34 @@ const EditTenancyContracts = () => {
             amount: item.rent,
             custom_annual_amount: formValues.anualPriceRent,
             custom_cheque_status: "active status",
-            custom_duration: formValues.duration,
-            custom_comments: formValues.comments,
-            custom_approval_status: formValues?.approvalStatus,
-            custom_rent_amount: "rent",
-            custom_status: formValues?.status,
-            custom_name_on_the_cheque: formValues?.cheque,
+            custom_duration: item.duration,
+            custom_comments: item.comments,
+            custom_approval_status: item.approvalStatus,
+            custom_rent_amount: item.rent,
+            custom_status: item.status,
+            custom_name_on_the_cheque: item.cheque,
           };
         }),
-      }); //import from API
+      };
+      if (formValues.tenancyStatus === "Renewal") {
+        const res = await updateTanencyContract(location.state, {
+          lease_status: "Renewal",
+        }); //import from API
 
-      if (res) {
-        navigate("/contracts");
+        if (res) {
+          navigate("/contracts");
+        }
+      } else {
+        const updateRes = await updateTanencyContract(location.state, {
+          ...payload,
+        }); //import from API
+        const createRes = await createTanencyContract({
+          ...payload,
+          lease_status: "Active",
+        }); //import from API
+        if (updateRes && createRes) {
+          navigate("/contracts");
+        }
       }
     } catch (err) {
       console.log(err);
@@ -792,8 +994,6 @@ const EditTenancyContracts = () => {
     },
   };
 
-  console.log("checking form values : ", formValues);
-
   return (
     <main>
       <div className="flex">
@@ -835,7 +1035,7 @@ const EditTenancyContracts = () => {
                         handleDropDown("tenancyStatus", value)
                       }
                       value={formValues.tenancyStatus}
-                      disabled={formValues.tenancyStatus === "Draft"}
+                      // disabled={formValues.tenancyStatus === "Draft"}
                       styles={{
                         label: {
                           marginBottom: "7px",
@@ -861,7 +1061,188 @@ const EditTenancyContracts = () => {
                     <div></div>
                   </div>
 
-                  
+                  {formValues.tenancyStatus === "Extend" && (
+                    <div>
+                      <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Extend
+                        </span>
+                        <span className="pb-1">Details</span>
+                      </p>
+                      <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                        {Extend_TenancyContractProperty.map(
+                          ({ label, name, type, values }) =>
+                            type === "text" || type === "number" ? (
+                              <Input
+                                key={name}
+                                label={label}
+                                name={name}
+                                type={type}
+                                value={formValues[name]}
+                                onChange={handleChange}
+                                borderd
+                                bgLight
+                              />
+                            ) : type === "dropdown" ? (
+                              <Select
+                                onValueChange={(item) =>
+                                  handleDropDown(name, item)
+                                }
+                                value={formValues[name]}
+                              >
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {values?.map((item, i) => (
+                                    <SelectItem key={i} value={item}>
+                                      {item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : type === "date" ? (
+                              <CustomDatePicker
+                                selectedDate={formValues[name] as Date}
+                                onChange={(date) =>
+                                  handleDateChange(name, date)
+                                }
+                                label={label}
+                                placeholder="Select Date"
+                                value={formValues[name]}
+                              />
+                            ) : (
+                              <></>
+                            )
+                        )}
+
+                        <Input
+                          disabled
+                          label={"Prorata Rate"}
+                          type={"text"}
+                          value={
+                            parseFloat(
+                              formValues.custom_duration *
+                                formValues.custom_day_rate
+                            ).toFixed(2) || 0
+                          }
+                          borderd
+                          bgLight
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {formValues.tenancyStatus === "Termination" && (
+                    <div>
+                      <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Termination
+                        </span>
+                        <span className="pb-1">Details</span>
+                      </p>
+                      <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                        {Termination_TenancyContractProperty.map(
+                          ({ label, name, type, values }) =>
+                            type === "text" || type === "number" ? (
+                              <Input
+                                key={name}
+                                label={label}
+                                name={name}
+                                type={type}
+                                value={formValues[name]}
+                                onChange={handleChange}
+                                borderd
+                                bgLight
+                              />
+                            ) : type === "dropdown" ? (
+                              <Select
+                                onValueChange={(item) =>
+                                  handleDropDown(name, item)
+                                }
+                                value={formValues[name]}
+                              >
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {values?.map((item, i) => (
+                                    <SelectItem key={i} value={item}>
+                                      {item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : type === "date" ? (
+                              <CustomDatePicker
+                                selectedDate={formValues[name] as Date}
+                                onChange={(date) =>
+                                  handleDateChange(name, date)
+                                }
+                                label={label}
+                                placeholder="Select Date"
+                                value={formValues[name]}
+                              />
+                            ) : type === "mantineSelect" ? (
+                              <MantineSelect
+                                label={label}
+                                placeholder={label}
+                                data={["Yes", "No"]}
+                                value={
+                                  formValues.custom_serve_the_notice_period ??
+                                  ""
+                                }
+                                onChange={(value) => {
+                                  handleDropDown(
+                                    "custom_serve_the_notice_period",
+                                    value
+                                  );
+                                }}
+                                styles={{
+                                  label: {
+                                    marginBottom: "7px",
+                                    color: "#7C8DB5",
+                                    fontSize: "16px",
+                                  },
+                                  input: {
+                                    border: "1px solid #CCDAFF",
+                                    borderRadius: "8px",
+                                    padding: "24px",
+                                    fontSize: "16px",
+                                    color: "#1A202C",
+                                  },
+                                  dropdown: {
+                                    backgroundColor: "white",
+                                    borderRadius: "8px",
+                                    border: "1px solid #E2E8F0",
+                                  },
+                                }}
+                                searchable
+                              />
+                            ) : (
+                              <></>
+                            )
+                        )}
+
+                        {formValues.custom_serve_the_notice_period === "No" && (
+                          <Input
+                            disabled
+                            label={"Penalty Amount"}
+                            type={"text"}
+                            value={parseFloat(
+                              2 * (formValues?.anualPriceRent / 12)
+                            ).toFixed(2)}
+                            borderd
+                            bgLight
+                          />
+                        )}
+                      </div>
+                    </div>
+                  )}
                   {/* Contract Details */}
                   <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
@@ -965,7 +1346,6 @@ const EditTenancyContracts = () => {
                       )}
                     </div> */}
                   </div>
-
 
                   {/* property details */}
                   <div>
@@ -1074,11 +1454,18 @@ const EditTenancyContracts = () => {
                             <MantineSelect
                               label={label}
                               placeholder={label}
-                              data={propertyUnits}
-                              value={formValues.propertyUnits}
-                              onChange={(value) =>
-                                handleDropDown("propertyUnits", value)
-                              }
+                              data={propertyUnits.map((unit) => ({
+                                value: unit.name,
+                                label: unit.custom_unit_number,
+                                unit,
+                              }))}
+                              value={formValues.propertyUnits?.name || ""}
+                              onChange={(value) => {
+                                const selectedUnit = propertyUnits.find(
+                                  (unit) => unit.name === value
+                                );
+                                handleDropDown("propertyUnits", selectedUnit);
+                              }}
                               styles={{
                                 label: {
                                   marginBottom: "7px",
@@ -1528,130 +1915,180 @@ const EditTenancyContracts = () => {
                     </div>
                   </div>
 
-                  <section className="border-t-[1px] border-gray-500 mt-16">
-                    <form className="flex flex-col ">
-                      <div>
-                        <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
-                          <span className="pb-1 border-b border-[#7C8DB5]">
-                            Payment
-                          </span>
-                          <span className="pb-1">Details</span>
-                        </p>
-                        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
-                          {payment_details.map(
-                            ({ label, name, type, values }) =>
-                              type === "text" ? (
-                                <Input
-                                  key={name}
-                                  label={label}
-                                  name={name}
-                                  type={type}
-                                  value={formValues[name]}
-                                  onChange={handleChange}
-                                  borderd
-                                  bgLight
-                                />
-                              ) : type === "dropdown" ? (
-                                <Select
-                                  onValueChange={(item) =>
-                                    handleDropDown(name, item)
-                                  }
-                                >
-                                  <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
-                                    <div className="flex items-center">
-                                      <SelectValue placeholder={label} />
-                                    </div>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {values?.map((item, i) => (
-                                      <SelectItem key={i} value={item}>
-                                        {item}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              ) : type === "date" ? (
-                                <CustomDatePicker
-                                  selectedDate={formValues[name] as Date}
-                                  onChange={(date) =>
-                                    handleDateChange(name, date.toDateString())
-                                  }
-                                  label={label}
-                                  placeholder="Select Date"
-                                  value={formValues[name]}
-                                />
-                              ) : type === "mantineSelect" ? (
-                                <MantineSelect
-                                  label={label}
-                                  placeholder={label}
-                                  data={values}
-                                  value={formValues[name]}
-                                  onChange={(value) =>
-                                    handleDropDown(name, value)
-                                  }
-                                  styles={{
-                                    label: {
-                                      marginBottom: "7px",
-                                      color: "#7C8DB5",
-                                      fontSize: "16px",
-                                    },
-                                    input: {
-                                      border: "1px solid #CCDAFF",
-                                      borderRadius: "8px",
-                                      padding: "24px",
-                                      fontSize: "16px",
-                                      color: "#1A202C",
-                                    },
-                                    dropdown: {
-                                      backgroundColor: "white",
-                                      borderRadius: "8px",
-                                      border: "1px solid #E2E8F0",
-                                    },
-                                  }}
-                                  searchable
-                                />
-                              ) : (
-                                <></>
-                              )
+                  {formValues.custom_mode_of_payment === "Cheque" &&
+                    formValues.tenancyStatus === "Active" && (
+                      <section className="border-t-[1px] border-gray-500 mt-16">
+                        <form className="flex flex-col ">
+                          <div>
+                            <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+                              <span className="pb-1 border-b border-[#7C8DB5]">
+                                Payment
+                              </span>
+                              <span className="pb-1">Details</span>
+                            </p>
+                            <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                              {payment_details.map(
+                                ({ label, name, type, values }) =>
+                                  type === "text" ? (
+                                    <Input
+                                      key={name}
+                                      label={label}
+                                      name={name}
+                                      type={type}
+                                      value={formValues[name]}
+                                      onChange={handleChange}
+                                      borderd
+                                      bgLight
+                                    />
+                                  ) : type === "dropdown" ? (
+                                    <Select
+                                      onValueChange={(item) =>
+                                        handleDropDown(name, item)
+                                      }
+                                    >
+                                      <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                        <div className="flex items-center">
+                                          <SelectValue placeholder={label} />
+                                        </div>
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {values?.map((item, i) => (
+                                          <SelectItem key={i} value={item}>
+                                            {item}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  ) : type === "date" ? (
+                                    <CustomDatePicker
+                                      selectedDate={formValues[name] as Date}
+                                      onChange={(date) =>
+                                        handleDateChange(
+                                          name,
+                                          date.toDateString()
+                                        )
+                                      }
+                                      label={label}
+                                      placeholder="Select Date"
+                                      value={formValues[name]}
+                                    />
+                                  ) : type === "mantineSelect" ? (
+                                    <MantineSelect
+                                      label={label}
+                                      placeholder={label}
+                                      data={values}
+                                      value={formValues[name]}
+                                      onChange={(value) =>
+                                        handleDropDown(name, value)
+                                      }
+                                      styles={{
+                                        label: {
+                                          marginBottom: "7px",
+                                          color: "#7C8DB5",
+                                          fontSize: "16px",
+                                        },
+                                        input: {
+                                          border: "1px solid #CCDAFF",
+                                          borderRadius: "8px",
+                                          padding: "24px",
+                                          fontSize: "16px",
+                                          color: "#1A202C",
+                                        },
+                                        dropdown: {
+                                          backgroundColor: "white",
+                                          borderRadius: "8px",
+                                          border: "1px solid #E2E8F0",
+                                        },
+                                      }}
+                                      searchable
+                                    />
+                                  ) : (
+                                    <></>
+                                  )
+                              )}
+                            </div>
+                          </div>
+                          {tableData?.length > 0 && (
+                            <Table>
+                              <Table.Thead>
+                                <Table.Tr>
+                                  <Table.Th>S.no.</Table.Th>
+                                  <Table.Th>Cheque Number</Table.Th>
+                                  <Table.Th>Rent</Table.Th>
+                                  <Table.Th>Cheque Date</Table.Th>
+                                  <Table.Th>Bank Name</Table.Th>
+                                  <Table.Th>Status</Table.Th>
+                                </Table.Tr>
+                              </Table.Thead>
+                              <Table.Tbody>
+                                {tableData?.map((item, i) => (
+                                  <Table.Tr key={i}>
+                                    <Table.Td>{item.Sno}</Table.Td>
+                                    <Table.Td
+                                      onClick={() => {
+                                        setFormValues({
+                                          ...formValues,
+                                          chequeNumber: item.chequeNumber,
+                                          bankName: item.bankName,
+                                          rent: item.rent.toString(),
+                                          chequeDate: item.chequeDate,
+                                          status: item.status,
+                                          duration: item.duration,
+                                          comments: item.comments,
+                                          approvalStatus: item.approvalStatus,
+                                          cheque: item.cheque,
+                                        });
+                                        setPaymentDetailsModalOpen(i);
+                                      }}
+                                      className="text-blue-600 cursor-pointer "
+                                    >
+                                      {item.chequeNumber}
+                                    </Table.Td>
+                                    <Table.Td>
+                                      {parseFloat(item.rent).toFixed(2)}
+                                    </Table.Td>
+                                    <Table.Td>{item.chequeDate}</Table.Td>
+                                    <Table.Td>{item.bankName}</Table.Td>
+                                    <Table.Td>Active</Table.Td>
+                                  </Table.Tr>
+                                ))}
+                              </Table.Tbody>
+                            </Table>
                           )}
-                        </div>
+                        </form>
+                      </section>
+                    )}
+
+                  {formValues.tenancyStatus !== "Draft" ? (
+                    <section className="my-20">
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Manage
+                        </span>
+                        <span className="pb-1">Notification</span>
+                      </p>
+                      <div>
+                        {values.map((value, index) => (
+                          <MantineCkeckbox
+                            mt="xs"
+                            ml={33}
+                            label={value.label}
+                            key={value.key}
+                            checked={value.checked}
+                            onChange={(event) => {
+                              handlers.setItemProp(
+                                index,
+                                "checked",
+                                event.currentTarget.checked
+                              );
+                            }}
+                          />
+                        ))}
                       </div>
-                      {tableData?.length > 0 && (
-                        <Table>
-                          <Table.Thead>
-                            <Table.Tr>
-                              <Table.Th>S.no.</Table.Th>
-                              <Table.Th>Cheque Number</Table.Th>
-                              <Table.Th>Rent</Table.Th>
-                              <Table.Th>Cheque Date</Table.Th>
-                              <Table.Th>Bank Name</Table.Th>
-                              <Table.Th>Status</Table.Th>
-                            </Table.Tr>
-                          </Table.Thead>
-                          <Table.Tbody>
-                            {tableData?.map((item, i) => (
-                              <Table.Tr key={i}>
-                                <Table.Td>{item.Sno}</Table.Td>
-                                <Table.Td
-                                  onClick={() => {
-                                    setSelectedCheque(item);
-                                    setPaymentDetailsModalOpen(true);
-                                  }}
-                                  className="text-blue-600 cursor-pointer "
-                                >
-                                  {item.chequeNumber}
-                                </Table.Td>
-                                <Table.Td>{item.rent}</Table.Td>
-                                <Table.Td>{item.chequeDate}</Table.Td>
-                                <Table.Td>{item.bankName}</Table.Td>
-                                <Table.Td>Active</Table.Td>
-                              </Table.Tr>
-                            ))}
-                          </Table.Tbody>
-                        </Table>
-                      )}
-                    </form>
-                  </section>
+                    </section>
+                  ) : (
+                    ""
+                  )}
 
                   <div className="max-w-[100px] mt-10">
                     <PrimaryButton title="Save" />
@@ -1663,8 +2100,8 @@ const EditTenancyContracts = () => {
         </div>
       </div>
       <Modal
-        opened={paymentDetailsModalOpen}
-        onClose={() => setPaymentDetailsModalOpen(false)}
+        opened={paymentDetailsModalOpen !== null}
+        onClose={() => setPaymentDetailsModalOpen(null)}
         title=""
         // scrollAreaComponent={ScrollArea.Autosize}
         fullscreen={false}
@@ -1682,12 +2119,12 @@ const EditTenancyContracts = () => {
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(420px,1fr))] gap-4 mb-6">
               {cheque_number_form_details.map(({ label, name, type, values }) =>
-                type === "text" ? (
+                (type === "text") | (type === "number") ? (
                   <Input
                     key={name}
                     label={label}
                     name={name}
-                    type="text"
+                    type={type}
                     // value={
                     //   name === "bankName"
                     //     ? selectedCheque?.bankName || ""
@@ -1735,6 +2172,7 @@ const EditTenancyContracts = () => {
                   />
                 ) : type === "text-area" ? (
                   <Textarea
+                    value={formValues[name] || ""}
                     onChange={(e) =>
                       setFormValues({ ...formValues, [name]: e.target.value })
                     }
@@ -1746,6 +2184,28 @@ const EditTenancyContracts = () => {
                 ) : null
               )}
             </div>
+
+            <PrimaryButton
+              onClick={() => {
+                console.log("table Data", tableData);
+                const updatedTableData = [...tableData];
+                updatedTableData[paymentDetailsModalOpen].cheque =
+                  formValues.cheque;
+                updatedTableData[paymentDetailsModalOpen].status =
+                  formValues.status;
+                updatedTableData[paymentDetailsModalOpen].duration =
+                  formValues.duration;
+                updatedTableData[paymentDetailsModalOpen].comments =
+                  formValues.comments;
+                updatedTableData[paymentDetailsModalOpen].approvalStatus =
+                  formValues.approvalStatus;
+                setTableData(updatedTableData);
+                setPaymentDetailsModalOpen(null);
+                console.log("updated table data", updatedTableData);
+              }}
+              type="button"
+              title="Edit"
+            />
           </div>
           {/* <div className="pt-4">
             <PrimaryButton type="submit" title="Save Details" />
