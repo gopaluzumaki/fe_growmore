@@ -119,6 +119,7 @@ const BookReserve = () => {
                 totalProperty={item?.property}
                 totalUnit="03"
                 img={demo_avatar}
+                getData={getData}
               />
             ))}
           </div>

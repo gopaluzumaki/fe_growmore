@@ -12,7 +12,7 @@ import {
 } from "../../components/ui/select";
 import { VscFilter } from "react-icons/vsc";
 import { useEffect, useState } from "react";
-import { getUnitList } from "../../api";
+import { deletePropertyUnit, getUnitList } from "../../api";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { img_group } from "../../assets";
 
@@ -35,7 +35,7 @@ const Units = () => {
 
   const getData = async () => {
     const unitList = await getUnitList();
-    console.log('eqwads',unitList)
+    console.log('eqwads', unitList)
     setUnitList(unitList?.data?.data);
   };
 
@@ -108,13 +108,12 @@ const Units = () => {
                           <td className="p-2 py-3">{item.tenantName}</td>
                           <td className="p-2 py-3">
                             <div
-                              className={`p-1 rounded ${
-                                item.custom_status === "Occupied"
+                              className={`p-1 rounded ${item.custom_status === "Occupied"
                                   ? "bg-[#FFEC1C] text-black"
                                   : item.custom_status === "Vacant"
-                                  ? "bg-[#34A853] text-white"
-                                  :item.custom_status === "Legal" && "bg-[#EB4335] text-white"
-                              }`}
+                                    ? "bg-[#34A853] text-white"
+                                    : item.custom_status === "Legal" && "bg-[#EB4335] text-white"
+                                }`}
                             >
                               {item.custom_status}
                             </div>
@@ -134,7 +133,10 @@ const Units = () => {
                                   />
                                 </Link>
                               </button>
-                              <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
+                              <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
+                                await deletePropertyUnit(item.name)
+                                getData()
+                              }}>
                                 <MdDeleteForever
                                   size={20}
                                   className="text-[#EB4335]"

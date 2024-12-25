@@ -78,6 +78,7 @@ const TenancyContracts = () => {
   }, []);
 
   const getData = async () => {
+
     const unitListRes = await getTenancyContractList();
     const propertyListRes = await getPropertyList();
     const tenantListRes = await getTenantList();

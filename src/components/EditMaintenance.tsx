@@ -29,9 +29,11 @@ import {
   createCase,
   fetchMaintenance,
   updateCase,
+  fetchDamageLocation,
+  createDamageLocation,
 } from "../api";
 import {
-  Select,
+  // Select,
   SelectContent,
   SelectGroup,
   SelectItem,
@@ -45,19 +47,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
 import CustomFileUpload from "./ui/CustomFileUpload";
+import { Select } from "@mantine/core";
 
-const EditMoveOut = () => {
+const EditMaintenance = () => {
   const statusSelect = [
     {
       label: "Status",
       name: "status",
       type: "dropdown",
-      values: ["Active", "Waiting for quotation", "Security deposit refund", "Quotation on the approval", "Resolved"],
+      values: ["Active", "Resolve"],
     },
   ]
   const [imgUrls, setImgUrls] = useState<string[]>([]);
   const location = useLocation();
-
   const navigate = useNavigate();
   const [property, setProperty] = useState();
   const [checked, setChecked] = useState<boolean>(false);
@@ -79,6 +81,7 @@ const EditMoveOut = () => {
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const [propertyUnits, setPropertyUnits] = useState([]);
   const [imageArray, setImageArray] = useState([])
+  const [damageLocationList, setDamageLocationList] = useState([])
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "Draft",
@@ -117,18 +120,11 @@ const EditMoveOut = () => {
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [propertyName, setPropertyName] = useState('')
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormValues((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   useEffect(() => {
     const data = async () => {
       const res = await fetchMaintenance(location.state)
       const propertyData = res?.data?.data;
+      console.log(propertyData,"jyu")
       if (propertyData) {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
@@ -153,14 +149,15 @@ const EditMoveOut = () => {
           ownerType: propertyData?.custom_owner_type,
           comment: propertyData?.custom_comment_box,
           customerName: propertyData?.custom_customer,
+          status: propertyData?.custom_statusmi,
           customerContact: propertyData?.custom_contact_number_of_customer,
           customerEmail: propertyData?.custom_customer_email,
           customerType: propertyData?.custom_customer_type,
           startDate: propertyData?.custom_start_date,
           endDate: propertyData?.custom_end_date,
-          status: propertyData?.custom_statusmo,
-          reasonForMoveOut: propertyData?.custom_reason_for_move_out,
-          reasonForStatus: propertyData?.custom_reason,
+          damageLocation: propertyData?.custom_damage_location,
+          description: propertyData?.custom_description,
+          originalissue: propertyData?.custom_original_issue,
         }));
 
       }
@@ -170,7 +167,27 @@ const EditMoveOut = () => {
       }
     }
     data()
+
   }, [location.state])
+  useEffect(() => {
+    getDamageLocationList();
+
+  }, [])
+  const getDamageLocationList = async () => {
+    const res = await fetchDamageLocation();
+    const item = res?.data?.data;
+    let dropdownData = [...item.map((p) => ({ name: p.name })), { name: 'Add new +', isButton: true }];
+    setDamageLocationList(dropdownData);
+  };
+  console.log(damageLocationList, "njk")
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
 
 
   const handleDropDown = async (name, item) => {
@@ -188,12 +205,14 @@ const EditMoveOut = () => {
       console.log("API Data => ", formValues);
       const res = await updateCase({
         // ...formValues,
-        custom_status: "Move Out",
+        custom_status: "Maintenance",
         custom_unit_no: formValues?.propertyUnits,
         custom_property: formValues?.propertyName,
         custom_customer: formValues?.customerName,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
+        custom_statusmi: '',
+        custom_statusmo: '',
         custom_comment_box: formValues?.comment,
         custom_attachment_table: imageData,
         custom_location__area: formValues?.propertyLocation,
@@ -211,31 +230,140 @@ const EditMoveOut = () => {
         custom_contact_number_of_customer: formValues?.customerContact,
         custom_customer_email: formValues?.customerEmail,
         custom_customer_type: formValues?.customerType,
-        custom_statusmo: formValues?.status,
-        custom_reason_for_move_out: formValues?.reasonForMoveOut,
-        custom_reason: formValues?.reasonForStatus,
+        custom_damage_location: formValues?.damageLocation,
+        custom_description: formValues?.description,
+        custom_original_issue: formValues?.originalissue
 
       }, formValues?.property); //import from API
       if (res) {
-        navigate("/moveout");
+        navigate("/maintenance");
       }
     } catch (err) {
       console.log(err);
     }
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newLocation, setNewLocation] = useState("");
+  const handleAddNewLocation = async () => {
+    if (newLocation.trim()) {
+      const updatedDamageLocationList = [...damageLocationList]; // Create a copy of the list
+updatedDamageLocationList.splice(damageLocationList.length - 1, 0, { name: newLocation }); // Insert at second last index
+setDamageLocationList(updatedDamageLocationList); // Update the state
 
+      const createDamageLocations = await createDamageLocation({ "custom_location": newLocation });
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        damageLocation: newLocation,
+      }));
+      setNewLocation(""); // Clear input field after adding
+      setIsModalOpen(false); // Close modal
+    }
+  };
 
+  const handleInputChange = (e) => {
+    setNewLocation(e.target.value);
+  };
+
+  const selectStyle = {
+    input: {
+      border: "1px solid #ccdaff",
+      backgroundColor: "#ffffff",
+      color: "#000",
+      padding: "20px 12px",
+      borderRadius: "5px",
+    },
+    dropdown: {
+      backgroundColor: "#ffffff",
+      color: "#000",
+    },
+  };
   return (
     <main>
       <div className="flex">
+        {isModalOpen && (
+          <>
+            {/* Overlay with blur effect */}
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+                backdropFilter: "blur(5px)", // Blur effect for the background
+                zIndex: 9999, // Behind the modal
+              }}
+              onClick={() => setIsModalOpen(false)} // Close modal if user clicks on the overlay
+            />
+
+            {/* Modal */}
+            <div
+              style={{
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)", // Center the modal
+                padding: "20px",
+                backgroundColor: "white",
+                borderRadius: "8px",
+                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                zIndex: 10000, // Ensure modal is on top
+              }}
+            >
+              <h3>Add New Damage Location</h3>
+              <input
+                type="text"
+                value={newLocation}
+                onChange={handleInputChange}
+                placeholder="Enter location"
+                autoFocus
+                style={{
+                  marginBottom: "10px",
+                  padding: "5px",
+                  width: "100%",
+                }}
+              />
+              <div>
+                <button
+                  onClick={handleAddNewLocation}
+                  style={{
+                    marginRight: "10px",
+                    padding: "5px 10px",
+                    backgroundColor: "#4CAF50", // Green color for the Add button
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Add
+                </button>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  style={{
+                    padding: "5px 10px",
+                    backgroundColor: "#f44336", // Red color for the Cancel button
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </>
+        )}
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
-            <Header name="Move Out" />
+            <Header name="Maintenance" />
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
-                {"Move Out > Add New"}
+                {"Maintenance > Add New"}
               </p>
             </div>
             <div>
@@ -334,20 +462,17 @@ const EditMoveOut = () => {
                         <label className="block">owner Type : {formValues.ownerType}</label>
                       </div>
                     </div>
-
-
-
-                    {/* Reason for moveout */}
+                    {/* Description box */}
                     <div className="mt-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Reason for move out
+                          Description
                         </span>
                       </p>
                       <textarea
-                        id="reasonForMoveOut"
-                        name="reasonForMoveOut"
-                        value={formValues.reasonForMoveOut}
+                        id="description"
+                        name="description"
+                        value={formValues.description}
                         onChange={
                           handleChange
                         }
@@ -355,46 +480,43 @@ const EditMoveOut = () => {
                         className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                       ></textarea>
                     </div>
-                    {/* status */}
+                    {/* Damage Location */}
                     <div className="mt-5 mb-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Status
+                          Damage Location
                         </span>
 
                       </p>
-                      {statusSelect.map(({ label, name, type, values }) => (
-                        <Select
-                          onValueChange={(value) =>
-                            handleDropDown(name, value)
+                      <Select
+                        placeholder="Select Damage Location"
+                        data={damageLocationList.map((p) => p.name)}
+                        clearable
+                        value={formValues?.damageLocation}
+                        onChange={(value) => {
+                          if (value === "Add new +") {
+                            // Handle button click
+                            setIsModalOpen(true);
+                            console.log("Add New clicked");
+                            // Add your logic here to open a modal or add a new item
+                          } else {
+                            handleDropDown("damageLocation", value);
                           }
-                          value={formValues[name]}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-3">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ))}</div>
-                    {/* Reason for status selection */}
+                        }}
+                        styles={selectStyle}
+                      />
+                    </div>
+                    {/* Description box */}
                     <div className="mt-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Reason for status
+                          Original Issue
                         </span>
                       </p>
                       <textarea
-                        id="reasonForStatus"
-                        name="reasonForStatus"
-                        value={formValues.reasonForStatus}
+                        id="originalissue"
+                        name="originalissue"
+                        value={formValues.originalissue}
                         onChange={
                           handleChange
                         }
@@ -402,6 +524,10 @@ const EditMoveOut = () => {
                         className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                       ></textarea>
                     </div>
+
+
+
+
                     {imageArray?.length > 0 && (<>
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
@@ -444,4 +570,4 @@ const EditMoveOut = () => {
   );
 };
 
-export default EditMoveOut;
+export default EditMaintenance;

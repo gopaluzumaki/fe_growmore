@@ -7,12 +7,13 @@ const RentOverviewChart: React.FC = () => {
     {
       name: "Rent Overview (Column)",
       type: "column",
-      data: [440, 505, 414, 671, 227, 413, 201, 352, 752, 320, 257, 160],
+      data: [60000, 65000, 70000, 75000, 100000, 110000, 130000, 140000, 175000, 190000, 210000, 260000  ],
     },
     {
       name: "Rent Overview (Line)",
       type: "line",
-      data: [440, 505, 414, 671, 227, 413, 201, 352, 752, 320, 257, 160],
+      data: [60000, 65000, 70000, 75000, 100000, 110000, 130000, 140000, 175000, 190000, 210000, 260000  ],
+
     },
   ];
 
@@ -46,21 +47,26 @@ const RentOverviewChart: React.FC = () => {
       enabledOnSeries: [1],
     },
     xaxis: {
+      title: {
+        text: "Years"},
       categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "2013",
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024"
       ],
     },
+    yaxis: {
+      title: {
+        text: "Dirham"}},
     plotOptions: {
       bar: {
         columnWidth: "50%", // Adjust column width if needed

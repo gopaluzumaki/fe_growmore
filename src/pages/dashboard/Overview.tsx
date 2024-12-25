@@ -7,91 +7,63 @@ import {
 import Header from "../../components/Header";
 import DataCard from "../../components/DataCard";
 import Sidebar from "../../components/Sidebar";
-import RentOverviewChart from "../../components/Chart";
+import RentOverviewChart from "../../components/RentOverviewChart";
 import { useEffect, useState } from "react";
-import { getPropertyCount, getTenantCount, getUnitCount } from "../../api";
+import { fetchCaseFromMaintenance, fetchTenancyData, getPropertyCount, getTenantCount, getUnitCount } from "../../api";
+import LeadsOverviewChart from "../../components/LeadsOverviewChart";
 
 const Overview = () => {
   const [propertyCount, setPropertyCount] = useState("");
   const [unitCount, setUnitCount] = useState("");
   const [tenantCount, setTenantCount] = useState("");
+  const [tenancyData, setTenancyData] = useState<any[]>([]);
 
   useEffect(() => {
     getData();
   }, []);
-
+  async function calculateDaysLeft(records) {
+    const currentDate = new Date(); // Get the current date
+    const results = await Promise.all(records.map(async (record,index) => {
+      const endDate = new Date(record.end_date); // Convert end date to Date object
+      const timeDiff = endDate.getTime() - currentDate.getTime(); // Difference in milliseconds
+      const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) <= 0 ? "Expired" : Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert to days
+  
+      console.log(daysLeft, "bft");
+  
+      // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
+      const caseData = await fetchCaseFromMaintenance(record.property, record.custom_number_of_unit,record.customer);
+      console.log(caseData?.data?.data, "bvf",index);
+      let caseStatus=caseData?.data?.data[0]?.custom_status
+      return { ...record, daysLeft, caseStatus }; // Return record with days left and caseData
+    }));
+  
+    return results; // Return the array of resolved records
+  }
+  
+console.log(tenancyData,"ngt")
   const getData = async () => {
     const property = await getPropertyCount();
     const unit = await getUnitCount();
     const tenant = await getTenantCount();
+    const tenancyData=await fetchTenancyData();
     setPropertyCount(property?.data?.message);
     setUnitCount(unit?.data?.message);
     setTenantCount(tenant?.data?.message);
+    setTenancyData(await calculateDaysLeft(tenancyData?.data?.data))
   };
 
   const headers = [
-    "No.",
-    "Id",
-    "Date",
+    "Sr. No",
     "Customer Name",
-    "Units",
-    "Available Units",
-    "Tenants",
-    "Maintenance",
+    "Property Name",
+    "Unit Number",
+    "Location / Area",
+    "Status",
+    "Case Status",
+    "No. of Days Left"
   ];
 
-  const mockData = [
-    {
-      No: 1,
-      Id: 1012,
-      Date: "Dec 1, 2021",
-      Customer_Name: "Frank Murlo",
-      Units: 10,
-      Available_Units: 6,
-      Tenants: 4,
-      Maintenance: "In Progress",
-    },
-    {
-      No: 2,
-      Id: 1013,
-      Date: "Jan 15, 2022",
-      Customer_Name: "Alice Johnson",
-      Units: 8,
-      Available_Units: 3,
-      Tenants: 5,
-      Maintenance: "Completed",
-    },
-    {
-      No: 3,
-      Id: 1014,
-      Date: "Feb 10, 2022",
-      Customer_Name: "Bob Smith",
-      Units: 12,
-      Available_Units: 9,
-      Tenants: 3,
-      Maintenance: "Pending",
-    },
-    {
-      No: 4,
-      Id: 1015,
-      Date: "Mar 5, 2022",
-      Customer_Name: "Cathy Brown",
-      Units: 15,
-      Available_Units: 10,
-      Tenants: 5,
-      Maintenance: "In Progress",
-    },
-    {
-      No: 5,
-      Id: 1016,
-      Date: "Apr 20, 2022",
-      Customer_Name: "David Lee",
-      Units: 20,
-      Available_Units: 15,
-      Tenants: 5,
-      Maintenance: "Completed",
-    },
-  ];
+  
 
   return (
     <main>
@@ -141,6 +113,9 @@ const Overview = () => {
             <div className="my-4 p-4 border border-[#E6EDFF] rounded-md">
               <RentOverviewChart />
             </div>
+            <div className="my-4 p-4 border border-[#E6EDFF] rounded-md">
+              <LeadsOverviewChart />
+            </div>
             <div className="my-4 p-4">
               <div className="my-4 p-4">
                 <div className="overflow-x-auto">
@@ -156,20 +131,41 @@ const Overview = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {mockData.map((item, i) => {
+                      {tenancyData.map((item, i) => {
                         return (
                           <tr
                             key={i}
                             className="hover:bg-gray-50 text-center text-[15px]"
                           >
-                            <td className="p-2 py-3">{item.No}</td>
-                            <td className="p-2 py-3">{item.Id}</td>
-                            <td className="p-2 py-3">{item.Date}</td>
-                            <td className="p-2 py-3">{item.Customer_Name}</td>
-                            <td className="p-2 py-3">{item.Units}</td>
-                            <td className="p-2 py-3">{item.Available_Units}</td>
-                            <td className="p-2 py-3">{item.Tenants}</td>
-                            <td className="p-2 py-3">{item.Maintenance}</td>
+                            <td className="p-2 py-3">{i+1}</td>
+                            <td className="p-2 py-3">{item.customer}</td>
+                            <td className="p-2 py-3">{item.property}</td>
+                            <td className="p-2 py-3">{item.custom_number_of_unit}</td>
+                            <td className="p-2 py-3">{item.custom_location__area}</td>
+                            <td className="p-2 py-3"><div
+                              className={`p-1 rounded ${
+                                item.lease_status === "Draft"
+                                  ? "bg-red-400 text-black"
+                                  : item.lease_status === "Active"
+                                  ? "bg-[#34A853] text-white"
+                                  : "bg-blue-400 text-white"
+                              }`}
+                            >
+                              {item.lease_status}
+                            </div></td>
+                            <td className="p-2 py-3">{item?.caseStatus?item?.caseStatus:'-'}</td>
+
+                            <td className="p-2 py-3"><div
+                              className={`p-1 rounded ${
+                                item.daysLeft==="Expired"
+                                  ? "bg-[#ff0000] text-black"
+                                  :item?.daysLeft<=15
+                                  ?"bg-[#ff8d00] text-black"
+                                  :''
+                              }`}
+                            >
+                              {item.daysLeft}
+                            </div></td>
                           </tr>
                         );
                       })}
