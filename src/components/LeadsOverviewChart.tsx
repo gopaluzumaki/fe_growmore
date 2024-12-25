@@ -54,14 +54,15 @@ getLeadsData()
       colors: ["#D09D4A"],
       curve: "smooth",
     },
-    title: {
-      text: "Leads Overview",
-    },
+    
+    
     dataLabels: {
       enabled: false,
       enabledOnSeries: [1],
     },
     xaxis: {
+      title: {
+        text: "Months"},
       categories: [
         "Jan",
         "Feb",
@@ -77,6 +78,9 @@ getLeadsData()
         "Dec",
       ],
     },
+    yaxis: {
+      title: {
+        text: "Leads"}},
     plotOptions: {
       bar: {
         columnWidth: "50%", // Adjust column width if needed

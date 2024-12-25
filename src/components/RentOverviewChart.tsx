@@ -47,6 +47,8 @@ const RentOverviewChart: React.FC = () => {
       enabledOnSeries: [1],
     },
     xaxis: {
+      title: {
+        text: "Years"},
       categories: [
         "2013",
         "2014",
@@ -62,6 +64,9 @@ const RentOverviewChart: React.FC = () => {
         "2024"
       ],
     },
+    yaxis: {
+      title: {
+        text: "Dirham"}},
     plotOptions: {
       bar: {
         columnWidth: "50%", // Adjust column width if needed
