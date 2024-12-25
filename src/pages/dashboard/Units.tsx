@@ -26,8 +26,7 @@ const Units = () => {
     "Owner Name",
     "Tenant Name",
     "Status",
-    // "Images",
-    " ",
+    "Actions",
   ];
 
   useEffect(() => {
