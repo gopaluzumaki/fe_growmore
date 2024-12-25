@@ -66,7 +66,7 @@ const RentOverviewChart: React.FC = () => {
     },
     yaxis: {
       title: {
-        text: "Dirhams"}},
+        text: "Dirham"}},
     plotOptions: {
       bar: {
         columnWidth: "50%", // Adjust column width if needed
