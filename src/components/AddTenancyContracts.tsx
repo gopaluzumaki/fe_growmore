@@ -71,7 +71,7 @@ const AddTenancyContracts = () => {
   const [ownerList, setOwnerList] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [numberOfChecks, setNumberOfChecks] = useState();
-  const [paymentDetailsModalOpen, setPaymentDetailsModalOpen] = useState(false);
+  const [paymentDetailsModalOpen, setPaymentDetailsModalOpen] = useState(null);
   const [selectedCheque, setSelectedCheque] = useState(null);
 
   const [tableData, setTableData] = useState<
@@ -634,28 +634,35 @@ const AddTenancyContracts = () => {
         custom_image: ownerImgUrl,
         custom_signature_of_owner: formValues.ownerSign,
 
-        lease_item: tableData.map((item) => {
-          return {
-            lease_item: "Rent",
-            frequency: "Monthly",
-            currency_code: "AED",
-            document_type: "Sales Invoice",
-            parentfield: "lease_item",
-            parenttype: "Lease",
-            doctype: "Lease Item",
-            custom_cheque_no: item.chequeNumber,
-            custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
-            amount: item.rent,
-            custom_annual_amount: formValues.anualPriceRent,
-            custom_cheque_status: "active status",
-            custom_duration: item.duration,
-            custom_comments: item.comments,
-            custom_approval_status: item.approvalStatus,
-            custom_rent_amount: item.rent,
-            custom_status: item.status,
-            custom_name_on_the_cheque: item.cheque,
-          };
-        }),
+        lease_item:
+          tableData && tableData.length > 0
+            ? tableData.map((item) => {
+                return {
+                  lease_item: "Rent",
+                  frequency: "Monthly",
+                  currency_code: "AED",
+                  document_type: "Sales Invoice",
+                  parentfield: "lease_item",
+                  parenttype: "Lease",
+                  doctype: "Lease Item",
+                  custom_cheque_no: item.chequeNumber,
+                  custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
+                  amount: item.rent,
+                  custom_annual_amount: formValues.anualPriceRent,
+                  custom_cheque_status: "active status",
+                  custom_duration: item.duration,
+                  custom_comments: item.comments,
+                  custom_approval_status: item.approvalStatus,
+                  custom_rent_amount: item.rent,
+                  custom_status: item.status,
+                  custom_name_on_the_cheque: item.cheque,
+                };
+              })
+            : [
+                {
+                  custom_comments: "",
+                },
+              ],
       });
       if (res) {
         navigate("/contracts");
@@ -1421,7 +1428,8 @@ const AddTenancyContracts = () => {
                     </div>
                   </div>
 
-                  {formValues.custom_mode_of_payment === "Cheque" ? (
+                  {formValues.custom_mode_of_payment === "Cheque" &&
+                  formValues.tenancyStatus === "Active" ? (
                     <section className="border-t-[1px] border-gray-500 mt-16">
                       <form className="flex flex-col ">
                         <div>
@@ -1532,7 +1540,7 @@ const AddTenancyContracts = () => {
                                   <Table.Td
                                     onClick={() => {
                                       setSelectedCheque(item);
-                                      setPaymentDetailsModalOpen(true);
+                                      setPaymentDetailsModalOpen(i);
                                     }}
                                     className="text-blue-600 cursor-pointer "
                                   >
@@ -1553,7 +1561,7 @@ const AddTenancyContracts = () => {
                     ""
                   )}
 
-                  {formValues.leaseStatus === "Active" ? (
+                  {formValues.leaseStatus !== "Draft" ? (
                     <section className="my-20">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
                         <span className="pb-1 border-b border-[#7C8DB5]">

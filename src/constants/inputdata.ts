@@ -436,3 +436,19 @@ export const Owner_Type_Company = [
     type: "text",
   },
 ];
+
+export const Extend_TenancyContractProperty = [
+  { label: "Duration", name: "custom_duration", type: "number" },
+  { label: "Day Rate", name: "custom_day_rate", type: "number" },
+];
+
+export const Termination_TenancyContractProperty = [
+  { label: "Termination Date", name: "custom_termination_date", type: "date" },
+  {
+    label: "Serve the notice period",
+    name: "custom_serve_the_notice_period",
+    type: "mantineSelect",
+  },
+
+  { label: "Overstay Check", name: "custom_overstay_check", type: "text" },
+];
