@@ -27,9 +27,15 @@ import {
   getTenantLeaseList,
   fetchTenancyContract,
   createCase,
+  fetchMaintenance,
+  updateCase,
+  fetchDamageLocation,
+  createDamageLocation,
+  fetchLegalReason,
+  createLegalReason,
 } from "../api";
 import {
-  Select,
+  // Select,
   SelectContent,
   SelectGroup,
   SelectItem,
@@ -39,12 +45,13 @@ import {
 import Checkbox from "./CheckBox";
 import CustomDatePicker from "./CustomDatePicker";
 import { em, Select as MantineSelect, Table } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
 import CustomFileUpload from "./ui/CustomFileUpload";
+import { Select } from "@mantine/core";
 
-const AddMoveIn = () => {
+const EditLegal = () => {
   const statusSelect = [
     {
       label: "Status",
@@ -54,6 +61,7 @@ const AddMoveIn = () => {
     },
   ]
   const [imgUrls, setImgUrls] = useState<string[]>([]);
+  const location = useLocation();
   const navigate = useNavigate();
   const [property, setProperty] = useState();
   const [checked, setChecked] = useState<boolean>(false);
@@ -74,6 +82,8 @@ const AddMoveIn = () => {
   const [ownerImgUrl, setOwnerImgUrl] = useState("");
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const [propertyUnits, setPropertyUnits] = useState([]);
+  const [imageArray, setImageArray] = useState([])
+  const [legalList, setLegalList] = useState([])
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "Draft",
@@ -111,35 +121,65 @@ const AddMoveIn = () => {
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [propertyName, setPropertyName] = useState('')
+
   useEffect(() => {
-    getProperties();
-    setFormValues((prevData) => ({
-      ...prevData,
-      "status": "Active",
-    }));
-  }, []);
+    const data = async () => {
+      const res = await fetchMaintenance(location.state)
+      const propertyData = res?.data?.data;
+      console.log(propertyData,"jyu")
+      if (propertyData) {
+        // Fill all the fields with the fetched data
+        setFormValues((prevData) => ({
+          ...prevData,
+          property: propertyData?.name,
+          propertyName: propertyData?.custom_property,
+          // propertyType: propertyData?.custom_type,
+          propertyLocation: propertyData?.custom_location__area,
+          propertyCity: propertyData?.custom_unit_city,
+          propertyCountry: propertyData?.custom_unit_country,
+          propertyRent: propertyData?.custom_property_rent,
+          propertyUnits: propertyData?.custom_unit_no,
+          sqFoot: propertyData?.custom_sqfoot,
+          sqMeter: propertyData?.custom_sqmeter,
+          priceSqMeter: propertyData.custom_pricesqmeter,
+          priceSqFt: propertyData.custom_pricesqft,
+          // propertyStatus: propertyData?.status,
+          // propertyDoc: propertyData?.custom_image,
+          ownerName: propertyData?.custom_supplier,
+          ownerContact: propertyData?.custom_contact_number_of_supplier,
+          ownerEmail: propertyData?.custom_email,
+          ownerType: propertyData?.custom_owner_type,
+          comment: propertyData?.custom_comment_box,
+          customerName: propertyData?.custom_customer,
+          status: propertyData?.custom_statusmi,
+          customerContact: propertyData?.custom_contact_number_of_customer,
+          customerEmail: propertyData?.custom_customer_email,
+          customerType: propertyData?.custom_customer_type,
+          startDate: propertyData?.custom_start_date,
+          endDate: propertyData?.custom_end_date,
+          legalReason:propertyData?.custom_legal_reason
+        }));
 
-  const getProperties = async () => {
-    // const res = await getPropertyList();
-    const res = await getTenantLeaseList()
-    const item = res?.data?.data;
-    const mergedData = item.reduce((acc, item) => {
-      const existingProperty = acc.find(obj => obj.property === item.property);
-      if (existingProperty) {
-        existingProperty.custom_number_of_unit.push(item.custom_number_of_unit);
-        existingProperty.names.push(item.name);
-      } else {
-        acc.push({
-          property: item.property,
-          custom_number_of_unit: [item.custom_number_of_unit],
-          names: [item.name]
-        });
       }
-      return acc;
-    }, []);
-    setPropertyList(mergedData);
-  };
+      if (propertyData?.custom_attachment_table?.length > 0) {
+        const imageArray = propertyData?.custom_attachment_table?.map((item) => item.image);
+        setImageArray(imageArray)
+      }
+    }
+    data()
 
+  }, [location.state])
+  useEffect(() => {
+    getLegalReasonList();
+
+  }, [])
+  const getLegalReasonList = async () => {
+    const res = await fetchLegalReason();
+    console.log(res,"nhy")
+    const item = res?.data?.data;
+    let dropdownData = [...item.map((p) => ({ name: p.name })), { name:'Add new +', isButton: true }];
+    setLegalList(dropdownData);
+  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues((prevData) => ({
@@ -149,99 +189,9 @@ const AddMoveIn = () => {
   };
 
 
-  function getCustomNumberOfUnit(propertyName) {
-    const propertyData = propertyList.find(item => item.property === propertyName);
-    return propertyData ? propertyData.custom_number_of_unit : null;
-  }
-
-  useEffect(() => {
-    const data = async () => {
-      const res = await fetchTenancyContract(propertyName)
-      const propertyData = res?.data?.data;
-      if (propertyData) {
-        // Fill all the fields with the fetched data
-        setFormValues((prevData) => ({
-          ...prevData,
-          property: propertyData?.property,
-          propertyName: propertyData?.name,
-          propertyType: propertyData?.custom_type,
-          propertyLocation: propertyData?.custom_location__area,
-          propertyCity: propertyData?.custom_city,
-          propertyCountry: propertyData?.custom_country,
-          propertyRent: propertyData?.rent_amount_to_pay,
-          propertyUnits: propertyData?.custom_number_of_unit,
-          sqFoot: propertyData?.custom_price__rent_annually / propertyData?.custom_price_sq_ft,
-          sqMeter: propertyData?.custom_price__rent_annually / propertyData?.custom_price_sq_m,
-          priceSqMeter: propertyData.custom_price_sq_m,
-          priceSqFt: propertyData.custom_price_sq_ft,
-          // propertyStatus: propertyData?.status,
-          propertyDoc: propertyData?.custom_image,
-          ownerName: propertyData?.custom_name_of_owner,
-          ownerContact: propertyData?.custom_contact_number_of_owner,
-          ownerEmail: propertyData?.custom_owner_email,
-          ownerType: propertyData?.custom_type_of_owner,
-
-          customerName: propertyData?.lease_customer,
-          customerContact: propertyData?.custom_contact_number,
-          customerEmail: propertyData?.custom_email,
-          customerType: propertyData?.custom_customer_type,
-          startDate: propertyData?.start_date,
-          endDate: propertyData?.end_date
-
-        }));
-
-      }
-    }
-    data()
-  }, [propertyName])
-
-  function getNameFromCustomNumber(customNumber) {
-    // Loop through each property object
-    for (const item of propertyList) {
-      // Check if custom_number_of_unit contains the value
-      const index = item.custom_number_of_unit.indexOf(customNumber);
-      if (index !== -1) {
-        return item.names[index];  // Return the corresponding name
-      }
-    }
-    return null;  // Return null if custom_number_of_unit is not found
-  }
 
   const handleDropDown = async (name, item) => {
-    if (name === "propertyName") {
 
-      setFormValues((prevData) => ({
-        ...prevData,
-        propertyName: '',
-        propertyType: '',
-        propertyLocation: '',
-        propertyCity: '',
-        propertyCountry: '',
-        propertyRent: '',
-        propertyUnits: '',
-        sqFoot: '',
-        sqMeter: '',
-        priceSqMeter: '',
-        priceSqFt: '',
-        // propertyStatus: propertyData?.status,
-        propertyDoc: '',
-        ownerName: '',
-        ownerContact: '',
-        ownerEmail: '',
-        ownerType: '',
-
-        customerName: '',
-        customerContact: '',
-        customerEmail: '',
-        customerType: '',
-      }));
-      const units = getCustomNumberOfUnit(item);
-      setPropertyUnits(units || []);
-    }
-    if (name === "propertyUnits") {
-      const name = getNameFromCustomNumber(item);
-      setPropertyName(name)
-    }
     setFormValues((prevData) => ({
       ...prevData,
       [name]: item,
@@ -250,19 +200,19 @@ const AddMoveIn = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
-
+    const imageData = imgUrls?.length > 0 ? imgUrls.map((imgUrl) => ({ image: imgUrl })) : imageArray.map((imgUrl) => ({ image: imgUrl }));
     try {
       console.log("API Data => ", formValues);
-      const res = await createCase({
+      const res = await updateCase({
         // ...formValues,
-        custom_status: "Move In",
+        custom_status: "Legal",
         custom_unit_no: formValues?.propertyUnits,
-        custom_property: formValues?.property,
+        custom_property: formValues?.propertyName,
         custom_customer: formValues?.customerName,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
-        custom_statusmi: formValues?.status,
+        custom_statusmi: '',
+        custom_statusmo: '',
         custom_comment_box: formValues?.comment,
         custom_attachment_table: imageData,
         custom_location__area: formValues?.propertyLocation,
@@ -280,29 +230,139 @@ const AddMoveIn = () => {
         custom_contact_number_of_customer: formValues?.customerContact,
         custom_customer_email: formValues?.customerEmail,
         custom_customer_type: formValues?.customerType,
-        // custom_supplier:formValues?.
+        custom_damage_location: formValues?.damageLocation,
+        custom_description: formValues?.description,
+        custom_legal_reason: formValues?.legalReason
 
-      }); //import from API
+      }, formValues?.property); //import from API
       if (res) {
-        navigate("/movein");
+        navigate("/legal");
       }
     } catch (err) {
       console.log(err);
     }
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+    const [newLegal, setNewLegal] = useState("");
+    const handleAddNewLegal =async () => {
+      if (newLegal.trim()) {
+        const updatedLegalList = [...legalList]; // Create a copy of the list
+updatedLegalList.splice(legalList.length - 1, 0, { name: newLegal }); // Insert at second last index
+setLegalList(updatedLegalList); // Update the state
+        const createLegalReasons=await createLegalReason({"custom_name":newLegal});
+        setFormValues((prevValues) => ({
+          ...prevValues,
+          legalReason: newLegal,
+        }));
+        setNewLegal(""); // Clear input field after adding
+        setIsModalOpen(false); // Close modal
+      }
+    };
+  
+    const handleInputChange = (e) => {
+      setNewLegal(e.target.value);
+    };
 
-
+  const selectStyle = {
+    input: {
+      border: "1px solid #ccdaff",
+      backgroundColor: "#ffffff",
+      color: "#000",
+      padding: "20px 12px",
+      borderRadius: "5px",
+    },
+    dropdown: {
+      backgroundColor: "#ffffff",
+      color: "#000",
+    },
+  };
   return (
     <main>
       <div className="flex">
+        {isModalOpen && (
+          <>
+            {/* Overlay with blur effect */}
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+                backdropFilter: "blur(5px)", // Blur effect for the background
+                zIndex: 9999, // Behind the modal
+              }}
+              onClick={() => setIsModalOpen(false)} // Close modal if user clicks on the overlay
+            />
+
+            {/* Modal */}
+            <div
+              style={{
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)", // Center the modal
+                padding: "20px",
+                backgroundColor: "white",
+                borderRadius: "8px",
+                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                zIndex: 10000, // Ensure modal is on top
+              }}
+            >
+              <h3>Add New Legal Reason</h3>
+              <input
+                type="text"
+                value={newLegal}
+                onChange={handleInputChange}
+                placeholder="Enter Legal Reason"
+                autoFocus
+                style={{
+                  marginBottom: "10px",
+                  padding: "5px",
+                  width: "100%",
+                }}
+              />
+              <div>
+                <button
+                  onClick={handleAddNewLegal}
+                  style={{
+                    marginRight: "10px",
+                    padding: "5px 10px",
+                    backgroundColor: "#4CAF50", // Green color for the Add button
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Add
+                </button>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  style={{
+                    padding: "5px 10px",
+                    backgroundColor: "#f44336", // Red color for the Cancel button
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </>
+        )}
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
-            <Header name="Move IN" />
+            <Header name="Legal" />
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
-                {"Move In > Add New"}
+                {"Legal > Add New"}
               </p>
             </div>
             <div>
@@ -316,83 +376,18 @@ const AddMoveIn = () => {
                       </span>
                       <span className="pb-1">Details</span>
                     </p>
-                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-                      <MantineSelect
-                        label="Property Name"
-                        placeholder="Select Property"
-                        data={propertyList.map((item) => ({
-                          value: item?.property,
-                          label: item?.property,
-                        }))}
-                        value={formValues.propertyName}
-                        onChange={(value) => {
-                          handleDropDown("propertyName", value)
-                        }
-                        }
-                        styles={{
-                          label: {
-                            marginBottom: "7px",
-                            color: "#7C8DB5",
-                            fontSize: "16px",
-                          },
-                          input: {
-                            border: "1px solid #CCDAFF",
-                            borderRadius: "8px",
-                            padding: "24px",
-                            fontSize: "16px",
-                            color: "#1A202C",
-                          },
-                          dropdown: {
-                            backgroundColor: "white",
-                            borderRadius: "8px",
-                            border: "1px solid #E2E8F0",
-                          },
-                        }}
 
-                      />
-
-                      {Add_TenancyContractProperty.map(
-                        ({ label, name, type, values }) =>
-                          type === "mantineSelect" ? (
-                            <MantineSelect
-                              label={label}
-                              placeholder={label}
-                              data={propertyUnits}
-                              value={formValues.propertyUnits}
-                              onChange={(value) =>
-                                handleDropDown("propertyUnits", value)
-                              }
-                              styles={{
-                                label: {
-                                  marginBottom: "7px",
-                                  color: "#7C8DB5",
-                                  fontSize: "16px",
-                                },
-                                input: {
-                                  border: "1px solid #CCDAFF",
-                                  borderRadius: "8px",
-                                  padding: "24px",
-                                  fontSize: "16px",
-                                  color: "#1A202C",
-                                },
-                                dropdown: {
-                                  backgroundColor: "white",
-                                  borderRadius: "8px",
-                                  border: "1px solid #E2E8F0",
-                                },
-                              }}
-
-                            />
-                          ) : (
-                            <></>
-                          )
-                      )}
-                    </div>
                   </div>
 
                   {formValues?.propertyName && formValues?.propertyUnits && (<>
                     {/* Property Details */}
                     <div className="grid grid-cols-2 gap-4">
+                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                        <label className="block">Property Name : {formValues.propertyName}</label>
+                      </div>
+                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                        <label className="block">Unit Number : {formValues.propertyUnits}</label>
+                      </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                         <label className="block">Location : {formValues.propertyLocation}</label>
                       </div>
@@ -430,16 +425,16 @@ const AddMoveIn = () => {
                     <div className="grid grid-cols-2 gap-4">
 
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Customer Name : {formValues.customerName}</label>
+                        <label className="block">customer Name : {formValues.customerName}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Customer Email : {formValues.customerEmail}</label>
+                        <label className="block">customer Email : {formValues.customerEmail}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Customer Contact : {formValues.customerContact}</label>
+                        <label className="block">customer Contact : {formValues.customerContact}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Customer Type : {formValues.customerType}</label>
+                        <label className="block">customer Type : {formValues.customerType}</label>
                       </div>
                     </div>
 
@@ -454,68 +449,68 @@ const AddMoveIn = () => {
                     <div className="grid grid-cols-2 gap-4">
 
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Name : {formValues.ownerName}</label>
+                        <label className="block">owner Name : {formValues.ownerName}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Email : {formValues.ownerEmail}</label>
+                        <label className="block">owner Email : {formValues.ownerEmail}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Contact : {formValues.ownerContact}</label>
+                        <label className="block">owner Contact : {formValues.ownerContact}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Type : {formValues.ownerType}</label>
+                        <label className="block">owner Type : {formValues.ownerType}</label>
                       </div>
                     </div>
-
-
-
-                    {/* Comment box */}
-                    <div className="mt-5">
-                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                        <span className="pb-1 border-b border-[#7C8DB5]">
-                          Comment
-                        </span>
-                      </p>
-                      <textarea
-                        id="comment"
-                        name="comment"
-                        value={formValues.comment}
-                        onChange={
-                          handleChange
-                        }
-                        rows={8}
-                        className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
-                      ></textarea>
-                    </div>
-                    {/* status */}
+                    {/* Legal Reason */}
                     <div className="mt-5 mb-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Status
+                          Legal Reason
                         </span>
 
                       </p>
-                      {statusSelect.map(({ label, name, type, values }) => (
-                        <Select
-                          onValueChange={(value) =>
-                            handleDropDown(name, value)
-                          }
-                          value={formValues[name]}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-3">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ))}</div>
+                      <Select
+                  placeholder="Select Legal Reason"
+                  data={legalList.map((p) => p.name)}
+                  clearable
+                  value={formValues?.legalReason}
+                  onChange={(value) => {
+                    if (value === "Add new +") {
+                      // Handle button click
+                      setIsModalOpen(true);
+                      console.log("Add New clicked");
+                      // Add your logic here to open a modal or add a new item
+                    } else {
+                      handleDropDown("legalReason", value);
+                    }
+                  }}
+                  styles={selectStyle}
+                />
+                      </div>
+                    
+
+
+
+
+                    {imageArray?.length > 0 && (<>
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Attachments
+                        </span>
+                      </p>
+                      <div className="grid grid-cols-2 gap-4 w-25% h-25%">
+
+                        {imageArray.map((value) =>
+                          <img
+                            className="w-50px h-50px rounded-md"
+                            src={value
+                              ? `https://propms.erpnext.syscort.com/${value}`
+                              : "/defaultProperty.jpeg"}
+                            alt="propertyImg"
+                          />
+                        )}
+
+                      </div></>)}
                     {/* Attachment */}
                     <div className="mt-5 mb-5">
                       <CustomFileUpload
@@ -539,4 +534,4 @@ const AddMoveIn = () => {
   );
 };
 
-export default AddMoveIn;
+export default EditLegal;

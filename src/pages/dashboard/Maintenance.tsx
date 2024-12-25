@@ -34,6 +34,7 @@ const Maintenance = () => {
 
   const getData = async () => {
     const maintenanceList = await getMaintenanceList();
+    console.log(maintenanceList,"ngh")
     setMaintenanceList(maintenanceList?.data?.data || []);
     setFilteredMaintenanceList(maintenanceList?.data?.data || []);
 
@@ -172,7 +173,7 @@ const Maintenance = () => {
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link
-                                to={"/contracts/edit"}
+                                to={"/maintenance/edit"}
                                 state={item.name}
                                 className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
                               >

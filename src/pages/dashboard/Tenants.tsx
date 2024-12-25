@@ -14,17 +14,18 @@ import { VscFilter } from "react-icons/vsc";
 import { img_group } from "../../assets";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { useEffect, useState } from "react";
-import { getTenantList, getTenantsFromAPI } from "../../api";
+import { deleteCustomer, getTenantList, getTenantsFromAPI } from "../../api";
 
 const Tenants = () => {
   const [tenantList, setTenantList] = useState<any[]>([]);
-
+  const [error,setError]=useState('')
   useEffect(() => {
+    setError('')
     getData();
   }, []);
 
   const getData = async () => {
-    const unitList = await getTenantsFromAPI(`?fields=["*"]`);
+    const unitList = await getTenantsFromAPI(`?fields=["*"]&order_by=creation desc`);
     console.log("unitlist", unitList);
     setTenantList(unitList?.data?.data);
   };
@@ -87,6 +88,8 @@ const Tenants = () => {
             </div>
             <div className="my-4 p-4">
               <div className="overflow-x-auto">
+              <span className="flex justify-center text-red-500">{error}</span>
+
                 <table className="min-w-full">
                   <thead>
                     <tr className="text-sonicsilver text-center">
@@ -142,7 +145,16 @@ const Tenants = () => {
                                   />
                                 </Link>
                               </button>
-                              <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
+                              <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
+                                try{
+                                                                                          await deleteCustomer(item.customer_name)
+                                }
+                                catch(e){
+                                  setError(`Cannot delete ${item.customer_name} because it is linked`)
+                                  console.log(e?.response?.data?._server_messages)
+                                }
+                                                                                          getData()
+                                                                                        }}>
                                 <MdDeleteForever
                                   size={20}
                                   className="text-[#EB4335]"

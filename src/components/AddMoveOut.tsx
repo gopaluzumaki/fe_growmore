@@ -178,7 +178,7 @@ const AddMoveOut = () => {
           propertyDoc: propertyData?.custom_image,
           ownerName: propertyData?.custom_name_of_owner,
           ownerContact: propertyData?.custom_contact_number_of_owner,
-          onwerEmail: propertyData?.custom_owner_email,
+          ownerEmail: propertyData?.custom_owner_email,
           ownerType: propertyData?.custom_type_of_owner,
 
           customerName: propertyData?.lease_customer,
@@ -227,7 +227,7 @@ const AddMoveOut = () => {
         propertyDoc: '',
         ownerName: '',
         ownerContact: '',
-        onwerEmail: '',
+        ownerEmail: '',
         ownerType: '',
 
         customerName: '',

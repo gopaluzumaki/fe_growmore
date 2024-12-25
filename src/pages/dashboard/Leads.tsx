@@ -14,7 +14,7 @@ import { VscFilter } from "react-icons/vsc";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { img_group } from "../../assets";
 import { useEffect, useState } from "react";
-import { getLeadList } from "../../api";
+import { deleteLead, getLeadList } from "../../api";
 
 const Leads = () => {
   const [leadList, setLeadList] = useState<any[]>([]);
@@ -110,13 +110,12 @@ const Leads = () => {
                           <td className="p-2 py-3">{item.company}</td>
                           <td className="p-2 py-3">
                             <div
-                              className={`p-1 rounded ${
-                                item.status === "Rented"
+                              className={`p-1 rounded ${item.status === "Rented"
                                   ? "bg-[#FFEC1C] text-black"
                                   : item.status === "Open"
-                                  ? "bg-[#34A853] text-white"
-                                  : "bg-[#EB4335] text-white"
-                              }`}
+                                    ? "bg-[#34A853] text-white"
+                                    : "bg-[#EB4335] text-white"
+                                }`}
                             >
                               {item.status}
                             </div>
@@ -133,7 +132,10 @@ const Leads = () => {
                                   />
                                 </button>
                               </Link>
-                              <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
+                              <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
+                                await deleteLead(item.name)
+                                getData()
+                              }}>
                                 <MdDeleteForever
                                   size={20}
                                   className="text-[#EB4335]"

@@ -20,8 +20,9 @@ import { getOwnerList } from "../../api";
 
 const Owners = () => {
   const [ownerList, setOwnerList] = useState<any[]>([]);
-
+  const [error,setError]=useState('')
   useEffect(() => {
+    setError('')
     getData();
   }, []);
 
@@ -91,6 +92,8 @@ const Owners = () => {
               </div>
             </div>
           </div>
+          <span className="flex justify-center text-red-500">{error}</span>
+
           <div className="my-4 grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] gap-10 rounded-xl">
             {ownerList.map((item, i) => (
               <OwnerCard
@@ -103,6 +106,8 @@ const Owners = () => {
                 totalProperty={item.custom_number_of_property}
                 totalUnit={item.custom_number_of_units}
                 img={demo_avatar}
+                getData={getData}
+                setError={setError}
               />
             ))}
           </div>
