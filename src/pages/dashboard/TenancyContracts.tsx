@@ -18,6 +18,7 @@ import {
   getPropertyList,
   getTenantList,
   getOwnerList,
+  deleteTanencyContract,
 } from "../../api";
 
 interface Unit {
@@ -78,7 +79,6 @@ const TenancyContracts = () => {
   }, []);
 
   const getData = async () => {
-
     const unitListRes = await getTenancyContractList();
     const propertyListRes = await getPropertyList();
     const tenantListRes = await getTenantList();
@@ -358,6 +358,10 @@ const TenancyContracts = () => {
                                 <MdDeleteForever
                                   size={20}
                                   className="text-[#EB4335]"
+                                  onClick={async () => {
+                                    await deleteTanencyContract(item.name);
+                                    getData();
+                                  }}
                                 />
                               </button>
                             </div>

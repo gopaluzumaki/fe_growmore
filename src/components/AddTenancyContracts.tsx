@@ -578,7 +578,7 @@ const AddTenancyContracts = () => {
       const res = await createTanencyContract({
         ...formValues,
         ...reminderValues,
-        lease_status: formValues?.leaseStatus,
+        lease_status: formValues?.tenancyStatus,
         //contract details
         // lease_status:"Draft",
         custom_no_of__cheques: formValues.numberOfChecks,
@@ -710,12 +710,11 @@ const AddTenancyContracts = () => {
                     <MantineSelect
                       label="Status"
                       placeholder="Status"
-                      name="tenancyStatus"
                       data={["Active", "Draft"]}
-                      value={formValues["leaseStatus"]}
                       onChange={(value) =>
-                        setFormValues({ ...formValues, ["leaseStatus"]: value })
+                        handleDropDown("tenancyStatus", value)
                       }
+                      value={formValues.tenancyStatus}
                       styles={{
                         label: {
                           marginBottom: "7px",
@@ -1546,7 +1545,9 @@ const AddTenancyContracts = () => {
                                   >
                                     {item.chequeNumber}
                                   </Table.Td>
-                                  <Table.Td>{item.rent}</Table.Td>
+                                  <Table.Td>
+                                    {parseFloat(item.rent).toFixed(2)}
+                                  </Table.Td>
                                   <Table.Td>{item.chequeDate}</Table.Td>
                                   <Table.Td>{item.bankName}</Table.Td>
                                   <Table.Td>Active</Table.Td>
@@ -1558,7 +1559,7 @@ const AddTenancyContracts = () => {
                       </form>
                     </section>
                   ) : (
-                    ""
+                    <></>
                   )}
 
                   {formValues.leaseStatus !== "Draft" ? (

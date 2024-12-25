@@ -289,6 +289,20 @@ export const updateTanencyContract = async (
   return response;
 };
 
+export const deleteTanencyContract = async (name: string) => {
+  const response = await axios.delete(
+    API_URL.Create_Lease + `/${name}`,
+
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
+  return response;
+};
+
 export const fetchTenant = async (params: any) => {
   const response = await axios.get(`${API_URL.Create_Tenant}/${params}`, {
     auth: {
