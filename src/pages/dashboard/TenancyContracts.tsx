@@ -38,6 +38,7 @@ const TenancyContracts = () => {
 
   const getData = async () => {
     const unitList = await getTenancyContractList();
+    console.log(unitList?.data?.data,"bgy")
     setUnitList(unitList?.data?.data);
   };
 

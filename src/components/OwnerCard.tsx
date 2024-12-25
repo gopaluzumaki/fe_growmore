@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
-import { MdOutlineEdit } from "react-icons/md";
+import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { deleteBooking, deleteOwner } from "../api";
 
 type OwnerCardProps = {
   name: string;
@@ -11,6 +12,8 @@ type OwnerCardProps = {
   location: string;
   img: string | ReactNode;
   redirect: string;
+  getData?: any;
+  setError?: any;
 };
 
 const OwnerCard = ({
@@ -22,6 +25,8 @@ const OwnerCard = ({
   totalProperty,
   totalUnit,
   redirect,
+  getData,
+  setError
 }: OwnerCardProps) => {
   return (
     <main>
@@ -29,13 +34,31 @@ const OwnerCard = ({
         <div className="flex justify-between items-center gap-2">
           <div className="flex items-center gap-2">
             {/* <img className="rounded-md" src={img as string} alt="propertyImg" /> */}
+
             <p className="text-[20px] font-semibold">{name}</p>
           </div>
-          <Link to={`/${redirect}/edit`} state={name}>
-            <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 mr-1.5 rounded cursor-pointer">
-              <MdOutlineEdit size={20} className="text-[#D09D4A]" />
+          <div>
+            <Link to={`/${redirect}/edit`} state={name}>
+              <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 mr-1 rounded cursor-pointer">
+                <MdOutlineEdit size={20} className="text-[#D09D4A]" />
+              </button>
+            </Link>
+            <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
+              try {
+                redirect==="booking"?await deleteBooking(name):await deleteOwner(name)
+              }
+              catch (e) {
+                setError(`Cannot delete ${name} because it is linked`)
+                console.log(e?.response?.data?._server_messages)
+              }
+              getData()
+            }}>
+              <MdDeleteForever
+                size={20}
+                className="text-[#EB4335]"
+              />
             </button>
-          </Link>
+          </div>
         </div>
         <div className="text-[15px] flex flex-col mx-2 my-4 mt-2">
           <p className="flex gap-2 py-3 border-b border-[#E6EDFF]">

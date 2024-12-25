@@ -27,9 +27,14 @@ import {
   getTenantLeaseList,
   fetchTenancyContract,
   createCase,
+  fetchDamageLocation,
+  createDamageLocation,
+  fetchDataFromLease,
+  fetchLegalReason,
+  createLegalReason,
 } from "../api";
 import {
-  Select,
+  // Select,
   SelectContent,
   SelectGroup,
   SelectItem,
@@ -43,6 +48,7 @@ import { useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
 import CustomFileUpload from "./ui/CustomFileUpload";
+import { Select } from "@mantine/core";
 
 const AddLegal = () => {
   const statusSelect = [
@@ -112,11 +118,21 @@ const AddLegal = () => {
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [propertyName, setPropertyName] = useState('')
   const [unitDetails, setUnitDetails] = useState([])
+  const [legalList,setLegalList]=useState([])
+  const [showCustomerSection,setShowCustomerSection]=useState(false)
+
   useEffect(() => {
     getProperties();
-
+    getLegalReasonList();
   }, []);
 
+
+  const getLegalReasonList = async () => {
+    const res = await fetchLegalReason();
+    const item = res?.data?.data;
+    let dropdownData = [...item.map((p) => ({ name: p.name })), { name:'Add new +', isButton: true }];
+    setLegalList(dropdownData);
+  };
   const getProperties = async () => {
     const res = await getPropertyList();
     const item = res?.data?.data;
@@ -131,16 +147,23 @@ const AddLegal = () => {
     }));
   };
 
-  function getCustomNumberOfUnit(propertyName) {
-    const propertyData = propertyList.find(item => item.property === propertyName);
-    return propertyData ? propertyData.custom_number_of_unit : null;
-  }
-
   function getUnitData(customUnitNumber) {
     return unitDetails.filter(item => item.custom_unit_number === customUnitNumber);
   }
   useEffect(() => {
+    setShowCustomerSection(false)
+    const getData=async()=>{
+
+      setFormValues((prevData) => ({
+        ...prevData,
+        legalReason:'',
+      }));
     const res = getUnitData(formValues?.propertyUnits)[0]
+    const result=await fetchDataFromLease(formValues?.propertyName,formValues?.propertyUnits)
+    const datas=result?.data?.data[0]
+    if(result?.data?.data?.length>0){
+      setShowCustomerSection(true)
+    }
     setFormValues((prevData) => ({
       ...prevData,
       propertyType: res?.type,
@@ -155,22 +178,57 @@ const AddLegal = () => {
       priceSqMeter: res?.custom_price_square_m,
       priceSqFt: res?.custom_price_square_ft,
       ownerName: res?.unit_owner,
-
+      ownerContact: datas?.custom_contact_number_of_owner,
+      ownerEmail: datas?.custom_owner_email,
+      ownerType: datas?.custom_type_of_owner,
+      customerName: datas?.lease_customer,
+          customerContact: datas?.custom_contact_number,
+          customerEmail: datas?.custom_email,
+          customerType: datas?.custom_customer_type,
+          startDate: datas?.start_date,
+          endDate: datas?.end_date
       // propertyDoc: propertyData?.custom_thumbnail_image,
-    }));
+    }));}
+    getData()
   }, [formValues?.propertyUnits])
-
   const handleDropDown = async (name, item) => {
+    setShowCustomerSection(false)
+
     if (name === "propertyName") {
       // Fetch property data based on the selected property
+      setFormValues((prevData) => ({
+        ...prevData,
+        propertyName: '',
+        propertyType: '',
+        propertyLocation: '',
+        propertyCity: '',
+        propertyCountry: '',
+        propertyRent: '',
+        propertyUnits: '',
+        sqFoot: '',
+        sqMeter: '',
+        priceSqMeter: '',
+        priceSqFt: '',
+        // propertyStatus: propertyData?.status,
+        propertyDoc: '',
+        ownerName: '',
+        ownerContact: '',
+        ownerEmail: '',
+        ownerType: '',
 
+        customerName: '',
+        customerContact: '',
+        customerEmail: '',
+        customerType: '',
+        legalReason:''
+      }));
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
-
       if (propertyData) {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
+          property:propertyData?.name1,
           propertyName: propertyData?.name,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
@@ -203,13 +261,14 @@ const AddLegal = () => {
       console.log("API Data => ", formValues);
       const res = await createCase({
         // ...formValues,
-        custom_status: "Move In",
+        custom_status: "Legal",
         custom_unit_no: formValues?.propertyUnits,
         custom_property: formValues?.property,
         custom_customer: formValues?.customerName,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
-        custom_statusmi: formValues?.status,
+        custom_statusmi: '',
+        custom_statusmo:'',
         custom_comment_box: formValues?.comment,
         custom_attachment_table: imageData,
         custom_location__area: formValues?.propertyLocation,
@@ -222,27 +281,137 @@ const AddLegal = () => {
         custom_pricesqft: formValues?.priceSqFt,
         custom_supplier: formValues?.ownerName,
         custom_contact_number_of_supplier: formValues?.ownerContact,
-        custom_email: formValues?.onwerEmail,
+        custom_email: formValues?.ownerEmail,
         custom_owner_type: formValues?.ownerType,
         custom_contact_number_of_customer: formValues?.customerContact,
         custom_customer_email: formValues?.customerEmail,
         custom_customer_type: formValues?.customerType,
+        custom_legal_reason:formValues?.legalReason,
         // custom_supplier:formValues?.
 
       }); //import from API
       if (res) {
-        navigate("/movein");
+        navigate("/legal");
       }
     } catch (err) {
       console.log(err);
     }
   };
 
+  const selectStyle = {
+    input: {
+      border: "1px solid #ccdaff",
+      backgroundColor: "#ffffff",
+      color: "#000",
+      padding: "20px 12px",
+      borderRadius: "5px",
+    },
+    dropdown: {
+      backgroundColor: "#ffffff",
+      color: "#000",
+    },
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [newLegal, setNewLegal] = useState("");
+  const handleAddNewLegal =async () => {
+    if (newLegal.trim()) {
+      const updatedLegalList = [...legalList]; // Create a copy of the list
+updatedLegalList.splice(legalList.length - 1, 0, { name: newLegal }); // Insert at second last index
+setLegalList(updatedLegalList); // Update the state
+      const createLegalReasons=await createLegalReason({"custom_name":newLegal});
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        legalReason: newLegal,
+      }));
+      setNewLegal(""); // Clear input field after adding
+      setIsModalOpen(false); // Close modal
+    }
+  };
 
+  const handleInputChange = (e) => {
+    setNewLegal(e.target.value);
+  };
 
   return (
     <main>
       <div className="flex">
+      {isModalOpen && (
+  <>
+    {/* Overlay with blur effect */}
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+        backdropFilter: "blur(5px)", // Blur effect for the background
+        zIndex: 9999, // Behind the modal
+      }}
+      onClick={() => setIsModalOpen(false)} // Close modal if user clicks on the overlay
+    />
+    
+    {/* Modal */}
+    <div
+      style={{
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)", // Center the modal
+        padding: "20px",
+        backgroundColor: "white",
+        borderRadius: "8px",
+        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        zIndex: 10000, // Ensure modal is on top
+      }}
+    >
+      <h3>Add New Legal Reason</h3>
+      <input
+        type="text"
+        value={newLegal}
+        onChange={handleInputChange}
+        placeholder="Enter Legal Reason"
+        autoFocus
+        style={{
+          marginBottom: "10px",
+          padding: "5px",
+          width: "100%",
+        }}
+      />
+      <div>
+        <button
+          onClick={handleAddNewLegal}
+          style={{
+            marginRight: "10px",
+            padding: "5px 10px",
+            backgroundColor: "#4CAF50", // Green color for the Add button
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Add
+        </button>
+        <button
+          onClick={() => setIsModalOpen(false)}
+          style={{
+            padding: "5px 10px",
+            backgroundColor: "#f44336", // Red color for the Cancel button
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </>
+)}
+
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
@@ -368,7 +537,7 @@ const AddLegal = () => {
 
 
                     {/* customer */}
-                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                    {showCustomerSection&&(<><p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                       <span className="pb-1 border-b border-[#7C8DB5]">
                         Customer
                       </span>
@@ -388,7 +557,7 @@ const AddLegal = () => {
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                         <label className="block">Customer Type : {formValues.customerType}</label>
                       </div>
-                    </div>
+                    </div></>)}
 
                     {/* owner */}
 
@@ -413,35 +582,46 @@ const AddLegal = () => {
                         <label className="block">Owner Type : {formValues.ownerType}</label>
                       </div>
                     </div>
-                    {/* status */}
+
+
+
+                    
+                    {/* Legal Reason */}
                     <div className="mt-5 mb-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Status
+                          Legal Reason
                         </span>
 
                       </p>
-                      {statusSelect.map(({ label, name, type, values }) => (
-                        <Select
-                          onValueChange={(value) =>
-                            handleDropDown(name, value)
-                          }
-                          value={formValues[name]}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-3">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ))}</div>
+                      <Select
+                  placeholder="Select Legal Reason"
+                  data={legalList.map((p) => p.name)}
+                  clearable
+                  value={formValues?.legalReason}
+                  onChange={(value) => {
+                    if (value === "Add new +") {
+                      // Handle button click
+                      setIsModalOpen(true);
+                      // Add your logic here to open a modal or add a new item
+                    } else {
+                      handleDropDown("legalReason", value);
+                    }
+                  }}
+                  styles={selectStyle}
+                />
+                      </div>
+                    
+
+                    {/* Attachment */}
+                    <div className="mt-5 mb-5">
+                      <CustomFileUpload
+                        onFilesUpload={(urls) => {
+                          setImgUrls(urls);
+                        }}
+                        type="*"
+                      />
+                    </div>
                     <div className="max-w-[100px]">
                       <PrimaryButton title="Save" />
                     </div>

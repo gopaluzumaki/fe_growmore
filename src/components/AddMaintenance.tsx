@@ -29,6 +29,7 @@ import {
   createCase,
   fetchDamageLocation,
   createDamageLocation,
+  fetchDataFromLease,
 } from "../api";
 import {
   // Select,
@@ -116,20 +117,16 @@ const AddMaintenance = () => {
   const [propertyName, setPropertyName] = useState('')
   const [unitDetails, setUnitDetails] = useState([])
   const [damageLocationList,setDamageLocationList]=useState([])
+  const [showCustomerSection,setShowCustomerSection]=useState(false)
   useEffect(() => {
     getProperties();
     getDamageLocationList();
   }, []);
-  // const getDamageLocation=await fetchDamageLocation();
-  // const getLegalReason=await fetchLegalReason();
-  // const createDamageLocations=await createDamageLocation("");
-  // const createLegalReasons=await createLegalReason("")
-  // console.log(getDamageLocation,"hi")
 
   const getDamageLocationList = async () => {
     const res = await fetchDamageLocation();
     const item = res?.data?.data;
-    let dropdownData = [...item.map((p) => ({ name: p.name })), { name:'Add new', isButton: true }];
+    let dropdownData = [...item.map((p) => ({ name: p.name })), { name:'Add new +', isButton: true }];
     setDamageLocationList(dropdownData);
   };
   const getProperties = async () => {
@@ -146,15 +143,26 @@ const AddMaintenance = () => {
     }));
   };
 
-  function getCustomNumberOfUnit(propertyName) {
-    const propertyData = propertyList.find(item => item.property === propertyName);
-    return propertyData ? propertyData.custom_number_of_unit : null;
-  }
   function getUnitData(customUnitNumber) {
     return unitDetails.filter(item => item.custom_unit_number === customUnitNumber);
   }
   useEffect(() => {
+    setShowCustomerSection(false)
+
+    const getData=async()=>{
+      setFormValues((prevData) => ({
+        ...prevData,
+        damageLocation:'',
+        description:'',
+        originalissue:''
+      }));
+    
     const res = getUnitData(formValues?.propertyUnits)[0]
+    const result=await fetchDataFromLease(formValues?.propertyName,formValues?.propertyUnits)
+    const datas=result?.data?.data[0]
+    if(result?.data?.data?.length>0){
+      setShowCustomerSection(true)
+    }
     setFormValues((prevData) => ({
       ...prevData,
       propertyType: res?.type,
@@ -169,22 +177,58 @@ const AddMaintenance = () => {
       priceSqMeter: res?.custom_price_square_m,
       priceSqFt: res?.custom_price_square_ft,
       ownerName: res?.unit_owner,
-
+      ownerContact: datas?.custom_contact_number_of_owner,
+      ownerEmail: datas?.custom_owner_email,
+      ownerType: datas?.custom_type_of_owner,
+      customerName: datas?.lease_customer,
+          customerContact: datas?.custom_contact_number,
+          customerEmail: datas?.custom_email,
+          customerType: datas?.custom_customer_type,
+          startDate: datas?.start_date,
+          endDate: datas?.end_date
       // propertyDoc: propertyData?.custom_thumbnail_image,
-    }));
+    }));}
+    getData()
   }, [formValues?.propertyUnits])
-
   const handleDropDown = async (name, item) => {
+    setShowCustomerSection(false)
     if (name === "propertyName") {
       // Fetch property data based on the selected property
+      setFormValues((prevData) => ({
+        ...prevData,
+        propertyName: '',
+        propertyType: '',
+        propertyLocation: '',
+        propertyCity: '',
+        propertyCountry: '',
+        propertyRent: '',
+        propertyUnits: '',
+        sqFoot: '',
+        sqMeter: '',
+        priceSqMeter: '',
+        priceSqFt: '',
+        // propertyStatus: propertyData?.status,
+        propertyDoc: '',
+        ownerName: '',
+        ownerContact: '',
+        ownerEmail: '',
+        ownerType: '',
 
+        customerName: '',
+        customerContact: '',
+        customerEmail: '',
+        customerType: '',
+        damageLocation:'',
+        description:'',
+        originalissue:''
+      }));
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
-
       if (propertyData) {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
+          property:propertyData?.name1,
           propertyName: propertyData?.name,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
@@ -217,13 +261,14 @@ const AddMaintenance = () => {
       console.log("API Data => ", formValues);
       const res = await createCase({
         // ...formValues,
-        custom_status: "Move In",
+        custom_status: "Maintenance",
         custom_unit_no: formValues?.propertyUnits,
         custom_property: formValues?.property,
         custom_customer: formValues?.customerName,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
-        custom_statusmi: formValues?.status,
+        custom_statusmi: '',
+        custom_statusmo:'',
         custom_comment_box: formValues?.comment,
         custom_attachment_table: imageData,
         custom_location__area: formValues?.propertyLocation,
@@ -236,16 +281,19 @@ const AddMaintenance = () => {
         custom_pricesqft: formValues?.priceSqFt,
         custom_supplier: formValues?.ownerName,
         custom_contact_number_of_supplier: formValues?.ownerContact,
-        custom_email: formValues?.onwerEmail,
+        custom_email: formValues?.ownerEmail,
         custom_owner_type: formValues?.ownerType,
         custom_contact_number_of_customer: formValues?.customerContact,
         custom_customer_email: formValues?.customerEmail,
         custom_customer_type: formValues?.customerType,
+        custom_damage_location:formValues?.damageLocation,
+        custom_description:formValues?.description,
+        custom_original_issue:formValues?.originalissue
         // custom_supplier:formValues?.
 
       }); //import from API
       if (res) {
-        navigate("/movein");
+        navigate("/maintenance");
       }
     } catch (err) {
       console.log(err);
@@ -269,7 +317,10 @@ const AddMaintenance = () => {
   const [newLocation, setNewLocation] = useState("");
   const handleAddNewLocation =async () => {
     if (newLocation.trim()) {
-      setDamageLocationList([...damageLocationList, { name: newLocation }]);
+      const updatedDamageLocationList = [...damageLocationList]; // Create a copy of the list
+updatedDamageLocationList.splice(damageLocationList.length - 1, 0, { name: newLocation }); // Insert at second last index
+setDamageLocationList(updatedDamageLocationList); // Update the state
+
       const createDamageLocations=await createDamageLocation({"custom_location":newLocation});
       setFormValues((prevValues) => ({
         ...prevValues,
@@ -489,7 +540,7 @@ const AddMaintenance = () => {
 
 
                     {/* customer */}
-                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                    {showCustomerSection&&(<><p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                       <span className="pb-1 border-b border-[#7C8DB5]">
                         Customer
                       </span>
@@ -510,7 +561,7 @@ const AddMaintenance = () => {
                         <label className="block">Customer Type : {formValues.customerType}</label>
                       </div>
                     </div>
-
+</>)}
                     {/* owner */}
 
                     <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
@@ -555,7 +606,7 @@ const AddMaintenance = () => {
                         className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                       ></textarea>
                     </div>
-                    {/* status */}
+                    {/* Damage Location */}
                     <div className="mt-5 mb-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
@@ -569,10 +620,9 @@ const AddMaintenance = () => {
                   clearable
                   value={formValues?.damageLocation}
                   onChange={(value) => {
-                    if (value === "Add new") {
+                    if (value === "Add new +") {
                       // Handle button click
                       setIsModalOpen(true);
-                      console.log("Add New clicked");
                       // Add your logic here to open a modal or add a new item
                     } else {
                       handleDropDown("damageLocation", value);

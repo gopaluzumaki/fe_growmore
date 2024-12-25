@@ -17,8 +17,11 @@ import { getPropertyList } from "../../api";
 
 const Property = () => {
   const [propertyList, setPropertyList] = useState([]);
+  const [error,setError]=useState('')
 
   useEffect(() => {
+    setError('')
+
     getData();
   }, []);
 
@@ -68,6 +71,8 @@ const Property = () => {
               </Select>
             </div>
           </div>
+          <span className="flex justify-center text-red-500">{error}</span>
+
           <div className="my-4 p-6 grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] gap-10 border border-[#E6EDFF] rounded-xl">
             {propertyList?.map((item: any, i) => (
               <PropertyCard
@@ -82,6 +87,9 @@ const Property = () => {
                 units={item?.number_of_units}
                 availUnits={item?.number_of_units}
                 path={`/property/${item?.property}`}
+                getData={getData}
+                id={item.name}
+                setError={setError}
               />
             ))}
           </div>

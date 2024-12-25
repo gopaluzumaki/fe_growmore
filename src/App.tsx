@@ -39,6 +39,9 @@ import AddLegal from "./components/AddLegal";
 import AddMaintenance from "./components/AddMaintenance";
 import EditMoveIn from "./components/EditMoveIn";
 import EditMoveOut from "./components/EditMoveOut";
+import EditMaintenance from "./components/EditMaintenance";
+import EditLegal from "./components/EditLegal";
+import Profile from "./components/Profile";
 
 function App() {
   const router = createBrowserRouter(
@@ -79,9 +82,11 @@ function App() {
         <Route path="/moveout/add" element={<AddMoveOut />} />
         <Route path="/moveout/edit" element={<EditMoveOut />} />
         <Route path="/legal/add" element={<AddLegal />} />
-        <Route path="/legal/edit" element={<EditTenancyContracts />} />
+        <Route path="/legal/edit" element={<EditLegal />} />
         <Route path="/maintenance/add" element={<AddMaintenance />} />
-        <Route path="/maintenance/edit" element={<EditTenancyContracts />} />
+        <Route path="/maintenance/edit" element={<EditMaintenance />} />
+        <Route path="/profile" element={<Profile />} />
+
       </Route>
     )
   );

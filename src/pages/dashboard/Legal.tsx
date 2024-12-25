@@ -34,6 +34,7 @@ const Legal = () => {
 
   const getData = async () => {
     const legalList = await getLegalList();
+    console.log(legalList,"nht")
     setLegalList(legalList?.data?.data || []);
     setFilteredLegalList(legalList?.data?.data || []);
 
@@ -168,12 +169,12 @@ const Legal = () => {
                           <td className="p-2 py-3">
                             {item.owner}
                           </td>
-                          <td className="p-2 py-3">{item.custom_reason}</td>
+                          <td className="p-2 py-3">{item.custom_legal_reason}</td>
 
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link
-                                to={"/contracts/edit"}
+                                to={"/legal/edit"}
                                 state={item.name}
                                 className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
                               >
