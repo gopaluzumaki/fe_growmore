@@ -876,46 +876,53 @@ const EditTenancyContracts = () => {
         custom_bank_name: formValues.bankName,
         custom_price__rent_annually: formValues.anualPriceRent,
 
-        lease_item: tableData.map((item) => {
-          return {
-            lease_item: "Rent",
-            frequency: "Monthly",
-            currency_code: "AED",
-            document_type: "Sales Invoice",
-            parentfield: "lease_item",
-            parenttype: "Lease",
-            doctype: "Lease Item",
-            custom_cheque_no: item.chequeNumber,
-            custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
-            amount: item.rent,
-            custom_annual_amount: formValues.anualPriceRent,
-            custom_cheque_status: "active status",
-            custom_duration: item.duration,
-            custom_comments: item.comments,
-            custom_approval_status: item.approvalStatus,
-            custom_rent_amount: item.rent,
-            custom_status: item.status,
-            custom_name_on_the_cheque: item.cheque,
-          };
-        }),
+        lease_item:
+          tableData && tableData.length > 0
+            ? tableData.map((item) => {
+                return {
+                  lease_item: "Rent",
+                  frequency: "Monthly",
+                  currency_code: "AED",
+                  document_type: "Sales Invoice",
+                  parentfield: "lease_item",
+                  parenttype: "Lease",
+                  doctype: "Lease Item",
+                  custom_cheque_no: item.chequeNumber,
+                  custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
+                  amount: item.rent,
+                  custom_annual_amount: formValues.anualPriceRent,
+                  custom_cheque_status: "active status",
+                  custom_duration: item.duration,
+                  custom_comments: item.comments,
+                  custom_approval_status: item.approvalStatus,
+                  custom_rent_amount: item.rent,
+                  custom_status: item.status,
+                  custom_name_on_the_cheque: item.cheque,
+                };
+              })
+            : [
+                {
+                  custom_comments: "",
+                },
+              ],
       };
       if (formValues.tenancyStatus === "Renewal") {
-        const res = await updateTanencyContract(location.state, {
-          lease_status: "Renewal",
-        }); //import from API
-
-        if (res) {
-          navigate("/contracts");
-        }
-      } else {
         const updateRes = await updateTanencyContract(location.state, {
-          ...payload,
+          lease_status: "Renewal",
         }); //import from API
         const createRes = await createTanencyContract({
           ...payload,
           lease_status: "Active",
         }); //import from API
         if (updateRes && createRes) {
+          navigate("/contracts");
+        }
+      } else {
+        const res = await updateTanencyContract(location.state, {
+          ...payload,
+        }); //import from API
+
+        if (res) {
           navigate("/contracts");
         }
       }
