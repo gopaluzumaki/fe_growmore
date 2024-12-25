@@ -30,16 +30,23 @@ export const API_URL = {
     "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22,%22start_date%22,%22end_date%22,%22custom_rent_amount_to_pay%22]",
   Tenancy_contract_pdf:
     "http://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=",
-  MoveIn_List: 'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Move In"]]',
-  MoveOut_List: 'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Move Out"]]',
-  Maintenance_list: 'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Maintenance"]]',
-  Legal_list: 'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Legal"]]',
-  Tenant_Lease_List: 'https://propms.erpnext.syscort.com/api/resource/Lease?filters=[["lease_status","=","Active"]]&fields=[%22property%22,%22name%22,%22custom_number_of_unit%22]',
-  Create_Case: 'https://propms.erpnext.syscort.com/api/resource/Maintenance',
-  Delete_Maintenance: 'https://propms.erpnext.syscort.com/api/resource/Maintenance',
-  Update_Case: 'https://propms.erpnext.syscort.com/api/resource/Maintenance',
-  Damage_Location:'https://propms.erpnext.syscort.com/api/resource/Damage Location',
-  Legal_Data:'https://propms.erpnext.syscort.com/api/resource/Legal Reason'
+  MoveIn_List:
+    'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Move In"]]',
+  MoveOut_List:
+    'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Move Out"]]',
+  Maintenance_list:
+    'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Maintenance"]]',
+  Legal_list:
+    'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Legal"]]',
+  Tenant_Lease_List:
+    'https://propms.erpnext.syscort.com/api/resource/Lease?filters=[["lease_status","=","Active"]]&fields=[%22property%22,%22name%22,%22custom_number_of_unit%22]',
+  Create_Case: "https://propms.erpnext.syscort.com/api/resource/Maintenance",
+  Delete_Maintenance:
+    "https://propms.erpnext.syscort.com/api/resource/Maintenance",
+  Update_Case: "https://propms.erpnext.syscort.com/api/resource/Maintenance",
+  Damage_Location:
+    "https://propms.erpnext.syscort.com/api/resource/Damage Location",
+  Legal_Data: "https://propms.erpnext.syscort.com/api/resource/Legal Reason",
 };
 
 export const loginUser = async (credentials: { usr: string; pwd: string }) => {
@@ -78,7 +85,6 @@ export const getUnitCount = async () => {
 };
 
 export const getTenantsFromAPI = async (params) => {
-  console.log("getTenantsFromAPI", `${API_URL.Create_Tenant}/${params}`);
   const response = await axios.get(`${API_URL.Create_Tenant}${params}`, {
     auth: {
       username: APP_AUTH.USERNAME,
@@ -192,10 +198,6 @@ export const fetchUnit = async (params: any) => {
 };
 
 export const fetchProperyForEdit = async (params: any) => {
-  console.log(
-    "redas",
-    `https://propms.erpnext.syscort.com/app/property/view/List?name1=${params}`
-  );
   const response = await axios.get(
     `https://propms.erpnext.syscort.com/app/property/view/List?name1=${params}`,
     {
@@ -343,7 +345,6 @@ export const createBooking = async (bookingData: any) => {
 };
 
 export const updateBooking = async (name: string, bookingData: any) => {
-  console.log("updating booking name", name);
   const response = await axios.put(
     API_URL.Create_Booking + `/${name}`,
     bookingData,
@@ -392,7 +393,6 @@ export const fetchBooking = async (params: any) => {
 };
 
 export const updateLead = async (name: string, LeadData: any) => {
-  console.log("updating Lead name", name);
   const response = await axios.put(API_URL.Create_Lead + `/${name}`, LeadData, {
     auth: {
       username: APP_AUTH.USERNAME,
@@ -402,7 +402,6 @@ export const updateLead = async (name: string, LeadData: any) => {
   return response;
 };
 export const updateTenant = async (name: string, TenantData: any) => {
-  console.log("updating Tenant name", name);
   const response = await axios.put(
     API_URL.Create_Tenant + `/${name}`,
     TenantData,
@@ -416,7 +415,6 @@ export const updateTenant = async (name: string, TenantData: any) => {
   return response;
 };
 export const updateOwner = async (name: string, OwnerData: any) => {
-  console.log("updating Owner name", name);
   const response = await axios.put(
     API_URL.Create_Owner + `/${name}`,
     OwnerData,
@@ -501,12 +499,15 @@ export const createCase = async (caseData: any) => {
 };
 
 export const deleteCase = async (params) => {
-  const response = await axios.delete(`${API_URL.Delete_Maintenance}/${params}`, {
-    auth: {
-      username: APP_AUTH.USERNAME,
-      password: APP_AUTH.PASSWORD,
-    },
-  });
+  const response = await axios.delete(
+    `${API_URL.Delete_Maintenance}/${params}`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
   return response;
 };
 
@@ -530,7 +531,7 @@ export const fetchDamageLocation = async () => {
   return response;
 };
 
-export const fetchLegalReason= async () => {
+export const fetchLegalReason = async () => {
   const response = await axios.get(`${API_URL.Legal_Data}`, {
     auth: {
       username: APP_AUTH.USERNAME,
@@ -556,7 +557,7 @@ export const updateCase = async (caseData: any, param: string) => {
 
 export const createDamageLocation = async (caseData: any) => {
   // {"custom_location":"hwii"}
-  const response = await axios.post(API_URL.Damage_Location,caseData , {
+  const response = await axios.post(API_URL.Damage_Location, caseData, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -566,11 +567,15 @@ export const createDamageLocation = async (caseData: any) => {
 };
 
 export const createLegalReason = async (caseData: any) => {
-  const response = await axios.post(API_URL.Legal_Data, {"custom_name":"hiwi"}, {
-    auth: {
-      username: APP_AUTH.USERNAME,
-      password: APP_AUTH.PASSWORD,
-    },
-  });
+  const response = await axios.post(
+    API_URL.Legal_Data,
+    { custom_name: "hiwi" },
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
   return response;
 };

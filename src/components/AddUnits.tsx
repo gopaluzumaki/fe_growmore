@@ -41,6 +41,7 @@ interface FormData {
   bathrooms: string;
   balcony: string;
   view: string;
+  premises: string;
   ownerName: string;
   tenantName: string;
   description: string;
@@ -103,6 +104,7 @@ const AddUnits = () => {
     bathrooms: "",
     balcony: "",
     view: "",
+    premises:"",
     ownerName: "",
     description: "",
   });
@@ -237,6 +239,7 @@ const AddUnits = () => {
         common_bathroom: formData?.bathrooms,
         custom_balcony_available: formData?.balcony,
         custom_view: formData?.view,
+        custom_premise_no:formData?.premises,
         unit_owner: formData?.ownerName,
         custom_thumbnail_image: imgUrl,
         is_group: 0,
@@ -266,6 +269,7 @@ const AddUnits = () => {
         common_bathroom: formData?.bathrooms,
         custom_balcony_available: formData?.balcony,
         custom_view: formData?.view,
+        custom_premise_no: formData?.premises,
         unit_owner: formData?.ownerName,
         custom_thumbnail_image: imgUrl,
         is_group: 0,

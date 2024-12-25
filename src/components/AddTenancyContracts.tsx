@@ -26,6 +26,8 @@ import {
   createTanencyContract,
   uploadFile,
   fetchUnitsfromProperty,
+  // getUnitList,
+  fetchUnit,
 } from "../api";
 import {
   Select,
@@ -37,10 +39,27 @@ import {
 } from "../components/ui/select";
 import Checkbox from "./CheckBox";
 import CustomDatePicker from "./CustomDatePicker";
-import { em, Select as MantineSelect, Table, Modal , Textarea} from "@mantine/core";
+import {
+  em,
+  Select as MantineSelect,
+  Table,
+  Modal,
+  Textarea,
+  Checkbox as MantineCkeckbox,
+} from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
+import { useListState, randomId } from "@mantine/hooks";
+
+const initialValues = [
+  { label: "Move In", checked: true, key: randomId() },
+  { label: "Move Out", checked: true, key: randomId() },
+  { label: "Payment Remainder", checked: true, key: randomId() },
+  { label: "Birthday Message", checked: true, key: randomId() },
+  { label: "60 Days Renewal Notice", checked: true, key: randomId() },
+  { label: "90 Days Renewal Notice", checked: true, key: randomId() },
+];
 
 const AddTenancyContracts = () => {
   const navigate = useNavigate();
@@ -69,7 +88,7 @@ const AddTenancyContracts = () => {
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "",
-
+    leaseStatus: "",
     numberOfChecks: "",
     bankName: "",
     chequeNo: "",
@@ -88,6 +107,12 @@ const AddTenancyContracts = () => {
     propertyUnits: "",
     propertyStatus: "",
     propertyDoc: "",
+
+    sqFoot: "",
+    sqMeter: "",
+    priceSqMeter: "",
+    priceSqFt: "",
+    custom_premises_no: "",
 
     tenantName: "",
     tenantContact: "",
@@ -119,6 +144,7 @@ const AddTenancyContracts = () => {
   const [selectedCheckbox, setSelectedCheckbox] = useState<string | null>(null);
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
+  const [values, handlers] = useListState(initialValues);
 
   const handleOwnerFileChange = async (
     event: ChangeEvent<HTMLInputElement>
@@ -241,27 +267,23 @@ const AddTenancyContracts = () => {
   const getProperties = async () => {
     const res = await getPropertyList();
     const item = res?.data?.data;
-    console.log(item);
     setPropertyList(item);
   };
 
   const getTenants = async () => {
     const res = await getTenantList();
     const item = res?.data?.data;
-    console.log(item);
     setTenantList(item);
   };
 
   const getOwnerData = async () => {
     const res = await getOwnerList();
     const item = res?.data?.data;
-    console.log(item);
     setOwnerList(item);
   };
 
   useEffect(() => {
     let chequeDate: any = [];
-    // console.log("formValues.chequeDate", formValues.chequeDate);
     chequeDate.push(formValues.chequeDate);
     if (formValues.numberOfChecks === "2") {
       let currentDate = new Date(formValues.chequeDate);
@@ -332,7 +354,6 @@ const AddTenancyContracts = () => {
       formValues?.chequeDate
     ) {
       setTableData((prevData) => {
-        console.log("chequeDate", chequeDate);
         const newData = [];
 
         for (let i = 0; i < +formValues.numberOfChecks; i++) {
@@ -390,11 +411,9 @@ const AddTenancyContracts = () => {
   const handleDropDown = async (name, item) => {
     if (name === "propertyName") {
       // Fetch property data based on the selected property
-
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
 
-      console.log("property data", propertyData);
       if (propertyData) {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
@@ -409,10 +428,12 @@ const AddTenancyContracts = () => {
         }));
         const response = await fetchUnitsfromProperty(propertyData?.name);
         const data = response?.data?.data;
-        const values = data?.map((item) => item.custom_unit_number);
-        setPropertyUnits((prev) => {
-          return values;
-        });
+        const val = data?.map((item) => ({
+          custom_unit_number: item.custom_unit_number,
+          name: item.name,
+        }));
+
+        setPropertyUnits(val);
       }
     }
 
@@ -421,7 +442,6 @@ const AddTenancyContracts = () => {
       const res = await fetchTenant(item);
       const tenantData = res?.data?.data;
       if (tenantData) {
-        console.log("tenantData", tenantData);
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
           ...prevData,
@@ -487,7 +507,21 @@ const AddTenancyContracts = () => {
       }
     }
 
-    console.log("name", name, item);
+    if (name === "propertyUnits" && item != undefined) {
+      const unit_List = await fetchUnit(item);
+      const unit_List_Data = unit_List?.data?.data;
+      if (unit_List_Data) {
+        setFormValues((prevData) => ({
+          ...prevData,
+          sqFoot: unit_List_Data?.custom_square_ft_of_unit,
+          sqMeter: unit_List_Data?.custom_square_m_of_unit,
+          priceSqMeter: unit_List_Data?.custom_price_square_m,
+          priceSqFt: unit_List_Data?.custom_price_square_ft,
+          custom_premises_no: unit_List_Data?.custom_premise_no,
+        }));
+      }
+    }
+
     if (name === "numberOfChecks") {
       setNumberOfChecks(item);
     }
@@ -514,7 +548,6 @@ const AddTenancyContracts = () => {
     if (value === "Select Owner") {
       return;
     }
-    console.log(value);
 
     setFormValues((prevData) => ({
       ...prevData,
@@ -525,11 +558,29 @@ const AddTenancyContracts = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log("API Data => ", formValues);
+      const remindersMapping = {
+        "Move In": "custom_move_in",
+        "Move Out": "custom_move_out",
+        "Payment Remainder": "custom_payment_remainder",
+        "Birthday Message": "custom_birthday_message",
+        "60 Days Renewal Notice": "custom_60_days_renewal_notice",
+        "90 Days Renewal Notice": "custom_90_days_renewal_notice",
+      };
+
+      const reminderValues = values.reduce((acc, value) => {
+        const fieldName = remindersMapping[value.label];
+        if (fieldName) {
+          acc[fieldName] = value.checked ? 1 : 0;
+        }
+        return acc;
+      }, {});
+
       const res = await createTanencyContract({
         ...formValues,
-        lease_status: "Draft",
+        ...reminderValues,
+        lease_status: formValues?.leaseStatus,
         //contract details
+        // lease_status:"Draft",
         custom_no_of__cheques: formValues.numberOfChecks,
         bank_name: formValues.bankName,
         cheque_no: formValues.chequeNo,
@@ -548,35 +599,13 @@ const AddTenancyContracts = () => {
         custom_property_no: formValues.custom_property_no,
         custom_premises_no: formValues.custom_premises_no,
         custom_mode_of_payment: formValues.custom_mode_of_payment,
-        lease_item: [
-          {
-            lease_item: "Rent",
-            frequency: "Monthly",
-            currency_code: "AED",
-            document_type: "Sales Invoice",
-            parentfield: "lease_item",
-            parenttype: "Lease",
-            doctype: "Lease Item",
-            custom_cheque_no: "",
-            custom_cheque_date:"",
-            amount: "",
-            custom_annual_amount: formValues.anualPriceRent,
-            custom_cheque_status: "active status",
-            custom_duration: formValues.duration,
-            custom_comments: formValues.comments,
-            custom_approval_status: formValues?.approvalStatus,
-            custom_rent_amount: "rent",
-            custom_status: formValues?.status,
-            custom_name_on_the_cheque: formValues?.cheque,
-          },
-        ],
 
         // property details
         property: formValues.propertyName,
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_number_of_unit: formValues.propertyUnits,
+        custom_number_of_unit: formValues.propertyUnits?.name,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,
@@ -604,7 +633,30 @@ const AddTenancyContracts = () => {
         custom_mobile_number: formValues.ownerMobile,
         custom_image: ownerImgUrl,
         custom_signature_of_owner: formValues.ownerSign,
-      }); //import from API
+
+        lease_item: tableData.map((item) => {
+          return {
+            lease_item: "Rent",
+            frequency: "Monthly",
+            currency_code: "AED",
+            document_type: "Sales Invoice",
+            parentfield: "lease_item",
+            parenttype: "Lease",
+            doctype: "Lease Item",
+            custom_cheque_no: item.chequeNumber,
+            custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
+            amount: item.rent,
+            custom_annual_amount: formValues.anualPriceRent,
+            custom_cheque_status: "active status",
+            custom_duration: item.duration,
+            custom_comments: item.comments,
+            custom_approval_status: item.approvalStatus,
+            custom_rent_amount: item.rent,
+            custom_status: item.status,
+            custom_name_on_the_cheque: item.cheque,
+          };
+        }),
+      });
       if (res) {
         navigate("/contracts");
       }
@@ -632,8 +684,6 @@ const AddTenancyContracts = () => {
     // ))}
   };
 
-  console.log("add - formValues :", formValues)
-
   return (
     <main>
       <div className="flex">
@@ -654,13 +704,10 @@ const AddTenancyContracts = () => {
                       label="Status"
                       placeholder="Status"
                       name="tenancyStatus"
-                      data={[
-                        "Active",
-                        "Draft",                        
-                      ]}
-                      value={formValues[name]}
+                      data={["Active", "Draft"]}
+                      value={formValues["leaseStatus"]}
                       onChange={(value) =>
-                        setFormValues({ ...formValues, [name]: value })
+                        setFormValues({ ...formValues, ["leaseStatus"]: value })
                       }
                       styles={{
                         label: {
@@ -687,8 +734,8 @@ const AddTenancyContracts = () => {
                     <div></div>
                   </div>
 
-                   {/* Contract Details */}
-                   <div>
+                  {/* Contract Details */}
+                  <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
                       <span className="pb-1 border-b border-[#7C8DB5]">
                         Contract
@@ -790,7 +837,7 @@ const AddTenancyContracts = () => {
                       )}
                     </div> */}
                   </div>
-                 
+
                   {/* property details */}
                   <div>
                     <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">
@@ -898,11 +945,18 @@ const AddTenancyContracts = () => {
                             <MantineSelect
                               label={label}
                               placeholder={label}
-                              data={propertyUnits}
-                              value={formValues.propertyUnits}
-                              onChange={(value) =>
-                                handleDropDown("propertyUnits", value)
-                              }
+                              data={propertyUnits.map((unit) => ({
+                                value: unit.name,
+                                label: unit.custom_unit_number,
+                                unit,
+                              }))}
+                              value={formValues.propertyUnits?.name || ""}
+                              onChange={(value) => {
+                                const selectedUnit = propertyUnits.find(
+                                  (unit) => unit.name === value
+                                );
+                                handleDropDown("propertyUnits", selectedUnit);
+                              }}
                               styles={{
                                 label: {
                                   marginBottom: "7px",
@@ -946,8 +1000,8 @@ const AddTenancyContracts = () => {
                     </div>
                   </div>
 
-                   {/* owner details */}
-                   <div>
+                  {/* owner details */}
+                  <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
                       <span className="pb-1 border-b border-[#7C8DB5]">
                         Owner
@@ -1367,135 +1421,168 @@ const AddTenancyContracts = () => {
                     </div>
                   </div>
 
-                {
-                  formValues.custom_mode_of_payment === "Cheque" ?
-                  <section className="border-t-[1px] border-gray-500 mt-16">
-                    <form className="flex flex-col ">
-                      <div>
-                        <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
-                          <span className="pb-1 border-b border-[#7C8DB5]">
-                            Payment
-                          </span>
-                          <span className="pb-1">Details</span>
-                        </p>
-                        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
-                          {payment_details.map(
-                            ({ label, name, type, values }) =>
-                              type === "text" ? (
-                                <Input
-                                  key={name}
-                                  label={label}
-                                  name={name}
-                                  type={type}
-                                  value={formValues[name]}
-                                  onChange={handleChange}
-                                  borderd
-                                  bgLight
-                                />
-                              ) : type === "dropdown" ? (
-                                <Select
-                                  onValueChange={(item) =>
-                                    handleDropDown(name, item)
-                                  }
-                                >
-                                  <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
-                                    <div className="flex items-center">
-                                      <SelectValue placeholder={label} />
-                                    </div>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {values?.map((item, i) => (
-                                      <SelectItem key={i} value={item}>
-                                        {item}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              ) : type === "date" ? (
-                                <CustomDatePicker
-                                  selectedDate={formValues[name] as Date}
-                                  onChange={(date) =>
-                                    handleDateChange(name, date.toDateString())
-                                  }
-                                  label={label}
-                                  placeholder="Select Date"
-                                  value={formValues[name]}
-                                />
-                              ) : type === "mantineSelect" ? (
-                                <MantineSelect
-                                  label={label}
-                                  placeholder={label}
-                                  data={values}
-                                  value={formValues[name]}
-                                  onChange={(value) =>
-                                    handleDropDown(name, value)
-                                  }
-                                  styles={{
-                                    label: {
-                                      marginBottom: "7px",
-                                      color: "#7C8DB5",
-                                      fontSize: "16px",
-                                    },
-                                    input: {
-                                      border: "1px solid #CCDAFF",
-                                      borderRadius: "8px",
-                                      padding: "24px",
-                                      fontSize: "16px",
-                                      color: "#1A202C",
-                                    },
-                                    dropdown: {
-                                      backgroundColor: "white",
-                                      borderRadius: "8px",
-                                      border: "1px solid #E2E8F0",
-                                    },
-                                  }}
-                                  searchable
-                                />
-                              ) : (
-                                <></>
-                              )
-                          )}
+                  {formValues.custom_mode_of_payment === "Cheque" ? (
+                    <section className="border-t-[1px] border-gray-500 mt-16">
+                      <form className="flex flex-col ">
+                        <div>
+                          <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+                            <span className="pb-1 border-b border-[#7C8DB5]">
+                              Payment
+                            </span>
+                            <span className="pb-1">Details</span>
+                          </p>
+                          <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                            {payment_details.map(
+                              ({ label, name, type, values }) =>
+                                type === "text" ? (
+                                  <Input
+                                    key={name}
+                                    label={label}
+                                    name={name}
+                                    type={type}
+                                    value={formValues[name]}
+                                    onChange={handleChange}
+                                    borderd
+                                    bgLight
+                                  />
+                                ) : type === "dropdown" ? (
+                                  <Select
+                                    onValueChange={(item) =>
+                                      handleDropDown(name, item)
+                                    }
+                                  >
+                                    <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                      <div className="flex items-center">
+                                        <SelectValue placeholder={label} />
+                                      </div>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {values?.map((item, i) => (
+                                        <SelectItem key={i} value={item}>
+                                          {item}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                ) : type === "date" ? (
+                                  <CustomDatePicker
+                                    selectedDate={formValues[name] as Date}
+                                    onChange={(date) =>
+                                      handleDateChange(
+                                        name,
+                                        date.toDateString()
+                                      )
+                                    }
+                                    label={label}
+                                    placeholder="Select Date"
+                                    value={formValues[name]}
+                                  />
+                                ) : type === "mantineSelect" ? (
+                                  <MantineSelect
+                                    label={label}
+                                    placeholder={label}
+                                    data={values}
+                                    value={formValues[name]}
+                                    onChange={(value) =>
+                                      handleDropDown(name, value)
+                                    }
+                                    styles={{
+                                      label: {
+                                        marginBottom: "7px",
+                                        color: "#7C8DB5",
+                                        fontSize: "16px",
+                                      },
+                                      input: {
+                                        border: "1px solid #CCDAFF",
+                                        borderRadius: "8px",
+                                        padding: "24px",
+                                        fontSize: "16px",
+                                        color: "#1A202C",
+                                      },
+                                      dropdown: {
+                                        backgroundColor: "white",
+                                        borderRadius: "8px",
+                                        border: "1px solid #E2E8F0",
+                                      },
+                                    }}
+                                    searchable
+                                  />
+                                ) : (
+                                  <></>
+                                )
+                            )}
+                          </div>
                         </div>
-                      </div>
-                      {tableData?.length > 0 && (
-                        <Table>
-                          <Table.Thead>
-                            <Table.Tr>
-                              <Table.Th>S.no.</Table.Th>
-                              <Table.Th>Cheque Number</Table.Th>
-                              <Table.Th>Rent</Table.Th>
-                              <Table.Th>Cheque Date</Table.Th>
-                              <Table.Th>Bank Name</Table.Th>
-                              <Table.Th>Status</Table.Th>
-                            </Table.Tr>
-                          </Table.Thead>
-                          <Table.Tbody>
-                            {tableData?.map((item, i) => (
-                              <Table.Tr key={i}>
-                                <Table.Td>{item.Sno}</Table.Td>
-                                <Table.Td
-                                  onClick={() => {
-                                    setSelectedCheque(item);
-                                    setPaymentDetailsModalOpen(true);
-                                  }}
-                                  className="text-blue-600 cursor-pointer "
-                                >
-                                  {item.chequeNumber}
-                                </Table.Td>
-                                <Table.Td>{item.rent}</Table.Td>
-                                <Table.Td>{item.chequeDate}</Table.Td>
-                                <Table.Td>{item.bankName}</Table.Td>
-                                <Table.Td>Active</Table.Td>
+                        {tableData?.length > 0 && (
+                          <Table>
+                            <Table.Thead>
+                              <Table.Tr>
+                                <Table.Th>S.no.</Table.Th>
+                                <Table.Th>Cheque Number</Table.Th>
+                                <Table.Th>Rent</Table.Th>
+                                <Table.Th>Cheque Date</Table.Th>
+                                <Table.Th>Bank Name</Table.Th>
+                                <Table.Th>Status</Table.Th>
                               </Table.Tr>
-                            ))}
-                          </Table.Tbody>
-                        </Table>
-                      )}
-                    </form>
-                  </section>
-                  :
-                  ""
-                }
+                            </Table.Thead>
+                            <Table.Tbody>
+                              {tableData?.map((item, i) => (
+                                <Table.Tr key={i}>
+                                  <Table.Td>{item.Sno}</Table.Td>
+                                  <Table.Td
+                                    onClick={() => {
+                                      setSelectedCheque(item);
+                                      setPaymentDetailsModalOpen(true);
+                                    }}
+                                    className="text-blue-600 cursor-pointer "
+                                  >
+                                    {item.chequeNumber}
+                                  </Table.Td>
+                                  <Table.Td>{item.rent}</Table.Td>
+                                  <Table.Td>{item.chequeDate}</Table.Td>
+                                  <Table.Td>{item.bankName}</Table.Td>
+                                  <Table.Td>Active</Table.Td>
+                                </Table.Tr>
+                              ))}
+                            </Table.Tbody>
+                          </Table>
+                        )}
+                      </form>
+                    </section>
+                  ) : (
+                    ""
+                  )}
+
+                  {formValues.leaseStatus === "Active" ? (
+                    <section className="my-20">
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Manage
+                        </span>
+                        <span className="pb-1">Notification</span>
+                      </p>
+                      <div>
+                        {values.map((value, index) => (
+                          <MantineCkeckbox
+                            mt="xs"
+                            ml={33}
+                            label={value.label}
+                            key={value.key}
+                            checked={value.checked}
+                            onChange={(event) => {
+                              handlers.setItemProp(
+                                index,
+                                "checked",
+                                event.currentTarget.checked
+                              );
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  ) : (
+                    ""
+                  )}
                   <div className="max-w-[100px] mt-16">
                     <PrimaryButton title="Save" />
                   </div>
@@ -1506,8 +1593,8 @@ const AddTenancyContracts = () => {
         </div>
       </div>
       <Modal
-        opened={paymentDetailsModalOpen}
-        onClose={() => setPaymentDetailsModalOpen(false)}
+        opened={paymentDetailsModalOpen !== null}
+        onClose={() => setPaymentDetailsModalOpen(null)}
         title=""
         // scrollAreaComponent={ScrollArea.Autosize}
         fullscreen={false}
@@ -1525,12 +1612,12 @@ const AddTenancyContracts = () => {
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(420px,1fr))] gap-4 mb-6">
               {cheque_number_form_details.map(({ label, name, type, values }) =>
-                type === "text" ? (
+                (type === "text") | (type === "number") ? (
                   <Input
                     key={name}
                     label={label}
                     name={name}
-                    type="text"
+                    type={type}
                     // value={
                     //   name === "bankName"
                     //     ? selectedCheque?.bankName || ""
@@ -1578,6 +1665,7 @@ const AddTenancyContracts = () => {
                   />
                 ) : type === "text-area" ? (
                   <Textarea
+                    value={formValues[name] || ""}
                     onChange={(e) =>
                       setFormValues({ ...formValues, [name]: e.target.value })
                     }
@@ -1589,6 +1677,28 @@ const AddTenancyContracts = () => {
                 ) : null
               )}
             </div>
+
+            <PrimaryButton
+              onClick={() => {
+                console.log("table Data", tableData);
+                const updatedTableData = [...tableData];
+                updatedTableData[paymentDetailsModalOpen].cheque =
+                  formValues.cheque;
+                updatedTableData[paymentDetailsModalOpen].status =
+                  formValues.status;
+                updatedTableData[paymentDetailsModalOpen].duration =
+                  formValues.duration;
+                updatedTableData[paymentDetailsModalOpen].comments =
+                  formValues.comments;
+                updatedTableData[paymentDetailsModalOpen].approvalStatus =
+                  formValues.approvalStatus;
+                setTableData(updatedTableData);
+                setPaymentDetailsModalOpen(null);
+                console.log("updated table data", updatedTableData);
+              }}
+              type="button"
+              title="Edit"
+            />
           </div>
           {/* <div className="pt-4">
             <PrimaryButton type="submit" title="Save Details" />

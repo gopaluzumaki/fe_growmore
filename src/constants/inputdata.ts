@@ -33,6 +33,7 @@ export const Add_Units = [
   { label: "No. of Bathrooms", name: "bathrooms", type: "text" },
   { label: "Balcony Available", name: "balcony", type: "text" },
   { label: "View", name: "view", type: "text" },
+  { label: "Premises Number", name: "premises", type: "text" },
   // { label: "Name of Owner", name: "ownerName", type: "text" },
 ];
 
@@ -277,7 +278,7 @@ export const cheque_number_form_details = [
   {
     label: "Duration",
     name: "duration",
-    type: "text",
+    type: "number",
   },
   {
     label: "Comments",
@@ -303,7 +304,12 @@ export const Add_Contract_Details = [
   { label: "Brokerage Amount", name: "brokerageAmt", type: "text" },
   { label: "Notice Period", name: "notice_period", type: "text" },
   // { label: "Property no", name: "custom_property_no", type: "text" },
-  { label: "Mode of Payment", name: "custom_mode_of_payment", type: "text", values:["Cash", "Cheque"] },
+  {
+    label: "Mode of Payment",
+    name: "custom_mode_of_payment",
+    type: "text",
+    values: ["Cash", "Cheque"],
+  },
 ];
 
 export const Add_TenancyContractProperty = [

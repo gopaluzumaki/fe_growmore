@@ -30,6 +30,7 @@ import {
   updateTanencyContract,
   fetchUnitsfromProperty,
   updateProperty,
+  fetchUnit,
 } from "../api";
 import {
   Select,
@@ -47,10 +48,21 @@ import {
   ScrollArea,
   Table,
   Textarea,
+  Checkbox as MantineCkeckbox,
 } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
+import { useListState, randomId } from "@mantine/hooks";
+
+const initialValues = [
+  { label: "Move In", checked: true, key: randomId() },
+  { label: "Move Out", checked: true, key: randomId() },
+  { label: "Payment Remainder", checked: true, key: randomId() },
+  { label: "Birthday Message", checked: true, key: randomId() },
+  { label: "60 Days Renewal Notice", checked: true, key: randomId() },
+  { label: "90 Days Renewal Notice", checked: true, key: randomId() },
+];
 
 const EditTenancyContracts = () => {
   const navigate = useNavigate();
@@ -103,6 +115,12 @@ const EditTenancyContracts = () => {
     propertyStatus: "",
     propertyDoc: "",
 
+    sqFoot: "",
+    sqMeter: "",
+    priceSqMeter: "",
+    priceSqFt: "",
+    custom_premises_no: "",
+
     tenantName: "",
     tenantContact: "",
     tenantEmail: "",
@@ -134,6 +152,7 @@ const EditTenancyContracts = () => {
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [selectedCheque, setSelectedCheque] = useState(null);
+  const [values, handlers] = useListState(initialValues);
 
   useEffect(() => {
     const fetchingBookedData = async () => {
@@ -141,20 +160,61 @@ const EditTenancyContracts = () => {
         try {
           const res = await fetchTenancyContract(location.state);
           const item = res?.data?.data;
-          console.log("tenancy contract item", item);
 
           if (item) {
             // Map lease items for nested fields
+            const mappedLeaseItems = item.lease_item.map((lease) => ({
+              chequeNo: lease.custom_cheque_no,
+              chequeDate: lease.custom_cheque_date,
+              cheque: lease.custom_name_on_the_cheque,
+              status: lease.custom_status,
+              duration: lease.custom_duration,
+              comments: lease.custom_comments,
+              approvalStatus: lease.custom_approval_status,
+            }));
+
+            const updatedValues = [
+              {
+                label: "Move In",
+                checked: item.custom_move_in === 1,
+                key: randomId(),
+              },
+              {
+                label: "Move Out",
+                checked: item.custom_move_out === 1,
+                key: randomId(),
+              },
+              {
+                label: "Payment Remainder",
+                checked: item.custom_payment_remainder === 1,
+                key: randomId(),
+              },
+              {
+                label: "Birthday Message",
+                checked: item.custom_birthday_message === 1,
+                key: randomId(),
+              },
+              {
+                label: "60 Days Renewal Notice",
+                checked: item.custom_60_days_renewal_notice === 1,
+                key: randomId(),
+              },
+              {
+                label: "90 Days Renewal Notice",
+                checked: item.custom_90_days_renewal_notice === 1,
+                key: randomId(),
+              },
+            ];
+
+            handlers.setState(updatedValues);
 
             setFormValues((prevData) => ({
               ...prevData,
+              chequeNo: mappedLeaseItems.map((item) => item.chequeNo).join(","),
+              chequeDate: mappedLeaseItems[0].chequeDate,
               tenancyStatus: item?.lease_status,
               bankName: item.custom_bank_name,
               numberOfChecks: item?.custom_no_of__cheques,
-              chequeNo: item.lease_item
-                .map((lease) => lease.custom_cheque_no)
-                .join(","),
-              chequeDate: item.lease_item[0]?.custom_cheque_date,
               startDate: item.start_date,
               endDate: item.end_date,
               anualPriceRent: item.custom_price__rent_annually + "",
@@ -196,13 +256,10 @@ const EditTenancyContracts = () => {
               ownerImage: item.custom_image,
               ownerSignature: item.custom_signature_of_owner,
 
-              cheque: item.lease_item[0].custom_name_on_the_cheque,
-              status: item.lease_item[0].custom_status,
-              duration: item.lease_item[0].custom_duration,
-              comments: item.lease_item[0].custom_comments,
-              approvalStatus: item.lease_item[0].custom_approval_status,
+              leaseItems: mappedLeaseItems, // Store mapped lease items
             }));
 
+            // Handle dropdowns
             if (item?.lease_customer)
               await handleDropDown("tenantName", item.lease_customer);
             if (item?.custom_name_of_owner)
@@ -222,6 +279,27 @@ const EditTenancyContracts = () => {
 
     fetchingBookedData();
   }, [location.state]);
+
+  useEffect(() => {
+    if (formValues.tenancyStatus === "Draft") {
+      const updatedValues = values.map((item) => {
+        return {
+          ...item,
+          checked: false,
+        };
+      });
+      handlers.setState(updatedValues);
+    } else {
+      const updatedValues = values.map((item) => {
+        return {
+          ...item,
+          checked: true,
+        };
+      });
+      handlers.setState(updatedValues);
+    }
+    return () => {};
+  }, [formValues.tenancyStatus]);
 
   const handleOwnerFileChange = async (
     event: ChangeEvent<HTMLInputElement>
@@ -344,27 +422,23 @@ const EditTenancyContracts = () => {
   const getProperties = async () => {
     const res = await getPropertyList();
     const item = res?.data?.data;
-    console.log(item);
     setPropertyList(item);
   };
 
   const getTenants = async () => {
     const res = await getTenantList();
     const item = res?.data?.data;
-    console.log(item);
     setTenantList(item);
   };
 
   const getOwnerData = async () => {
     const res = await getOwnerList();
     const item = res?.data?.data;
-    console.log(item);
     setOwnerList(item);
   };
 
   useEffect(() => {
     let chequeDate: any = [];
-    // console.log("formValues.chequeDate", formValues.chequeDate);
     chequeDate.push(formValues.chequeDate);
     if (formValues.numberOfChecks === "2") {
       let currentDate = new Date(formValues.chequeDate);
@@ -432,25 +506,48 @@ const EditTenancyContracts = () => {
       formValues?.anualPriceRent &&
       formValues?.bankName &&
       formValues?.chequeNo &&
-      formValues?.chequeDate
+      formValues?.chequeDate &&
+      formValues?.leaseItems?.length > 0
     ) {
-      setTableData((prevData) => {
+      // setTableData((prevData) => {
+      //   const newData = [];
+
+      //   for (let i = 0; i < +formValues.numberOfChecks; i++) {
+      //     newData.push({
+      //       rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+      //       chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
+      //       chequeDate: chequeDate[i],
+      //       bankName: formValues.bankName,
+      //       Sno: i,
+      //       cheque: formValues.cheque,
+      //       status: formValues.status,
+      //       duration: formValues.duration,
+      //       comments: formValues.comments,
+      //       approvalStatus: formValues.approvalStatus,
+      //     });
+      //   }
+      //   return newData;
+      // });
+
+      setTableData(() => {
         const newData = [];
 
-        for (let i = 0; i < +formValues.numberOfChecks; i++) {
+        // Populate table data from leaseItems
+        formValues.leaseItems.forEach((lease, index) => {
           newData.push({
             rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
-            chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
-            chequeDate: chequeDate[i],
+            chequeNumber: formValues.chequeNo.split(",")[index] ?? "",
+            chequeDate: chequeDate[index] ?? lease.chequeDate,
             bankName: formValues.bankName,
-            Sno: i,
-            cheque: formValues.cheque,
-            status: formValues.status,
-            duration: formValues.duration,
-            comments: formValues.comments,
-            approvalStatus: formValues.approvalStatus,
+            Sno: index + 1,
+            cheque: lease.cheque,
+            status: lease.status,
+            duration: lease.duration,
+            comments: lease.comments,
+            approvalStatus: lease.approvalStatus,
           });
-        }
+        });
+
         return newData;
       });
     }
@@ -460,6 +557,7 @@ const EditTenancyContracts = () => {
     formValues?.bankName,
     formValues?.chequeNo,
     formValues?.chequeDate,
+    formValues?.leaseItems,
   ]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -496,7 +594,6 @@ const EditTenancyContracts = () => {
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
 
-      console.log("property data", propertyData);
       if (propertyData) {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
@@ -510,13 +607,12 @@ const EditTenancyContracts = () => {
         }));
         const response = await fetchUnitsfromProperty(propertyData?.name);
         const data = response?.data?.data;
-        const values = data?.map((item) => ({
-          label: item.custom_unit_number,
-          value: item.name,
+        const val = data?.map((item) => ({
+          custom_unit_number: item.custom_unit_number,
+          name: item.name,
         }));
-        setPropertyUnits((prev) => {
-          return values;
-        });
+
+        setPropertyUnits(val);
       }
     }
 
@@ -525,7 +621,6 @@ const EditTenancyContracts = () => {
       const res = await fetchTenant(item);
       const tenantData = res?.data?.data;
       if (tenantData) {
-        console.log("tenantData", tenantData);
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
           ...prevData,
@@ -562,7 +657,6 @@ const EditTenancyContracts = () => {
       // Fetch tenant data based on the selected tenant
       const res = await fetchOwner(item);
       const ownerData = res?.data?.data;
-      console.log("ownerData", ownerData);
       if (ownerData) {
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
@@ -592,7 +686,21 @@ const EditTenancyContracts = () => {
       }
     }
 
-    console.log("name", name, item);
+    if (name === "propertyUnits" && item != undefined) {
+      const unit_List = await fetchUnit(item);
+      const unit_List_Data = unit_List?.data?.data;
+      if (unit_List_Data) {
+        setFormValues((prevData) => ({
+          ...prevData,
+          sqFoot: unit_List_Data?.custom_square_ft_of_unit,
+          sqMeter: unit_List_Data?.custom_square_m_of_unit,
+          priceSqMeter: unit_List_Data?.custom_price_square_m,
+          priceSqFt: unit_List_Data?.custom_price_square_ft,
+          custom_premises_no: unit_List_Data?.custom_premise_no,
+        }));
+      }
+    }
+
     if (name === "numberOfChecks") {
       setNumberOfChecks(item);
     }
@@ -619,7 +727,6 @@ const EditTenancyContracts = () => {
     if (value === "Select Owner") {
       return;
     }
-    console.log(value);
 
     setFormValues((prevData) => ({
       ...prevData,
@@ -630,7 +737,6 @@ const EditTenancyContracts = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log("API Data => ", formValues);
       if (formValues.tenancyStatus === "Move In") {
         const response = await updateProperty(
           { custom_status: "Occupied" },
@@ -642,12 +748,30 @@ const EditTenancyContracts = () => {
           formValues.propertyUnits
         );
       }
+
+      const remindersMapping = {
+        "Move In": "custom_move_in",
+        "Move Out": "custom_move_out",
+        "Payment Remainder": "custom_payment_remainder",
+        "Birthday Message": "custom_birthday_message",
+        "60 Days Renewal Notice": "custom_60_days_renewal_notice",
+        "90 Days Renewal Notice": "custom_90_days_renewal_notice",
+      };
+
+      const reminderValues = values.reduce((acc, value) => {
+        const fieldName = remindersMapping[value.label];
+        if (fieldName) {
+          acc[fieldName] = value.checked ? 1 : 0;
+        }
+        return acc;
+      }, {});
+
       const res = await updateTanencyContract(location.state, {
         ...formValues,
+        ...reminderValues,
         lease_status: formValues.tenancyStatus,
 
         //contract details
-        custom_no_of__cheques: formValues.numberOfChecks,
         bank_name: formValues.bankName,
         cheque_no: formValues.chequeNo,
         cheque_date: formatDateToYYMMDD(formValues.chequeDate),
@@ -671,7 +795,7 @@ const EditTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_number_of_unit: formValues.propertyUnits,
+        custom_number_of_unit: formValues.propertyUnits?.name,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,
@@ -702,8 +826,6 @@ const EditTenancyContracts = () => {
 
         // payment-details
 
-        custom_price__rent_annually: formValues.anualPriceRent,
-        lease_status: "Active",
         //payment details
         custom_no_of__cheques: formValues.numberOfChecks,
         custom_bank_name: formValues.bankName,
@@ -723,12 +845,12 @@ const EditTenancyContracts = () => {
             amount: item.rent,
             custom_annual_amount: formValues.anualPriceRent,
             custom_cheque_status: "active status",
-            custom_duration: formValues.duration,
-            custom_comments: formValues.comments,
-            custom_approval_status: formValues?.approvalStatus,
-            custom_rent_amount: "rent",
-            custom_status: formValues?.status,
-            custom_name_on_the_cheque: formValues?.cheque,
+            custom_duration: item.duration,
+            custom_comments: item.comments,
+            custom_approval_status: item.approvalStatus,
+            custom_rent_amount: item.rent,
+            custom_status: item.status,
+            custom_name_on_the_cheque: item.cheque,
           };
         }),
       }); //import from API
@@ -811,8 +933,6 @@ const EditTenancyContracts = () => {
     },
   };
 
-  console.log("checking table data : ", tableData);
-
   return (
     <main>
       <div className="flex">
@@ -854,7 +974,7 @@ const EditTenancyContracts = () => {
                         handleDropDown("tenancyStatus", value)
                       }
                       value={formValues.tenancyStatus}
-                      disabled={formValues.tenancyStatus === "Draft"}
+                      // disabled={formValues.tenancyStatus === "Draft"}
                       styles={{
                         label: {
                           marginBottom: "7px",
@@ -1091,11 +1211,18 @@ const EditTenancyContracts = () => {
                             <MantineSelect
                               label={label}
                               placeholder={label}
-                              data={propertyUnits}
-                              value={formValues.propertyUnits}
-                              onChange={(value) =>
-                                handleDropDown("propertyUnits", value)
-                              }
+                              data={propertyUnits.map((unit) => ({
+                                value: unit.name,
+                                label: unit.custom_unit_number,
+                                unit,
+                              }))}
+                              value={formValues.propertyUnits?.name || ""}
+                              onChange={(value) => {
+                                const selectedUnit = propertyUnits.find(
+                                  (unit) => unit.name === value
+                                );
+                                handleDropDown("propertyUnits", selectedUnit);
+                              }}
                               styles={{
                                 label: {
                                   marginBottom: "7px",
@@ -1661,6 +1788,7 @@ const EditTenancyContracts = () => {
                                       duration: item.duration,
                                       comments: item.comments,
                                       approvalStatus: item.approvalStatus,
+                                      cheque: item.cheque,
                                     });
                                     setPaymentDetailsModalOpen(i);
                                   }}
@@ -1679,6 +1807,37 @@ const EditTenancyContracts = () => {
                       )}
                     </form>
                   </section>
+
+                  {formValues.tenancyStatus === "Active" ? (
+                    <section className="my-20">
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Manage
+                        </span>
+                        <span className="pb-1">Notification</span>
+                      </p>
+                      <div>
+                        {values.map((value, index) => (
+                          <MantineCkeckbox
+                            mt="xs"
+                            ml={33}
+                            label={value.label}
+                            key={value.key}
+                            checked={value.checked}
+                            onChange={(event) => {
+                              handlers.setItemProp(
+                                index,
+                                "checked",
+                                event.currentTarget.checked
+                              );
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  ) : (
+                    ""
+                  )}
 
                   <div className="max-w-[100px] mt-10">
                     <PrimaryButton title="Save" />
@@ -1709,12 +1868,12 @@ const EditTenancyContracts = () => {
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(420px,1fr))] gap-4 mb-6">
               {cheque_number_form_details.map(({ label, name, type, values }) =>
-                type === "text" ? (
+                (type === "text") | (type === "number") ? (
                   <Input
                     key={name}
                     label={label}
                     name={name}
-                    type="text"
+                    type={type}
                     // value={
                     //   name === "bankName"
                     //     ? selectedCheque?.bankName || ""
@@ -1774,10 +1933,11 @@ const EditTenancyContracts = () => {
                 ) : null
               )}
             </div>
-            <button
-              onClick={() => {
-                const updatedTableData = tableData;
 
+            <PrimaryButton
+              onClick={() => {
+                console.log("table Data", tableData);
+                const updatedTableData = [...tableData];
                 updatedTableData[paymentDetailsModalOpen].cheque =
                   formValues.cheque;
                 updatedTableData[paymentDetailsModalOpen].status =
@@ -1790,11 +1950,11 @@ const EditTenancyContracts = () => {
                   formValues.approvalStatus;
                 setTableData(updatedTableData);
                 setPaymentDetailsModalOpen(null);
+                console.log("updated table data", updatedTableData);
               }}
               type="button"
-            >
-              Save
-            </button>
+              title="Edit"
+            />
           </div>
           {/* <div className="pt-4">
             <PrimaryButton type="submit" title="Save Details" />
