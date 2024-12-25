@@ -37,12 +37,12 @@ const Tenants = () => {
     "Customer Name",
     "Customer Type",
     "Customer Email",
+    "Actions"
     // "Property Name",
     // "Owner Name",
     // "Unit Number",
     // "Location",
     // "status",
-    " ",
   ];
 
   return (
