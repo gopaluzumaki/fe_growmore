@@ -2073,7 +2073,7 @@ const EditTenancyContracts = () => {
                       </section>
                     )}
 
-                  {formValues.tenancyStatus !== "Draft" ? (
+                  {formValues.tenancyStatus !== "Draft" && formValues.tenancyStatus !== ""&& formValues.tenancyStatus !== null ? (
                     <section className="my-20">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
                         <span className="pb-1 border-b border-[#7C8DB5]">
