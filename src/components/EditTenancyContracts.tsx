@@ -33,6 +33,7 @@ import {
   fetchUnitsfromProperty,
   updateProperty,
   fetchUnit,
+  API_URL,
 } from "../api";
 import {
   Select,
@@ -51,6 +52,7 @@ import {
   Table,
   Textarea,
   Checkbox as MantineCkeckbox,
+  Button,
 } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
@@ -1022,14 +1024,22 @@ const EditTenancyContracts = () => {
                     onClick={() => setPaymentDetailsModalOpen(true)}
                   />
                 </div> */}
-                <form onSubmit={handleSubmit}>
+                <form className="relative" onSubmit={handleSubmit}>
+                  <a
+                    href={API_URL.Tenancy_contract_pdf + location.state}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="absolute top-4 right-4 px-4 py-2 bg-blue-400 rounded-md text-white"
+                  >
+                    Export to PDF
+                  </a>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
                     <MantineSelect
                       label="Status"
                       placeholder="Status"
                       data={[
                         "Active",
-                        "Closed",
+
                         "Draft",
                         "Extend",
                         "Renewal",
