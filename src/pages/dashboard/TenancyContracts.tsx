@@ -168,7 +168,7 @@ const TenancyContracts = () => {
       "Dec",
     ];
     const [year, month, day] = dateString.split("-");
-    return `${day}-${months[parseInt(month, 10) - 1]}-${year}`;
+    return `${day} ${months[parseInt(month, 10) - 1]} ${year}`;
   };
 
   const searchStyle = {
