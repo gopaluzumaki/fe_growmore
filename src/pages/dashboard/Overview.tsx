@@ -23,29 +23,29 @@ const Overview = () => {
   }, []);
   async function calculateDaysLeft(records) {
     const currentDate = new Date(); // Get the current date
-    const results = await Promise.all(records.map(async (record,index) => {
+    const results = await Promise.all(records.map(async (record, index) => {
       const endDate = new Date(record.end_date); // Convert end date to Date object
       const timeDiff = endDate.getTime() - currentDate.getTime(); // Difference in milliseconds
       const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) <= 0 ? "Expired" : Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert to days
-  
+
       console.log(daysLeft, "bft");
-  
+
       // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
-      const caseData = await fetchCaseFromMaintenance(record.property, record.custom_number_of_unit,record.customer);
-      console.log(caseData?.data?.data, "bvf",index);
-      let caseStatus=caseData?.data?.data[0]?.custom_status
+      const caseData = await fetchCaseFromMaintenance(record.property, record.custom_number_of_unit, record.customer);
+      console.log(caseData?.data?.data, "bvf", index);
+      let caseStatus = caseData?.data?.data[0]?.custom_status
       return { ...record, daysLeft, caseStatus }; // Return record with days left and caseData
     }));
-  
+
     return results; // Return the array of resolved records
   }
-  
-console.log(tenancyData,"ngt")
+
+  console.log(tenancyData, "ngt")
   const getData = async () => {
     const property = await getPropertyCount();
     const unit = await getUnitCount();
     const tenant = await getTenantCount();
-    const tenancyData=await fetchTenancyData();
+    const tenancyData = await fetchTenancyData();
     setPropertyCount(property?.data?.message);
     setUnitCount(unit?.data?.message);
     setTenantCount(tenant?.data?.message);
@@ -63,7 +63,7 @@ console.log(tenancyData,"ngt")
     "No. of Days Left"
   ];
 
-  
+
 
   return (
     <main>
@@ -116,9 +116,16 @@ console.log(tenancyData,"ngt")
             <div className="my-4 p-4 border border-[#E6EDFF] rounded-md">
               <LeadsOverviewChart />
             </div>
+
             <div className="my-4 p-4">
               <div className="my-4 p-4">
                 <div className="overflow-x-auto">
+                  <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">
+                    <span className="pb-1 border-b border-[#7C8DB5]">
+                      Tenancy
+                    </span>
+                    <span className="pb-1">Contracts</span>
+                  </p>
                   <table className="min-w-full">
                     <thead>
                       <tr className="text-sonicsilver text-center">
@@ -137,32 +144,37 @@ console.log(tenancyData,"ngt")
                             key={i}
                             className="hover:bg-gray-50 text-center text-[15px]"
                           >
-                            <td className="p-2 py-3">{i+1}</td>
+                            <td className="p-2 py-3">{i + 1}</td>
                             <td className="p-2 py-3">{item.customer}</td>
                             <td className="p-2 py-3">{item.property}</td>
                             <td className="p-2 py-3">{item.custom_number_of_unit}</td>
                             <td className="p-2 py-3">{item.custom_location__area}</td>
                             <td className="p-2 py-3"><div
-                              className={`p-1 rounded ${
-                                item.lease_status === "Draft"
+                              className={`p-1 rounded ${item.lease_status === "Draft"
                                   ? "bg-red-400 text-black"
                                   : item.lease_status === "Active"
-                                  ? "bg-[#34A853] text-white"
-                                  : "bg-blue-400 text-white"
-                              }`}
+                                    ? "bg-[#34A853] text-white"
+                                    : "bg-blue-400 text-white"
+                                }`}
                             >
                               {item.lease_status}
                             </div></td>
-                            <td className="p-2 py-3">{item?.caseStatus?item?.caseStatus:'-'}</td>
+                            <td className="p-2 py-3"><div
+                              className={`p-1 rounded ${item?.caseStatus?.length > 0
+                                  ? "bg-[#ff0000] text-black"
+                                  :
+                                  ""
+
+                                }`}
+                            >{item?.caseStatus ? item?.caseStatus : '-'}</div></td>
 
                             <td className="p-2 py-3"><div
-                              className={`p-1 rounded ${
-                                item.daysLeft==="Expired"
+                              className={`p-1 rounded ${item.daysLeft === "Expired"
                                   ? "bg-[#ff0000] text-black"
-                                  :item?.daysLeft<=15
-                                  ?"bg-[#ff8d00] text-black"
-                                  :''
-                              }`}
+                                  : item?.daysLeft <= 15
+                                    ? "bg-[#ff8d00] text-black"
+                                    : ''
+                                }`}
                             >
                               {item.daysLeft}
                             </div></td>

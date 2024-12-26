@@ -244,7 +244,7 @@ const AddMaintenance = () => {
         setPropertyUnits((prev) => {
           return values;
         });
-
+      
       }
     }
     setFormValues((prevData) => ({
@@ -476,7 +476,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                             <MantineSelect
                               label={label}
                               placeholder={label}
-                              data={propertyUnits}
+                              data={propertyUnits?.length>0?propertyUnits:[]}
                               value={formValues.propertyUnits}
                               onChange={(value) =>
                                 handleDropDown("propertyUnits", value)
