@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Select as MantineSelect, Table } from "@mantine/core";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 interface FormData {
   location: string;
@@ -63,7 +64,8 @@ interface FormData {
 
 const EditUnits = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
-  const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState([]);
+  const [imageArray, setImageArray] = useState([])
   const navigate = useNavigate();
   const [sqmValue, setSqmValue] = useState();
   const [priceSqFt, setPriceSqFt] = useState();
@@ -110,7 +112,11 @@ const EditUnits = () => {
             cost_center: "Main - SRE",
             is_group: 0,
           });
-          setImgUrl(res.data.data.custom_thumbnail_image || "");
+          // setImgUrls(res.data.data.custom_thumbnail_image || "");
+        }
+        if (res?.data?.data?.custom_attachment_table_unit?.length > 0) {
+          const imageArray = res?.data?.data?.custom_attachment_table_unit?.map((item) => item.image);
+          setImageArray(imageArray)
         }
       } catch (error) {
         console.error("Error fetching property data:", error);
@@ -127,7 +133,7 @@ const EditUnits = () => {
 
       if (file) {
         const res = await uploadFile(file);
-        setImgUrl(res?.data?.message?.file_url);
+        setImgUrls(res?.data?.message?.file_url);
       }
     }
   };
@@ -236,6 +242,7 @@ const EditUnits = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
 
     try {
       console.log("API Data => ", formData);
@@ -245,6 +252,7 @@ const EditUnits = () => {
           ...formData,
           name1: formData?.unitNumber,
           custom_premise_no: formData?.premises,
+          custom_attachment_table_unit: imageData,
         },
         location.state.item.name as string
       );
@@ -255,7 +263,13 @@ const EditUnits = () => {
       console.log(err);
     }
   };
-
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
+  useEffect(()=>{
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  },[imgUrls])
   return (
     <main>
       <div className="flex">
@@ -350,21 +364,15 @@ const EditUnits = () => {
                         <></>
                       )
                     )}
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
-                      </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                    </div>
+                   {/* Attachment */}
+                                       <div className="mt-5 mb-5">
+                                         <CustomFileUpload
+                                           onFilesUpload={(urls) => {
+                                             setImgUrls(urls);
+                                           }}
+                                           type="image/*"
+                                         />
+                                       </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
@@ -379,6 +387,34 @@ const EditUnits = () => {
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                     ></textarea>
                   </div>
+                  {imageArray?.length > 0 && (<>
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Attachments
+                        </span>
+                      </p>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div></>)}
                   <div className="mt-4 max-w-[100px]">
                     <PrimaryButton title="Save" />
                   </div>

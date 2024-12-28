@@ -16,6 +16,7 @@ import {
 } from "./ui/select";
 import CustomDatePicker from "./CustomDatePicker";
 import { useLocation } from "react-router-dom";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 interface FormData {
   leadName: string;
@@ -47,9 +48,11 @@ interface FormData {
 
 const EditLead = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
-  const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState("");
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [imageArray, setImageArray] = useState([])
+
   const location = useLocation();
   console.log("location-state :", location.state);
 
@@ -60,7 +63,7 @@ const EditLead = () => {
 
       if (file) {
         const res = await uploadFile(file);
-        setImgUrl(res?.data?.message?.file_url);
+        setImgUrls(res?.data?.message?.file_url);
       }
     }
   };
@@ -107,7 +110,11 @@ const EditLead = () => {
                 description: item?.custom_description,
               };
             });
-            setImgUrl(item?.custom_image_attachment || "");
+            // setImgUrls(item?.custom_image_attachment || "");
+          }
+          if (item?.custom_attachment_table?.length > 0) {
+            const imageArray = item?.custom_attachment_table?.map((item) => item.image);
+            setImageArray(imageArray)
           }
         } catch (error) {
           console.log(error);
@@ -138,9 +145,13 @@ const EditLead = () => {
       [name]: date,
     }));
   };
-
+  useEffect(()=>{
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  },[imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+
     try {
       console.log("API Data => ", formData);
       const res = await updateLead(location.state, {
@@ -158,8 +169,8 @@ const EditLead = () => {
         custom_community_preference: formData?.communityPreference,
         custom_bedroom_preference: formData?.bedroomPreference,
         custom_description: formData?.description,
-
-        custom_imagephoto: imgUrl,
+        custom_attachment_table: imageData,
+        custom_imagephoto: '',
       });
       if (res) {
         navigate("/leads");
@@ -168,7 +179,10 @@ const EditLead = () => {
       console.log(err);
     }
   };
-
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
   return (
     <main>
       <div className="flex">
@@ -226,21 +240,15 @@ const EditLead = () => {
                         <></>
                       )
                     )}
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
-                      </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                    </div>
+                    {/* Attachment */}
+                                        <div className="mt-5 mb-5">
+                                          <CustomFileUpload
+                                            onFilesUpload={(urls) => {
+                                              setImgUrls(urls);
+                                            }}
+                                            type="image/*"
+                                          />
+                                        </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
@@ -254,7 +262,35 @@ const EditLead = () => {
                       value={formData.description}
                     ></textarea>
                   </div>
-                  <div className="mt-4 max-w-[100px]">
+                  {imageArray?.length > 0 && (<>
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Attachments
+                        </span>
+                      </p>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div></>)}
+                  <div className="mt-4 max-w-[200px]">
                     <PrimaryButton title="Update Lead" />
                   </div>
                 </form>

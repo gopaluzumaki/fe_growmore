@@ -33,7 +33,7 @@ import {
   createDamageLocation,
 } from "../api";
 import {
-  // Select,
+  Select,
   SelectContent,
   SelectGroup,
   SelectItem,
@@ -47,7 +47,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
 import CustomFileUpload from "./ui/CustomFileUpload";
-import { Select } from "@mantine/core";
 
 const EditMaintenance = () => {
   const statusSelect = [
@@ -149,7 +148,7 @@ const EditMaintenance = () => {
           ownerType: propertyData?.custom_owner_type,
           comment: propertyData?.custom_comment_box,
           customerName: propertyData?.custom_customer,
-          status: propertyData?.custom_statusmi,
+          status: propertyData?.custom_status_maint,
           customerContact: propertyData?.custom_contact_number_of_customer,
           customerEmail: propertyData?.custom_customer_email,
           customerType: propertyData?.custom_customer_type,
@@ -197,10 +196,12 @@ const EditMaintenance = () => {
       [name]: item,
     }));
   };
-
+  useEffect(()=>{
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  },[imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imgUrls?.length > 0 ? imgUrls.map((imgUrl) => ({ image: imgUrl })) : imageArray.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
     try {
       console.log("API Data => ", formValues);
       const res = await updateCase({
@@ -213,6 +214,7 @@ const EditMaintenance = () => {
         custom_end_date: formValues?.endDate,
         custom_statusmi: '',
         custom_statusmo: '',
+        custom_status_maint:formValues?.status,
         custom_comment_box: formValues?.comment,
         custom_attachment_table: imageData,
         custom_location__area: formValues?.propertyLocation,
@@ -242,7 +244,10 @@ const EditMaintenance = () => {
       console.log(err);
     }
   };
-
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLocation, setNewLocation] = useState("");
   const handleAddNewLocation = async () => {
@@ -488,7 +493,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                         </span>
 
                       </p>
-                      <Select
+                      <MantineSelect
                         placeholder="Select Damage Location"
                         data={damageLocationList.map((p) => p.name)}
                         clearable
@@ -524,7 +529,34 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                         className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                       ></textarea>
                     </div>
+                    <div className="mt-5 mb-5">
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Status
+                        </span>
 
+                      </p>
+                      {statusSelect.map(({ label, name, type, values }) => (
+                        <Select
+                          onValueChange={(value) =>
+                            handleDropDown(name, value)
+                          }
+                          value={formValues[name]}
+                        >
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-3">
+                            <div className="flex items-center">
+                              <SelectValue placeholder={label} />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {values?.map((item, i) => (
+                              <SelectItem key={i} value={item}>
+                                {item}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ))}</div>
 
 
 
@@ -534,26 +566,36 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                           Attachments
                         </span>
                       </p>
-                      <div className="grid grid-cols-2 gap-4 w-25% h-25%">
-
-                        {imageArray.map((value) =>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
                           <img
-                            className="w-50px h-50px rounded-md"
-                            src={value
-                              ? `https://propms.erpnext.syscort.com/${value}`
-                              : "/defaultProperty.jpeg"}
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
                             alt="propertyImg"
                           />
-                        )}
-
-                      </div></>)}
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                      </>)}
                     {/* Attachment */}
                     <div className="mt-5 mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);
                         }}
-                        type="*"
+                       type="image/*"
                       />
                     </div>
                     <div className="max-w-[100px]">

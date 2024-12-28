@@ -11,6 +11,8 @@ import RentOverviewChart from "../../components/RentOverviewChart";
 import { useEffect, useState } from "react";
 import { fetchCaseFromMaintenance, fetchTenancyData, getPropertyCount, getTenantCount, getUnitCount } from "../../api";
 import LeadsOverviewChart from "../../components/LeadsOverviewChart";
+import { Link } from "react-router-dom";
+import { MdOutlineEdit } from "react-icons/md";
 
 const Overview = () => {
   const [propertyCount, setPropertyCount] = useState("");
@@ -26,9 +28,9 @@ const Overview = () => {
     const results = await Promise.all(records.map(async (record, index) => {
       const endDate = new Date(record.end_date); // Convert end date to Date object
       const timeDiff = endDate.getTime() - currentDate.getTime(); // Difference in milliseconds
-      const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) <= 0 ? "Expired" : Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert to days
+      const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert to days
 
-      console.log(daysLeft, "bft");
+    
 
       // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
       const caseData = await fetchCaseFromMaintenance(record.property, record.custom_number_of_unit, record.customer);
@@ -60,7 +62,8 @@ const Overview = () => {
     "Location / Area",
     "Status",
     "Case Status",
-    "No. of Days Left"
+    "No. of Days Left",
+    "Action"
   ];
 
 
@@ -178,6 +181,20 @@ const Overview = () => {
                             >
                               {item.daysLeft}
                             </div></td>
+                            <td className="p-2 py-3">
+                            <div className="flex ml-4">
+                              <Link
+                                to={"/contracts/edit"}
+                                state={item.name}
+                                className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
+                              >
+                                <MdOutlineEdit
+                                  size={20}
+                                  className="text-[#D09D4A]"
+                                />
+                              </Link>
+                              </div>
+                            </td>
                           </tr>
                         );
                       })}

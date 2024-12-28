@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { Select as MantineSelect, Table } from "@mantine/core";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 interface FormData {
   location: string;
@@ -63,7 +64,7 @@ interface FormData {
 
 const AddUnits = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
-  const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState("");
   const navigate = useNavigate();
   const [sqmValue, setSqmValue] = useState();
   const [priceSqFt, setPriceSqFt] = useState();
@@ -78,7 +79,7 @@ const AddUnits = () => {
 
       if (file) {
         const res = await uploadFile(file);
-        setImgUrl(res?.data?.message?.file_url);
+        setImgUrls(res?.data?.message?.file_url);
       }
     }
   };
@@ -241,11 +242,12 @@ const AddUnits = () => {
         custom_view: formData?.view,
         custom_premise_no:formData?.premises,
         unit_owner: formData?.ownerName,
-        custom_thumbnail_image: imgUrl,
+        custom_thumbnail_image: imgUrls,
         is_group: 0,
         cost_center: "Main - SRE",
         description: formData?.description,
       });
+      const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
 
       const res = await createProperty({
         name1: formData?.custom_unit_number,
@@ -271,7 +273,8 @@ const AddUnits = () => {
         custom_view: formData?.view,
         custom_premise_no: formData?.premises,
         unit_owner: formData?.ownerName,
-        custom_thumbnail_image: imgUrl,
+        custom_thumbnail_image: '',
+        custom_attachment_table_unit: imageData,
         is_group: 0,
         cost_center: "Main - SRE",
         description: formData?.description,
@@ -398,21 +401,15 @@ const AddUnits = () => {
                         searchable
                       />
                     </div>
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
-                      </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                    </div>
+                     {/* Attachment */}
+                                        <div className="mt-5 mb-5">
+                                          <CustomFileUpload
+                                            onFilesUpload={(urls) => {
+                                              setImgUrls(urls);
+                                            }}
+                                           type="image/*"
+                                          />
+                                        </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">

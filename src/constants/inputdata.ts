@@ -129,6 +129,9 @@ export const Type_Individual_Tenant = [
   { label: "Nationality", name: "nationality", type: "text" },
   { label: "Passport Number", name: "passportNum", type: "text" },
   { label: "Passport Expiry Date", name: "passportExpiryDate", type: "date" },
+  { label: "Birth Date", name: "birthDate", type: "date" },
+  { label: "Visa Start Date", name: "visaStartDate", type: "date" },
+  { label: "Visa End Date", name: "visaEndDate", type: "date" },
   { label: "Country Of Issuance", name: "countryOfIssuance", type: "text" },
   { label: "Emirates ID", name: "emiratesId", type: "text" },
   {
@@ -165,6 +168,9 @@ export const Type_Individual = [
   { label: "Nationality", name: "nationality", type: "text" },
   { label: "Passport Number", name: "passportNum", type: "text" },
   { label: "Passport Expiry Date", name: "passportExpiryDate", type: "date" },
+  { label: "Birth Date", name: "birthDate", type: "date" },
+  { label: "Visa Start Date", name: "visaStartDate", type: "date" },
+  { label: "Visa End Date", name: "visaEndDate", type: "date" },
   { label: "Country Of Issuance", name: "countryOfIssuance", type: "text" },
   { label: "Emirates ID", name: "emiratesId", type: "text" },
   {
@@ -202,7 +208,7 @@ export const Add_Lead = [
     label: "Lead Status",
     name: "leadStatus",
     type: "dropdown",
-    values: ["Open", "Lead", "Replied", "Opportunity"],
+    values: ["Open", "Converted to booking", "Junk", "Closed"],
   },
 ];
 

@@ -119,6 +119,16 @@ export const getPropertyList = async () => {
   return response;
 };
 
+export const getPropertyListData = async () => {
+  const response = await axios.get(`${API_URL.Create_Property}?fields=["*"]`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
 export const getUnitList = async () => {
   const response = await axios.get(API_URL.Unit_List, {
     auth: {
@@ -470,9 +480,35 @@ export const getMoveInList = async () => {
   return response;
 };
 
+export const getMoveInListData = async (propertyName: any, unitName: any) => {
+  const response = await axios.get(
+    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move In"],["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"]]&fields=["*"]&order_by=creation desc`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
+  return response;
+};
+
 export const getMoveOutList = async () => {
   const response = await axios.get(
     `${API_URL.MoveOut_List}&order_by=creation desc`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
+  return response;
+};
+
+export const getMoveOutListData = async (propertyName: any, unitName: any) => {
+  const response = await axios.get(
+    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move Out"],["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"]]&fields=["*"]&order_by=creation desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,

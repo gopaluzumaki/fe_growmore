@@ -180,10 +180,12 @@ const EditMoveOut = () => {
       [name]: item,
     }));
   };
-
+  useEffect(()=>{
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  },[imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imgUrls?.length > 0 ? imgUrls.map((imgUrl) => ({ image: imgUrl })) : imageArray.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
     try {
       console.log("API Data => ", formValues);
       const res = await updateCase({
@@ -223,7 +225,10 @@ const EditMoveOut = () => {
       console.log(err);
     }
   };
-
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
 
 
   return (
@@ -408,26 +413,35 @@ const EditMoveOut = () => {
                           Attachments
                         </span>
                       </p>
-                      <div className="grid grid-cols-2 gap-4 w-25% h-25%">
-
-                        {imageArray.map((value) =>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
                           <img
-                            className="w-50px h-50px rounded-md"
-                            src={value
-                              ? `https://propms.erpnext.syscort.com/${value}`
-                              : "/defaultProperty.jpeg"}
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
                             alt="propertyImg"
                           />
-                        )}
-
-                      </div></>)}
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div></>)}
                     {/* Attachment */}
                     <div className="mt-5 mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);
                         }}
-                        type="*"
+                       type="image/*"
                       />
                     </div>
                     <div className="max-w-[100px]">

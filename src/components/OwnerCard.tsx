@@ -45,7 +45,11 @@ const OwnerCard = ({
             </Link>
             <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
               try {
-                redirect==="booking"?await deleteBooking(name):await deleteOwner(name)
+                const confirmed = window.confirm(`Are you sure you want to delete this ${name}?`);
+                if (confirmed) {
+                  redirect === "booking" ? await deleteBooking(name) : await deleteOwner(name)
+                }
+
               }
               catch (e) {
                 setError(`Cannot delete ${name} because it is linked`)

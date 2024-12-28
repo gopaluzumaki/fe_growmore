@@ -13,12 +13,21 @@ import {
 } from "../../components/ui/select";
 import { VscFilter } from "react-icons/vsc";
 import { useEffect, useState } from "react";
-import { getPropertyList } from "../../api";
+import { deleteProperty, getPropertyListData } from "../../api";
+import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 
 const Property = () => {
   const [propertyList, setPropertyList] = useState([]);
-  const [error,setError]=useState('')
-
+  const [error, setError] = useState('')
+  const headers = [
+    "Sr. No",
+    "Name of property",
+    "Property Type",
+    "Location",
+    "Country",
+    "Status",
+    "Actions",
+  ];
   useEffect(() => {
     setError('')
 
@@ -26,7 +35,7 @@ const Property = () => {
   }, []);
 
   const getData = async () => {
-    const propertyList = await getPropertyList();
+    const propertyList = await getPropertyListData();
     console.log("nbv", propertyList.data.data);
     setPropertyList(propertyList?.data?.data);
   };
@@ -73,25 +82,69 @@ const Property = () => {
           </div>
           <span className="flex justify-center text-red-500">{error}</span>
 
-          <div className="my-4 p-6 grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] gap-10 border border-[#E6EDFF] rounded-xl">
-            {propertyList?.map((item: any, i) => (
-              <PropertyCard
-                key={i}
-                img={
-                  item?.image
-                    ? `https://propms.erpnext.syscort.com/${item?.image}`
-                    : "/defaultProperty.jpeg"
-                }
-                name={item?.property}
-                location={item?.location}
-                units={item?.number_of_units}
-                availUnits={item?.number_of_units}
-                path={`/property/${item?.property}`}
-                getData={getData}
-                id={item.name}
-                setError={setError}
-              />
-            ))}
+          
+          <div className="my-4 p-4">
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="text-sonicsilver text-center">
+                    {headers.map((header, index) => (
+                      <th key={index} className="p-2 py-3 font-normal">
+                        {header}
+                      </th>
+                    ))}
+                    <th className="p-2 py-3 font-normal"></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {propertyList.map((item, i) => {
+                    return (
+                      <tr
+                        key={i}
+                        className="hover:bg-gray-50 text-center text-[15px]"
+                      >
+                        <td className="p-2 py-3">{i + 1}</td>
+                        <td className="p-2 py-3">{item?.name1}</td>
+                        <td className="p-2 py-3">{item?.type}</td>
+                        <td className="p-2 py-3">{item?.custom_location}</td>
+                        <td className="p-2 py-3">{item?.custom_country}</td>
+                        <td className="p-2 py-3">{item?.custom_status}</td>
+                        <td className="p-2 py-3">
+                          <div className="flex gap-3">
+                            <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
+                              <Link to={"/property/edit"} state={item?.name}>
+                                <MdOutlineEdit
+                                  size={20}
+                                  className="text-[#D09D4A]"
+                                />
+                              </Link>
+                            </button>
+                            <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
+                              try {
+                                const confirmed = window.confirm(`Are you sure you want to delete this ${item?.name1}?`);
+                                if (confirmed) {
+                                  await deleteProperty(item?.name);
+                                }
+                              }
+                              catch (e) {
+                                setError(`Cannot delete ${item?.name1} because it is linked`)
+                                console.log(e?.response?.data?._server_messages)
+                              }
+                              getData()
+                            }}>
+                              <MdDeleteForever
+                                size={20}
+                                className="text-[#EB4335]"
+                              />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

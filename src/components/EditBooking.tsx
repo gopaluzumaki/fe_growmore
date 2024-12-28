@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 interface FormData {
   selectALead: string;
@@ -60,6 +61,7 @@ interface FormData {
 const EditBooking = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState([]);
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [ownerList, setOwnerList] = useState<any[]>([]);
@@ -68,6 +70,7 @@ const EditBooking = () => {
   const [tenantList, setTenantList] = useState<any[]>([]);
   const location = useLocation();
   const [propertyUnits, setPropertyUnits] = useState([]);
+  const [imageArray, setImageArray] = useState([])
 
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
@@ -157,7 +160,7 @@ const EditBooking = () => {
                 description: item?.custom_description || "",
               };
             });
-            setImgUrl(item?.custom_image_attachment || "");
+            // setImgUrl(item?.custom_image_attachment || "");
             if (item?.property) {
               const response = await fetchUnitsfromProperty(item?.property);
               const data = response?.data?.data;
@@ -166,6 +169,10 @@ const EditBooking = () => {
                 return values;
               });
             }
+          }
+          if (item?.custom_attachment_table?.length > 0) {
+            const imageArray = item?.custom_attachment_table?.map((item) => item.image);
+            setImageArray(imageArray)
           }
         } catch (error) {
           console.log(error);
@@ -297,6 +304,7 @@ const EditBooking = () => {
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
+      const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
 
       const res = await updateBooking(location.state, {
         property: formData.name1,
@@ -321,7 +329,9 @@ const EditBooking = () => {
         custom_booking_amount: formData.bookingAmount,
         custom_contact_number_of_owner: formData.ownerContact,
         custom_name_of_owner: formData.ownerName,
-        custom_image_attachment: imgUrl,
+        custom_image_attachment: '',
+        custom_attachment_table: imageData,
+
         custom_description: formData.description,
       });
       console.log(res);
@@ -356,7 +366,13 @@ const EditBooking = () => {
       }));
     }
   };
-
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
+  useEffect(()=>{
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  },[imgUrls])
   return (
     <main>
       <div className="flex">
@@ -463,21 +479,15 @@ const EditBooking = () => {
                       )
                     )}
 
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
-                      </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                    </div>
+                     {/* Attachment */}
+                                                           <div className="mt-5 mb-5">
+                                                             <CustomFileUpload
+                                                               onFilesUpload={(urls) => {
+                                                                 setImgUrls(urls);
+                                                               }}
+                                                              type="image/*"
+                                                             />
+                                                           </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
@@ -491,7 +501,35 @@ const EditBooking = () => {
                       onChange={handleChange}
                     ></textarea>
                   </div>
-                  <div className="mt-4 max-w-[100px]">
+                  {imageArray?.length > 0 && (<>
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Attachments
+                        </span>
+                      </p>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div></>)}
+                  <div className="mt-4 max-w-[200px]">
                     <PrimaryButton type="submit" title="Save Update" />
                   </div>
                 </form>
