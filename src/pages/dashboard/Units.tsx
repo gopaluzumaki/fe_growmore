@@ -109,20 +109,15 @@ const Units = () => {
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${item.custom_status === "Occupied"
-                                  ? "bg-[#FFEC1C] text-black"
-                                  : item.custom_status === "Vacant"
-                                    ? "bg-[#34A853] text-white"
-                                    : item.custom_status === "Legal" && "bg-[#EB4335] text-white"
+                                ? "bg-[#FFEC1C] text-black"
+                                : item.custom_status === "Vacant"
+                                  ? "bg-[#34A853] text-white"
+                                  : item.custom_status === "Legal" && "bg-[#EB4335] text-white"
                                 }`}
                             >
                               {item.custom_status}
                             </div>
                           </td>
-                          {/* <td className="p-2 py-3">
-                            <div className="flex justify-center">
-                              <img src={img_group} />
-                            </div>
-                          </td> */}
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
@@ -134,8 +129,12 @@ const Units = () => {
                                 </Link>
                               </button>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
-                                await deletePropertyUnit(item.name)
-                                getData()
+                                const confirmed = window.confirm(`Are you sure you want to delete this ${item.property} property ${item.unit_number} unit?`);
+                                if (confirmed) {
+                                  await deletePropertyUnit(item.name);
+                                  getData();
+                                }
+
                               }}>
                                 <MdDeleteForever
                                   size={20}

@@ -27,6 +27,8 @@ import {
   getTenantLeaseList,
   fetchTenancyContract,
   createCase,
+  getMoveInList,
+  getMoveInListData,
 } from "../api";
 import {
   Select,
@@ -43,6 +45,7 @@ import { useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
 import CustomFileUpload from "./ui/CustomFileUpload";
+import { it } from "node:test";
 
 const AddMoveIn = () => {
   const statusSelect = [
@@ -111,6 +114,8 @@ const AddMoveIn = () => {
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [propertyName, setPropertyName] = useState('')
+  const [alreadyAdded,setAlreadyAdded] = useState(true)
+  const [showError,setShowError] = useState('')
   useEffect(() => {
     getProperties();
     setFormValues((prevData) => ({
@@ -126,12 +131,12 @@ const AddMoveIn = () => {
     const mergedData = item.reduce((acc, item) => {
       const existingProperty = acc.find(obj => obj.property === item.property);
       if (existingProperty) {
-        existingProperty.custom_number_of_unit.push(item.custom_number_of_unit);
-        existingProperty.names.push(item.name);
+        item.custom_number_of_unit?.length>0&&existingProperty.custom_number_of_unit.push(item.custom_number_of_unit);
+        item.custom_number_of_unit?.length>0&&existingProperty.names.push(item.name);
       } else {
         acc.push({
           property: item.property,
-          custom_number_of_unit: [item.custom_number_of_unit],
+          custom_number_of_unit: item.custom_number_of_unit?.length>0?[item.custom_number_of_unit]:[],
           names: [item.name]
         });
       }
@@ -158,7 +163,15 @@ const AddMoveIn = () => {
     const data = async () => {
       const res = await fetchTenancyContract(propertyName)
       const propertyData = res?.data?.data;
+      const moveInList = await getMoveInListData(formValues?.propertyName,formValues?.propertyUnits);
+      if(moveInList?.data?.data?.length>0){
+        setAlreadyAdded(true)
+        setShowError(`This ${formValues?.propertyName} property with ${formValues?.propertyUnits} unit is already Moved in`)
+      }
+      else{
       if (propertyData) {
+        setAlreadyAdded(false)
+
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
@@ -192,6 +205,7 @@ const AddMoveIn = () => {
 
       }
     }
+    }
     data()
   }, [propertyName])
 
@@ -206,10 +220,11 @@ const AddMoveIn = () => {
     }
     return null;  // Return null if custom_number_of_unit is not found
   }
-
   const handleDropDown = async (name, item) => {
     if (name === "propertyName") {
-
+      setPropertyName('')
+      setAlreadyAdded(false)
+      setShowError('')
       setFormValues((prevData) => ({
         ...prevData,
         propertyName: '',
@@ -218,7 +233,7 @@ const AddMoveIn = () => {
         propertyCity: '',
         propertyCountry: '',
         propertyRent: '',
-        propertyUnits: '',
+        propertyUnits: null,
         sqFoot: '',
         sqMeter: '',
         priceSqMeter: '',
@@ -239,6 +254,8 @@ const AddMoveIn = () => {
       setPropertyUnits(units || []);
     }
     if (name === "propertyUnits") {
+      setAlreadyAdded(false)
+      setShowError('')
       const name = getNameFromCustomNumber(item);
       setPropertyName(name)
     }
@@ -247,7 +264,6 @@ const AddMoveIn = () => {
       [name]: item,
     }));
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
@@ -389,8 +405,8 @@ const AddMoveIn = () => {
                       )}
                     </div>
                   </div>
-
-                  {formValues?.propertyName && formValues?.propertyUnits && (<>
+<div className="flex justify-center mt-2 text-red-700">{showError}</div>
+                  {formValues?.propertyName && formValues?.propertyUnits && !alreadyAdded&&(<>
                     {/* Property Details */}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
@@ -522,7 +538,7 @@ const AddMoveIn = () => {
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);
                         }}
-                        type="*"
+                        type="image/*"
                       />
                     </div>
                     <div className="max-w-[100px]">

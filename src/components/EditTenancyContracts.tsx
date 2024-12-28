@@ -1473,7 +1473,7 @@ const EditTenancyContracts = () => {
                                 label: unit.custom_unit_number,
                                 unit,
                               }))}
-                              value={formValues.propertyUnits?.name || ""}
+                              value={formValues.propertyUnits || ""}
                               onChange={(value) => {
                                 const selectedUnit = propertyUnits.find(
                                   (unit) => unit.name === value

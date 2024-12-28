@@ -57,7 +57,7 @@ function App() {
         <Route path="/booking" element={<BookReserve />} />
         <Route path="/contracts" element={<TenancyContracts />} />
         <Route path="/property/add" element={<AddProperty />} />
-        <Route path="/property/:id" element={<EditProperty />} />
+        <Route path="/property/edit" element={<EditProperty />} />
         <Route path="/units/add" element={<AddUnits />} />
         <Route path="/units/edit" element={<EditUnits />} />
         <Route path="/leads/add" element={<AddLeads />} />

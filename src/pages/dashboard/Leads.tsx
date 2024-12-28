@@ -111,16 +111,16 @@ const Leads = () => {
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${item.status === "Rented"
-                                  ? "bg-[#FFEC1C] text-black"
-                                  : item.status === "Open"
-                                    ? "bg-[#34A853] text-white"
-                                    : "bg-[#EB4335] text-white"
+                                ? "bg-[#FFEC1C] text-black"
+                                : item.status === "Open"
+                                  ? "bg-[#34A853] text-white"
+                                  : "bg-[#EB4335] text-white"
                                 }`}
                             >
                               {item.status}
                             </div>
                           </td>
-                         
+
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link to={"/leads/edit"} state={item.name}>
@@ -133,8 +133,12 @@ const Leads = () => {
                                 </button>
                               </Link>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
-                                await deleteLead(item.name)
-                                getData()
+                                const confirmed = window.confirm(`Are you sure you want to delete this ${item.lead_name}?`);
+                                if (confirmed) {
+                                  await deleteLead(item.name)
+                                  getData();
+                                }
+
                               }}>
                                 <MdDeleteForever
                                   size={20}

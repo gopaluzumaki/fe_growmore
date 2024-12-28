@@ -27,6 +27,7 @@ import {
   getTenantLeaseList,
   fetchTenancyContract,
   createCase,
+  getMoveOutListData,
 } from "../api";
 import {
   Select,
@@ -111,6 +112,8 @@ const AddMoveOut = () => {
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [propertyName, setPropertyName] = useState('')
+  const [alreadyAdded,setAlreadyAdded] = useState(true)
+  const [showError,setShowError] = useState('')
   useEffect(() => {
     getProperties();
     setFormValues((prevData) => ({
@@ -126,12 +129,12 @@ const AddMoveOut = () => {
     const mergedData = item.reduce((acc, item) => {
       const existingProperty = acc.find(obj => obj.property === item.property);
       if (existingProperty) {
-        existingProperty.custom_number_of_unit.push(item.custom_number_of_unit);
-        existingProperty.names.push(item.name);
+        item.custom_number_of_unit?.length>0&&existingProperty.custom_number_of_unit.push(item.custom_number_of_unit);
+        item.custom_number_of_unit?.length>0&&existingProperty.names.push(item.name);
       } else {
         acc.push({
           property: item.property,
-          custom_number_of_unit: [item.custom_number_of_unit],
+          custom_number_of_unit: item.custom_number_of_unit?.length>0?[item.custom_number_of_unit]:[],
           names: [item.name]
         });
       }
@@ -158,7 +161,14 @@ const AddMoveOut = () => {
     const data = async () => {
       const res = await fetchTenancyContract(propertyName)
       const propertyData = res?.data?.data;
+      const moveOutList = await getMoveOutListData(formValues?.propertyName,formValues?.propertyUnits);
+            if(moveOutList?.data?.data?.length>0){
+              setAlreadyAdded(true)
+              setShowError(`This ${formValues?.propertyName} property with ${formValues?.propertyUnits} unit is already Moved Out`)
+            }
+            else{
       if (propertyData) {
+        setAlreadyAdded(false)
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
@@ -189,7 +199,7 @@ const AddMoveOut = () => {
           endDate: propertyData?.end_date
 
         }));
-
+      }
       }
     }
     data()
@@ -209,7 +219,9 @@ const AddMoveOut = () => {
 
   const handleDropDown = async (name, item) => {
     if (name === "propertyName") {
-
+      setPropertyName('')
+      setAlreadyAdded(false)
+      setShowError('')
       setFormValues((prevData) => ({
         ...prevData,
         propertyName: '',
@@ -218,7 +230,7 @@ const AddMoveOut = () => {
         propertyCity: '',
         propertyCountry: '',
         propertyRent: '',
-        propertyUnits: '',
+        propertyUnits: null,
         sqFoot: '',
         sqMeter: '',
         priceSqMeter: '',
@@ -239,6 +251,8 @@ const AddMoveOut = () => {
       setPropertyUnits(units || []);
     }
     if (name === "propertyUnits") {
+      setAlreadyAdded(false)
+      setShowError('')
       const name = getNameFromCustomNumber(item);
       setPropertyName(name)
     }
@@ -373,8 +387,8 @@ const AddMoveOut = () => {
                       )}
                     </div>
                   </div>
-
-                  {formValues?.propertyName && formValues?.propertyUnits && (<>
+<div className="flex justify-center mt-2 text-red-700">{showError}</div>
+                  {formValues?.propertyName && formValues?.propertyUnits && !alreadyAdded&&(<>
                     {/* Property Details */}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
@@ -524,7 +538,7 @@ const AddMoveOut = () => {
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);
                         }}
-                        type="*"
+                        type="image/*"
                       />
                     </div>
                     <div className="max-w-[100px]">

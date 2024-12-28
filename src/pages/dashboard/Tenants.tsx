@@ -18,7 +18,7 @@ import { deleteCustomer, getTenantList, getTenantsFromAPI } from "../../api";
 
 const Tenants = () => {
   const [tenantList, setTenantList] = useState<any[]>([]);
-  const [error,setError]=useState('')
+  const [error, setError] = useState('')
   useEffect(() => {
     setError('')
     getData();
@@ -88,7 +88,7 @@ const Tenants = () => {
             </div>
             <div className="my-4 p-4">
               <div className="overflow-x-auto">
-              <span className="flex justify-center text-red-500">{error}</span>
+                <span className="flex justify-center text-red-500">{error}</span>
 
                 <table className="min-w-full">
                   <thead>
@@ -146,15 +146,19 @@ const Tenants = () => {
                                 </Link>
                               </button>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
-                                try{
-                                                                                          await deleteCustomer(item.customer_name)
+                                try {
+                                  const confirmed = window.confirm(`Are you sure you want to delete this ${item.customer_name}?`);
+                                  if (confirmed) {
+                                    await deleteCustomer(item.customer_name);
+                                  }
+
                                 }
-                                catch(e){
+                                catch (e) {
                                   setError(`Cannot delete ${item.customer_name} because it is linked`)
                                   console.log(e?.response?.data?._server_messages)
                                 }
-                                                                                          getData()
-                                                                                        }}>
+                                getData()
+                              }}>
                                 <MdDeleteForever
                                   size={20}
                                   className="text-[#EB4335]"
