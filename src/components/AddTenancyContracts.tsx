@@ -283,8 +283,10 @@ const AddTenancyContracts = () => {
     setOwnerList(item);
   };
 
+  // to manage payment details table
   useEffect(() => {
     let chequeDate: any = [];
+    // console.log("formValues.chequeDate", formValues.chequeDate);
     chequeDate.push(formValues.chequeDate);
     if (formValues.numberOfChecks === "2") {
       let currentDate = new Date(formValues.chequeDate);
@@ -351,20 +353,48 @@ const AddTenancyContracts = () => {
       formValues?.numberOfChecks &&
       formValues?.anualPriceRent &&
       formValues?.bankName &&
-      formValues?.chequeNo &&
       formValues?.chequeDate
     ) {
-      setTableData((prevData) => {
+      setTableData(() => {
         const newData = [];
 
-        for (let i = 0; i < +formValues.numberOfChecks; i++) {
-          newData.push({
-            rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
-            chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
-            chequeDate: chequeDate[i],
-            bankName: formValues.bankName,
+        // Populate table data from leaseItems
+        if (
+          formValues?.leaseItems &&
+          formValues?.numberOfChecks &&
+          formValues?.leaseItems?.length == formValues.numberOfChecks
+        ) {
+          formValues.leaseItems.forEach((lease, index) => {
+            newData.push({
+              rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+              chequeNumber: lease.chequeNumber,
+              chequeDate: chequeDate[index] ?? lease.chequeDate,
+              bankName: formValues.bankName,
+              Sno: index + 1,
+              cheque: lease.cheque,
+              status: lease.status,
+              duration: lease.duration,
+              comments: lease.comments,
+              approvalStatus: lease.approvalStatus,
+            });
           });
+        } else {
+          for (let i = 0; i < +formValues.numberOfChecks; i++) {
+            newData.push({
+              rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+              chequeNumber: "",
+              chequeDate: chequeDate[i],
+              bankName: formValues.bankName,
+              Sno: i,
+              cheque: formValues.cheque,
+              status: formValues.status,
+              duration: formValues.duration,
+              comments: formValues.comments,
+              approvalStatus: formValues.approvalStatus,
+            });
+          }
         }
+
         return newData;
       });
     }
@@ -372,8 +402,8 @@ const AddTenancyContracts = () => {
     formValues?.numberOfChecks,
     formValues?.anualPriceRent,
     formValues?.bankName,
-    formValues?.chequeNo,
     formValues?.chequeDate,
+    formValues?.leaseItems,
   ]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -791,6 +821,7 @@ const AddTenancyContracts = () => {
                                 onValueChange={(item) =>
                                   handleDropDown(name, item)
                                 }
+                                value={formValues[name]}
                               >
                                 <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                                   <div className="flex items-center">
@@ -966,7 +997,7 @@ const AddTenancyContracts = () => {
                                   label: unit.custom_unit_number,
                                   unit,
                                 }))}
-                                value={formValues.propertyUnits?.name || ""}
+                                value={formValues.propertyUnits || ""}
                                 onChange={(value) => {
                                   const selectedUnit = propertyUnits.find(
                                     (unit) => unit.name === value
@@ -1104,30 +1135,22 @@ const AddTenancyContracts = () => {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                              Owner Name :{" "}
-                              {tenantDetails && ownerDetails.supplier_name}
-                              {ownerDetails.supplier_name}
+                              Owner Name : {ownerDetails.supplier_name}
                             </label>
                           </div>
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                              Owner Email :{" "}
-                              {tenantDetails && ownerDetails.supplier_name}
-                              {ownerDetails.custom_email}
+                              Owner Email : {ownerDetails.custom_email}
                             </label>
                           </div>
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                              Owner Contact :{" "}
-                              {tenantDetails && ownerDetails.supplier_name}
-                              {ownerDetails.custom_phone_number}
+                              Owner Contact : {ownerDetails.custom_phone_number}
                             </label>
                           </div>
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                              Owner Type :
-                              {tenantDetails && ownerDetails.supplier_name}
-                              {ownerDetails.supplier_type}
+                              Owner Type :{ownerDetails.supplier_type}
                             </label>
                           </div>
                         </div>
@@ -1323,12 +1346,23 @@ const AddTenancyContracts = () => {
                                   <Table.Td>{item.Sno}</Table.Td>
                                   <Table.Td
                                     onClick={() => {
-                                      setSelectedCheque(item);
+                                      setFormValues({
+                                        ...formValues,
+                                        chequeNumber: item.chequeNumber,
+                                        bankName: item.bankName,
+                                        rent: item.rent.toString(),
+                                        dateOfCheque: item.chequeDate,
+                                        status: item.status,
+                                        duration: item.duration,
+                                        comments: item.comments,
+                                        approvalStatus: item.approvalStatus,
+                                        cheque: item.cheque,
+                                      });
                                       setPaymentDetailsModalOpen(i);
                                     }}
                                     className="text-blue-600 cursor-pointer "
                                   >
-                                    {item.chequeNumber}
+                                    {item.chequeNumber || "Add Cheque "}
                                   </Table.Td>
                                   <Table.Td>
                                     {parseFloat(item.rent).toFixed(2)}
@@ -1401,9 +1435,7 @@ const AddTenancyContracts = () => {
         <form className="flex flex-col">
           <div className="">
             <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
-              <span className="pb-1 border-b border-[#7C8DB5]">
-                Cheque Number
-              </span>
+              <span className="pb-1 border-b border-[#7C8DB5]">Cheque</span>
               <span className="pb-1">Details</span>
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(420px,1fr))] gap-4 mb-6">
@@ -1470,27 +1502,44 @@ const AddTenancyContracts = () => {
                     label={label}
                     placeholder="Input placeholder"
                   />
+                ) : type === "date" ? (
+                  <CustomDatePicker
+                    selectedDate={formValues[name] as Date}
+                    onChange={(date) =>
+                      handleDateChange(name, date.toDateString())
+                    }
+                    label={label}
+                    placeholder="Select Date"
+                    value={formValues[name]}
+                  />
                 ) : null
               )}
             </div>
 
             <PrimaryButton
               onClick={() => {
-                console.log("table Data", tableData);
-                const updatedTableData = [...tableData];
-                updatedTableData[paymentDetailsModalOpen].cheque =
-                  formValues.cheque;
-                updatedTableData[paymentDetailsModalOpen].status =
-                  formValues.status;
-                updatedTableData[paymentDetailsModalOpen].duration =
-                  formValues.duration;
-                updatedTableData[paymentDetailsModalOpen].comments =
-                  formValues.comments;
-                updatedTableData[paymentDetailsModalOpen].approvalStatus =
-                  formValues.approvalStatus;
+                console.log("Original Table Data", tableData);
+                const updatedTableData = tableData.map((item, index) =>
+                  index === paymentDetailsModalOpen
+                    ? {
+                        ...item,
+                        chequeDate: formValues.dateOfCheque || item.chequeDate,
+                        cheque: formValues.cheque || item.cheque,
+                        chequeNumber:
+                          formValues.chequeNumber || item.chequeNumber,
+                        status: formValues.status || item.status,
+                        duration: formValues.duration || item.duration,
+                        comments: formValues.comments || item.comments,
+                        approvalStatus:
+                          formValues.approvalStatus || item.approvalStatus,
+                      }
+                    : item
+                );
+
                 setTableData(updatedTableData);
                 setPaymentDetailsModalOpen(null);
-                console.log("updated table data", updatedTableData);
+
+                console.log("Updated Table Data", updatedTableData);
               }}
               type="button"
               title="Edit"

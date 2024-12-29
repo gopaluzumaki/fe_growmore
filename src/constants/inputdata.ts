@@ -250,11 +250,7 @@ export const payment_details = [
     name: "bankName",
     type: "text",
   },
-  {
-    label: "Cheque No",
-    name: "chequeNo",
-    type: "text",
-  },
+
   {
     label: "Cheque Date",
     name: "chequeDate",
@@ -268,6 +264,16 @@ export const cheque_number_form_details = [
     label: "Cheque Name",
     name: "cheque",
     type: "text",
+  },
+  {
+    label: "Cheque Number",
+    name: "chequeNumber",
+    type: "number",
+  },
+  {
+    label: "Cheque Date",
+    name: "dateOfCheque",
+    type: "date",
   },
   {
     label: "Status",
@@ -453,7 +459,6 @@ export const Termination_TenancyContractProperty = [
   { label: "Overstay Check", name: "custom_overstay_check", type: "text" },
 ];
 
-
 export const Renewal_TenancyContractProperty = [
   // { label: "Number of days", name: "number_of_days", type: "number" },
   {
@@ -466,5 +471,4 @@ export const Renewal_TenancyContractProperty = [
     name: "rental_increase",
     type: "mantineSelect",
   },
-
 ];

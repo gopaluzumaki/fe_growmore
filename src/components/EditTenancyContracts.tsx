@@ -153,6 +153,8 @@ const EditTenancyContracts = () => {
     approvalStatus: "",
 
     number_of_days: "",
+
+    custom_mode_of_payment: "",
   });
   const [selectedCheckbox, setSelectedCheckbox] = useState<string | null>(null);
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
@@ -208,7 +210,7 @@ const EditTenancyContracts = () => {
           if (item) {
             // Map lease items for nested fields
             const mappedLeaseItems = item.lease_item.map((lease) => ({
-              chequeNo: lease.custom_cheque_no,
+              chequeNumber: lease.custom_cheque_no,
               chequeDate: lease.custom_cheque_date,
               cheque: lease.custom_name_on_the_cheque,
               status: lease.custom_status,
@@ -254,7 +256,6 @@ const EditTenancyContracts = () => {
 
             setFormValues((prevData) => ({
               ...prevData,
-              chequeNo: mappedLeaseItems.map((item) => item.chequeNo).join(","),
               chequeDate: mappedLeaseItems[0].chequeDate,
               tenancyStatus: item?.lease_status,
               bankName: item.custom_bank_name,
@@ -821,48 +822,47 @@ const EditTenancyContracts = () => {
       formValues?.numberOfChecks &&
       formValues?.anualPriceRent &&
       formValues?.bankName &&
-      formValues?.chequeNo &&
-      formValues?.chequeDate &&
-      formValues?.leaseItems?.length > 0
+      formValues?.chequeDate
     ) {
-      // setTableData((prevData) => {
-      //   const newData = [];
-
-      //   for (let i = 0; i < +formValues.numberOfChecks; i++) {
-      //     newData.push({
-      //       rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
-      //       chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
-      //       chequeDate: chequeDate[i],
-      //       bankName: formValues.bankName,
-      //       Sno: i,
-      //       cheque: formValues.cheque,
-      //       status: formValues.status,
-      //       duration: formValues.duration,
-      //       comments: formValues.comments,
-      //       approvalStatus: formValues.approvalStatus,
-      //     });
-      //   }
-      //   return newData;
-      // });
-
       setTableData(() => {
         const newData = [];
 
         // Populate table data from leaseItems
-        formValues.leaseItems.forEach((lease, index) => {
-          newData.push({
-            rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
-            chequeNumber: formValues.chequeNo.split(",")[index] ?? "",
-            chequeDate: chequeDate[index] ?? lease.chequeDate,
-            bankName: formValues.bankName,
-            Sno: index + 1,
-            cheque: lease.cheque,
-            status: lease.status,
-            duration: lease.duration,
-            comments: lease.comments,
-            approvalStatus: lease.approvalStatus,
+        if (
+          formValues?.leaseItems &&
+          formValues?.numberOfChecks &&
+          formValues?.leaseItems?.length == formValues.numberOfChecks
+        ) {
+          formValues.leaseItems.forEach((lease, index) => {
+            newData.push({
+              rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+              chequeNumber: lease.chequeNumber,
+              chequeDate: chequeDate[index] ?? lease.chequeDate,
+              bankName: formValues.bankName,
+              Sno: index + 1,
+              cheque: lease.cheque,
+              status: lease.status,
+              duration: lease.duration,
+              comments: lease.comments,
+              approvalStatus: lease.approvalStatus,
+            });
           });
-        });
+        } else {
+          for (let i = 0; i < +formValues.numberOfChecks; i++) {
+            newData.push({
+              rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+              chequeNumber: "",
+              chequeDate: chequeDate[i],
+              bankName: formValues.bankName,
+              Sno: i,
+              cheque: formValues.cheque,
+              status: formValues.status,
+              duration: formValues.duration,
+              comments: formValues.comments,
+              approvalStatus: formValues.approvalStatus,
+            });
+          }
+        }
 
         return newData;
       });
@@ -871,7 +871,6 @@ const EditTenancyContracts = () => {
     formValues?.numberOfChecks,
     formValues?.anualPriceRent,
     formValues?.bankName,
-    formValues?.chequeNo,
     formValues?.chequeDate,
     formValues?.leaseItems,
   ]);
@@ -1057,7 +1056,6 @@ const EditTenancyContracts = () => {
             endDate: endDate,
             numberOfChecks: "",
             bankName: "",
-            chequeNo: "",
             chequeDate: "",
             anualPriceRent: 0,
           };
@@ -1146,7 +1144,6 @@ const EditTenancyContracts = () => {
 
         //contract details
         bank_name: formValues.bankName,
-        cheque_no: formValues.chequeNo,
         cheque_date: formatDateToYYMMDD(formValues.chequeDate),
         start_date: formatDateToYYMMDD(formValues.startDate),
         end_date: formatDateToYYMMDD(formValues.endDate),
@@ -1305,9 +1302,6 @@ const EditTenancyContracts = () => {
   // };
 
   const getChequeData = (name, label, type) => {
-    // console.log('nuda',numberOfChecks)
-
-    // {Array(numberOfChecks).map((index)=>(
     return (
       <Input
         key={name}
@@ -1320,7 +1314,6 @@ const EditTenancyContracts = () => {
         bgLight
       />
     );
-    // ))}
   };
 
   const inputStyles = {
@@ -1793,7 +1786,6 @@ const EditTenancyContracts = () => {
                         ({ label, name, type, values }) => {
                           if (
                             type === "text" &&
-                            name !== "chequeNo" &&
                             name !== "chequeDate" &&
                             name !== "custom_mode_of_payment"
                           ) {
@@ -1824,6 +1816,7 @@ const EditTenancyContracts = () => {
                                 onValueChange={(item) =>
                                   handleDropDown(name, item)
                                 }
+                                value={formValues[name]}
                               >
                                 <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                                   <div className="flex items-center">
@@ -1996,7 +1989,7 @@ const EditTenancyContracts = () => {
                                 label: unit.custom_unit_number,
                                 unit,
                               }))}
-                              value={formValues.propertyUnits?.name || ""}
+                              value={formValues.propertyUnits || ""}
                               onChange={(value) => {
                                 const selectedUnit = propertyUnits.find(
                                   (unit) => unit.name === value
@@ -2665,7 +2658,7 @@ const EditTenancyContracts = () => {
                                           chequeNumber: item.chequeNumber,
                                           bankName: item.bankName,
                                           rent: item.rent.toString(),
-                                          chequeDate: item.chequeDate,
+                                          dateOfCheque: item.chequeDate,
                                           status: item.status,
                                           duration: item.duration,
                                           comments: item.comments,
@@ -2676,7 +2669,7 @@ const EditTenancyContracts = () => {
                                       }}
                                       className="text-blue-600 cursor-pointer "
                                     >
-                                      {item.chequeNumber}
+                                      {item.chequeNumber || "Add Cheque "}
                                     </Table.Td>
                                     <Table.Td>
                                       {parseFloat(item.rent).toFixed(2)}
@@ -2749,9 +2742,7 @@ const EditTenancyContracts = () => {
         <form className="flex flex-col">
           <div className="">
             <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
-              <span className="pb-1 border-b border-[#7C8DB5]">
-                Cheque Number
-              </span>
+              <span className="pb-1 border-b border-[#7C8DB5]">Cheque</span>
               <span className="pb-1">Details</span>
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(420px,1fr))] gap-4 mb-6">
@@ -2818,6 +2809,16 @@ const EditTenancyContracts = () => {
                     label={label}
                     placeholder="Input placeholder"
                   />
+                ) : type === "date" ? (
+                  <CustomDatePicker
+                    selectedDate={formValues[name] as Date}
+                    onChange={(date) =>
+                      handleDateChange(name, date.toDateString())
+                    }
+                    label={label}
+                    placeholder="Select Date"
+                    value={formValues[name]}
+                  />
                 ) : null
               )}
             </div>
@@ -2829,7 +2830,10 @@ const EditTenancyContracts = () => {
                   index === paymentDetailsModalOpen
                     ? {
                         ...item,
+                        chequeDate: formValues.dateOfCheque || item.chequeDate,
                         cheque: formValues.cheque || item.cheque,
+                        chequeNumber:
+                          formValues.chequeNumber || item.chequeNumber,
                         status: formValues.status || item.status,
                         duration: formValues.duration || item.duration,
                         comments: formValues.comments || item.comments,
