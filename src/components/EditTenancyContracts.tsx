@@ -15,6 +15,7 @@ import {
   cheque_number_form_details,
   Extend_TenancyContractProperty,
   Termination_TenancyContractProperty,
+  Renewal_TenancyContractProperty,
 } from "../constants/inputdata";
 import Input from "./TextInput";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -64,7 +65,6 @@ const initialValues = [
   { label: "Move Out", checked: true, key: randomId() },
   { label: "Payment Remainder", checked: true, key: randomId() },
   { label: "Birthday Message", checked: true, key: randomId() },
-  { label: "60 Days Renewal Notice", checked: true, key: randomId() },
   { label: "90 Days Renewal Notice", checked: true, key: randomId() },
 ];
 
@@ -151,14 +151,51 @@ const EditTenancyContracts = () => {
     duration: "",
     comments: "",
     approvalStatus: "",
+
+    number_of_days: "",
   });
   const [selectedCheckbox, setSelectedCheckbox] = useState<string | null>(null);
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [selectedCheque, setSelectedCheque] = useState(null);
   const [values, handlers] = useListState(initialValues);
+  const [ownerDetails, setOwnerDetails] = useState();
+  const [tenantDetails, setTenantDetails] = useState();
+
+  // set start and end date in renewal details
+
+  useEffect(() => {
+    const fetchingBookedData = async () => {
+      if (location.state) {
+        try {
+          const res = await fetchTenancyContract(location.state);
+          const item = res?.data?.data;
+
+          console.log("property items data: ", item);
+
+          if (item) {
+            setFormValues((prevData) => ({
+              ...prevData,
+
+              startDate: formValues.renewal_duration
+                ? item?.end_date
+                : item?.start_date,
+              endDate: formValues.renewal_duration
+                ? handleStartEndDate_AccToRenewal(item.end_date)
+                : item?.end_date,
+            }));
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+
+    fetchingBookedData();
+  }, [location.state, formValues.renewal_duration, formValues.number_of_days]);
 
   // to prefilled formdata values.
+
   useEffect(() => {
     const fetchingBookedData = async () => {
       if (location.state) {
@@ -201,11 +238,11 @@ const EditTenancyContracts = () => {
                 checked: item.custom_birthday_message === 1,
                 key: randomId(),
               },
-              {
-                label: "60 Days Renewal Notice",
-                checked: item.custom_60_days_renewal_notice === 1,
-                key: randomId(),
-              },
+              // {
+              //   label: "60 Days Renewal Notice",
+              //   checked: item.custom_60_days_renewal_notice === 1,
+              //   key: randomId(),
+              // },
               {
                 label: "90 Days Renewal Notice",
                 checked: item.custom_90_days_renewal_notice === 1,
@@ -222,8 +259,8 @@ const EditTenancyContracts = () => {
               tenancyStatus: item?.lease_status,
               bankName: item.custom_bank_name,
               numberOfChecks: item?.custom_no_of__cheques,
-              startDate: item.start_date,
-              endDate: item.end_date,
+              startDate: item?.start_date,
+              endDate: item?.end_date,
               anualPriceRent: item.custom_price__rent_annually + "",
               sqFoot:
                 item.custom_price__rent_annually / item.custom_price_sq_ft || 0,
@@ -295,6 +332,36 @@ const EditTenancyContracts = () => {
 
     fetchingBookedData();
   }, [location.state]);
+
+  function handleStartEndDate_AccToRenewal(date) {
+    let new_date = new Date(date); // Convert to Date object
+
+    if (formValues.renewal_duration === "1 week") {
+      new_date.setDate(new_date.getDate() + 7);
+    } else if (formValues.renewal_duration === "1 month") {
+      new_date.setMonth(new_date.getMonth() + 1);
+    } else if (formValues.renewal_duration === "2 months") {
+      new_date.setMonth(new_date.getMonth() + 2);
+    } else if (formValues.renewal_duration === "3 months") {
+      new_date.setMonth(new_date.getMonth() + 3);
+    } else if (formValues.renewal_duration === "6 months") {
+      new_date.setMonth(new_date.getMonth() + 6);
+    } else if (formValues.renewal_duration === "1 year") {
+      new_date.setFullYear(new_date.getFullYear() + 1);
+    } else if (formValues.renewal_duration === "2 years") {
+      new_date.setFullYear(new_date.getFullYear() + 2);
+    } else if (formValues.renewal_duration === "other") {
+      if (formValues.number_of_days) {
+        new_date.setDate(
+          new_date.getDate() + parseInt(formValues.number_of_days)
+        );
+      }
+    }
+
+    const formattedDate = new_date.toISOString().split("T")[0];
+    console.log("formatted date value : ", formattedDate);
+    return formattedDate;
+  }
 
   // just comment out to take reference for future.
   // useEffect(() => {
@@ -812,6 +879,14 @@ const EditTenancyContracts = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
+    if (name === "percentage") {
+      const numericValue = Math.max(0, Math.min(100, Number(value))); // Clamp value between 0 and 100
+      setFormValues({ ...formValues, [name]: numericValue });
+    } else if (name === "number_of_days") {
+      const numericValue = Math.max(0, Number(value)); // Only enforce min value of 0
+      setFormValues({ ...formValues, [name]: numericValue });
+    }
+
     if (name === "sqFoot" && value) {
       let sqMeter = value * 0.092903;
       handleDropDown("sqMeter", value * 0.092903);
@@ -837,9 +912,10 @@ const EditTenancyContracts = () => {
   //   };
 
   const updateInitialValues = (tenancyStatus) => {
+    console.log("tenancy status: ", tenancyStatus);
     return initialValues.map((item) => ({
       ...item,
-      checked: tenancyStatus !== "Draft",
+      checked: tenancyStatus !== "Renewal",
     }));
   };
 
@@ -876,6 +952,7 @@ const EditTenancyContracts = () => {
       // Fetch tenant data based on the selected tenant
       const res = await fetchTenant(item);
       const tenantData = res?.data?.data;
+      setTenantDetails(tenantData);
       if (tenantData) {
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
@@ -909,43 +986,47 @@ const EditTenancyContracts = () => {
       }
     }
 
-    if (name === "ownerName") {
-      // Fetch tenant data based on the selected tenant
-      const res = await fetchOwner(item);
-      const ownerData = res?.data?.data;
-      if (ownerData) {
-        // Fill all the tenant-related fields with the fetched tenant data
-        setFormValues((prevData) => ({
-          ...prevData,
-          ownerName: ownerData?.name,
-          ownerType: ownerData?.supplier_type,
-          ownerContact: ownerData?.custom_phone_number,
-          ownerEmail: ownerData?.custom_email,
-          ownerCountry: ownerData?.country,
-          ownerMobile: ownerData?.custom_phone_number,
-          ownerDoc: ownerData?.doc,
-          ownerSign: ownerData?.custom_signature_of_owner,
-          //individual
-          ownerPassportNum: ownerData?.custom_passport_number,
-          ownerPassportExpiryDate: ownerData?.custom_passport_expiry_date,
-          ownerCountryOfIssuance: ownerData?.custom_country_of_issuance,
-          ownerEmiratesId: ownerData?.custom_emirates_id,
-          ownerEmiratesIdExpiryDate: ownerData?.custom_emirates_id_expiry_date,
-          // company
-          ownerCompanyName: ownerData?.name,
-          ownerTradeLicenseNumner: ownerData?.custom_trade_license_number,
-          ownerEmirate: ownerData?.custom_emirate,
-          ownerTradeLicenseExpiryDate:
-            ownerData?.custom_trade_license_expiry_date,
-          ownerPoaHolder: ownerData?.custom_power_of_attorney_holder_name,
-        }));
-      }
-    }
+    // if (name === "ownerName") {
+    //   // Fetch tenant data based on the selected tenant
+    //   const res = await fetchOwner(item);
+    //   const ownerData = res?.data?.data;
+    //   if (ownerData) {
+    //     // Fill all the tenant-related fields with the fetched tenant data
+    //     setFormValues((prevData) => ({
+    //       ...prevData,
+    //       ownerName: ownerData?.name,
+    //       ownerType: ownerData?.supplier_type,
+    //       ownerContact: ownerData?.custom_phone_number,
+    //       ownerEmail: ownerData?.custom_email,
+    //       ownerCountry: ownerData?.country,
+    //       ownerMobile: ownerData?.custom_phone_number,
+    //       ownerDoc: ownerData?.doc,
+    //       ownerSign: ownerData?.custom_signature_of_owner,
+    //       //individual
+    //       ownerPassportNum: ownerData?.custom_passport_number,
+    //       ownerPassportExpiryDate: ownerData?.custom_passport_expiry_date,
+    //       ownerCountryOfIssuance: ownerData?.custom_country_of_issuance,
+    //       ownerEmiratesId: ownerData?.custom_emirates_id,
+    //       ownerEmiratesIdExpiryDate: ownerData?.custom_emirates_id_expiry_date,
+    //       // company
+    //       ownerCompanyName: ownerData?.name,
+    //       ownerTradeLicenseNumner: ownerData?.custom_trade_license_number,
+    //       ownerEmirate: ownerData?.custom_emirate,
+    //       ownerTradeLicenseExpiryDate:
+    //         ownerData?.custom_trade_license_expiry_date,
+    //       ownerPoaHolder: ownerData?.custom_power_of_attorney_holder_name,
+    //     }));
+    //   }
+    // }
 
     if (name === "propertyUnits" && item != undefined) {
       const unit_List = await fetchUnit(item);
       const unit_List_Data = unit_List?.data?.data;
       if (unit_List_Data) {
+        const res = await fetchOwner(unit_List_Data?.unit_owner);
+        const ownerData = res?.data?.data;
+        setOwnerDetails(ownerData);
+
         setFormValues((prevData) => ({
           ...prevData,
           sqFoot: unit_List_Data?.custom_square_ft_of_unit,
@@ -1037,7 +1118,7 @@ const EditTenancyContracts = () => {
         "Move Out": "custom_move_out",
         "Payment Remainder": "custom_payment_remainder",
         "Birthday Message": "custom_birthday_message",
-        "60 Days Renewal Notice": "custom_60_days_renewal_notice",
+        // "60 Days Renewal Notice": "custom_60_days_renewal_notice",
         "90 Days Renewal Notice": "custom_90_days_renewal_notice",
       };
 
@@ -1508,6 +1589,197 @@ const EditTenancyContracts = () => {
                       </div>
                     </div>
                   )}
+
+                  {formValues.tenancyStatus === "Renewal" && (
+                    <div>
+                      <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Renewal
+                        </span>
+                        <span className="pb-1">Details</span>
+                      </p>
+                      <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                        {Renewal_TenancyContractProperty.map(
+                          ({ label, name, type, values }) =>
+                            type === "text" || type === "number" ? (
+                              <Input
+                                key={name}
+                                label={label}
+                                name={name}
+                                type={type}
+                                value={formValues[name]}
+                                onChange={handleChange}
+                                borderd
+                                bgLight
+                              />
+                            ) : type === "dropdown" ? (
+                              <Select
+                                onValueChange={(item) =>
+                                  handleDropDown(name, item)
+                                }
+                                value={formValues[name]}
+                              >
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {values?.map((item, i) => (
+                                    <SelectItem key={i} value={item}>
+                                      {item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : type === "date" ? (
+                              <CustomDatePicker
+                                selectedDate={formValues[name] as Date}
+                                onChange={(date) =>
+                                  handleDateChange(name, date)
+                                }
+                                label={label}
+                                placeholder="Select Date"
+                                value={formValues[name]}
+                              />
+                            ) : type === "mantineSelect" ? (
+                              name === "renewal_duration" ? (
+                                <MantineSelect
+                                  label={label}
+                                  placeholder={label}
+                                  data={[
+                                    "1 week",
+                                    "1 month",
+                                    "2 months",
+                                    "3 months",
+                                    "6 months",
+                                    "1 year",
+                                    "2 years",
+                                    "other",
+                                  ]}
+                                  value={formValues.renewal_duration ?? ""}
+                                  onChange={(value) => {
+                                    handleDropDown("renewal_duration", value);
+                                  }}
+                                  styles={{
+                                    label: {
+                                      marginBottom: "7px",
+                                      color: "#7C8DB5",
+                                      fontSize: "16px",
+                                    },
+                                    input: {
+                                      border: "1px solid #CCDAFF",
+                                      borderRadius: "8px",
+                                      padding: "24px",
+                                      fontSize: "16px",
+                                      color: "#1A202C",
+                                    },
+                                    dropdown: {
+                                      backgroundColor: "white",
+                                      borderRadius: "8px",
+                                      border: "1px solid #E2E8F0",
+                                    },
+                                  }}
+                                  searchable
+                                />
+                              ) : (
+                                <MantineSelect
+                                  label={label}
+                                  placeholder={label}
+                                  data={["Percentage", "Fixed Amount"]}
+                                  value={formValues.rental_increase ?? ""}
+                                  onChange={(value) => {
+                                    handleDropDown("rental_increase", value);
+                                  }}
+                                  styles={{
+                                    label: {
+                                      marginBottom: "7px",
+                                      color: "#7C8DB5",
+                                      fontSize: "16px",
+                                    },
+                                    input: {
+                                      border: "1px solid #CCDAFF",
+                                      borderRadius: "8px",
+                                      padding: "24px",
+                                      fontSize: "16px",
+                                      color: "#1A202C",
+                                    },
+                                    dropdown: {
+                                      backgroundColor: "white",
+                                      borderRadius: "8px",
+                                      border: "1px solid #E2E8F0",
+                                    },
+                                  }}
+                                  searchable
+                                />
+                              )
+                            ) : (
+                              <></>
+                            )
+                        )}
+
+                        {formValues.custom_serve_the_notice_period === "No" && (
+                          <Input
+                            disabled
+                            label={"Penalty Amount"}
+                            type={"text"}
+                            value={parseFloat(
+                              2 * (formValues?.anualPriceRent / 12)
+                            ).toFixed(2)}
+                            borderd
+                            bgLight
+                          />
+                        )}
+                      </div>
+                      {formValues.renewal_duration === "other" ? (
+                        <div>
+                          <Input
+                            label="Number of days"
+                            name="number_of_days"
+                            min={0}
+                            type="number"
+                            value={formValues[name]}
+                            onChange={handleChange}
+                            borderd
+                            bgLight
+                          />
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {formValues.rental_increase ? (
+                        formValues.rental_increase === "Percentage" ? (
+                          <div>
+                            <Input
+                              label="Percentage"
+                              name="percentage"
+                              min={0}
+                              max={100}
+                              type="number"
+                              value={formValues[name]}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <Input
+                              label="Fixed Amount"
+                              name="ficed_amount"
+                              type="number"
+                              value={formValues[name]}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
+                          </div>
+                        )
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  )}
                   {/* Contract Details */}
                   <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
@@ -1772,6 +2044,50 @@ const EditTenancyContracts = () => {
                         </div>
                       </div>
                     </div>
+                    {formValues.propertyUnits.custom_unit_number ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Location : {formValues.propertyLocation}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            City : {formValues.propertyCity}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Country : {formValues.propertyCountry}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block"></label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Square ft of unit : {formValues.sqFoot}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Square m of unit : {formValues.sqMeter}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Price/ Square m : {formValues.priceSqMeter}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Price/ Square ft : {formValues.priceSqFt}
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
 
                   {/* owner details */}
@@ -1783,7 +2099,7 @@ const EditTenancyContracts = () => {
                       <span className="pb-1">Details</span>
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
-                      <MantineSelect
+                      {/* <MantineSelect
                         label="Owner Name"
                         placeholder="Select Property"
                         data={ownerList.map((item) => ({
@@ -1812,8 +2128,8 @@ const EditTenancyContracts = () => {
                           },
                         }}
                         searchable
-                      />
-                      {Add_TenancyContractOwner.map(
+                      /> */}
+                      {/* {Add_TenancyContractOwner.map(
                         ({ label, name, type, values }) =>
                           type === "text" ? (
                             <Input
@@ -1980,8 +2296,34 @@ const EditTenancyContracts = () => {
                             onChange={handleOwnerFileChange}
                           />
                         </div>
-                      </div>
+                      </div> */}
                     </div>
+                    {ownerDetails ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Owner Name : {ownerDetails.supplier_name}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Owner Email : {ownerDetails.custom_email}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Owner Contact : {ownerDetails.custom_phone_number}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Owner Type :{ownerDetails.supplier_type}
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
 
                   {/* Customer Details */}
@@ -2024,7 +2366,7 @@ const EditTenancyContracts = () => {
                         }}
                         searchable
                       />
-                      {Add_TenancyContractTenant.map(
+                      {/* {Add_TenancyContractTenant.map(
                         ({ label, name, type, values }) =>
                           type === "text" ? (
                             <Input
@@ -2176,12 +2518,39 @@ const EditTenancyContracts = () => {
                             ) : (
                               <></>
                             )
-                        )}
+                        )} */}
                     </div>
+                    {formValues.tenantName ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Customer Name : {formValues.tenantName}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Customer Email : {formValues.tenantEmail}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Customer Contact : {formValues.tenantContact}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Customer Type : {formValues.tenantType}
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
                   </div>
 
                   {formValues.custom_mode_of_payment === "Cheque" &&
-                    formValues.tenancyStatus === "Active" && (
+                    (formValues.tenancyStatus === "Active" ||
+                      formValues.tenancyStatus === "Draft") && (
                       <section className="border-t-[1px] border-gray-500 mt-16">
                         <form className="flex flex-col ">
                           <div>
@@ -2324,7 +2693,8 @@ const EditTenancyContracts = () => {
                       </section>
                     )}
 
-                  {formValues.tenancyStatus !== "Draft" &&
+                  {formValues.tenancyStatus !== "Extend" &&
+                  formValues.tenancyStatus !== "Termination" &&
                   formValues.tenancyStatus !== "" &&
                   formValues.tenancyStatus !== null ? (
                     <section className="my-20">
