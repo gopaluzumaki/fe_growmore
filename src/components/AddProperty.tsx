@@ -2,10 +2,10 @@
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Add_Property } from "../constants/inputdata";
 import Input from "./TextInput";
-import { createProperty, uploadFile } from "../api";
+import { createProperty, getCountryList, uploadFile } from "../api";
 import { useNavigate } from "react-router-dom";
 import {
   Select,
@@ -48,9 +48,16 @@ interface FormData {
 const AddProperty = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrls, setImgUrls] = useState<string[]>([]);
-
+  const [countryList,setCountryList]=useState([])
   const navigate = useNavigate();
+useEffect(()=>{
+  getCountryListData()
+},[])
+const getCountryListData=async()=>{
+const res=await getCountryList()
 
+setCountryList(res?.data?.data)
+}
   // const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
   //   if (event.target.files) {
   //     const file = event.target.files[0];
@@ -145,27 +152,32 @@ const AddProperty = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
+                        <div>
+                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+        {label}
+      </label>
                         <Select
                           onValueChange={(item) => handleDropDown(name, item)}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
                           </SelectTrigger>
                           <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
+                            {(name==="custom_country"?countryList:values)?.map((item, i) => (
+                              <SelectItem key={i} value={name==="custom_country"?item.name:item}>
+                                {name==="custom_country"?item.name:item}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
+                        </div>
                       ) : (
                         <></>
                       )
                     )}
-                    <div className="mt-5 mb-5">
+                    <div className="mb-5">
                                           <CustomFileUpload
                                             onFilesUpload={(urls) => {
                                               setImgUrls(urls);

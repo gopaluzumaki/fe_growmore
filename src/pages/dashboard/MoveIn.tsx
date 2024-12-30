@@ -64,12 +64,12 @@ const MoveIn = () => {
   const applyFilters = () => {
     const filteredData = moveInList.filter((item) => {
       const matchesSearch = !searchValue ||
-        item?.custom_property.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_unit_no.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_customer.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_start_date.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_end_date.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_statusmi.toLowerCase().includes(searchValue.toLowerCase())
+        item?.custom_property?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_unit_no?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_customer?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_start_date?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_end_date?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_statusmi?.toLowerCase().includes(searchValue.toLowerCase())
 
 
       const matchesProperty =

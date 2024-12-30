@@ -78,7 +78,7 @@ const Overview = () => {
             <div className="p-4 py-6 grid grid-cols-4 border border-[#E6EDFF] rounded-xl">
               <DataCard
                 amount={propertyCount}
-                title="Total Property"
+                title="Total Properties"
                 marginValue="10.2"
                 weeklyAmount="1.01"
                 icon={icon_property}

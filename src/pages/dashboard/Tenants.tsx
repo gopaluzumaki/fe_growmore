@@ -15,9 +15,14 @@ import { img_group } from "../../assets";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { deleteCustomer, getTenantList, getTenantsFromAPI } from "../../api";
+import { Input } from "@mantine/core";
+import { CiSearch } from "react-icons/ci";
 
 const Tenants = () => {
   const [tenantList, setTenantList] = useState<any[]>([]);
+  const [filteredTenantList, setFilteredTenantList] = useState<any[]>([]);
+  const [searchValue, setSearchvalue] = useState<string | null>(null);
+
   const [error, setError] = useState('')
   useEffect(() => {
     setError('')
@@ -28,6 +33,7 @@ const Tenants = () => {
     const unitList = await getTenantsFromAPI(`?fields=["*"]&order_by=creation desc`);
     console.log("unitlist", unitList);
     setTenantList(unitList?.data?.data);
+    setFilteredTenantList(unitList?.data?.data)
   };
 
   console.log("unitList => ", tenantList);
@@ -44,7 +50,29 @@ const Tenants = () => {
     // "Location",
     // "status",
   ];
+  const applyFilters = () => {
+    const filteredData = tenantList.filter((item) => {
+      const matchesSearch = !searchValue ||
+        item?.customer_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_email?.toLowerCase().includes(searchValue.toLowerCase())
+        return matchesSearch 
+    });
+    setFilteredTenantList(filteredData);
+  };
+  useEffect(() => {
+    applyFilters();
+  }, [searchValue]);
 
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+  };
+  const searchStyle = {
+    input: {
+      border: "1px solid gray",
+      width: "20vw",
+      padding:"24px"
+    },
+  };
   return (
     <main>
       <div className="flex">
@@ -67,24 +95,15 @@ const Tenants = () => {
                   <IoAdd size={20} />
                 </Link>
               </div>
-              <div>
-                <Select>
-                  <SelectTrigger className="w-[190px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                    <div className="flex items-center gap-3">
-                      <VscFilter size={18} />
-                      <SelectValue placeholder="All Units" />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="unit1">Unit 1</SelectItem>
-                      <SelectItem value="unit2">Unit 2</SelectItem>
-                      <SelectItem value="unit3">Unit 3</SelectItem>
-                      <SelectItem value="unit4">Unit 4</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
+              <div className="flex gap-2 items-center">
+                                        <Input
+                                          onChange={handleSearchValue}
+                                          value={searchValue}
+                                          styles={searchStyle}
+                                          placeholder="Search"
+                                          leftSection={<CiSearch className="mr-2" size={24} />}
+                                        />
+                                      </div>  
             </div>
             <div className="my-4 p-4">
               <div className="overflow-x-auto">
@@ -102,7 +121,7 @@ const Tenants = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {tenantList.map((item, i) => {
+                    {filteredTenantList.map((item, i) => {
                       {
                         console.log("tem213", item);
                       }
@@ -137,7 +156,7 @@ const Tenants = () => {
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
                                 <Link
                                   to={"/tenants/edit"}
-                                  state={item.customer_name}
+                                  state={item.name}
                                 >
                                   <MdOutlineEdit
                                     size={20}
@@ -147,9 +166,10 @@ const Tenants = () => {
                               </button>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
                                 try {
+                                  setError("")
                                   const confirmed = window.confirm(`Are you sure you want to delete this ${item.customer_name}?`);
                                   if (confirmed) {
-                                    await deleteCustomer(item.customer_name);
+                                    await deleteCustomer(item.name);
                                   }
 
                                 }

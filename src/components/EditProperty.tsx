@@ -9,6 +9,7 @@ import {
   createProperty,
   fetchProperty,
   fetchProperyForEdit,
+  getCountryList,
   getPropertyList,
   updateProperty,
   uploadFile,
@@ -63,8 +64,10 @@ interface FormData {
 
 const EditProperty = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [imgUrls, setImgUrls] = useState("");
+  const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState([])
+  const [countryList,setCountryList]=useState([])
+
   const [formData, setFormData] = useState<FormData>({
     type: "",
     name: "",
@@ -86,7 +89,14 @@ const EditProperty = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
+useEffect(()=>{
+  getCountryListData()
+},[])
+const getCountryListData=async()=>{
+const res=await getCountryList()
 
+setCountryList(res?.data?.data)
+}
   useEffect(() => {
     const fetchPropertyData = async () => {
       try {
@@ -98,7 +108,6 @@ const EditProperty = () => {
           }
         });
         const res = await fetchProperty(location.state); // Fetch the property data
-        
         if (res) {
           setFormData({
             type: res.data.data.type || "",
@@ -192,28 +201,33 @@ useEffect(()=>{
                           bgLight
                         />
                       ) : type === "dropdown" ? (
+                        <div>
+                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+        {label}
+      </label>
                         <Select
                           value={formData[name as keyof FormData]}
                           onValueChange={(item) => handleDropDown(name, item)}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
                           </SelectTrigger>
                           <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
+                            {(name==="custom_country"?countryList:values)?.map((item, i) => (
+                              <SelectItem key={i} value={name==="custom_country"?item.name:item}>
+                                {name==="custom_country"?item.name:item}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
+                        </div>
                       ) : (
                         <></>
                       )
                     )}
-                    <div className="mt-5 mb-5">
+                    <div className="mb-5">
                                                               <CustomFileUpload
                                                                 onFilesUpload={(urls) => {
                                                                   setImgUrls(urls);
@@ -235,11 +249,9 @@ useEffect(()=>{
                     ></textarea>
                   </div>
                   {imageArray?.length > 0 && (<>
-                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                      <span className="pb-1 border-b border-[#7C8DB5]">
-                        Attachments
-                      </span>
-                    </p>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                          Attachments
+                      </p>
                     <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (
                         <div key={index} className="relative w-[100px] h-[100px]">

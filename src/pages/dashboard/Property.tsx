@@ -15,13 +15,18 @@ import { VscFilter } from "react-icons/vsc";
 import { useEffect, useState } from "react";
 import { deleteProperty, getPropertyListData } from "../../api";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
+import { Input } from "@mantine/core";
+import { CiSearch } from "react-icons/ci";
 
 const Property = () => {
   const [propertyList, setPropertyList] = useState([]);
+  const [filteredPropertyList,setFilteredPropertyList] = useState([]);
   const [error, setError] = useState('')
+  const [searchValue, setSearchvalue] = useState<string | null>(null);
+
   const headers = [
     "Sr. No",
-    "Name of property",
+    "Property Name",
     "Property Type",
     "Location",
     "Country",
@@ -38,8 +43,33 @@ const Property = () => {
     const propertyList = await getPropertyListData();
     console.log("nbv", propertyList.data.data);
     setPropertyList(propertyList?.data?.data);
+    setFilteredPropertyList(propertyList?.data?.data)
   };
+  const applyFilters = () => {
+    const filteredData = propertyList.filter((item) => {
+      const matchesSearch = !searchValue ||
+        item?.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_location?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_country?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_status?.toLowerCase().includes(searchValue.toLowerCase()) 
+      return matchesSearch 
+    });
+    setFilteredPropertyList(filteredData);
+  };
+  useEffect(() => {
+    applyFilters();
+  }, [searchValue]);
 
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+  };
+  const searchStyle = {
+    input: {
+      border: "1px solid gray",
+      width: "20vw",
+      padding:"24px"
+    },
+  };
   return (
     <main>
       <div className="flex">
@@ -61,24 +91,15 @@ const Property = () => {
                 <IoAdd size={20} />
               </Link>
             </div>
-            <div>
-              <Select>
-                <SelectTrigger className="w-[190px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                  <div className="flex items-center gap-3">
-                    <VscFilter size={18} />
-                    <SelectValue placeholder="All Properties" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Property1">Property 1</SelectItem>
-                    <SelectItem value="Property2">Property 2</SelectItem>
-                    <SelectItem value="Property3">Property 3</SelectItem>
-                    <SelectItem value="Property4">Property 4</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex gap-2 items-center">
+                          <Input
+                            onChange={handleSearchValue}
+                            value={searchValue}
+                            styles={searchStyle}
+                            placeholder="Search"
+                            leftSection={<CiSearch className="mr-2" size={24} />}
+                          />
+                        </div>  
           </div>
           <span className="flex justify-center text-red-500">{error}</span>
 
@@ -97,7 +118,7 @@ const Property = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {propertyList.map((item, i) => {
+                  {filteredPropertyList.map((item, i) => {
                     return (
                       <tr
                         key={i}
@@ -121,6 +142,7 @@ const Property = () => {
                             </button>
                             <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
                               try {
+                                setError("")
                                 const confirmed = window.confirm(`Are you sure you want to delete this ${item?.name1}?`);
                                 if (confirmed) {
                                   await deleteProperty(item?.name);

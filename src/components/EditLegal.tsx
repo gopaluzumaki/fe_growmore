@@ -525,10 +525,8 @@ setLegalList(updatedLegalList); // Update the state
 
 
                     {imageArray?.length > 0 && (<>
-                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                        <span className="pb-1 border-b border-[#7C8DB5]">
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           Attachments
-                        </span>
                       </p>
                       <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (
@@ -553,7 +551,7 @@ setLegalList(updatedLegalList); // Update the state
                       ))}
                     </div></>)}
                     {/* Attachment */}
-                    <div className="mt-5 mb-5">
+                    <div className="mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);

@@ -2,14 +2,14 @@
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   Add_Owner,
   Type_Company,
   Type_Individual,
 } from "../constants/inputdata";
 import Input from "./TextInput";
-import { createOwner, uploadFile } from "../api";
+import { createOwner, getCountryList, uploadFile } from "../api";
 import { useNavigate } from "react-router-dom";
 import {
   Select,
@@ -52,6 +52,7 @@ const AddOwners = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [ownerType, setOwnerType] = useState(null);
+  const [countryList,setCountryList]=useState([])
 
   const [formData, setFormData] = useState<FormData>({
     ownerType: "",
@@ -77,7 +78,14 @@ const AddOwners = () => {
     poaHolder: "",
     description: "",
   });
+useEffect(()=>{
+  getCountryListData()
+},[])
+const getCountryListData=async()=>{
+const res=await getCountryList()
 
+setCountryList(res?.data?.data)
+}
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
@@ -142,6 +150,9 @@ const AddOwners = () => {
         custom_emirates_id_expiry_date: formatDateToYYMMDD(
           formData.emiratesIdExpiryDate
         ),
+        custom_date_of_birth:formatDateToYYMMDD(formData?.custom_date_of_birth),
+        custom_visa_start_date:formatDateToYYMMDD(formData?.custom_visa_start_date),
+        custom_visa_end_date:formatDateToYYMMDD(formData?.custom_visa_end_date)
       });
       if (res) {
         navigate("/owners");
@@ -238,10 +249,14 @@ const AddOwners = () => {
                             bgLight
                           />
                         ) : type === "dropdown" ? (
+                          <div>
+                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+        {label}
+      </label>
                           <Select
                             onValueChange={(item) => handleDropDown(name, item)}
                           >
-                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
                               <div className="flex items-center">
                                 <SelectValue placeholder={label} />
                               </div>
@@ -249,13 +264,14 @@ const AddOwners = () => {
                             <SelectContent
                               onChange={() => console.log("hello")}
                             >
-                              {values?.map((item, i) => (
-                                <SelectItem key={i} value={item}>
-                                  {item}
+                              {(name==="country"?countryList:values)?.map((item, i) => (
+                                <SelectItem key={i} value={name==="country"?item.name:item}>
+                                  {name==="country"?item.name:item}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
+                          </div>
                         ) : type === "date" ? (
                           <CustomDatePicker
                             selectedDate={formData[name] as Date}

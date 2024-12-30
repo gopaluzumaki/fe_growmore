@@ -48,7 +48,7 @@ interface FormData {
 
 const EditLead = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
-  const [imgUrls, setImgUrls] = useState("");
+  const [imgUrls, setImgUrls] = useState([]);
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [imageArray, setImageArray] = useState([])
@@ -155,7 +155,7 @@ const EditLead = () => {
     try {
       console.log("API Data => ", formData);
       const res = await updateLead(location.state, {
-        // lead_owner:formData?.leadName,
+        first_name:formData?.leadName,
         status: formData?.leadStatus,
         type: formData?.leadType,
         mobile_no: formData?.contact,
@@ -241,7 +241,7 @@ const EditLead = () => {
                       )
                     )}
                     {/* Attachment */}
-                                        <div className="mt-5 mb-5">
+                                        <div className="mb-5">
                                           <CustomFileUpload
                                             onFilesUpload={(urls) => {
                                               setImgUrls(urls);
@@ -263,10 +263,8 @@ const EditLead = () => {
                     ></textarea>
                   </div>
                   {imageArray?.length > 0 && (<>
-                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                        <span className="pb-1 border-b border-[#7C8DB5]">
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           Attachments
-                        </span>
                       </p>
                       <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (

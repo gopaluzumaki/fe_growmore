@@ -17,9 +17,14 @@ import PrimaryButton from "../../components/PrimaryButton";
 import { useEffect, useState } from "react";
 import { getBookingList } from "../../api";
 import OwnerCard from "../../components/OwnerCard";
+import { Input } from "@mantine/core";
+import { CiSearch } from "react-icons/ci";
 
 const BookReserve = () => {
   const [bookingList, setBookingList] = useState<any[]>([]);
+  const [filteredBookingList, setFilteredBookingList] = useState<any[]>([]);
+  const [searchValue, setSearchvalue] = useState<string | null>(null);
+
 
   useEffect(() => {
     getData();
@@ -27,11 +32,38 @@ const BookReserve = () => {
 
   const getData = async () => {
     const unitList = await getBookingList();
+    setFilteredBookingList(unitList?.data?.data)
     setBookingList(unitList?.data?.data);
   };
 
   console.log("unitList => ", bookingList);
+  const applyFilters = () => {
+    const filteredData = bookingList.filter((item) => {
+      const matchesSearch = !searchValue ||
+        item?.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_contact_number?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_email?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_location__area?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.property?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_unit_number?.toLowerCase().includes(searchValue.toLowerCase())
+      return matchesSearch 
+    });
+    setFilteredBookingList(filteredData);
+  };
+  useEffect(() => {
+    applyFilters();
+  }, [searchValue]);
 
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+  };
+  const searchStyle = {
+    input: {
+      border: "1px solid gray",
+      width: "20vw",
+      padding:"24px"
+    },
+  };
   return (
     <main>
       <div className="flex">
@@ -54,70 +86,26 @@ const BookReserve = () => {
               </Link>
             </div>
             <div className="flex gap-2 items-center">
-              <Select>
-                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                  <div className="flex items-center gap-3">
-                    <VscFilter size={18} />
-                    <SelectValue placeholder="Select Properties" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Property1">Property 1</SelectItem>
-                    <SelectItem value="Property2">Property 2</SelectItem>
-                    <SelectItem value="Property3">Property 3</SelectItem>
-                    <SelectItem value="Property4">Property 4</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                  <div className="flex items-center gap-3">
-                    <VscFilter size={18} />
-                    <SelectValue placeholder="Select Unit" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Unit1">Unit 1</SelectItem>
-                    <SelectItem value="Unit2">Unit 2</SelectItem>
-                    <SelectItem value="Unit3">Unit 3</SelectItem>
-                    <SelectItem value="Unit4">Unit 4</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                  <div className="flex items-center gap-3">
-                    <VscFilter size={18} />
-                    <SelectValue placeholder="Select Tenant" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Tenant1">Tenant 1</SelectItem>
-                    <SelectItem value="Tenant2">Tenant 2</SelectItem>
-                    <SelectItem value="Tenant3">Tenant 3</SelectItem>
-                    <SelectItem value="Tenant4">Tenant 4</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <div className="w-[100px]">
-                <PrimaryButton title="Apply" />
-              </div>
-            </div>
+                                      <Input
+                                        onChange={handleSearchValue}
+                                        value={searchValue}
+                                        styles={searchStyle}
+                                        placeholder="Search"
+                                        leftSection={<CiSearch className="mr-2" size={24} />}
+                                      />
+                                    </div>  
           </div>
           <div className="my-4 p-6 grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] gap-10 border border-[#E6EDFF] rounded-xl">
-            {bookingList.map((item, i) => (
+            {filteredBookingList.map((item, i) => (
               <OwnerCard
                 redirect="booking"
                 key={i}
                 name={item?.name}
-                contact="971 52 489 1755"
-                email="John@gmail.com"
-                location="Downtown, DSO"
+                contact={item?.custom_contact_number}
+                email={item?.custom_email}
+                location={item?.custom_location__area}
                 totalProperty={item?.property}
-                totalUnit="03"
+                totalUnit={item?.custom_unit_number}
                 img={demo_avatar}
                 getData={getData}
               />

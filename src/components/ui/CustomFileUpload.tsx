@@ -20,7 +20,7 @@ export default function CustomFileUpload({
   };
   return (
     <div>
-      <p className="mb-1.5 ml-1 text-[18px] text-[#7C8DB5]">
+      <p className="mb-1.5 ml-1 font-medium text-gray-700">
         <label>Attachments (if Any)</label>
       </p>
       <FileInput
@@ -28,6 +28,20 @@ export default function CustomFileUpload({
         accept={type}
         placeholder="Upload files"
         multiple
+        styles={{
+          label: {
+            marginBottom: "7px",
+            color: "black",
+            fontSize: "16px",
+          },
+          input: {
+            border: "1px solid #CCDAFF",
+            borderRadius: "8px",
+            padding: "9px",
+            fontSize: "16px",
+            color: "#1A202C",
+          },
+        }}
       />
     </div>
   );
