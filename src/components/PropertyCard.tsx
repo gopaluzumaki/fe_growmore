@@ -11,7 +11,7 @@ type PropertyCardProps = {
   path?: string;
   getData?: any;
   id?: string;
-  setError?:any;
+  setError?: any;
 };
 
 const PropertyCard = ({
@@ -66,14 +66,17 @@ const PropertyCard = ({
           <button
             className="w-full text-center py-1.5 rounded-md text-[#0E0F11] bg-[#F7F7F7] border border-burlywood"
             onClick={async () => {
-               try {
-                              await deleteProperty(id)
-                            }
-                            catch (e) {
-                              setError(`Cannot delete ${name} because it is linked`)
-                              console.log(e?.response?.data?._server_messages)
-                            }
-                            getData()
+              try {
+                const confirmed = window.confirm(`Are you sure you want to delete this ${name}?`);
+                if (confirmed) {
+                  await deleteProperty(id);
+                }
+              }
+              catch (e) {
+                setError(`Cannot delete ${name} because it is linked`)
+                console.log(e?.response?.data?._server_messages)
+              }
+              getData()
             }}
           >
             Delete

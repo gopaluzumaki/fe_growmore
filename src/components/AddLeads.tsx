@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import CustomDatePicker from "./CustomDatePicker";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 interface FormData {
   leadName: string;
@@ -45,7 +46,7 @@ interface FormData {
 
 const AddLeads = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
-  const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState("");
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -56,7 +57,7 @@ const AddLeads = () => {
 
       if (file) {
         const res = await uploadFile(file);
-        setImgUrl(res?.data?.message?.file_url);
+        setImgUrls(res?.data?.message?.file_url);
       }
     }
   };
@@ -99,9 +100,10 @@ const AddLeads = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
+
     try {
       console.log("API Data => ", formData);
-      console.log("image Url : ", imgUrl);
       const res = await createLead({
         lead_owner: "saeed.m@syscort.com",
         status: formData?.leadStatus,
@@ -111,13 +113,13 @@ const AddLeads = () => {
         custom_tentative_lease_data: formData?.leaseInDate,
         custom_budget_range: formData?.budgetRange,
         custom_property_preference: formData?.propertyPreference,
-
+        custom_attachment_table: imageData,
         custom_area_preference: formData?.areaPreference,
         custom_community_preference: formData?.communityPreference,
         custom_bedroom_preference: formData?.bedroomPreference,
         custom_description: formData?.description,
 
-        custom_imagephoto: imgUrl,
+        custom_imagephoto: "",
       });
       if (res) {
         navigate("/leads");
@@ -183,21 +185,15 @@ const AddLeads = () => {
                         <></>
                       )
                     )}
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
-                      </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                    </div>
+                     {/* Attachment */}
+                                        <div className="mt-5 mb-5">
+                                          <CustomFileUpload
+                                            onFilesUpload={(urls) => {
+                                              setImgUrls(urls);
+                                            }}
+                                            type="image/*"
+                                          />
+                                        </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">

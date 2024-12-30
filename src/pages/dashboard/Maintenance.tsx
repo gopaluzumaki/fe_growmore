@@ -6,7 +6,8 @@ import { IoAdd } from "react-icons/io5";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { API_URL, createDamageLocation, createLegalReason, deleteCase, fetchDamageLocation, fetchLegalReason, getMaintenanceList } from "../../api";
 import { useEffect, useState } from "react";
-import { Select } from "@mantine/core";
+import { Input, Select } from "@mantine/core";
+import { CiSearch } from "react-icons/ci";
 
 const Maintenance = () => {
   const [maintenanceList, setMaintenanceList] = useState<any[]>([]);
@@ -17,6 +18,7 @@ const Maintenance = () => {
   const [uniqueOwner, setUniqueOwner] = useState<any[]>([])
   const [uniqueUnit, setUniqueUnit] = useState<any[]>([])
   const [uniqueProperty, setUniqueProperty] = useState<any[]>([])
+  const [searchValue, setSearchvalue] = useState<string | null>(null);
 
   const headers = [
     "Sr. No",
@@ -25,6 +27,9 @@ const Maintenance = () => {
     "Location",
     "Owner",
     "Damage Location",
+    "Created On",
+    "Active Days",
+    "Status",
     "Actions ",
   ];
 
@@ -34,9 +39,15 @@ const Maintenance = () => {
 
   const getData = async () => {
     const maintenanceList = await getMaintenanceList();
-    console.log(maintenanceList,"ngh")
-    setMaintenanceList(maintenanceList?.data?.data || []);
-    setFilteredMaintenanceList(maintenanceList?.data?.data || []);
+   
+    const updatedData = maintenanceList?.data?.data.map(item => {
+      const creationDate = new Date(item.creation);
+      const timeDifference = new Date() - creationDate; // Difference in milliseconds
+      const daysOfActivation = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
+      return { ...item, days_of_Activation: daysOfActivation };
+    });
+    setMaintenanceList(updatedData || []);
+    setFilteredMaintenanceList(updatedData || []);
 
   };
   useEffect(() => {
@@ -61,20 +72,32 @@ const Maintenance = () => {
   }, [maintenanceList])
   const applyFilters = () => {
     const filteredData = maintenanceList.filter((item) => {
+      const matchesSearch = !searchValue ||
+        item?.custom_property.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_unit_no.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_location__area.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.owner.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_damage_location.toLowerCase().includes(searchValue.toLowerCase())
+
+
       const matchesProperty =
         !selectedProperty || item.custom_property === selectedProperty;
       const matchesUnit =
         !selectedUnit || item.custom_unit_no === selectedUnit;
       const matchesCustomer =
         !selectedOwner || item.owner === selectedOwner;
-      return matchesProperty && matchesUnit && matchesCustomer;
+      return matchesSearch && matchesProperty && matchesUnit && matchesCustomer;
     });
     setFilteredMaintenanceList(filteredData);
   };
 
   useEffect(() => {
     applyFilters();
-  }, [selectedProperty, selectedUnit, selectedOwner]);
+  }, [selectedProperty, selectedUnit, selectedOwner, searchValue]);
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+  };
+
   const selectStyle = {
     input: {
       border: "1px solid gray",
@@ -88,7 +111,12 @@ const Maintenance = () => {
       color: "#000",
     },
   };
-
+  const searchStyle = {
+    input: {
+      border: "1px solid gray",
+      width: "20vw",
+    },
+  };
   return (
     <main>
       <div className="flex">
@@ -136,6 +164,13 @@ const Maintenance = () => {
                   onChange={(value) => setSelectedOwner(value)}
                   styles={selectStyle}
                 />
+                <Input
+                  onChange={handleSearchValue}
+                  value={searchValue}
+                  styles={searchStyle}
+                  placeholder="search"
+                  leftSection={<CiSearch size={16} />}
+                />
               </div>
             </div>
             <div className="my-4 p-4">
@@ -170,6 +205,11 @@ const Maintenance = () => {
                             {item.owner}
                           </td>
                           <td className="p-2 py-3">{item.custom_damage_location}</td>
+                          <td className="p-2 py-3">{item.creation.split(" ")[0]}</td>
+
+                          <td className="p-2 py-3">{item.custom_status_maint==="Resolve"?0:item.days_of_Activation}</td>
+                          <td className="p-2 py-3">{item.custom_status_maint}</td>
+
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link
@@ -183,8 +223,11 @@ const Maintenance = () => {
                                 />
                               </Link>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
-                                await deleteCase(item.name)
-                                getData()
+                                const confirmed = window.confirm(`Are you sure you want to delete this ${item.custom_property}?`);
+                                if (confirmed) {
+                                  await deleteCase(item.name);
+                                  getData();
+                                }
                               }}>
                                 <MdDeleteForever
                                   size={20}

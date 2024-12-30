@@ -13,7 +13,7 @@ import {
   updateProperty,
   uploadFile,
 } from "../api";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 interface FormData {
   propertyName: string;
@@ -62,7 +63,8 @@ interface FormData {
 
 const EditProperty = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState("");
+  const [imageArray, setImageArray] = useState([])
   const [formData, setFormData] = useState<FormData>({
     type: "",
     name: "",
@@ -83,6 +85,7 @@ const EditProperty = () => {
 
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchPropertyData = async () => {
@@ -94,8 +97,8 @@ const EditProperty = () => {
             propertyName = prop.name;
           }
         });
-        const res = await fetchProperty(propertyName); // Fetch the property data
-
+        const res = await fetchProperty(location.state); // Fetch the property data
+        
         if (res) {
           setFormData({
             type: res.data.data.type || "",
@@ -115,7 +118,10 @@ const EditProperty = () => {
             custom_amenities: res.data.data.custom_amenities || "",
             is_group: 1,
           });
-          setImgUrl(res.data.data.custom_thumbnail_image || "");
+        }
+        if (res?.data?.data?.custom_attachment_table?.length > 0) {
+          const imageArray = res?.data?.data?.custom_attachment_table?.map((item) => item.image);
+          setImageArray(imageArray)
         }
       } catch (error) {
         console.error("Error fetching property data:", error);
@@ -123,7 +129,7 @@ const EditProperty = () => {
     };
 
     fetchPropertyData();
-  }, [id]);
+  }, [location?.state]);
 
   const handleDropDown = (name, item) => {
     setFormData((prevData) => ({
@@ -132,17 +138,7 @@ const EditProperty = () => {
     }));
   };
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const file = event.target.files[0];
-      setSelectedFile(file);
-
-      if (file) {
-        const res = await uploadFile(file);
-        setImgUrl(res?.data?.message?.file_url);
-      }
-    }
-  };
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -151,12 +147,15 @@ const EditProperty = () => {
       [name]: value,
     }));
   };
-
+useEffect(()=>{
+  setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+},[imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
     const apiData = {
       ...formData,
-      custom_thumbnail_image: imgUrl,
+      custom_attachment_table: imageData,
     };
     console.log("API Data => ", apiData);
     const res = await updateProperty(apiData, formData.name);
@@ -164,7 +163,11 @@ const EditProperty = () => {
       navigate("/property");
     }
   };
-
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
+  console.log(imageArray,"bgy")
   return (
     <main>
       <div className="flex">
@@ -210,21 +213,14 @@ const EditProperty = () => {
                         <></>
                       )
                     )}
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
-                      </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                    </div>
+                    <div className="mt-5 mb-5">
+                                                              <CustomFileUpload
+                                                                onFilesUpload={(urls) => {
+                                                                  setImgUrls(urls);
+                                                                }}
+                                                                type="image/*"
+                                                              />
+                                                            </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
@@ -238,6 +234,35 @@ const EditProperty = () => {
                       name="description" // Set name to match state
                     ></textarea>
                   </div>
+                  {imageArray?.length > 0 && (<>
+                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                      <span className="pb-1 border-b border-[#7C8DB5]">
+                        Attachments
+                      </span>
+                    </p>
+                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>)}
                   <div className="mt-4 max-w-[100px]">
                     <PrimaryButton title="Save" />
                   </div>

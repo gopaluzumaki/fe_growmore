@@ -34,7 +34,7 @@ import {
   createLegalReason,
 } from "../api";
 import {
-  // Select,
+  Select,
   SelectContent,
   SelectGroup,
   SelectItem,
@@ -48,7 +48,6 @@ import { useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
 import CustomFileUpload from "./ui/CustomFileUpload";
-import { Select } from "@mantine/core";
 
 const AddLegal = () => {
   const statusSelect = [
@@ -124,6 +123,10 @@ const AddLegal = () => {
   useEffect(() => {
     getProperties();
     getLegalReasonList();
+    setFormValues((prevData) => ({
+      ...prevData,
+      "status": "Active",
+    }));
   }, []);
 
 
@@ -204,7 +207,7 @@ const AddLegal = () => {
         propertyCity: '',
         propertyCountry: '',
         propertyRent: '',
-        propertyUnits: '',
+        propertyUnits: null,
         sqFoot: '',
         sqMeter: '',
         priceSqMeter: '',
@@ -269,6 +272,7 @@ const AddLegal = () => {
         custom_end_date: formValues?.endDate,
         custom_statusmi: '',
         custom_statusmo:'',
+        custom_status_legal:formValues?.status,
         custom_comment_box: formValues?.comment,
         custom_attachment_table: imageData,
         custom_location__area: formValues?.propertyLocation,
@@ -594,7 +598,7 @@ setLegalList(updatedLegalList); // Update the state
                         </span>
 
                       </p>
-                      <Select
+                      <MantineSelect
                   placeholder="Select Legal Reason"
                   data={legalList.map((p) => p.name)}
                   clearable
@@ -611,7 +615,34 @@ setLegalList(updatedLegalList); // Update the state
                   styles={selectStyle}
                 />
                       </div>
-                    
+                      <div className="mt-5 mb-5">
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Status
+                        </span>
+
+                      </p>
+                      {statusSelect.map(({ label, name, type, values }) => (
+                        <Select
+                          onValueChange={(value) =>
+                            handleDropDown(name, value)
+                          }
+                          value={formValues[name]}
+                        >
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-3">
+                            <div className="flex items-center">
+                              <SelectValue placeholder={label} />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {values?.map((item, i) => (
+                              <SelectItem key={i} value={item}>
+                                {item}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ))}</div>
 
                     {/* Attachment */}
                     <div className="mt-5 mb-5">
@@ -619,7 +650,7 @@ setLegalList(updatedLegalList); // Update the state
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);
                         }}
-                        type="*"
+                       type="image/*"
                       />
                     </div>
                     <div className="max-w-[100px]">

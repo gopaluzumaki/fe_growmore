@@ -246,6 +246,7 @@ const AddBookReserve = () => {
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
+      const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
 
       const res = await createBooking({
         property: formData.name1,
@@ -269,8 +270,10 @@ const AddBookReserve = () => {
         custom_booking_amount: formData.bookingAmount,
         custom_contact_number_of_owner: formData.ownerContact,
         custom_name_of_owner: formData.ownerName,
-        custom_image_attachment: imgUrl,
+        custom_image_attachment: '',
         custom_description: formData.description,
+        custom_attachment_table: imageData,
+
       });
       if (res) {
         navigate("/booking");

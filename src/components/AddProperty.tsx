@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 interface FormData {
   propertyName: string;
@@ -46,21 +47,22 @@ interface FormData {
 
 const AddProperty = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
-  const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState<string[]>([]);
+
   const navigate = useNavigate();
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const file = event.target.files[0];
-      setSelectedFile(file);
+  // const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files) {
+  //     const file = event.target.files[0];
+  //     setSelectedFile(file);
 
-      if (file) {
-        const res = await uploadFile(file);
-        console.log('reaeq2asd',res)
-        setImgUrl(res?.data?.message?.file_url);
-      }
-    }
-  };
+  //     if (file) {
+  //       const res = await uploadFile(file);
+  //       console.log('reaeq2asd',res)
+  //       setImgUrl(res?.data?.message?.file_url);
+  //     }
+  //   }
+  // };
 
   const [formData, setFormData] = useState<FormData>({
     type: "",
@@ -97,12 +99,13 @@ const AddProperty = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('13e2qdwas',imgUrl)
+    const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
+
     try {
       console.log("API Data => ", formData);
       const res = await createProperty({
         ...formData,
-        custom_thumbnail_image: imgUrl,
+        custom_attachment_table: imageData,
       });
       console.log("res,res", res);
       if (res) {
@@ -162,21 +165,14 @@ const AddProperty = () => {
                         <></>
                       )
                     )}
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
-                      </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                    </div>
+                    <div className="mt-5 mb-5">
+                                          <CustomFileUpload
+                                            onFilesUpload={(urls) => {
+                                              setImgUrls(urls);
+                                            }}
+                                            type="image/*"
+                                          />
+                                        </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">

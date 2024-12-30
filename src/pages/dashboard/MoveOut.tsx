@@ -6,7 +6,8 @@ import { IoAdd } from "react-icons/io5";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { API_URL, deleteCase, getMoveOutList } from "../../api";
 import { useEffect, useState } from "react";
-import { Select } from "@mantine/core";
+import { Input, Select } from "@mantine/core";
+import { CiSearch } from "react-icons/ci";
 
 const MoveOut = () => {
   const [moveOutList, setMoveOutList] = useState<any[]>([]);
@@ -17,6 +18,8 @@ const MoveOut = () => {
   const [uniqueCustomer, setUniqueCustomer] = useState<any[]>([])
   const [uniqueUnit, setUniqueUnit] = useState<any[]>([])
   const [uniqueProperty, setUniqueProperty] = useState<any[]>([])
+  const [searchValue, setSearchvalue] = useState<string | null>(null);
+
   const headers = [
     "Sr. No",
     "Customer",
@@ -59,20 +62,32 @@ const MoveOut = () => {
   }, [moveOutList])
   const applyFilters = () => {
     const filteredData = moveOutList.filter((item) => {
+      const matchesSearch = !searchValue ||
+        item?.custom_property.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_unit_no.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_customer.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_start_date.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_end_date.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_statusmo.toLowerCase().includes(searchValue.toLowerCase())
+
       const matchesProperty =
         !selectedProperty || item.custom_property === selectedProperty;
       const matchesUnit =
         !selectedUnit || item.custom_unit_no === selectedUnit;
       const matchesCustomer =
         !selectedCustomer || item.custom_customer === selectedCustomer;
-      return matchesProperty && matchesUnit && matchesCustomer;
+      return matchesSearch && matchesProperty && matchesUnit && matchesCustomer;
     });
     setFilteredMoveOutList(filteredData);
   };
 
   useEffect(() => {
     applyFilters();
-  }, [selectedProperty, selectedUnit, selectedCustomer]);
+  }, [selectedProperty, selectedUnit, selectedCustomer, searchValue]);
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+  };
+
   const selectStyle = {
     input: {
       border: "1px solid gray",
@@ -84,6 +99,12 @@ const MoveOut = () => {
     dropdown: {
       backgroundColor: "#F5F5F5",
       color: "#000",
+    },
+  };
+  const searchStyle = {
+    input: {
+      border: "1px solid gray",
+      width: "20vw",
     },
   };
   return (
@@ -133,6 +154,13 @@ const MoveOut = () => {
                   onChange={(value) => setSelectedCustomer(value)}
                   styles={selectStyle}
                 />
+                <Input
+                  onChange={handleSearchValue}
+                  value={searchValue}
+                  styles={searchStyle}
+                  placeholder="search"
+                  leftSection={<CiSearch size={16} />}
+                />
               </div>
             </div>
             <div className="my-4 p-4">
@@ -168,16 +196,9 @@ const MoveOut = () => {
                           </td>
                           <td className="p-2 py-3">{item.custom_end_date}</td>
                           <td className="p-2 py-3">
-                            <div
-                              className={`p-1 rounded ${item.custom_status === "Draft"
-                                  ? "bg-red-400 text-black"
-                                  : item.custom_status === "Active"
-                                    ? "bg-[#34A853] text-white"
-                                    : "bg-blue-400 text-white"
-                                }`}
-                            >
-                              {item.custom_status}
-                            </div>
+
+                            {item.custom_statusmo}
+
                           </td>
 
                           <td className="p-2 py-3">
@@ -194,8 +215,11 @@ const MoveOut = () => {
                               </Link>
 
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
-                                await deleteCase(item.name)
-                                getData()
+                               const confirmed = window.confirm(`Are you sure you want to delete this ${item.custom_property}?`);
+                               if (confirmed) {
+                                 await deleteCase(item.name);
+                                 getData();
+                               }
                               }}>
                                 <MdDeleteForever
                                   size={20}
