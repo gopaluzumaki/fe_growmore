@@ -168,7 +168,8 @@ const TenancyContracts = () => {
       "Dec",
     ];
     const [year, month, day] = dateString.split("-");
-    return `${day} ${months[parseInt(month, 10) - 1]} ${year}`;
+    // return `${day} ${months[parseInt(month, 10) - 1]} ${year}`;
+    return `${day}-${month}-${year}`;
   };
 
   const searchStyle = {
@@ -311,13 +312,15 @@ const TenancyContracts = () => {
                           <td className="p-2 py-3">
                             {item.custom_rent_amount_to_pay}
                           </td>
-                          <td className="p-2 py-3">
+                          <td className="p-2 py-3 whitespace-nowrap">
                             {formatDate(item.start_date)}
                           </td>
-                          <td className="p-2 py-3">
+                          <td className="p-2 py-3 whitespace-nowrap">
                             {formatDate(item.end_date)}
                           </td>
-                          <td className="p-2 py-3">{expiryDays}</td>
+                          <td className="p-2 py-3">
+                            {expiryDays ? `-${expiryDays}` : expiryDays}
+                          </td>
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${

@@ -15,6 +15,7 @@ import {
   cheque_number_form_details,
   Extend_TenancyContractProperty,
   Termination_TenancyContractProperty,
+  Renewal_TenancyContractProperty,
 } from "../constants/inputdata";
 import Input from "./TextInput";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -64,7 +65,6 @@ const initialValues = [
   { label: "Move Out", checked: true, key: randomId() },
   { label: "Payment Remainder", checked: true, key: randomId() },
   { label: "Birthday Message", checked: true, key: randomId() },
-  { label: "60 Days Renewal Notice", checked: true, key: randomId() },
   { label: "90 Days Renewal Notice", checked: true, key: randomId() },
 ];
 
@@ -151,12 +151,20 @@ const EditTenancyContracts = () => {
     duration: "",
     comments: "",
     approvalStatus: "",
+
+    number_of_days: "",
+
+    custom_mode_of_payment: "",
   });
   const [selectedCheckbox, setSelectedCheckbox] = useState<string | null>(null);
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [selectedCheque, setSelectedCheque] = useState(null);
   const [values, handlers] = useListState(initialValues);
+  const [ownerDetails, setOwnerDetails] = useState();
+  const [tenantDetails, setTenantDetails] = useState();
+
+  // set start and end date in renewal details
 
   useEffect(() => {
     const fetchingBookedData = async () => {
@@ -165,10 +173,44 @@ const EditTenancyContracts = () => {
           const res = await fetchTenancyContract(location.state);
           const item = res?.data?.data;
 
+          console.log("property items data: ", item);
+
+          if (item) {
+            setFormValues((prevData) => ({
+              ...prevData,
+
+              startDate: formValues.renewal_duration
+                ? item?.end_date
+                : item?.start_date,
+              endDate: formValues.renewal_duration
+                ? handleStartEndDate_AccToRenewal(item.end_date)
+                : item?.end_date,
+            }));
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+
+    fetchingBookedData();
+  }, [location.state, formValues.renewal_duration, formValues.number_of_days]);
+
+  // to prefilled formdata values.
+
+  useEffect(() => {
+    const fetchingBookedData = async () => {
+      if (location.state) {
+        try {
+          const res = await fetchTenancyContract(location.state);
+          const item = res?.data?.data;
+
+          console.log("property items data: ", item);
+
           if (item) {
             // Map lease items for nested fields
             const mappedLeaseItems = item.lease_item.map((lease) => ({
-              chequeNo: lease.custom_cheque_no,
+              chequeNumber: lease.custom_cheque_no,
               chequeDate: lease.custom_cheque_date,
               cheque: lease.custom_name_on_the_cheque,
               status: lease.custom_status,
@@ -198,11 +240,11 @@ const EditTenancyContracts = () => {
                 checked: item.custom_birthday_message === 1,
                 key: randomId(),
               },
-              {
-                label: "60 Days Renewal Notice",
-                checked: item.custom_60_days_renewal_notice === 1,
-                key: randomId(),
-              },
+              // {
+              //   label: "60 Days Renewal Notice",
+              //   checked: item.custom_60_days_renewal_notice === 1,
+              //   key: randomId(),
+              // },
               {
                 label: "90 Days Renewal Notice",
                 checked: item.custom_90_days_renewal_notice === 1,
@@ -214,13 +256,12 @@ const EditTenancyContracts = () => {
 
             setFormValues((prevData) => ({
               ...prevData,
-              chequeNo: mappedLeaseItems.map((item) => item.chequeNo).join(","),
               chequeDate: mappedLeaseItems[0].chequeDate,
               tenancyStatus: item?.lease_status,
               bankName: item.custom_bank_name,
               numberOfChecks: item?.custom_no_of__cheques,
-              startDate: item.start_date,
-              endDate: item.end_date,
+              startDate: item?.start_date,
+              endDate: item?.end_date,
               anualPriceRent: item.custom_price__rent_annually + "",
               sqFoot:
                 item.custom_price__rent_annually / item.custom_price_sq_ft || 0,
@@ -292,6 +333,163 @@ const EditTenancyContracts = () => {
 
     fetchingBookedData();
   }, [location.state]);
+
+  function handleStartEndDate_AccToRenewal(date) {
+    let new_date = new Date(date); // Convert to Date object
+
+    if (formValues.renewal_duration === "1 week") {
+      new_date.setDate(new_date.getDate() + 7);
+    } else if (formValues.renewal_duration === "1 month") {
+      new_date.setMonth(new_date.getMonth() + 1);
+    } else if (formValues.renewal_duration === "2 months") {
+      new_date.setMonth(new_date.getMonth() + 2);
+    } else if (formValues.renewal_duration === "3 months") {
+      new_date.setMonth(new_date.getMonth() + 3);
+    } else if (formValues.renewal_duration === "6 months") {
+      new_date.setMonth(new_date.getMonth() + 6);
+    } else if (formValues.renewal_duration === "1 year") {
+      new_date.setFullYear(new_date.getFullYear() + 1);
+    } else if (formValues.renewal_duration === "2 years") {
+      new_date.setFullYear(new_date.getFullYear() + 2);
+    } else if (formValues.renewal_duration === "other") {
+      if (formValues.number_of_days) {
+        new_date.setDate(
+          new_date.getDate() + parseInt(formValues.number_of_days)
+        );
+      }
+    }
+
+    const formattedDate = new_date.toISOString().split("T")[0];
+    console.log("formatted date value : ", formattedDate);
+    return formattedDate;
+  }
+
+  // just comment out to take reference for future.
+  // useEffect(() => {
+  //   const fetchingBookedData = async () => {
+  //     if (location.state) {
+  //       try {
+  //         const res = await fetchTenancyContract(location.state);
+  //         const item = res?.data?.data;
+  //         console.log("tenancy contract item", item);
+
+  //         if (item) {
+  //           // Map lease items for nested fields
+  //           const mappedLeaseItems = item.lease_item.map((lease) => ({
+  //             chequeNo: lease.custom_cheque_no,
+  //             chequeDate: lease.custom_cheque_date,
+  //             cheque: lease.custom_name_on_the_cheque,
+  //             status: lease.custom_status,
+  //             duration: lease.custom_duration,
+  //             comments: lease.custom_comments,
+  //             approvalStatus: lease.custom_approval_status,
+  //           }));
+
+  //           const updatedValues = [
+  //             {
+  //               label: "Move In",
+  //               checked: item.custom_move_in === 1,
+  //               key: randomId(),
+  //             },
+  //             {
+  //               label: "Move Out",
+  //               checked: item.custom_move_out === 1,
+  //               key: randomId(),
+  //             },
+  //             {
+  //               label: "Payment Remainder",
+  //               checked: item.custom_payment_remainder === 1,
+  //               key: randomId(),
+  //             },
+  //             {
+  //               label: "Birthday Message",
+  //               checked: item.custom_birthday_message === 1,
+  //               key: randomId(),
+  //             },
+  //             {
+  //               label: "60 Days Renewal Notice",
+  //               checked: item.custom_60_days_renewal_notice === 1,
+  //               key: randomId(),
+  //             },
+  //             {
+  //               label: "90 Days Renewal Notice",
+  //               checked: item.custom_90_days_renewal_notice === 1,
+  //               key: randomId(),
+  //             },
+  //           ];
+
+  //           handlers.setState(updatedValues);
+
+  //           setFormValues((prevData) => ({
+  //             ...prevData,
+
+  //             tenancyStatus: item?.lease_status,
+  //             bankName: item.custom_bank_name,
+  //             numberOfChecks: item?.custom_no_of__cheques,
+  //             startDate: item.start_date,
+  //             endDate: item.end_date,
+  //             anualPriceRent: item.custom_price__rent_annually + "",
+  //             sqFoot:
+  //               item.custom_price__rent_annually / item.custom_price_sq_ft || 0,
+  //             sqMeter:
+  //               item.custom_price__rent_annually / item.custom_price_sq_m || 0,
+  //             priceSqMeter: item.custom_price_sq_m,
+  //             priceSqFt: item.custom_price_sq_ft,
+  //             securityDepositeAmt: item.security_deposit,
+  //             brokerageAmt: item.custom_brokerage_amount,
+  //             notice_period: item.notice_period,
+  //             custom_property_no: item.custom_property_no,
+  //             custom_premises_no: item.custom_premises_no,
+  //             custom_mode_of_payment: item.custom_mode_of_payment,
+  //             propertyName: item.property,
+  //             propertyType: item.custom_type,
+  //             propertyLocation: item.custom_location__area,
+  //             propertyRent: item.custom_rent_amount_to_pay,
+  //             propertyUnits: item.custom_number_of_unit,
+  //             propertyDoc: item.propertyDoc,
+  //             tenantName: item.lease_customer,
+  //             tenantContact: item.custom_contact_number,
+  //             tenantEmail: item.custom_email,
+  //             tenantCity: item.custom_city,
+  //             tenantPassport: item.custom_passport_number,
+  //             tenantPassportExpiry: item.custom_passport_expiry_date,
+  //             tenantCountryOfIssuance: item.custom_country_of_issuance,
+  //             tenantEmiratesId: item.custom_emirates_id,
+  //             tenantEmiratesIdExpiry: item.custom_emirates_id_expiry_date,
+  //             tenantSignature: item.custom_signature_of_customer,
+  //             ownerName: item.custom_name_of_owner,
+  //             ownerType: item.custom_type_of_owner,
+  //             ownerContact: item.custom_contact_number_of_owner,
+  //             ownerEmiratesId: item.custom_emirates_idtrade_license,
+  //             ownerCountry: item.custom_owner_country,
+  //             ownerEmail: item.custom_owner_email,
+  //             ownerMobile: item.custom_mobile_number,
+  //             ownerImage: item.custom_image,
+  //             ownerSignature: item.custom_signature_of_owner,
+
+  //             leaseItems: mappedLeaseItems, // Store mapped lease items
+  //           }));
+
+  //           // Handle dropdowns
+  //           if (item?.lease_customer)
+  //             await handleDropDown("tenantName", item.lease_customer);
+  //           if (item?.custom_name_of_owner)
+  //             await handleDropDown("ownerName", item.custom_name_of_owner);
+  //           if (item?.property) {
+  //             await handleDropDown("propertyName", item.property);
+  //           }
+
+  //           setOwnerImgUrl(item.custom_image || "");
+  //           setPropertyImgUrl(item?.propertyDoc || "");
+  //         }
+  //       } catch (error) {
+  //         console.error(error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchingBookedData();
+  // }, [location.state]);
 
   const handleOwnerFileChange = async (
     event: ChangeEvent<HTMLInputElement>
@@ -429,8 +627,135 @@ const EditTenancyContracts = () => {
     setOwnerList(item);
   };
 
+  // comment out for reference
+  // useEffect(() => {
+  //   let chequeDate: any = [];
+  //   chequeDate.push(formValues.chequeDate);
+  //   if (formValues.numberOfChecks === "2") {
+  //     let currentDate = new Date(formValues.chequeDate);
+
+  //     let date = currentDate.setMonth(currentDate.getMonth() + 6);
+
+  //     let dateMDY = `${new Date(date).getFullYear()}-${
+  //       new Date(date).getMonth() + 1
+  //     }-${new Date(date).getDate()}`;
+
+  //     chequeDate.push(dateMDY);
+  //   } else if (formValues.numberOfChecks === "3") {
+  //     let currentDate = new Date(formValues.chequeDate);
+
+  //     let date = currentDate.setMonth(currentDate.getMonth() + 4);
+  //     let date1 = currentDate.setMonth(currentDate.getMonth() + 4);
+
+  //     let dateMDY = `${new Date(date).getFullYear()}-${
+  //       new Date(date).getMonth() + 1
+  //     }-${new Date(date).getDate()}`;
+
+  //     let dateMDY1 = `${new Date(date1).getFullYear()}-${
+  //       new Date(date1).getMonth() + 1
+  //     }-${new Date(date1).getDate()}`;
+
+  //     chequeDate.push(dateMDY);
+  //     chequeDate.push(dateMDY1);
+  //   } else if (formValues.numberOfChecks === "6") {
+  //     let currentDate = new Date(formValues.chequeDate);
+
+  //     let date = currentDate.setMonth(currentDate.getMonth() + 2);
+  //     let date1 = currentDate.setMonth(currentDate.getMonth() + 2);
+  //     let date2 = currentDate.setMonth(currentDate.getMonth() + 2);
+  //     let date3 = currentDate.setMonth(currentDate.getMonth() + 2);
+  //     let date4 = currentDate.setMonth(currentDate.getMonth() + 2);
+
+  //     let dateMDY = `${new Date(date).getFullYear()}-${
+  //       new Date(date).getMonth() + 1
+  //     }-${new Date(date).getDate()}`;
+
+  //     let dateMDY1 = `${new Date(date1).getFullYear()}-${
+  //       new Date(date1).getMonth() + 1
+  //     }-${new Date(date1).getDate()}`;
+
+  //     let dateMDY2 = `${new Date(date2).getFullYear()}-${
+  //       new Date(date2).getMonth() + 1
+  //     }-${new Date(date2).getDate()}`;
+
+  //     let dateMDY3 = `${new Date(date3).getFullYear()}-${
+  //       new Date(date3).getMonth() + 1
+  //     }-${new Date(date3).getDate()}`;
+
+  //     let dateMDY4 = `${new Date(date4).getFullYear()}-${
+  //       new Date(date4).getMonth() + 1
+  //     }-${new Date(date4).getDate()}`;
+
+  //     chequeDate.push(dateMDY);
+  //     chequeDate.push(dateMDY1);
+  //     chequeDate.push(dateMDY2);
+  //     chequeDate.push(dateMDY3);
+  //     chequeDate.push(dateMDY4);
+  //   }
+  //   if (
+  //     formValues?.numberOfChecks &&
+  //     formValues?.anualPriceRent &&
+  //     formValues?.bankName &&
+  //     formValues?.chequeNo &&
+  //     formValues?.chequeDate &&
+  //     formValues?.leaseItems?.length > 0
+  //   ) {
+
+  //     setTableData(() => {
+  //       const newData = [];
+
+  //       // Populate table data from leaseItems
+
+  // // if number of checks there then will set table data
+  // if(formValues.numberOfChecks){
+  //          for (let i = 0; i < +formValues.numberOfChecks; i++) {
+  //         newData.push({
+  //           rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+  //           chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
+  //           chequeDate: chequeDate[i],
+  //           bankName: formValues.bankName,
+  //           Sno: i+1,
+  //           cheque: formValues.cheque,
+  //           status: formValues.status,
+  //           duration: formValues.duration,
+  //           comments: formValues.comments,
+  //           approvalStatus: formValues.approvalStatus,
+  //         });
+  //       }
+  //      }
+  //      else{
+  //       formValues.leaseItems.forEach((lease, index) => {
+  //         newData.push({
+  //           rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+  //           chequeNumber: formValues.chequeNo.split(",")[index] ?? "",
+  //           chequeDate: chequeDate[index] ?? lease.chequeDate,
+  //           bankName: formValues.bankName,
+  //           Sno: index + 1,
+  //           cheque: lease.cheque,
+  //           status: lease.status,
+  //           duration: lease.duration,
+  //           comments: lease.comments,
+  //           approvalStatus: lease.approvalStatus,
+  //         });
+  //       });
+  //      }
+
+  //       return newData;
+  //     });
+  //   }
+  // }, [
+  //   formValues?.numberOfChecks,
+  //   formValues?.anualPriceRent,
+  //   formValues?.bankName,
+  //   formValues?.chequeNo,
+  //   formValues?.chequeDate,
+  //   formValues?.leaseItems,
+  // ]);
+
+  // to manage payment details table
   useEffect(() => {
     let chequeDate: any = [];
+    // console.log("formValues.chequeDate", formValues.chequeDate);
     chequeDate.push(formValues.chequeDate);
     if (formValues.numberOfChecks === "2") {
       let currentDate = new Date(formValues.chequeDate);
@@ -497,48 +822,47 @@ const EditTenancyContracts = () => {
       formValues?.numberOfChecks &&
       formValues?.anualPriceRent &&
       formValues?.bankName &&
-      formValues?.chequeNo &&
-      formValues?.chequeDate &&
-      formValues?.leaseItems?.length > 0
+      formValues?.chequeDate
     ) {
-      // setTableData((prevData) => {
-      //   const newData = [];
-
-      //   for (let i = 0; i < +formValues.numberOfChecks; i++) {
-      //     newData.push({
-      //       rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
-      //       chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
-      //       chequeDate: chequeDate[i],
-      //       bankName: formValues.bankName,
-      //       Sno: i,
-      //       cheque: formValues.cheque,
-      //       status: formValues.status,
-      //       duration: formValues.duration,
-      //       comments: formValues.comments,
-      //       approvalStatus: formValues.approvalStatus,
-      //     });
-      //   }
-      //   return newData;
-      // });
-
       setTableData(() => {
         const newData = [];
 
         // Populate table data from leaseItems
-        formValues.leaseItems.forEach((lease, index) => {
-          newData.push({
-            rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
-            chequeNumber: formValues.chequeNo.split(",")[index] ?? "",
-            chequeDate: chequeDate[index] ?? lease.chequeDate,
-            bankName: formValues.bankName,
-            Sno: index + 1,
-            cheque: lease.cheque,
-            status: lease.status,
-            duration: lease.duration,
-            comments: lease.comments,
-            approvalStatus: lease.approvalStatus,
+        if (
+          formValues?.leaseItems &&
+          formValues?.numberOfChecks &&
+          formValues?.leaseItems?.length == formValues.numberOfChecks
+        ) {
+          formValues.leaseItems.forEach((lease, index) => {
+            newData.push({
+              rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+              chequeNumber: lease.chequeNumber,
+              chequeDate: chequeDate[index] ?? lease.chequeDate,
+              bankName: formValues.bankName,
+              Sno: index + 1,
+              cheque: lease.cheque,
+              status: lease.status,
+              duration: lease.duration,
+              comments: lease.comments,
+              approvalStatus: lease.approvalStatus,
+            });
           });
-        });
+        } else {
+          for (let i = 0; i < +formValues.numberOfChecks; i++) {
+            newData.push({
+              rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
+              chequeNumber: "",
+              chequeDate: chequeDate[i],
+              bankName: formValues.bankName,
+              Sno: i,
+              cheque: formValues.cheque,
+              status: formValues.status,
+              duration: formValues.duration,
+              comments: formValues.comments,
+              approvalStatus: formValues.approvalStatus,
+            });
+          }
+        }
 
         return newData;
       });
@@ -547,13 +871,20 @@ const EditTenancyContracts = () => {
     formValues?.numberOfChecks,
     formValues?.anualPriceRent,
     formValues?.bankName,
-    formValues?.chequeNo,
     formValues?.chequeDate,
     formValues?.leaseItems,
   ]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    if (name === "percentage") {
+      const numericValue = Math.max(0, Math.min(100, Number(value))); // Clamp value between 0 and 100
+      setFormValues({ ...formValues, [name]: numericValue });
+    } else if (name === "number_of_days") {
+      const numericValue = Math.max(0, Number(value)); // Only enforce min value of 0
+      setFormValues({ ...formValues, [name]: numericValue });
+    }
 
     if (name === "sqFoot" && value) {
       let sqMeter = value * 0.092903;
@@ -578,6 +909,14 @@ const EditTenancyContracts = () => {
   //       [name]: value,
   //     }));
   //   };
+
+  const updateInitialValues = (tenancyStatus) => {
+    console.log("tenancy status: ", tenancyStatus);
+    return initialValues.map((item) => ({
+      ...item,
+      checked: tenancyStatus !== "Renewal",
+    }));
+  };
 
   const handleDropDown = async (name, item) => {
     if (name === "propertyName") {
@@ -612,6 +951,7 @@ const EditTenancyContracts = () => {
       // Fetch tenant data based on the selected tenant
       const res = await fetchTenant(item);
       const tenantData = res?.data?.data;
+      setTenantDetails(tenantData);
       if (tenantData) {
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
@@ -645,43 +985,47 @@ const EditTenancyContracts = () => {
       }
     }
 
-    if (name === "ownerName") {
-      // Fetch tenant data based on the selected tenant
-      const res = await fetchOwner(item);
-      const ownerData = res?.data?.data;
-      if (ownerData) {
-        // Fill all the tenant-related fields with the fetched tenant data
-        setFormValues((prevData) => ({
-          ...prevData,
-          ownerName: ownerData?.name,
-          ownerType: ownerData?.supplier_type,
-          ownerContact: ownerData?.custom_phone_number,
-          ownerEmail: ownerData?.custom_email,
-          ownerCountry: ownerData?.country,
-          ownerMobile: ownerData?.custom_phone_number,
-          ownerDoc: ownerData?.doc,
-          ownerSign: ownerData?.custom_signature_of_owner,
-          //individual
-          ownerPassportNum: ownerData?.custom_passport_number,
-          ownerPassportExpiryDate: ownerData?.custom_passport_expiry_date,
-          ownerCountryOfIssuance: ownerData?.custom_country_of_issuance,
-          ownerEmiratesId: ownerData?.custom_emirates_id,
-          ownerEmiratesIdExpiryDate: ownerData?.custom_emirates_id_expiry_date,
-          // company
-          ownerCompanyName: ownerData?.name,
-          ownerTradeLicenseNumner: ownerData?.custom_trade_license_number,
-          ownerEmirate: ownerData?.custom_emirate,
-          ownerTradeLicenseExpiryDate:
-            ownerData?.custom_trade_license_expiry_date,
-          ownerPoaHolder: ownerData?.custom_power_of_attorney_holder_name,
-        }));
-      }
-    }
+    // if (name === "ownerName") {
+    //   // Fetch tenant data based on the selected tenant
+    //   const res = await fetchOwner(item);
+    //   const ownerData = res?.data?.data;
+    //   if (ownerData) {
+    //     // Fill all the tenant-related fields with the fetched tenant data
+    //     setFormValues((prevData) => ({
+    //       ...prevData,
+    //       ownerName: ownerData?.name,
+    //       ownerType: ownerData?.supplier_type,
+    //       ownerContact: ownerData?.custom_phone_number,
+    //       ownerEmail: ownerData?.custom_email,
+    //       ownerCountry: ownerData?.country,
+    //       ownerMobile: ownerData?.custom_phone_number,
+    //       ownerDoc: ownerData?.doc,
+    //       ownerSign: ownerData?.custom_signature_of_owner,
+    //       //individual
+    //       ownerPassportNum: ownerData?.custom_passport_number,
+    //       ownerPassportExpiryDate: ownerData?.custom_passport_expiry_date,
+    //       ownerCountryOfIssuance: ownerData?.custom_country_of_issuance,
+    //       ownerEmiratesId: ownerData?.custom_emirates_id,
+    //       ownerEmiratesIdExpiryDate: ownerData?.custom_emirates_id_expiry_date,
+    //       // company
+    //       ownerCompanyName: ownerData?.name,
+    //       ownerTradeLicenseNumner: ownerData?.custom_trade_license_number,
+    //       ownerEmirate: ownerData?.custom_emirate,
+    //       ownerTradeLicenseExpiryDate:
+    //         ownerData?.custom_trade_license_expiry_date,
+    //       ownerPoaHolder: ownerData?.custom_power_of_attorney_holder_name,
+    //     }));
+    //   }
+    // }
 
     if (name === "propertyUnits" && item != undefined) {
       const unit_List = await fetchUnit(item);
       const unit_List_Data = unit_List?.data?.data;
       if (unit_List_Data) {
+        const res = await fetchOwner(unit_List_Data?.unit_owner);
+        const ownerData = res?.data?.data;
+        setOwnerDetails(ownerData);
+
         setFormValues((prevData) => ({
           ...prevData,
           sqFoot: unit_List_Data?.custom_square_ft_of_unit,
@@ -712,7 +1056,6 @@ const EditTenancyContracts = () => {
             endDate: endDate,
             numberOfChecks: "",
             bankName: "",
-            chequeNo: "",
             chequeDate: "",
             anualPriceRent: 0,
           };
@@ -721,23 +1064,7 @@ const EditTenancyContracts = () => {
         setTableData([]);
       }
 
-      if (formValues.tenancyStatus === "Draft") {
-        const updatedValues = values.map((item) => {
-          return {
-            ...item,
-            checked: false,
-          };
-        });
-        handlers.setState(updatedValues);
-      } else {
-        const updatedValues = values.map((item) => {
-          return {
-            ...item,
-            checked: true,
-          };
-        });
-        handlers.setState(updatedValues);
-      }
+      handlers.setState(updateInitialValues(item));
     }
     setFormValues((prevData) => ({
       ...prevData,
@@ -789,7 +1116,7 @@ const EditTenancyContracts = () => {
         "Move Out": "custom_move_out",
         "Payment Remainder": "custom_payment_remainder",
         "Birthday Message": "custom_birthday_message",
-        "60 Days Renewal Notice": "custom_60_days_renewal_notice",
+        // "60 Days Renewal Notice": "custom_60_days_renewal_notice",
         "90 Days Renewal Notice": "custom_90_days_renewal_notice",
       };
 
@@ -817,7 +1144,6 @@ const EditTenancyContracts = () => {
 
         //contract details
         bank_name: formValues.bankName,
-        cheque_no: formValues.chequeNo,
         cheque_date: formatDateToYYMMDD(formValues.chequeDate),
         start_date: formatDateToYYMMDD(formValues.startDate),
         end_date: formatDateToYYMMDD(formValues.endDate),
@@ -976,9 +1302,6 @@ const EditTenancyContracts = () => {
   // };
 
   const getChequeData = (name, label, type) => {
-    // console.log('nuda',numberOfChecks)
-
-    // {Array(numberOfChecks).map((index)=>(
     return (
       <Input
         key={name}
@@ -991,7 +1314,6 @@ const EditTenancyContracts = () => {
         bgLight
       />
     );
-    // ))}
   };
 
   const inputStyles = {
@@ -999,6 +1321,9 @@ const EditTenancyContracts = () => {
       border: "1px solid gray",
     },
   };
+
+  console.log("table data == >", tableData);
+  console.log("form values == >", formValues);
 
   return (
     <main>
@@ -1257,6 +1582,197 @@ const EditTenancyContracts = () => {
                       </div>
                     </div>
                   )}
+
+                  {formValues.tenancyStatus === "Renewal" && (
+                    <div>
+                      <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Renewal
+                        </span>
+                        <span className="pb-1">Details</span>
+                      </p>
+                      <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                        {Renewal_TenancyContractProperty.map(
+                          ({ label, name, type, values }) =>
+                            type === "text" || type === "number" ? (
+                              <Input
+                                key={name}
+                                label={label}
+                                name={name}
+                                type={type}
+                                value={formValues[name]}
+                                onChange={handleChange}
+                                borderd
+                                bgLight
+                              />
+                            ) : type === "dropdown" ? (
+                              <Select
+                                onValueChange={(item) =>
+                                  handleDropDown(name, item)
+                                }
+                                value={formValues[name]}
+                              >
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {values?.map((item, i) => (
+                                    <SelectItem key={i} value={item}>
+                                      {item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : type === "date" ? (
+                              <CustomDatePicker
+                                selectedDate={formValues[name] as Date}
+                                onChange={(date) =>
+                                  handleDateChange(name, date)
+                                }
+                                label={label}
+                                placeholder="Select Date"
+                                value={formValues[name]}
+                              />
+                            ) : type === "mantineSelect" ? (
+                              name === "renewal_duration" ? (
+                                <MantineSelect
+                                  label={label}
+                                  placeholder={label}
+                                  data={[
+                                    "1 week",
+                                    "1 month",
+                                    "2 months",
+                                    "3 months",
+                                    "6 months",
+                                    "1 year",
+                                    "2 years",
+                                    "other",
+                                  ]}
+                                  value={formValues.renewal_duration ?? ""}
+                                  onChange={(value) => {
+                                    handleDropDown("renewal_duration", value);
+                                  }}
+                                  styles={{
+                                    label: {
+                                      marginBottom: "7px",
+                                      color: "#7C8DB5",
+                                      fontSize: "16px",
+                                    },
+                                    input: {
+                                      border: "1px solid #CCDAFF",
+                                      borderRadius: "8px",
+                                      padding: "24px",
+                                      fontSize: "16px",
+                                      color: "#1A202C",
+                                    },
+                                    dropdown: {
+                                      backgroundColor: "white",
+                                      borderRadius: "8px",
+                                      border: "1px solid #E2E8F0",
+                                    },
+                                  }}
+                                  searchable
+                                />
+                              ) : (
+                                <MantineSelect
+                                  label={label}
+                                  placeholder={label}
+                                  data={["Percentage", "Fixed Amount"]}
+                                  value={formValues.rental_increase ?? ""}
+                                  onChange={(value) => {
+                                    handleDropDown("rental_increase", value);
+                                  }}
+                                  styles={{
+                                    label: {
+                                      marginBottom: "7px",
+                                      color: "#7C8DB5",
+                                      fontSize: "16px",
+                                    },
+                                    input: {
+                                      border: "1px solid #CCDAFF",
+                                      borderRadius: "8px",
+                                      padding: "24px",
+                                      fontSize: "16px",
+                                      color: "#1A202C",
+                                    },
+                                    dropdown: {
+                                      backgroundColor: "white",
+                                      borderRadius: "8px",
+                                      border: "1px solid #E2E8F0",
+                                    },
+                                  }}
+                                  searchable
+                                />
+                              )
+                            ) : (
+                              <></>
+                            )
+                        )}
+
+                        {formValues.custom_serve_the_notice_period === "No" && (
+                          <Input
+                            disabled
+                            label={"Penalty Amount"}
+                            type={"text"}
+                            value={parseFloat(
+                              2 * (formValues?.anualPriceRent / 12)
+                            ).toFixed(2)}
+                            borderd
+                            bgLight
+                          />
+                        )}
+                      </div>
+                      {formValues.renewal_duration === "other" ? (
+                        <div>
+                          <Input
+                            label="Number of days"
+                            name="number_of_days"
+                            min={0}
+                            type="number"
+                            value={formValues[name]}
+                            onChange={handleChange}
+                            borderd
+                            bgLight
+                          />
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {formValues.rental_increase ? (
+                        formValues.rental_increase === "Percentage" ? (
+                          <div>
+                            <Input
+                              label="Percentage"
+                              name="percentage"
+                              min={0}
+                              max={100}
+                              type="number"
+                              value={formValues[name]}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <Input
+                              label="Fixed Amount"
+                              name="ficed_amount"
+                              type="number"
+                              value={formValues[name]}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
+                          </div>
+                        )
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  )}
                   {/* Contract Details */}
                   <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
@@ -1270,7 +1786,6 @@ const EditTenancyContracts = () => {
                         ({ label, name, type, values }) => {
                           if (
                             type === "text" &&
-                            name !== "chequeNo" &&
                             name !== "chequeDate" &&
                             name !== "custom_mode_of_payment"
                           ) {
@@ -1301,6 +1816,7 @@ const EditTenancyContracts = () => {
                                 onValueChange={(item) =>
                                   handleDropDown(name, item)
                                 }
+                                value={formValues[name]}
                               >
                                 <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                                   <div className="flex items-center">
@@ -1521,6 +2037,50 @@ const EditTenancyContracts = () => {
                         </div>
                       </div>
                     </div>
+                    {formValues.propertyUnits.custom_unit_number ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Location : {formValues.propertyLocation}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            City : {formValues.propertyCity}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Country : {formValues.propertyCountry}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block"></label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Square ft of unit : {formValues.sqFoot}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Square m of unit : {formValues.sqMeter}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Price/ Square m : {formValues.priceSqMeter}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Price/ Square ft : {formValues.priceSqFt}
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
 
                   {/* owner details */}
@@ -1532,7 +2092,7 @@ const EditTenancyContracts = () => {
                       <span className="pb-1">Details</span>
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
-                      <MantineSelect
+                      {/* <MantineSelect
                         label="Owner Name"
                         placeholder="Select Property"
                         data={ownerList.map((item) => ({
@@ -1561,8 +2121,8 @@ const EditTenancyContracts = () => {
                           },
                         }}
                         searchable
-                      />
-                      {Add_TenancyContractOwner.map(
+                      /> */}
+                      {/* {Add_TenancyContractOwner.map(
                         ({ label, name, type, values }) =>
                           type === "text" ? (
                             <Input
@@ -1729,8 +2289,34 @@ const EditTenancyContracts = () => {
                             onChange={handleOwnerFileChange}
                           />
                         </div>
-                      </div>
+                      </div> */}
                     </div>
+                    {ownerDetails ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Owner Name : {ownerDetails.supplier_name}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Owner Email : {ownerDetails.custom_email}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Owner Contact : {ownerDetails.custom_phone_number}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Owner Type :{ownerDetails.supplier_type}
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
 
                   {/* Customer Details */}
@@ -1773,7 +2359,7 @@ const EditTenancyContracts = () => {
                         }}
                         searchable
                       />
-                      {Add_TenancyContractTenant.map(
+                      {/* {Add_TenancyContractTenant.map(
                         ({ label, name, type, values }) =>
                           type === "text" ? (
                             <Input
@@ -1925,12 +2511,39 @@ const EditTenancyContracts = () => {
                             ) : (
                               <></>
                             )
-                        )}
+                        )} */}
                     </div>
+                    {formValues.tenantName ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Customer Name : {formValues.tenantName}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Customer Email : {formValues.tenantEmail}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Customer Contact : {formValues.tenantContact}
+                          </label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">
+                            Customer Type : {formValues.tenantType}
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
                   </div>
 
                   {formValues.custom_mode_of_payment === "Cheque" &&
-                    formValues.tenancyStatus === "Active" && (
+                    (formValues.tenancyStatus === "Active" ||
+                      formValues.tenancyStatus === "Draft") && (
                       <section className="border-t-[1px] border-gray-500 mt-16">
                         <form className="flex flex-col ">
                           <div>
@@ -2045,7 +2658,7 @@ const EditTenancyContracts = () => {
                                           chequeNumber: item.chequeNumber,
                                           bankName: item.bankName,
                                           rent: item.rent.toString(),
-                                          chequeDate: item.chequeDate,
+                                          dateOfCheque: item.chequeDate,
                                           status: item.status,
                                           duration: item.duration,
                                           comments: item.comments,
@@ -2056,7 +2669,7 @@ const EditTenancyContracts = () => {
                                       }}
                                       className="text-blue-600 cursor-pointer "
                                     >
-                                      {item.chequeNumber}
+                                      {item.chequeNumber || "Add Cheque "}
                                     </Table.Td>
                                     <Table.Td>
                                       {parseFloat(item.rent).toFixed(2)}
@@ -2073,7 +2686,10 @@ const EditTenancyContracts = () => {
                       </section>
                     )}
 
-                  {formValues.tenancyStatus !== "Draft" && formValues.tenancyStatus !== ""&& formValues.tenancyStatus !== null ? (
+                  {formValues.tenancyStatus !== "Extend" &&
+                  formValues.tenancyStatus !== "Termination" &&
+                  formValues.tenancyStatus !== "" &&
+                  formValues.tenancyStatus !== null ? (
                     <section className="my-20">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
                         <span className="pb-1 border-b border-[#7C8DB5]">
@@ -2126,9 +2742,7 @@ const EditTenancyContracts = () => {
         <form className="flex flex-col">
           <div className="">
             <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
-              <span className="pb-1 border-b border-[#7C8DB5]">
-                Cheque Number
-              </span>
+              <span className="pb-1 border-b border-[#7C8DB5]">Cheque</span>
               <span className="pb-1">Details</span>
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(420px,1fr))] gap-4 mb-6">
@@ -2195,27 +2809,44 @@ const EditTenancyContracts = () => {
                     label={label}
                     placeholder="Input placeholder"
                   />
+                ) : type === "date" ? (
+                  <CustomDatePicker
+                    selectedDate={formValues[name] as Date}
+                    onChange={(date) =>
+                      handleDateChange(name, date.toDateString())
+                    }
+                    label={label}
+                    placeholder="Select Date"
+                    value={formValues[name]}
+                  />
                 ) : null
               )}
             </div>
 
             <PrimaryButton
               onClick={() => {
-                console.log("table Data", tableData);
-                const updatedTableData = [...tableData];
-                updatedTableData[paymentDetailsModalOpen].cheque =
-                  formValues.cheque;
-                updatedTableData[paymentDetailsModalOpen].status =
-                  formValues.status;
-                updatedTableData[paymentDetailsModalOpen].duration =
-                  formValues.duration;
-                updatedTableData[paymentDetailsModalOpen].comments =
-                  formValues.comments;
-                updatedTableData[paymentDetailsModalOpen].approvalStatus =
-                  formValues.approvalStatus;
+                console.log("Original Table Data", tableData);
+                const updatedTableData = tableData.map((item, index) =>
+                  index === paymentDetailsModalOpen
+                    ? {
+                        ...item,
+                        chequeDate: formValues.dateOfCheque || item.chequeDate,
+                        cheque: formValues.cheque || item.cheque,
+                        chequeNumber:
+                          formValues.chequeNumber || item.chequeNumber,
+                        status: formValues.status || item.status,
+                        duration: formValues.duration || item.duration,
+                        comments: formValues.comments || item.comments,
+                        approvalStatus:
+                          formValues.approvalStatus || item.approvalStatus,
+                      }
+                    : item
+                );
+
                 setTableData(updatedTableData);
                 setPaymentDetailsModalOpen(null);
-                console.log("updated table data", updatedTableData);
+
+                console.log("Updated Table Data", updatedTableData);
               }}
               type="button"
               title="Edit"

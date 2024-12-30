@@ -256,11 +256,7 @@ export const payment_details = [
     name: "bankName",
     type: "text",
   },
-  {
-    label: "Cheque No",
-    name: "chequeNo",
-    type: "text",
-  },
+
   {
     label: "Cheque Date",
     name: "chequeDate",
@@ -274,6 +270,16 @@ export const cheque_number_form_details = [
     label: "Cheque Name",
     name: "cheque",
     type: "text",
+  },
+  {
+    label: "Cheque Number",
+    name: "chequeNumber",
+    type: "number",
+  },
+  {
+    label: "Cheque Date",
+    name: "dateOfCheque",
+    type: "date",
   },
   {
     label: "Status",
@@ -319,20 +325,20 @@ export const Add_Contract_Details = [
 ];
 
 export const Add_TenancyContractProperty = [
-  {
-    label: "Type",
-    name: "propertyType",
-    type: "dropdown",
-    values: ["Commercial", "Residential"],
-  },
+  // {
+  //   label: "Type",
+  //   name: "propertyType",
+  //   type: "dropdown",
+  //   values: ["Commercial", "Residential"],
+  // },
   { label: "Unit Number", name: "propertyUnits", type: "mantineSelect" },
-  { label: "Location / Area", name: "propertyLocation", type: "text" },
-  { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
-  { label: "Square ft of unit", name: "sqFoot", type: "text" },
-  { label: "Square m of unit", name: "sqMeter", type: "text" },
-  { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
-  { label: "Price/ Square ft", name: "priceSqFt", type: "text" },
-  { label: "Premises no", name: "custom_premises_no", type: "text" },
+  // { label: "Location / Area", name: "propertyLocation", type: "text" },
+  // { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
+  // { label: "Square ft of unit", name: "sqFoot", type: "text" },
+  // { label: "Square m of unit", name: "sqMeter", type: "text" },
+  // { label: "Price/ Square m", name: "priceSqMeter", type: "text" },
+  // { label: "Price/ Square ft", name: "priceSqFt", type: "text" },
+  // { label: "Premises no", name: "custom_premises_no", type: "text" },
 ];
 
 export const Add_TenancyContractTenant = [
@@ -404,23 +410,23 @@ export const Tenant_Type_Company = [
 export const Owner_Type_Individual = [
   { label: "Name of Owner", name: "ownerName", type: "text" },
 
-  { label: "Passport Number", name: "ownerPassportNum", type: "text" },
-  {
-    label: "Passport Expiry Date",
-    name: "ownerPassportExpiryDate",
-    type: "date",
-  },
-  {
-    label: "Country Of Issuance",
-    name: "ownerCountryOfIssuance",
-    type: "text",
-  },
-  { label: "Emirates ID", name: "ownerEmiratesId", type: "text" },
-  {
-    label: "Emirates ID Expiry Date",
-    name: "ownerEmiratesIdExpiryDate",
-    type: "date",
-  },
+  // { label: "Passport Number", name: "ownerPassportNum", type: "text" },
+  // {
+  //   label: "Passport Expiry Date",
+  //   name: "ownerPassportExpiryDate",
+  //   type: "date",
+  // },
+  // {
+  //   label: "Country Of Issuance",
+  //   name: "ownerCountryOfIssuance",
+  //   type: "text",
+  // },
+  // { label: "Emirates ID", name: "ownerEmiratesId", type: "text" },
+  // {
+  //   label: "Emirates ID Expiry Date",
+  //   name: "ownerEmiratesIdExpiryDate",
+  //   type: "date",
+  // },
 ];
 
 export const Owner_Type_Company = [
@@ -457,4 +463,18 @@ export const Termination_TenancyContractProperty = [
   },
 
   { label: "Overstay Check", name: "custom_overstay_check", type: "text" },
+];
+
+export const Renewal_TenancyContractProperty = [
+  // { label: "Number of days", name: "number_of_days", type: "number" },
+  {
+    label: "Renewal Duration",
+    name: "renewal_duration",
+    type: "mantineSelect",
+  },
+  {
+    label: "Rental Increase",
+    name: "rental_increase",
+    type: "mantineSelect",
+  },
 ];

@@ -20,6 +20,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     bgLight,
     borderd,
     disabled = false,
+    min,
+    max,
   }) => {
     return (
       <div>
@@ -45,6 +47,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={id}
             name={name}
             value={value}
+            min={min}
+            max={max}
             onChange={onChange}
             placeholder={placeholder}
           />
