@@ -46,7 +46,7 @@ interface FormData {
 
 const AddLeads = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
-  const [imgUrls, setImgUrls] = useState("");
+  const [imgUrls, setImgUrls] = useState([]);
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -105,6 +105,7 @@ const AddLeads = () => {
     try {
       console.log("API Data => ", formData);
       const res = await createLead({
+        first_name:formData?.leadName,
         lead_owner: "saeed.m@syscort.com",
         status: formData?.leadStatus,
         type: formData?.leadType,
@@ -186,7 +187,7 @@ const AddLeads = () => {
                       )
                     )}
                      {/* Attachment */}
-                                        <div className="mt-5 mb-5">
+                                        <div className="mb-5">
                                           <CustomFileUpload
                                             onFilesUpload={(urls) => {
                                               setImgUrls(urls);

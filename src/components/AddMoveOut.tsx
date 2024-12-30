@@ -164,7 +164,7 @@ const AddMoveOut = () => {
       const moveOutList = await getMoveOutListData(formValues?.propertyName,formValues?.propertyUnits);
             if(moveOutList?.data?.data?.length>0){
               setAlreadyAdded(true)
-              setShowError(`This ${formValues?.propertyName} property with ${formValues?.propertyUnits} unit is already Moved Out`)
+              setShowError(`This ${formValues?.propertyName} property with ${formValues?.propertyUnits} unit is under Move Out`)
             }
             else{
       if (propertyData) {
@@ -533,7 +533,7 @@ const AddMoveOut = () => {
                       ></textarea>
                     </div>
                     {/* Attachment */}
-                    <div className="mt-5 mb-5">
+                    <div className="mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);

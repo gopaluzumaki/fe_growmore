@@ -14,11 +14,15 @@ type OwnerCardProps = {
   redirect: string;
   getData?: any;
   setError?: any;
+  name1?:string;
+  // name1?:string;
 };
 
 const OwnerCard = ({
   name,
+  name1,
   // location,
+  // name1,
   img,
   contact,
   email,
@@ -28,6 +32,7 @@ const OwnerCard = ({
   getData,
   setError
 }: OwnerCardProps) => {
+  console.log(name1,"vgh")
   return (
     <main>
       <div className="border border-[#E6EDFF] p-3 px-4 rounded-md">
@@ -38,16 +43,17 @@ const OwnerCard = ({
             <p className="text-[20px] font-semibold">{name}</p>
           </div>
           <div>
-            <Link to={`/${redirect}/edit`} state={name}>
+            <Link to={`/${redirect}/edit`} state={redirect === "booking"?name:name1}>
               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 mr-1 rounded cursor-pointer">
                 <MdOutlineEdit size={20} className="text-[#D09D4A]" />
               </button>
             </Link>
             <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
               try {
+                setError&&setError("")
                 const confirmed = window.confirm(`Are you sure you want to delete this ${name}?`);
                 if (confirmed) {
-                  redirect === "booking" ? await deleteBooking(name) : await deleteOwner(name)
+                  redirect === "booking" ? await deleteBooking(name) : await deleteOwner(name1)
                 }
 
               }

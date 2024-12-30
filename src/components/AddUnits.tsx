@@ -9,7 +9,9 @@ import { useNavigate } from "react-router-dom";
 import {
   createProperty,
   fetchProperty,
+  getCountryList,
   getOwnerList,
+  getOwnerListData,
   getPropertyList,
   uploadFile,
 } from "../api";
@@ -64,13 +66,14 @@ interface FormData {
 
 const AddUnits = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
-  const [imgUrls, setImgUrls] = useState("");
+  const [imgUrls, setImgUrls] = useState([]);
   const navigate = useNavigate();
   const [sqmValue, setSqmValue] = useState();
   const [priceSqFt, setPriceSqFt] = useState();
   const [priceSqMeter, setPriceSqMeter] = useState();
   const [ownerList, setOwnerList] = useState<any[]>([]);
   const [propertyList, setPropertyList] = useState<any[]>([]);
+  const [countryList,setCountryList]=useState([])
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -83,7 +86,14 @@ const AddUnits = () => {
       }
     }
   };
+useEffect(()=>{
+  getCountryListData()
+},[])
+const getCountryListData=async()=>{
+const res=await getCountryList()
 
+setCountryList(res?.data?.data)
+}
   const [formData, setFormData] = useState<FormData>({
     parent_property: "",
     type: "",
@@ -142,9 +152,9 @@ const AddUnits = () => {
   };
 
   const getOwnerData = async () => {
-    const res = await getOwnerList();
+    const res = await getOwnerListData();
     const item = res?.data?.data;
-    // console.log(item);
+    console.log(item,"nkl");
     setOwnerList(item);
   };
 
@@ -247,7 +257,7 @@ const AddUnits = () => {
         cost_center: "Main - SRE",
         description: formData?.description,
       });
-      const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
+      const imageData = imgUrls?.map((imgUrl) => ({ image: imgUrl }));
 
       const res = await createProperty({
         name1: formData?.custom_unit_number,
@@ -348,23 +358,28 @@ const AddUnits = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
+                        <div>
+                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+        {label}
+        </label>
                         <Select
                           value={formData[name as keyof FormData]}
                           onValueChange={(item) => handleDropDown(name, item)}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
                           </SelectTrigger>
                           <SelectContent onChange={() => console.log("hello")}>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
+                            {(name==="country"?countryList:values)?.map((item, i) => (
+                              <SelectItem key={i} value={name==="country"?item.name:item}>
+                                {name==="country"?item.name:item}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
+                        </div>
                       ) : (
                         <></>
                       )
@@ -374,7 +389,7 @@ const AddUnits = () => {
                         label="Owner Name"
                         placeholder="Select Property"
                         data={ownerList.map((item) => ({
-                          value: item?.supplier_name,
+                          value: item?.name,
                           label: item?.supplier_name,
                         }))}
                         value={formData.ownerName}
@@ -402,7 +417,7 @@ const AddUnits = () => {
                       />
                     </div>
                      {/* Attachment */}
-                                        <div className="mt-5 mb-5">
+                                        <div className="mb-5">
                                           <CustomFileUpload
                                             onFilesUpload={(urls) => {
                                               setImgUrls(urls);

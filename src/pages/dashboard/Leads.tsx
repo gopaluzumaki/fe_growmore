@@ -15,9 +15,13 @@ import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { img_group } from "../../assets";
 import { useEffect, useState } from "react";
 import { deleteLead, getLeadList } from "../../api";
+import { Input } from "@mantine/core";
+import { CiSearch } from "react-icons/ci";
 
 const Leads = () => {
   const [leadList, setLeadList] = useState<any[]>([]);
+  const [filteredLeadList, setFilteredLeadList] = useState<any[]>([]);
+  const [searchValue, setSearchvalue] = useState<string | null>(null);
 
   useEffect(() => {
     getData();
@@ -26,6 +30,7 @@ const Leads = () => {
   const getData = async () => {
     const res = await getLeadList();
     setLeadList(res?.data?.data);
+    setFilteredLeadList(res?.data?.data)
   };
 
   console.log("unitList => ", leadList);
@@ -40,7 +45,35 @@ const Leads = () => {
     "status",
     "Actions",
   ];
+  const applyFilters = () => {
+    const filteredData = leadList.filter((item) => {
+      const matchesSearch = !searchValue ||
+        item?.lead_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.lead_owner?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_property?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.company?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.status?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.type?.toLowerCase().includes(searchValue.toLowerCase()) 
 
+
+      return matchesSearch 
+    });
+    setFilteredLeadList(filteredData);
+  };
+  useEffect(() => {
+    applyFilters();
+  }, [searchValue]);
+
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+  };
+  const searchStyle = {
+    input: {
+      border: "1px solid gray",
+      width: "20vw",
+      padding:"24px"
+    },
+  };
   return (
     <main>
       <div className="flex">
@@ -63,24 +96,15 @@ const Leads = () => {
                   <IoAdd size={20} />
                 </Link>
               </div>
-              <div>
-                <Select>
-                  <SelectTrigger className="w-[190px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                    <div className="flex items-center gap-3">
-                      <VscFilter size={18} />
-                      <SelectValue placeholder="All Leads" />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="Lead 1">Lead 1</SelectItem>
-                      <SelectItem value="Lead 2">Lead 2</SelectItem>
-                      <SelectItem value="Lead 3">Lead 3</SelectItem>
-                      <SelectItem value="Lead 4">Lead 4</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
+              <div className="flex gap-2 items-center">
+                                        <Input
+                                          onChange={handleSearchValue}
+                                          value={searchValue}
+                                          styles={searchStyle}
+                                          placeholder="Search"
+                                          leftSection={<CiSearch className="mr-2" size={24} />}
+                                        />
+                                      </div>  
             </div>
             <div className="my-4 p-4">
               <div className="overflow-x-auto">
@@ -96,7 +120,7 @@ const Leads = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {leadList.map((item, i) => {
+                    {filteredLeadList.map((item, i) => {
                       return (
                         <tr
                           key={i}

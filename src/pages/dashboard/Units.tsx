@@ -15,9 +15,14 @@ import { useEffect, useState } from "react";
 import { deletePropertyUnit, getUnitList } from "../../api";
 import { MdDeleteForever, MdOutlineEdit } from "react-icons/md";
 import { img_group } from "../../assets";
+import { Input } from "@mantine/core";
+import { CiSearch } from "react-icons/ci";
 
 const Units = () => {
   const [unitList, setUnitList] = useState<any[]>([]);
+  const [filteredUnitList,setFilteredUnitList] = useState([]);
+  const [searchValue, setSearchvalue] = useState<string | null>(null);
+
   const headers = [
     "Sr. No",
     "Property Name",
@@ -37,8 +42,35 @@ const Units = () => {
     const unitList = await getUnitList();
     console.log('eqwads', unitList)
     setUnitList(unitList?.data?.data);
+    setFilteredUnitList(unitList?.data?.data)
   };
+  const applyFilters = () => {
+    const filteredData = unitList.filter((item) => {
+      const matchesSearch = !searchValue ||
+        item?.property?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.unit_number?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.location?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.unit_owner?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.tenantName?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_status?.toLowerCase().includes(searchValue.toLowerCase())
+      return matchesSearch 
+    });
+    setFilteredUnitList(filteredData);
+  };
+  useEffect(() => {
+    applyFilters();
+  }, [searchValue]);
 
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+  };
+  const searchStyle = {
+    input: {
+      border: "1px solid gray",
+      width: "20vw",
+      padding:"24px"
+    },
+  };
   return (
     <main>
       <div className="flex">
@@ -61,24 +93,15 @@ const Units = () => {
                   <IoAdd size={20} />
                 </Link>
               </div>
-              {/* <div>
-                <Select>
-                  <SelectTrigger className="w-[190px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                    <div className="flex items-center gap-3">
-                      <VscFilter size={18} />
-                      <SelectValue placeholder="All Units" />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="unit1">Unit 1</SelectItem>
-                      <SelectItem value="unit2">Unit 2</SelectItem>
-                      <SelectItem value="unit3">Unit 3</SelectItem>
-                      <SelectItem value="unit4">Unit 4</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div> */}
+              <div className="flex gap-2 items-center">
+                                       <Input
+                                         onChange={handleSearchValue}
+                                         value={searchValue}
+                                         styles={searchStyle}
+                                         placeholder="Search"
+                                         leftSection={<CiSearch className="mr-2" size={24} />}
+                                       />
+                                     </div>  
             </div>
             <div className="my-4 p-4">
               <div className="overflow-x-auto">
@@ -94,7 +117,7 @@ const Units = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {unitList.map((item, i) => {
+                    {filteredUnitList.map((item, i) => {
                       return (
                         <tr
                           key={i}

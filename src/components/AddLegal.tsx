@@ -645,7 +645,7 @@ setLegalList(updatedLegalList); // Update the state
                       ))}</div>
 
                     {/* Attachment */}
-                    <div className="mt-5 mb-5">
+                    <div className="mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);

@@ -67,6 +67,7 @@ const PropertyCard = ({
             className="w-full text-center py-1.5 rounded-md text-[#0E0F11] bg-[#F7F7F7] border border-burlywood"
             onClick={async () => {
               try {
+                setError("")
                 const confirmed = window.confirm(`Are you sure you want to delete this ${name}?`);
                 if (confirmed) {
                   await deleteProperty(id);
