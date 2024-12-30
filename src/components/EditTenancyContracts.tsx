@@ -2541,6 +2541,7 @@ const EditTenancyContracts = () => {
                     )}
                   </div>
 
+                  {/* payment details */}
                   {formValues.custom_mode_of_payment === "Cheque" &&
                     (formValues.tenancyStatus === "Active" ||
                       formValues.tenancyStatus === "Draft") && (

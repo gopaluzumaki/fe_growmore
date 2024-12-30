@@ -327,7 +327,7 @@ export const Add_TenancyContractProperty = [
   // },
   { label: "Unit Number", name: "propertyUnits", type: "mantineSelect" },
   // { label: "Location / Area", name: "propertyLocation", type: "text" },
-  // { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
+  { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
   // { label: "Square ft of unit", name: "sqFoot", type: "text" },
   // { label: "Square m of unit", name: "sqMeter", type: "text" },
   // { label: "Price/ Square m", name: "priceSqMeter", type: "text" },

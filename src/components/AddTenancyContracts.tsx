@@ -406,25 +406,43 @@ const AddTenancyContracts = () => {
     formValues?.leaseItems,
   ]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    if (name === "sqFoot" && value) {
-      let sqMeter = value * 0.092903;
-      handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
+  useEffect(() => {
+    if (formValues.sqFoot && formValues.anualPriceRent) {
+      const sqMeter = formValues.sqFoot * 0.092903;
+      handleDropDown(
+        "sqMeter",
+        Number(formValues.sqFoot * 0.092903).toFixed(2)
+      );
       handleDropDown(
         "priceSqFt",
-        Number(formValues["anualPriceRent"] / value).toFixed(2)
+        Number(formValues.anualPriceRent / formValues.sqFoot).toFixed(2)
       );
       handleDropDown(
         "priceSqMeter",
-        Number(formValues["anualPriceRent"] / sqMeter).toFixed(2)
+        Number(formValues.anualPriceRent / sqMeter).toFixed(2)
       );
-    } else if (!value) {
-      handleDropDown("sqMeter", 0);
-      handleDropDown("priceSqFt", 0);
-      handleDropDown("priceSqMeter", 0);
     }
+  }, [formValues.sqFoot, formValues.anualPriceRent]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // if (name === "sqFoot" && value) {
+    //   let sqMeter = value * 0.092903;
+    //   handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
+    //   handleDropDown(
+    //     "priceSqFt",
+    //     Number(formValues["anualPriceRent"] / value).toFixed(2)
+    //   );
+    //   handleDropDown(
+    //     "priceSqMeter",
+    //     Number(formValues["anualPriceRent"] / sqMeter).toFixed(2)
+    //   );
+    // } else if (!value) {
+    //   handleDropDown("sqMeter", 0);
+    //   handleDropDown("priceSqFt", 0);
+    //   handleDropDown("priceSqMeter", 0);
+    // }
     setFormValues((prevData) => ({
       ...prevData,
       [name]: value,
@@ -1233,10 +1251,10 @@ const AddTenancyContracts = () => {
                       )}
                     </div>
                   </div>
-
-                  {(formValues.custom_mode_of_payment === "Cheque" &&
-                    formValues.tenancyStatus === "Active") ||
-                  formValues.tenancyStatus === "Draft" ? (
+                  {/* payment details */}
+                  {formValues.custom_mode_of_payment === "Cheque" &&
+                  (formValues.tenancyStatus === "Active" ||
+                    formValues.tenancyStatus === "Draft") ? (
                     <section className="border-t-[1px] border-gray-500 mt-16">
                       <form className="flex flex-col ">
                         <div>
