@@ -167,35 +167,86 @@ const EditTenancyContracts = () => {
 
   // set start and end date in renewal details
 
-  // useEffect(() => {
-  //   const fetchingBookedData = async () => {
-  //     if (location.state) {
-  //       try {
-  //         const res = await fetchTenancyContract(location.state);
-  //         const item = res?.data?.data;
+  useEffect(() => {
+    const fetchingBookedData = async () => {
+      if (location.state) {
+        try {
+          const res = await fetchTenancyContract(location.state);
+          const item = res?.data?.data;
 
-  //         console.log("property items data: ", item);
+          console.log("property items data: ", item);
 
-  //         if (item) {
-  //           setFormValues((prevData) => ({
-  //             ...prevData,
+          if (item) {
+            setFormValues((prevData) => ({
+              ...prevData,
 
-  //             startDate: formValues.renewal_duration
-  //               ? item?.end_date
-  //               : item?.start_date,
-  //             endDate: formValues.renewal_duration
-  //               ? handleStartEndDate_AccToRenewal(item.end_date)
-  //               : item?.end_date,
-  //           }));
-  //         }
-  //       } catch (error) {
-  //         console.error(error);
-  //       }
-  //     }
-  //   };
+              startDate: formValues.renewal_duration
+                ? item?.end_date
+                : item?.start_date,
+              endDate: formValues.renewal_duration
+                ? handleStartEndDate_AccToRenewal(item.end_date)
+                : item?.end_date,
+            }));
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
 
-  //   fetchingBookedData();
-  // }, [location.state, formValues.renewal_duration, formValues.number_of_days]);
+    fetchingBookedData();
+  }, [location.state, formValues.renewal_duration, formValues.number_of_days]);
+
+  // increase rent based on the percentage or fixed amount
+
+  useEffect(() => {
+    const fetchingBookedData = async () => {
+      if (location.state) {
+        try {
+          const res = await fetchTenancyContract(location.state);
+          const item = res?.data?.data;
+
+          console.log("property items data: ", item);
+
+          if (item) {
+            if (formValues.tenancyStatus === "Renewal") {
+              if (formValues.rental_increase === "Percentage") {
+                setFormValues((prevData) => ({
+                  ...prevData,
+                  anualPriceRent:
+                    Number(item?.custom_price__rent_annually) +
+                    (Number(formValues.percentage) *
+                      Number(item?.custom_price__rent_annually)) /
+                      100,
+                }));
+              } else if (formValues.rental_increase === "Fixed Amount") {
+                setFormValues((prevData) => ({
+                  ...prevData,
+                  anualPriceRent:
+                    Number(item?.custom_price__rent_annually) +
+                    Number(formValues.fixed_amount),
+                }));
+              }
+            }
+            setFormValues((prevData) => ({
+              ...prevData,
+
+              startDate: formValues.renewal_duration
+                ? item?.end_date
+                : item?.start_date,
+              endDate: formValues.renewal_duration
+                ? handleStartEndDate_AccToRenewal(item.end_date)
+                : item?.end_date,
+            }));
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+
+    fetchingBookedData();
+  }, [formValues.percentage, formValues.fixed_amount]);
 
   // to prefilled formdata values.
 
@@ -624,8 +675,6 @@ const EditTenancyContracts = () => {
   ]);
 
   useEffect(() => {
-    console.log("formValues.sqFoot", formValues.sqFoot);
-    console.log("formValues.propertyRent", formValues.propertyRent);
     if (formValues.sqFoot && formValues.propertyRent) {
       const sqMeter = formValues.sqFoot * 0.092903;
       setFormValues((prevData) => ({
@@ -770,21 +819,12 @@ const EditTenancyContracts = () => {
     if (name === "tenancyStatus") {
       if (item === "Renewal") {
         setFormValues((prevData) => {
-          console.log("startDate", prevData.startDate);
-          console.log("endDate", prevData.endDate);
-          const startDate = new Date(prevData.startDate);
-          startDate.setFullYear(startDate.getFullYear() + 1);
-          const endDate = new Date(prevData.endDate);
-          endDate.setFullYear(endDate.getFullYear() + 1);
-
           return {
             ...prevData,
-            startDate: startDate,
-            endDate: endDate,
+
             numberOfChecks: "",
             bankName: "",
             chequeDate: "",
-            anualPriceRent: 0,
           };
         });
 
@@ -1434,19 +1474,6 @@ const EditTenancyContracts = () => {
                               <></>
                             )
                         )}
-
-                        {formValues.custom_serve_the_notice_period === "No" && (
-                          <Input
-                            disabled
-                            label={"Penalty Amount"}
-                            type={"text"}
-                            value={parseFloat(
-                              2 * (formValues?.anualPriceRent / 12)
-                            ).toFixed(2)}
-                            borderd
-                            bgLight
-                          />
-                        )}
                       </div>
                       {formValues.renewal_duration === "other" ? (
                         <div>
@@ -1473,7 +1500,7 @@ const EditTenancyContracts = () => {
                               min={0}
                               max={100}
                               type="number"
-                              value={formValues[name]}
+                              value={formValues?.percentage}
                               onChange={handleChange}
                               borderd
                               bgLight
@@ -1483,9 +1510,9 @@ const EditTenancyContracts = () => {
                           <div>
                             <Input
                               label="Fixed Amount"
-                              name="ficed_amount"
+                              name="fixed_amount"
                               type="number"
-                              value={formValues[name]}
+                              value={formValues?.fixed_amount}
                               onChange={handleChange}
                               borderd
                               bgLight
@@ -2265,7 +2292,8 @@ const EditTenancyContracts = () => {
                   {/* payment details */}
                   {formValues.custom_mode_of_payment === "Cheque" &&
                     (formValues.tenancyStatus === "Active" ||
-                      formValues.tenancyStatus === "Draft") && (
+                      formValues.tenancyStatus === "Draft" ||
+                      formValues.tenancyStatus === "Renewal") && (
                       <section className="border-t-[1px] border-gray-500 mt-16">
                         <form className="flex flex-col ">
                           <div>
