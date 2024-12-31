@@ -35,6 +35,7 @@ import {
   updateProperty,
   fetchUnit,
   API_URL,
+  fetchUnitForTenancyContract,
 } from "../api";
 import {
   Select,
@@ -254,6 +255,18 @@ const EditTenancyContracts = () => {
 
             handlers.setState(updatedValues);
 
+            // Handle dropdowns
+            if (item?.lease_customer)
+              await handleDropDown("tenantName", item.lease_customer);
+            if (item?.custom_name_of_owner)
+              await handleDropDown("ownerName", item.custom_name_of_owner);
+            if (item?.property) {
+              await handleDropDown("propertyName", item.property);
+            }
+            if (item?.custom_number_of_unit) {
+              await handleDropDown("propertyUnits", item.custom_number_of_unit);
+            }
+
             setFormValues((prevData) => ({
               ...prevData,
               chequeDate: mappedLeaseItems[0].chequeDate,
@@ -312,15 +325,6 @@ const EditTenancyContracts = () => {
                 item.custom_serve_the_notice_period,
               custom_overstay_check: item.custom_overstay_check,
             }));
-
-            // Handle dropdowns
-            if (item?.lease_customer)
-              await handleDropDown("tenantName", item.lease_customer);
-            if (item?.custom_name_of_owner)
-              await handleDropDown("ownerName", item.custom_name_of_owner);
-            if (item?.property) {
-              await handleDropDown("propertyName", item.property);
-            }
 
             setOwnerImgUrl(item.custom_image || "");
             setPropertyImgUrl(item?.propertyDoc || "");
@@ -932,7 +936,6 @@ const EditTenancyContracts = () => {
           propertyName: propertyData?.name,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
-          propertyRent: propertyData?.rent,
           propertyStatus: propertyData?.status,
           propertyDoc: propertyData?.custom_thumbnail_image,
         }));
@@ -1019,7 +1022,7 @@ const EditTenancyContracts = () => {
     // }
 
     if (name === "propertyUnits" && item != undefined) {
-      const unit_List = await fetchUnit(item);
+      const unit_List = await fetchUnitForTenancyContract(item);
       const unit_List_Data = unit_List?.data?.data;
       if (unit_List_Data) {
         const res = await fetchOwner(unit_List_Data?.unit_owner);
@@ -1033,6 +1036,9 @@ const EditTenancyContracts = () => {
           priceSqMeter: unit_List_Data?.custom_price_square_m,
           priceSqFt: unit_List_Data?.custom_price_square_ft,
           custom_premises_no: unit_List_Data?.custom_premise_no,
+          custom_city: unit_List_Data?.custom_city,
+          custom_country: unit_List_Data?.custom_country,
+          propertyRent: unit_List_Data?.rent,
         }));
       }
     }
@@ -1165,7 +1171,7 @@ const EditTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_number_of_unit: formValues.propertyUnits?.name,
+        custom_number_of_unit: formValues.propertyUnits,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,
@@ -1991,10 +1997,7 @@ const EditTenancyContracts = () => {
                               }))}
                               value={formValues.propertyUnits || ""}
                               onChange={(value) => {
-                                const selectedUnit = propertyUnits.find(
-                                  (unit) => unit.name === value
-                                );
-                                handleDropDown("propertyUnits", selectedUnit);
+                                handleDropDown("propertyUnits", value);
                               }}
                               styles={{
                                 label: {
@@ -2021,7 +2024,7 @@ const EditTenancyContracts = () => {
                             <></>
                           )
                       )}
-                      <div>
+                      {/* <div>
                         <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           <label>Image Attachment</label>
                         </p>
@@ -2035,9 +2038,9 @@ const EditTenancyContracts = () => {
                             onChange={handlePropertyFileChange}
                           />
                         </div>
-                      </div>
+                      </div> */}
                     </div>
-                    {formValues.propertyUnits.custom_unit_number ? (
+                    {formValues.propertyUnits ? (
                       <div className="grid grid-cols-2 gap-4">
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
@@ -2046,12 +2049,12 @@ const EditTenancyContracts = () => {
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            City : {formValues.propertyCity}
+                            City : {formValues.custom_city}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            Country : {formValues.propertyCountry}
+                            Country : {formValues.custom_country}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">

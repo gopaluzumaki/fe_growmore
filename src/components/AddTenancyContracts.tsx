@@ -28,6 +28,7 @@ import {
   fetchUnitsfromProperty,
   // getUnitList,
   fetchUnit,
+  fetchUnitForTenancyContract,
 } from "../api";
 import {
   Select,
@@ -470,7 +471,7 @@ const AddTenancyContracts = () => {
           propertyName: propertyData?.name,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
-          propertyRent: propertyData?.rent,
+
           propertyUnits: propertyData?.custom_number_of_units,
           propertyStatus: propertyData?.status,
           propertyDoc: propertyData?.custom_thumbnail_image,
@@ -558,7 +559,7 @@ const AddTenancyContracts = () => {
 
     if (name === "propertyUnits" && item != undefined) {
       console.log("property unit item :", item);
-      const unit_List = await fetchUnit(item);
+      const unit_List = await fetchUnitForTenancyContract(item);
       const unit_List_Data = unit_List?.data?.data;
       console.log("property unit data :", unit_List_Data);
       if (unit_List_Data) {
@@ -573,6 +574,9 @@ const AddTenancyContracts = () => {
           priceSqMeter: unit_List_Data?.custom_price_square_m,
           priceSqFt: unit_List_Data?.custom_price_square_ft,
           custom_premises_no: unit_List_Data?.custom_premise_no,
+          custom_city: unit_List_Data?.custom_city,
+          custom_country: unit_List_Data?.custom_country,
+          propertyRent: unit_List_Data?.rent,
         }));
       }
     }
@@ -660,7 +664,7 @@ const AddTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_number_of_unit: formValues.propertyUnits?.name,
+        custom_number_of_unit: formValues.propertyUnits,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,
@@ -1017,10 +1021,7 @@ const AddTenancyContracts = () => {
                                 }))}
                                 value={formValues.propertyUnits || ""}
                                 onChange={(value) => {
-                                  const selectedUnit = propertyUnits.find(
-                                    (unit) => unit.name === value
-                                  );
-                                  handleDropDown("propertyUnits", selectedUnit);
+                                  handleDropDown("propertyUnits", value);
                                 }}
                                 styles={{
                                   label: {
@@ -1064,7 +1065,7 @@ const AddTenancyContracts = () => {
                         </div>
                       </div> */}
                     </div>
-                    {formValues.propertyUnits.custom_unit_number ? (
+                    {formValues.propertyUnits ? (
                       <div className="grid grid-cols-2 gap-4">
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
@@ -1073,12 +1074,12 @@ const AddTenancyContracts = () => {
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            City : {formValues.propertyCity}
+                            City : {formValues.custom_city}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            Country : {formValues.propertyCountry}
+                            Country : {formValues.custom_country}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">

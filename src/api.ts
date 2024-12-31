@@ -212,6 +212,16 @@ export const fetchUnit = async (params: any) => {
   return response;
 };
 
+export const fetchUnitForTenancyContract = async (params: any) => {
+  const response = await axios.get(`${API_URL.Create_Property}/${params}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
 export const fetchProperyForEdit = async (params: any) => {
   const response = await axios.get(
     `https://propms.erpnext.syscort.com/app/property/view/List?name1=${params}`,
