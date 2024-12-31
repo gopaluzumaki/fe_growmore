@@ -5,11 +5,12 @@ import Sidebar from "./Sidebar";
 import { ChangeEvent, useEffect, useState } from "react";
 import Input from "./TextInput";
 import { Add_Units } from "../constants/inputdata";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   createProperty,
   fetchProperty,
   fetchUnit,
+  fetchUnitDatas,
   getCountryList,
   getPropertyList,
   updateProperty,
@@ -74,13 +75,8 @@ const EditUnits = () => {
   const location = useLocation();
   const [propertyList, setPropertyList] = useState<any[]>([]);
   const [countryList,setCountryList]=useState([])
+  const { id } = useParams();
 
-  // useEffect(() => {
-  //   console.log('dsads',location.state.item)
-  //   // setFormData([...location.state.unitList]);
-  // }, []);
-
-  // const { state } = props.location;x
 useEffect(()=>{
   getCountryListData()
 },[])
@@ -90,10 +86,10 @@ const res=await getCountryList()
 setCountryList(res?.data?.data)
 }
   useEffect(() => {
-    console.log("location.state.item", location.state.item);
+    console.log("location.state.item",id);
     const fetchUnitData = async () => {
       try {
-        const res = await fetchUnit(location.state.item); // Fetch the property data
+        const res = await fetchUnitDatas(id); // Fetch the property data
         console.log("dasdas", res);
         if (res) {
           setFormData({
@@ -134,7 +130,7 @@ setCountryList(res?.data?.data)
     };
 
     fetchUnitData();
-  }, [location.state.item.property]);
+  }, [id]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -176,16 +172,48 @@ setCountryList(res?.data?.data)
     console.log("dsadas", formData);
     if (name === "sqFoot" && value) {
       let sqMeter = value * 0.092903;
-      handleDropDown("sqMeter", value * 0.092903);
-      handleDropDown("priceSqFt", formData["rentPrice"] / value);
-      handleDropDown("priceSqMeter", formData["rentPrice"] / sqMeter);
+      console.log(formData["rent"])
+      handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
+      handleDropDown("priceSqFt", value<=0?0:Number(formData["rent"] / value).toFixed(2));
+      handleDropDown("priceSqMeter", value<=0?0:Number(formData["rent"] / sqMeter).toFixed(2));
 
       // let priceSqFt
       // let priceSqMeter
       // setSqmValue(value* 0.092903)
       setPriceSqFt(priceSqFt);
       setPriceSqMeter(priceSqMeter);
-    } else if (!value) {
+    }else if (name === "sqMeter" && value) {
+      console.log("dasewa");
+      let sqFoot = value * 10.7639;
+      handleDropDown("sqFoot", Number(value * 10.7639).toFixed(2));
+      handleDropDown("priceSqMeter", value<=0?0:Number(formData["rent"] / value).toFixed(2));
+      handleDropDown(
+        "priceSqFt",
+        value<=0?0:Number(formData["rent"] / sqFoot).toFixed(2)
+      );
+
+      // let priceSqFt
+      // let priceSqMeter
+      // setSqmValue(value* 0.092903)
+      setPriceSqFt(priceSqFt);
+      setPriceSqMeter(priceSqMeter);
+    } 
+    else if (name === "rent" && value) {
+      console.log("dasewa",typeof value);
+      handleDropDown("priceSqMeter", value<=0?0:formData["sqMeter"]<=0?0:Number(value / formData["sqMeter"]).toFixed(2));
+      handleDropDown(
+        "priceSqFt",
+        value<=0?0:formData["sqFoot"]<=0?0:Number(value / formData["sqFoot"]).toFixed(2)
+      );
+
+      // let priceSqFt
+      // let priceSqMeter
+      // setSqmValue(value* 0.092903)
+      setPriceSqFt(priceSqFt);
+      setPriceSqMeter(priceSqMeter);
+    }
+
+    else if (!value) {
       handleDropDown("sqMeter", 0);
       handleDropDown("priceSqFt", 0);
       handleDropDown("priceSqMeter", 0);
@@ -263,8 +291,20 @@ setCountryList(res?.data?.data)
           name1: formData?.unitNumber,
           custom_premise_no: formData?.premises,
           custom_attachment_table_unit: imageData,
+          rent:formData?.rentPrice,
+          custom_selling_price:formData?.sellingPrice,
+          custom_square_ft_of_unit:formData?.sqFoot,
+          custom_square_m_of_unit:formData?.sqMeter,
+          custom_price_square_m:formData?.priceSqMeter,
+          custom_price_square_ft:formData?.priceSqFt,
+          custom_no_of_rooms:formData?.rooms,
+          custom_no_of_floors:formData?.floors,
+          common_bathroom:formData?.bathrooms,
+          custom_balcony_available:formData?.balcony,
+          custom_view:formData?.view,
+          unit_owner:formData?.ownerName
         },
-        location.state.item.name as string
+        id as string
       );
       if (res) {
         navigate("/units");
@@ -340,7 +380,7 @@ setCountryList(res?.data?.data)
                         bgLight
                       />
                     </div>
-                    {Add_Units.map(({ label, name, type, values }) =>
+                    {Add_Units.map(({ label, name, type, values,readonly }) =>
                       type === "text" ? (
                         <Input
                           key={name}
@@ -351,6 +391,8 @@ setCountryList(res?.data?.data)
                           onChange={handleChange}
                           borderd
                           bgLight
+                          readOnly={readonly}
+
                         />
                       ) : type === "dropdown" ? (
                         <div>
@@ -358,6 +400,7 @@ setCountryList(res?.data?.data)
         {label}
       </label>
                         <Select
+                        disabled={readonly}
                           value={formData[name as keyof FormData]}
                           onValueChange={(item) => handleDropDown(name, item)}
                         >

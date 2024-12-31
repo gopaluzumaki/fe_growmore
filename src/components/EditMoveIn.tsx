@@ -41,7 +41,7 @@ import {
 import Checkbox from "./CheckBox";
 import CustomDatePicker from "./CustomDatePicker";
 import { em, Select as MantineSelect, Table } from "@mantine/core";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD } from "../lib/utils";
 import CustomFileUpload from "./ui/CustomFileUpload";
@@ -58,6 +58,7 @@ const EditMoveIn = () => {
   const [imgUrls, setImgUrls] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
+  const {id} = useParams()
   const [property, setProperty] = useState();
   const [checked, setChecked] = useState<boolean>(false);
   const [propertyList, setPropertyList] = useState<any[]>([]);
@@ -117,7 +118,7 @@ const EditMoveIn = () => {
 
   useEffect(() => {
     const data = async () => {
-      const res = await fetchMaintenance(location.state)
+      const res = await fetchMaintenance(id)
       const propertyData = res?.data?.data;
       if (propertyData) {
         // Fill all the fields with the fetched data
@@ -159,7 +160,7 @@ const EditMoveIn = () => {
       }
     }
     data()
-  }, [location.state])
+  }, [id])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

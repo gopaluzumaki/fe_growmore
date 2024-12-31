@@ -24,7 +24,7 @@ interface FormData {
   communityName: string;
   area: string;
   city: string;
-  country: string;
+  custom_country: string;
   custom_status: string;
   amenities: string;
   rent: string;
@@ -48,29 +48,8 @@ interface FormData {
 const AddProperty = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrls, setImgUrls] = useState<string[]>([]);
-  const [countryList,setCountryList]=useState([])
+  const [countryList, setCountryList] = useState([])
   const navigate = useNavigate();
-useEffect(()=>{
-  getCountryListData()
-},[])
-const getCountryListData=async()=>{
-const res=await getCountryList()
-
-setCountryList(res?.data?.data)
-}
-  // const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files) {
-  //     const file = event.target.files[0];
-  //     setSelectedFile(file);
-
-  //     if (file) {
-  //       const res = await uploadFile(file);
-  //       console.log('reaeq2asd',res)
-  //       setImgUrl(res?.data?.message?.file_url);
-  //     }
-  //   }
-  // };
-
   const [formData, setFormData] = useState<FormData>({
     type: "",
     name: "",
@@ -81,14 +60,22 @@ setCountryList(res?.data?.data)
     custom_community_name: "",
     custom_area: "",
     custom_city: "",
-    custom_country: "",
+    custom_country: "United Arab Emirates",
     custom_status: "",
     rent: "",
     description: "",
-    custom_amenities:"",
+    custom_amenities: "",
     custom_thumbnail_image: "",
     is_group: 1,
   });
+  useEffect(() => {
+    getCountryListData()
+  }, [])
+  const getCountryListData = async () => {
+    const res = await getCountryList()
+
+    setCountryList(res?.data?.data)
+  }
   const handleDropDown = (name, item) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -122,7 +109,7 @@ setCountryList(res?.data?.data)
       console.log(err);
     }
   };
-
+  console.log(formData?.custom_country, "nkl")
   return (
     <main>
       <div className="flex">
@@ -142,6 +129,7 @@ setCountryList(res?.data?.data)
                     {Add_Property.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
+                          required={true}
                           key={name}
                           label={label}
                           name={name}
@@ -153,38 +141,43 @@ setCountryList(res?.data?.data)
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
-        {label}
-      </label>
-                        <Select
-                          onValueChange={(item) => handleDropDown(name, item)}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(name==="custom_country"?countryList:values)?.map((item, i) => (
-                              <SelectItem key={i} value={name==="custom_country"?item.name:item}>
-                                {name==="custom_country"?item.name:item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <div className="flex justify-between mb-1.5 ml-1 font-medium text-gray-700">
+                            <label htmlFor="custom-dropdown">
+                              {label}
+                            </label>
+                            <label><span style={{ color: "red" }}>*</span></label>
+                          </div>
+                          <Select
+                            required
+                            onValueChange={(item) => handleDropDown(name, item)}
+                            value={name === "custom_country" ? formData?.custom_country : undefined}
+                          >
+                            <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(name === "custom_country" ? countryList : values)?.map((item, i) => (
+                                <SelectItem key={i} value={name === "custom_country" ? item.name : item}>
+                                  {name === "custom_country" ? item.name : item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       ) : (
                         <></>
                       )
                     )}
                     <div className="mb-5">
-                                          <CustomFileUpload
-                                            onFilesUpload={(urls) => {
-                                              setImgUrls(urls);
-                                            }}
-                                            type="image/*"
-                                          />
-                                        </div>
+                      <CustomFileUpload
+                        onFilesUpload={(urls) => {
+                          setImgUrls(urls);
+                        }}
+                        type="image/*"
+                      />
+                    </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">

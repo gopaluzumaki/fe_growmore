@@ -155,7 +155,7 @@ const Tenants = () => {
                             <div className="flex gap-3">
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
                                 <Link
-                                  to={"/tenants/edit"}
+                                  to={`/tenants/edit/${item?.name}`}
                                   state={item.name}
                                 >
                                   <MdOutlineEdit

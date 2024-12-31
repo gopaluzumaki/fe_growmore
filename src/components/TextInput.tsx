@@ -22,12 +22,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     disabled = false,
     min,
     max,
+    required =false,
+    readOnly=false
   }) => {
     return (
       <div>
         {label && (
-          <p className="mb-1.5 ml-1 font-medium text-gray-700">
+          <p className="flex  mb-1.5 ml-1 font-medium text-gray-700">
             <label htmlFor={id}>{label}</label>
+            <label><span style={{color: "red"}}>*</span></label>
           </p>
         )}
         <div
@@ -39,6 +42,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         >
           {icon && <img src={icon as string} alt="iconImg" />}
           <input
+          readOnly={readOnly}
+          required={required}
             disabled={disabled}
             className={`w-full ${
               bgLight ? "bg-white" : "bg-brightgray"

@@ -133,7 +133,7 @@ const Property = () => {
                         <td className="p-2 py-3">
                           <div className="flex gap-3">
                             <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
-                              <Link to={"/property/edit"} state={item?.name}>
+                              <Link to={`/property/edit/${item?.name}`} state={item?.name}>
                                 <MdOutlineEdit
                                   size={20}
                                   className="text-[#D09D4A]"

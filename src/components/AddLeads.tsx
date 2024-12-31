@@ -147,6 +147,7 @@ const AddLeads = () => {
                     {Add_Lead.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
+                        required={true}
                           key={name}
                           label={label}
                           name={name}
@@ -157,12 +158,20 @@ const AddLeads = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
+                        <div>
+                        <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                            <label htmlFor="custom-dropdown">
+                              {label}
+                            </label>
+                            <label><span style={{ color: "red" }}>*</span></label>
+                          </div>
                         <Select
+                        required
                           onValueChange={(value) =>
                             handleDropdownChange(name, value)
                           }
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
@@ -175,6 +184,7 @@ const AddLeads = () => {
                             ))}
                           </SelectContent>
                         </Select>
+                        </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
                           selectedDate={formData[name] as Date}

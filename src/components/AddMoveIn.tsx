@@ -166,7 +166,7 @@ const AddMoveIn = () => {
       const moveInList = await getMoveInListData(formValues?.propertyName,formValues?.propertyUnits);
       if(moveInList?.data?.data?.length>0){
         setAlreadyAdded(true)
-        setShowError(`This ${formValues?.propertyName} property with ${formValues?.propertyUnits} unit is under Move in`)
+        setShowError(`This ${formValues?.propertyName} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-In' status`)
       }
       else{
       if (propertyData) {
@@ -315,7 +315,7 @@ const AddMoveIn = () => {
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
           <div className="my-5 px-2 ">
-            <Header name="Move IN" />
+            <Header name="Move In" />
             <div className="flex">
               <p className="text-[#7C8DB5] mt-1.5 ml-1">
                 {"Move In > Add New"}
@@ -334,6 +334,7 @@ const AddMoveIn = () => {
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                       <MantineSelect
+                      required
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
@@ -371,6 +372,7 @@ const AddMoveIn = () => {
                         ({ label, name, type, values }) =>
                           type === "mantineSelect" ? (
                             <MantineSelect
+                            required
                               label={label}
                               placeholder={label}
                               data={propertyUnits}
@@ -513,6 +515,7 @@ const AddMoveIn = () => {
                       </p>
                       {statusSelect.map(({ label, name, type, values }) => (
                         <Select
+                        required
                           onValueChange={(value) =>
                             handleDropDown(name, value)
                           }

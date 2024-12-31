@@ -75,7 +75,7 @@ const AddBookReserve = () => {
     location: "",
     unitCount: "",
     city: "",
-    country: "",
+    country: "United Arab Emirates",
     status: "",
     bookingDate: "",
     tenantName: "",
@@ -122,6 +122,7 @@ setCountryList(res?.data?.data)
   const getLeadData = async () => {
     const res = await getLeadList();
     const item = res?.data?.data;
+    console.log(item,"njk")
     setLeadList(item);
   };
 
@@ -298,7 +299,7 @@ setCountryList(res?.data?.data)
     if (label === "selectALead") {
       return leadList.map((item) => ({
         value: item?.name,
-        label: item?.name,
+        label: item?.lead_name,
       }));
     } else if (label === "ownerName") {
       return ownerList.map((item) => ({
@@ -336,6 +337,7 @@ setCountryList(res?.data?.data)
                     {Add_BookReserve.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
+                        required={true}
                           key={name}
                           label={label}
                           name={name}
@@ -347,16 +349,20 @@ setCountryList(res?.data?.data)
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
-        {label}
-      </label>
+                         <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                            <label htmlFor="custom-dropdown">
+                              {label}
+                            </label>
+                            <label><span style={{ color: "red" }}>*</span></label>
+                          </div>
                         <Select
+                        required
                           onValueChange={(value) =>
                             handleDropdownChange(name, value)
                           }
-                          value={formData[name]}
+                          value={name==='country'?formData?.country:formData[name]}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
+                          <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
@@ -379,6 +385,7 @@ setCountryList(res?.data?.data)
                         />
                       ) : type === "matineSelect" ? (
                         <MantineSelect
+                        required
                           label={label}
                           placeholder={label}
                           data={
@@ -405,8 +412,8 @@ setCountryList(res?.data?.data)
                           }
                           styles={{
                             label: {
-                              marginBottom: "7px",
-                              color: "black",
+                              marginBottom: "3px",
+                              color: "#374151",
                               fontSize: "16px",
                             },
                             input: {
@@ -414,7 +421,7 @@ setCountryList(res?.data?.data)
                               borderRadius: "8px",
                               padding: "24px",
                               fontSize: "16px",
-                              color: "#1A202C",
+                              color: "#374151",
                             },
                             dropdown: {
                               backgroundColor: "white",

@@ -5,7 +5,7 @@ import Sidebar from "./Sidebar";
 import Input from "./TextInput";
 import { Add_Lead } from "../constants/inputdata";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { createLead, uploadFile, fetchLeads, updateLead } from "../api";
 import {
   Select,
@@ -52,9 +52,9 @@ const EditLead = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [imageArray, setImageArray] = useState([])
-
+  const {id} = useParams()
   const location = useLocation();
-  console.log("location-state :", location.state);
+  console.log("location-state :", id);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -85,9 +85,9 @@ const EditLead = () => {
 
   useEffect(() => {
     const fetchingLeadData = async () => {
-      if (location.state) {
+      if (id) {
         try {
-          const res = await fetchLeads(location.state);
+          const res = await fetchLeads(id);
           const item = res?.data?.data;
           console.log("booking item", item);
           if (item) {
@@ -122,7 +122,7 @@ const EditLead = () => {
       }
     };
     fetchingLeadData();
-  }, [location.state]);
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -154,7 +154,7 @@ const EditLead = () => {
 
     try {
       console.log("API Data => ", formData);
-      const res = await updateLead(location.state, {
+      const res = await updateLead(id, {
         first_name:formData?.leadName,
         status: formData?.leadStatus,
         type: formData?.leadType,
@@ -210,13 +210,17 @@ const EditLead = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
+                        <div>
+                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+        {label}
+      </label>
                         <Select
                           onValueChange={(value) =>
                             handleDropdownChange(name, value)
                           }
                           value={formData[name]}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
@@ -229,6 +233,7 @@ const EditLead = () => {
                             ))}
                           </SelectContent>
                         </Select>
+                        </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
                           selectedDate={formData[name] as Date}

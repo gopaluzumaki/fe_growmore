@@ -89,6 +89,8 @@ const EditProperty = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
+  console.log(id,"bjk",location.state)
+
 useEffect(()=>{
   getCountryListData()
 },[])
@@ -107,7 +109,7 @@ setCountryList(res?.data?.data)
             propertyName = prop.name;
           }
         });
-        const res = await fetchProperty(location.state); // Fetch the property data
+        const res = await fetchProperty(id); // Fetch the property data
         if (res) {
           setFormData({
             type: res.data.data.type || "",
@@ -138,7 +140,7 @@ setCountryList(res?.data?.data)
     };
 
     fetchPropertyData();
-  }, [location?.state]);
+  }, [id]);
 
   const handleDropDown = (name, item) => {
     setFormData((prevData) => ({

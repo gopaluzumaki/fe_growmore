@@ -57,17 +57,17 @@ function App() {
         <Route path="/booking" element={<BookReserve />} />
         <Route path="/contracts" element={<TenancyContracts />} />
         <Route path="/property/add" element={<AddProperty />} />
-        <Route path="/property/edit" element={<EditProperty />} />
+        <Route path="/property/edit/:id" element={<EditProperty />} />
         <Route path="/units/add" element={<AddUnits />} />
-        <Route path="/units/edit" element={<EditUnits />} />
+        <Route path="/units/edit/:id" element={<EditUnits />} />
         <Route path="/leads/add" element={<AddLeads />} />
-        <Route path="/leads/edit" element={<EditLead />} />
+        <Route path="/leads/edit/:id" element={<EditLead />} />
         <Route path="/owners/add" element={<AddOwners />} />
-        <Route path="/owners/edit" element={<EditOwner />} />
+        <Route path="/owners/edit/:id" element={<EditOwner />} />
         <Route path="/tenants/add" element={<AddTenants />} />
-        <Route path="/tenants/edit" element={<EditTenants />} />
+        <Route path="/tenants/edit/:id" element={<EditTenants />} />
         <Route path="/booking/add" element={<AddBookReserve />} />
-        <Route path="/booking/edit" element={<EditBooking />} />
+        <Route path="/booking/edit/:id" element={<EditBooking />} />
         <Route path="/contracts/add" element={<AddTenancyContracts />} />
         <Route path="/contracts/edit" element={<EditTenancyContracts />} />
         <Route path="/signup" element={<Signup />} />
@@ -78,13 +78,13 @@ function App() {
         <Route path="/maintenance" element={<Maintenance />} />
         <Route path="/legal" element={<Legal />} />
         <Route path="/movein/add" element={<AddMoveIn />} />
-        <Route path="/movein/edit" element={<EditMoveIn />} />
+        <Route path="/movein/edit/:id" element={<EditMoveIn />} />
         <Route path="/moveout/add" element={<AddMoveOut />} />
-        <Route path="/moveout/edit" element={<EditMoveOut />} />
+        <Route path="/moveout/edit/:id" element={<EditMoveOut />} />
         <Route path="/legal/add" element={<AddLegal />} />
-        <Route path="/legal/edit" element={<EditLegal />} />
+        <Route path="/legal/edit/:id" element={<EditLegal />} />
         <Route path="/maintenance/add" element={<AddMaintenance />} />
-        <Route path="/maintenance/edit" element={<EditMaintenance />} />
+        <Route path="/maintenance/edit/:id" element={<EditMaintenance />} />
         <Route path="/profile" element={<Profile />} />
 
       </Route>
