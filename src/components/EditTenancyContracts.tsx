@@ -197,6 +197,58 @@ const EditTenancyContracts = () => {
     fetchingBookedData();
   }, [location.state, formValues.renewal_duration, formValues.number_of_days]);
 
+  // calcutaoin termination things.
+
+  useEffect(() => {
+    if (
+      formValues.custom_overstay_check &&
+      formValues.custom_serve_the_notice_period &&
+      formValues.custom_termination_date
+    ) {
+      let extraPenalty = 0;
+      const monthRate = formValues?.anualPriceRent / 12;
+      const dayRate = monthRate / 30;
+      const overStayCheckAmount = +formValues.custom_overstay_check * dayRate;
+      if (formValues.custom_serve_the_notice_period === "No") {
+        extraPenalty = 2 * monthRate;
+      }
+      let dayDifference = 0;
+      tableData.forEach((item) => {
+        if (
+          new Date(item.chequeDate) <
+          new Date(formValues.custom_termination_date)
+        ) {
+          const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
+          // Calculate the difference in milliseconds
+          const diffMs =
+            new Date(formValues.custom_termination_date).getTime() -
+            new Date(item.chequeDate).getTime();
+          dayDifference = Math.round(diffMs / oneDay);
+        }
+      });
+
+      console.log("dayDifference", dayDifference);
+      console.log("dayRate", dayRate);
+      console.log("overStayCheckAmount", overStayCheckAmount);
+      console.log("formValues?.anualPriceRent", formValues?.anualPriceRent);
+
+      const dayDifferenceAmount = dayDifference * dayRate;
+
+      const penaltyAmount = parseFloat(
+        overStayCheckAmount + dayDifferenceAmount + extraPenalty
+      ).toFixed(2);
+      setFormValues((prevData) => ({
+        ...prevData,
+        custom_penalty_amount: penaltyAmount,
+      }));
+    }
+  }, [
+    location.state,
+    formValues.custom_overstay_check,
+    formValues.custom_serve_the_notice_period,
+    formValues.custom_termination_date,
+  ]);
+
   // increase rent based on the percentage or fixed amount
 
   useEffect(() => {
@@ -371,6 +423,19 @@ const EditTenancyContracts = () => {
               custom_serve_the_notice_period:
                 item.custom_serve_the_notice_period,
               custom_overstay_check: item.custom_overstay_check,
+              custom_penalty_amount: item.custom_penalty_amount,
+
+              //renewal details
+
+              renewal_duration: item.custom_renewal_duration,
+
+              number_of_days: item.custom_number_of_days,
+
+              rental_increase: item?.custom_rental_increase,
+
+              fixed_amount: item?.custom_fixed_amount,
+
+              percentage: item?.custom_percentage,
             }));
 
             setOwnerImgUrl(item.custom_image || "");
@@ -900,6 +965,7 @@ const EditTenancyContracts = () => {
         ...reminderValues,
         lease_status: formValues.tenancyStatus,
 
+        //termination details
         custom_duration: formValues.custom_duration,
         custom_day_rate: formValues.custom_day_rate,
         custom_termination_date: formatDateToYYMMDD(
@@ -908,6 +974,7 @@ const EditTenancyContracts = () => {
         custom_serve_the_notice_period:
           formValues.custom_serve_the_notice_period,
         custom_overstay_check: formValues.custom_overstay_check,
+        custom_penalty_amount: formValues.custom_penalty_amount,
 
         //contract details
         bank_name: formValues.bankName,
@@ -951,7 +1018,7 @@ const EditTenancyContracts = () => {
         ),
         custom_signature_of_customer: formValues.tenantSignature,
         // owner details
-        custom_name_of_owner: formValues.ownerName,
+        custom_name_of_owner: ownerDetails.supplier_name,
         custom_type_of_owner: formValues.ownerType,
         custom_contact_number_of_owner: formValues.ownerContact,
         custom_emirates_idtrade_license: formValues.ownerEmiratesId,
@@ -960,8 +1027,6 @@ const EditTenancyContracts = () => {
         custom_mobile_number: formValues.ownerMobile,
         custom_image: ownerImgUrl,
         custom_signature_of_owner: formValues.ownerSign,
-
-        // payment-details
 
         //payment details
         custom_no_of__cheques: formValues.numberOfChecks,
@@ -1001,6 +1066,13 @@ const EditTenancyContracts = () => {
       if (formValues.tenancyStatus === "Renewal") {
         const updateRes = await updateTanencyContract(location.state, {
           lease_status: "Renewal",
+
+          //renewal details
+          custom_renewal_duration: formValues.renewal_duration,
+          custom_number_of_days: formValues.number_of_days,
+          custom_rental_increase: formValues?.rental_increase,
+          custom_fixed_amount: formValues?.fixed_amount,
+          custom_percentage: formValues?.percentage,
         }); //import from API
         const createRes = await createTanencyContract({
           ...payload,
@@ -1331,7 +1403,7 @@ const EditTenancyContracts = () => {
                             )
                         )}
 
-                        {formValues.custom_serve_the_notice_period === "No" && (
+                        {/* {formValues.custom_serve_the_notice_period === "No" && (
                           <Input
                             disabled
                             label={"Penalty Amount"}
@@ -1342,7 +1414,7 @@ const EditTenancyContracts = () => {
                             borderd
                             bgLight
                           />
-                        )}
+                        )} */}
                       </div>
                     </div>
                   )}

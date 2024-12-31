@@ -462,7 +462,8 @@ export const Termination_TenancyContractProperty = [
     type: "mantineSelect",
   },
 
-  { label: "Overstay Check", name: "custom_overstay_check", type: "text" },
+  { label: "Overstay Check", name: "custom_overstay_check", type: "number" },
+  { label: "Penalty Amount", name: "custom_penalty_amount", type: "number" },
 ];
 
 export const Renewal_TenancyContractProperty = [

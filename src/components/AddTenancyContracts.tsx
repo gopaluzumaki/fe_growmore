@@ -681,7 +681,7 @@ const AddTenancyContracts = () => {
         ),
         custom_signature_of_customer: formValues.tenantSignature,
         // owner details
-        custom_name_of_owner: formValues.ownerName,
+        custom_name_of_owner: ownerDetails.supplier_name,
         custom_type_of_owner: formValues.ownerType,
         custom_contact_number_of_owner: formValues.ownerContact,
         custom_emirates_idtrade_license: formValues.ownerEmiratesId,
@@ -690,6 +690,8 @@ const AddTenancyContracts = () => {
         custom_mobile_number: formValues.ownerMobile,
         custom_image: ownerImgUrl,
         custom_signature_of_owner: formValues.ownerSign,
+
+        custom_no_of__cheques: formValues.numberOfChecks,
 
         custom_bank_name: formValues.bankName,
         custom_price__rent_annually: formValues.anualPriceRent,
