@@ -141,7 +141,7 @@ const AddProperty = () => {
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                          <div className="flex justify-between mb-1.5 ml-1 font-medium text-gray-700">
+                          <div className="flex mb-1.5 ml-1 font-medium text-gray-700">
                             <label htmlFor="custom-dropdown">
                               {label}
                             </label>
