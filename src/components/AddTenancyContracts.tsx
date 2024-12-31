@@ -640,13 +640,11 @@ const AddTenancyContracts = () => {
         lease_status: formValues?.tenancyStatus,
         //contract details
         // lease_status:"Draft",
-        custom_no_of__cheques: formValues.numberOfChecks,
         bank_name: formValues.bankName,
         cheque_no: formValues.chequeNo,
         cheque_date: formatDateToYYMMDD(formValues.chequeDate),
         start_date: formatDateToYYMMDD(formValues.startDate),
         end_date: formatDateToYYMMDD(formValues.endDate),
-        custom_price__rent_annually: formValues.anualPriceRent,
         sq_foot: formValues.sqFoot,
         sq_meter: formValues.sqMeter,
         custom_price_sq_m: formValues.priceSqMeter,
@@ -683,7 +681,7 @@ const AddTenancyContracts = () => {
         ),
         custom_signature_of_customer: formValues.tenantSignature,
         // owner details
-        custom_name_of_owner: formValues.ownerName,
+        custom_name_of_owner: ownerDetails.supplier_name,
         custom_type_of_owner: formValues.ownerType,
         custom_contact_number_of_owner: formValues.ownerContact,
         custom_emirates_idtrade_license: formValues.ownerEmiratesId,
@@ -692,6 +690,11 @@ const AddTenancyContracts = () => {
         custom_mobile_number: formValues.ownerMobile,
         custom_image: ownerImgUrl,
         custom_signature_of_owner: formValues.ownerSign,
+
+        custom_no_of__cheques: formValues.numberOfChecks,
+
+        custom_bank_name: formValues.bankName,
+        custom_price__rent_annually: formValues.anualPriceRent,
 
         lease_item:
           tableData && tableData.length > 0
