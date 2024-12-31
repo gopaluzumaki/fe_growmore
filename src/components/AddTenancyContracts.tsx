@@ -1489,6 +1489,9 @@ const AddTenancyContracts = () => {
                     onChange={(value) =>
                       setFormValues({ ...formValues, [name]: value })
                     }
+                    disabled={
+                      name === "approvalStatus" && formValues.status !== "Hold"
+                    }
                     styles={{
                       label: {
                         marginBottom: "7px",
