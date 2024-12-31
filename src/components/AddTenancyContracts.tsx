@@ -408,7 +408,7 @@ const AddTenancyContracts = () => {
   ]);
 
   useEffect(() => {
-    if (formValues.sqFoot && formValues.anualPriceRent) {
+    if (formValues.sqFoot && formValues.propertyRent) {
       const sqMeter = formValues.sqFoot * 0.092903;
       handleDropDown(
         "sqMeter",
@@ -416,14 +416,14 @@ const AddTenancyContracts = () => {
       );
       handleDropDown(
         "priceSqFt",
-        Number(formValues.anualPriceRent / formValues.sqFoot).toFixed(2)
+        Number(formValues.propertyRent / formValues.sqFoot).toFixed(2)
       );
       handleDropDown(
         "priceSqMeter",
-        Number(formValues.anualPriceRent / sqMeter).toFixed(2)
+        Number(formValues.propertyRent / sqMeter).toFixed(2)
       );
     }
-  }, [formValues.sqFoot, formValues.anualPriceRent]);
+  }, [formValues.sqFoot, formValues.propertyRent]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
