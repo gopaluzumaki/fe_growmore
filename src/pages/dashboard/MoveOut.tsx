@@ -63,12 +63,12 @@ const MoveOut = () => {
   const applyFilters = () => {
     const filteredData = moveOutList.filter((item) => {
       const matchesSearch = !searchValue ||
-        item?.custom_property.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_unit_no.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_customer.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_start_date.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_end_date.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_statusmo.toLowerCase().includes(searchValue.toLowerCase())
+        item?.custom_property?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_unit_no?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_customer?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_start_date?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_end_date?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_statusmo?.toLowerCase().includes(searchValue.toLowerCase())
 
       const matchesProperty =
         !selectedProperty || item.custom_property === selectedProperty;

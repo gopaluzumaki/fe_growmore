@@ -19,6 +19,8 @@ import {
   getTenantList,
   getPropertyList,
   fetchUnitsfromProperty,
+  getCountryList,
+  getOwnerListData,
 } from "../api";
 import CustomDatePicker from "./CustomDatePicker";
 import { Select as MantineSelect } from "@mantine/core";
@@ -71,6 +73,7 @@ const EditBooking = () => {
   const location = useLocation();
   const [propertyUnits, setPropertyUnits] = useState([]);
   const [imageArray, setImageArray] = useState([])
+  const [countryList,setCountryList]=useState([])
 
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
@@ -115,11 +118,18 @@ const EditBooking = () => {
   };
 
   const getOwnerData = async () => {
-    const res = await getOwnerList();
+    const res = await getOwnerListData();
     const item = res?.data?.data;
     setOwnerList(item);
   };
+useEffect(()=>{
+  getCountryListData()
+},[])
+const getCountryListData=async()=>{
+const res=await getCountryList()
 
+setCountryList(res?.data?.data)
+}
   useEffect(() => {
     getLeadData();
     getOwnerData();
@@ -352,7 +362,7 @@ const EditBooking = () => {
       }));
     } else if (label === "ownerName") {
       return ownerList.map((item) => ({
-        value: item?.supplier_name,
+        value: item?.name,
         label: item?.supplier_name,
       }));
     } else if (label === "name1") {
@@ -402,25 +412,30 @@ const EditBooking = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
+                        <div>
+                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+        {label}
+      </label>
                         <Select
                           onValueChange={(value) =>
                             handleDropdownChange(name, value)
                           }
                           value={formData[name]}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
                           </SelectTrigger>
                           <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
+                          {(name==="country"?countryList:values)?.map((item, i) => (
+                              <SelectItem key={i} value={name==="country"?item.name:item}>
+                                {name==="country"?item.name:item}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
+                        </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
                           selectedDate={formData[name] as Date}
@@ -480,7 +495,7 @@ const EditBooking = () => {
                     )}
 
                      {/* Attachment */}
-                                                           <div className="mt-5 mb-5">
+                                                           <div className="mb-5">
                                                              <CustomFileUpload
                                                                onFilesUpload={(urls) => {
                                                                  setImgUrls(urls);
@@ -502,10 +517,8 @@ const EditBooking = () => {
                     ></textarea>
                   </div>
                   {imageArray?.length > 0 && (<>
-                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                        <span className="pb-1 border-b border-[#7C8DB5]">
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           Attachments
-                        </span>
                       </p>
                       <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (

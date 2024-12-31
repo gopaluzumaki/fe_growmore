@@ -16,10 +16,15 @@ import {
 import { VscFilter } from "react-icons/vsc";
 import PrimaryButton from "../../components/PrimaryButton";
 import { useEffect, useState } from "react";
-import { getOwnerList } from "../../api";
+import { getOwnerList, getOwnerListData } from "../../api";
+import { Input } from "@mantine/core";
+import { CiSearch } from "react-icons/ci";
 
 const Owners = () => {
   const [ownerList, setOwnerList] = useState<any[]>([]);
+  const [filteredOwnerList, setFilteredOwnerList] = useState<any[]>([]);
+  const [searchValue, setSearchvalue] = useState<string | null>(null);
+
   const [error,setError]=useState('')
   useEffect(() => {
     setError('')
@@ -27,11 +32,37 @@ const Owners = () => {
   }, []);
 
   const getData = async () => {
-    const unitList = await getOwnerList();
+    const unitList = await getOwnerListData();
     console.log("dase", unitList);
     setOwnerList(unitList?.data?.data);
+    setFilteredOwnerList(unitList?.data?.data)
   };
+  const applyFilters = () => {
+    const filteredData = ownerList.filter((item) => {
+      const matchesSearch = !searchValue ||
+        item?.supplier_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_phone_number?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_email?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_number_of_property?.toLowerCase().includes(searchValue.toLowerCase())|| 
+        item?.custom_number_of_units?.toLowerCase().includes(searchValue.toLowerCase())
+        return matchesSearch 
+    });
+    setFilteredOwnerList(filteredData);
+  };
+  useEffect(() => {
+    applyFilters();
+  }, [searchValue]);
 
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchvalue(e.target.value);
+  };
+  const searchStyle = {
+    input: {
+      border: "1px solid gray",
+      width: "20vw",
+      padding:"24px"
+    },
+  };
   console.log("unitList => ", ownerList);
   return (
     <main>
@@ -54,51 +85,24 @@ const Owners = () => {
                 <IoAdd size={20} />
               </Link>
             </div>
-            <div className="flex gap-2 items-center">
-              <Select>
-                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                  <div className="flex items-center gap-3">
-                    <VscFilter size={18} />
-                    <SelectValue placeholder="Select Properties" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Property1">Property 1</SelectItem>
-                    <SelectItem value="Property2">Property 2</SelectItem>
-                    <SelectItem value="Property3">Property 3</SelectItem>
-                    <SelectItem value="Property4">Property 4</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-slate-100 outline-none">
-                  <div className="flex items-center gap-3">
-                    <VscFilter size={18} />
-                    <SelectValue placeholder="Select Unit" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Unit1">Unit 1</SelectItem>
-                    <SelectItem value="Unit2">Unit 2</SelectItem>
-                    <SelectItem value="Unit3">Unit 3</SelectItem>
-                    <SelectItem value="Unit4">Unit 4</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <div className="w-[100px]">
-                <PrimaryButton title="Apply" />
-              </div>
-            </div>
+             <div className="flex gap-2 items-center">
+                                      <Input
+                                        onChange={handleSearchValue}
+                                        value={searchValue}
+                                        styles={searchStyle}
+                                        placeholder="Search"
+                                        leftSection={<CiSearch className="mr-2" size={24} />}
+                                      />
+                                    </div> 
           </div>
           <span className="flex justify-center text-red-500">{error}</span>
 
           <div className="my-4 grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] gap-10 rounded-xl">
-            {ownerList.map((item, i) => (
+            {filteredOwnerList.map((item, i) => (
               <OwnerCard
                 redirect="owners"
                 key={i}
+                name1={item?.name}
                 name={item?.supplier_name}
                 contact={item.custom_phone_number}
                 email={item.custom_email}

@@ -10,6 +10,7 @@ import {
   createProperty,
   fetchProperty,
   fetchUnit,
+  getCountryList,
   getPropertyList,
   updateProperty,
   uploadFile,
@@ -72,13 +73,22 @@ const EditUnits = () => {
   const [priceSqMeter, setPriceSqMeter] = useState();
   const location = useLocation();
   const [propertyList, setPropertyList] = useState<any[]>([]);
+  const [countryList,setCountryList]=useState([])
+
   // useEffect(() => {
   //   console.log('dsads',location.state.item)
   //   // setFormData([...location.state.unitList]);
   // }, []);
 
   // const { state } = props.location;x
+useEffect(()=>{
+  getCountryListData()
+},[])
+const getCountryListData=async()=>{
+const res=await getCountryList()
 
+setCountryList(res?.data?.data)
+}
   useEffect(() => {
     console.log("location.state.item", location.state.item);
     const fetchUnitData = async () => {
@@ -193,7 +203,7 @@ const EditUnits = () => {
   const getProperties = async () => {
     const res = await getPropertyList();
     const item = res?.data?.data;
-    console.log(item);
+    console.log(item,"njk");
     setPropertyList(item);
   };
 
@@ -343,29 +353,34 @@ const EditUnits = () => {
                           bgLight
                         />
                       ) : type === "dropdown" ? (
+                        <div>
+                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+        {label}
+      </label>
                         <Select
                           value={formData[name as keyof FormData]}
                           onValueChange={(item) => handleDropDown(name, item)}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
                           </SelectTrigger>
                           <SelectContent onChange={() => console.log("hello")}>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
+                            {(name==="country"?countryList:values)?.map((item, i) => (
+                              <SelectItem key={i} value={name==="country"?item.name:item}>
+                               {name==="country"?item.name:item}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
+                        </div>
                       ) : (
                         <></>
                       )
                     )}
                    {/* Attachment */}
-                                       <div className="mt-5 mb-5">
+                                       <div className="mb-5">
                                          <CustomFileUpload
                                            onFilesUpload={(urls) => {
                                              setImgUrls(urls);
@@ -388,10 +403,8 @@ const EditUnits = () => {
                     ></textarea>
                   </div>
                   {imageArray?.length > 0 && (<>
-                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                        <span className="pb-1 border-b border-[#7C8DB5]">
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           Attachments
-                        </span>
                       </p>
                       <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (

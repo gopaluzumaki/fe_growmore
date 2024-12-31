@@ -166,7 +166,7 @@ const AddMoveIn = () => {
       const moveInList = await getMoveInListData(formValues?.propertyName,formValues?.propertyUnits);
       if(moveInList?.data?.data?.length>0){
         setAlreadyAdded(true)
-        setShowError(`This ${formValues?.propertyName} property with ${formValues?.propertyUnits} unit is already Moved in`)
+        setShowError(`This ${formValues?.propertyName} property with ${formValues?.propertyUnits} unit is under Move in`)
       }
       else{
       if (propertyData) {
@@ -533,7 +533,7 @@ const AddMoveIn = () => {
                         </Select>
                       ))}</div>
                     {/* Attachment */}
-                    <div className="mt-5 mb-5">
+                    <div className="mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);

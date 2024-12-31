@@ -14,9 +14,9 @@ export const API_URL = {
   Tenant_List: "https://propms.erpnext.syscort.com/api/method/tenant_list",
   Owner_List: "https://propms.erpnext.syscort.com/api/method/owner_list",
   Lead_List:
-    "https://propms.erpnext.syscort.com/api/resource/Lead?fields=[%22name%22,%22lead_name%22,%22lead_owner%22,%22status%22,%22custom_property%22,%22company%22]&order_by=creation desc",
+    "https://propms.erpnext.syscort.com/api/resource/Lead?fields=[%22*%22]&order_by=creation desc",
   Booking_List:
-    "https://propms.erpnext.syscort.com/api/resource/Property%20Booking?fields=[%22name%22,%22owner%22,%22creation%22,%22modified%22,%22modified_by%22,%22docstatus%22,%22idx%22,%22property%22,%22book_against%22,%22customer%22,%22annual_rent%22,%22doctype%22]&order_by=creation desc",
+    "https://propms.erpnext.syscort.com/api/resource/Property%20Booking?fields=[%22*%22]&order_by=creation desc",
   Tenancy_Contract:
     "https://propms.erpnext.syscort.com/api/method/tenancy_contract",
   Create_Property: "https://propms.erpnext.syscort.com/api/resource/Property",
@@ -52,6 +52,7 @@ export const API_URL = {
     'https://propms.erpnext.syscort.com/api/resource/Lead?fields=["creation"]',
   Fetch_Case: "https://propms.erpnext.syscort.com/api/resource/Maintenance",
   Profile_Data: "https://propms.erpnext.syscort.com/api/resource/User",
+  Country_List: "https://propms.erpnext.syscort.com/api/resource/Country"
 };
 
 export const loginUser = async (credentials: { usr: string; pwd: string }) => {
@@ -120,7 +121,7 @@ export const getPropertyList = async () => {
 };
 
 export const getPropertyListData = async () => {
-  const response = await axios.get(`${API_URL.Create_Property}?fields=["*"]`, {
+  const response = await axios.get(`${API_URL.Create_Property}?fields=["*"]&order_by=creation desc`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -151,6 +152,16 @@ export const getTenantList = async () => {
 
 export const getOwnerList = async () => {
   const response = await axios.get(`${API_URL.Owner_List}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
+export const getOwnerListData = async () => {
+  const response = await axios.get(`${API_URL.Create_Owner}?fields=["*"]`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -779,6 +790,16 @@ export const deleteOwner = async (params) => {
 
 export const deleteBooking = async (params) => {
   const response = await axios.delete(`${API_URL.Create_Booking}/${params}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
+export const getCountryList = async () => {
+  const response = await axios.get(`${API_URL.Country_List}?fields=["name"]&limit_page_length=[100]`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,

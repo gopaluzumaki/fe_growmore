@@ -683,7 +683,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                         </Select>
                       ))}</div>
                     {/* Attachment */}
-                    <div className="mt-5 mb-5">
+                    <div className="mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);

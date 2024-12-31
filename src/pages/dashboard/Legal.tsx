@@ -64,11 +64,11 @@ const Legal = () => {
   const applyFilters = () => {
     const filteredData = legalList.filter((item) => {
       const matchesSearch = !searchValue ||
-        item?.custom_property.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_unit_no.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_location__area.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_legal_reason.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.owner.toLowerCase().includes(searchValue.toLowerCase())
+        item?.custom_property?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_unit_no?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_location__area?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_legal_reason?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.owner?.toLowerCase().includes(searchValue.toLowerCase())
 
      
 

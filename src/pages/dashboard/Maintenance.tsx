@@ -73,11 +73,11 @@ const Maintenance = () => {
   const applyFilters = () => {
     const filteredData = maintenanceList.filter((item) => {
       const matchesSearch = !searchValue ||
-        item?.custom_property.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_unit_no.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_location__area.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.owner.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_damage_location.toLowerCase().includes(searchValue.toLowerCase())
+        item?.custom_property?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_unit_no?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_location__area?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.owner?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_damage_location?.toLowerCase().includes(searchValue.toLowerCase())
 
 
       const matchesProperty =
