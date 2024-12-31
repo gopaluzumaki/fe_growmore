@@ -136,6 +136,7 @@ const AddMaintenance = () => {
   const getProperties = async () => {
     const res = await getPropertyList();
     const item = res?.data?.data;
+    console.log(item,"bj")
     setPropertyList(item);
   };
 
@@ -163,6 +164,7 @@ const AddMaintenance = () => {
     
     const res = getUnitData(formValues?.propertyUnits)[0]
     const result=await fetchDataFromLease(formValues?.propertyName,formValues?.propertyUnits)
+    console.log(res,"cgy",result?.data?.data)
     const datas=result?.data?.data[0]
     if(result?.data?.data?.length>0){
       setShowCustomerSection(true)
@@ -243,6 +245,7 @@ const AddMaintenance = () => {
         }));
         const response = await fetchUnitsfromProperty(propertyData?.name);
         const data = response?.data?.data;
+        console.log(data,"njk")
         setUnitDetails(data)
         const values = data?.map((item) => item.custom_unit_number);
         setPropertyUnits((prev) => {
@@ -442,6 +445,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                       <MantineSelect
+                      required
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
@@ -479,6 +483,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                         ({ label, name, type, values }) =>
                           type === "mantineSelect" ? (
                             <MantineSelect
+                            required
                               label={label}
                               placeholder={label}
                               data={propertyUnits?.length>0?propertyUnits:[]}
@@ -620,6 +625,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
 
                       </p>
                       <MantineSelect
+                      required
                   placeholder="Select Damage Location"
                   data={damageLocationList.map((p) => p.name)}
                   clearable
@@ -644,6 +650,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                         </span>
                       </p>
                       <textarea
+                      required
                         id="originalissue"
                         name="originalissue"
                         value={formValues.originalissue}
@@ -663,6 +670,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                       </p>
                       {statusSelect.map(({ label, name, type, values }) => (
                         <Select
+                        required
                           onValueChange={(value) =>
                             handleDropDown(name, value)
                           }

@@ -43,7 +43,7 @@ const OwnerCard = ({
             <p className="text-[20px] font-semibold">{name}</p>
           </div>
           <div>
-            <Link to={`/${redirect}/edit`} state={redirect === "booking"?name:name1}>
+            <Link to={redirect === "booking"?`/${redirect}/edit/${name}`:`/${redirect}/edit/${name1}`} state={redirect === "booking"?name:name1}>
               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 mr-1 rounded cursor-pointer">
                 <MdOutlineEdit size={20} className="text-[#D09D4A]" />
               </button>

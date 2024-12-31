@@ -10,6 +10,7 @@ interface CustomDatePickerProps {
   label?: string;
   placeholder?: string;
   disabled?: boolean;
+  required?:boolean;
 }
 
 export default function CustomDatePicker({
@@ -18,7 +19,9 @@ export default function CustomDatePicker({
   label = "Select date",
   placeholder = "Pick a date",
   disabled = false,
+  required=false
 }: CustomDatePickerProps) {
+  console.log(required,"bhj")
   const [isOpen, setIsOpen] = useState(false);
 
   const handleChange = (date: Date | null) => {
@@ -29,7 +32,7 @@ export default function CustomDatePicker({
   return (
     <div className="flex flex-col space-y-2">
       {label && (
-        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <label className="font-medium text-gray-700">{label}</label>
       )}
       <div className="relative">
         <button
@@ -61,6 +64,7 @@ export default function CustomDatePicker({
         {isOpen && (
           <div className="absolute z-10 mt-1 bg-white rounded-md shadow-lg">
             <DatePicker
+            required={required}
               selected={selectedDate}
               onChange={handleChange}
               inline

@@ -88,6 +88,7 @@ const AddUnits = () => {
   };
 useEffect(()=>{
   getCountryListData()
+  
 },[])
 const getCountryListData=async()=>{
 const res=await getCountryList()
@@ -105,10 +106,10 @@ setCountryList(res?.data?.data)
     status: "",
     rent: "",
     sellingPrice: "",
-    sqFoot: "",
-    sqMeter: "",
-    priceSqMeter: "",
-    priceSqFt: "",
+    sqFoot: "0",
+    sqMeter: "0",
+    priceSqMeter: "0",
+    priceSqFt: "0",
     custom_unit_number: "",
     rooms: "",
     floors: "",
@@ -124,13 +125,13 @@ setCountryList(res?.data?.data)
     const { name, value } = e.target;
     console.log("dsadas", name, value);
     if (name === "sqFoot" && value) {
-      console.log("dasewa");
+      console.log("dasewa",value);
       let sqMeter = value * 0.092903;
       handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
-      handleDropDown("priceSqFt", Number(formData["rent"] / value).toFixed(2));
+      handleDropDown("priceSqFt", value<=0?0:Number(formData["rent"] / value).toFixed(2));
       handleDropDown(
         "priceSqMeter",
-        Number(formData["rent"] / sqMeter).toFixed(2)
+        value<=0?0: Number(formData["rent"] / sqMeter).toFixed(2)
       );
 
       // let priceSqFt
@@ -138,7 +139,38 @@ setCountryList(res?.data?.data)
       // setSqmValue(value* 0.092903)
       setPriceSqFt(priceSqFt);
       setPriceSqMeter(priceSqMeter);
-    } else if (!value) {
+    }
+    else if (name === "sqMeter" && value) {
+      console.log("dasewa",typeof value);
+      let sqFoot = value * 10.7639;
+      handleDropDown("sqFoot", Number(value * 10.7639).toFixed(2));
+      handleDropDown("priceSqMeter", value<=0?0:Number(formData["rent"] / value).toFixed(2));
+      handleDropDown(
+        "priceSqFt",
+        value<=0?0:Number(formData["rent"] / sqFoot).toFixed(2)
+      );
+
+      // let priceSqFt
+      // let priceSqMeter
+      // setSqmValue(value* 0.092903)
+      setPriceSqFt(priceSqFt);
+      setPriceSqMeter(priceSqMeter);
+    }
+    else if (name === "rent" && value) {
+      console.log("dasewa",typeof value);
+      handleDropDown("priceSqMeter", value<=0?0:formData["sqMeter"]<=0?0:Number(value / formData["sqMeter"]).toFixed(2));
+      handleDropDown(
+        "priceSqFt",
+        value<=0?0:formData["sqFoot"]<=0?0:Number(value / formData["sqFoot"]).toFixed(2)
+      );
+
+      // let priceSqFt
+      // let priceSqMeter
+      // setSqmValue(value* 0.092903)
+      setPriceSqFt(priceSqFt);
+      setPriceSqMeter(priceSqMeter);
+    }
+    else if (!value) {
       console.log("iadjskn");
 
       handleDropDown("sqMeter", 0);
@@ -313,6 +345,7 @@ setCountryList(res?.data?.data)
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(px,1fr))] gap-4">
                       <MantineSelect
+                      required
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
@@ -325,8 +358,8 @@ setCountryList(res?.data?.data)
                         }
                         styles={{
                           label: {
-                            marginBottom: "7px",
-                            color: "#7C8DB5",
+                            marginBottom: "4px",
+                            color: "#374151",
                             fontSize: "16px",
                           },
                           input: {
@@ -334,7 +367,7 @@ setCountryList(res?.data?.data)
                             borderRadius: "8px",
                             padding: "24px",
                             fontSize: "16px",
-                            color: "#1A202C",
+                            color: "#374151",
                           },
                           dropdown: {
                             backgroundColor: "white",
@@ -345,9 +378,10 @@ setCountryList(res?.data?.data)
                         searchable
                       />
                     </div>
-                    {Add_Units.map(({ label, name, type, values }) =>
+                    {Add_Units.map(({ label, name, type, values,readonly }) =>
                       type === "text" ? (
                         <Input
+                        required={true}
                           key={name}
                           label={label}
                           name={name}
@@ -356,17 +390,23 @@ setCountryList(res?.data?.data)
                           onChange={handleChange}
                           borderd
                           bgLight
+                          readOnly={readonly}
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
-        {label}
-        </label>
+                        <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                            <label htmlFor="custom-dropdown">
+                              {label}
+                            </label>
+                            <label><span style={{ color: "red" }}>*</span></label>
+                          </div>
                         <Select
+                        disabled={readonly}
+                        required
                           value={formData[name as keyof FormData]}
                           onValueChange={(item) => handleDropDown(name, item)}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
+                          <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
@@ -386,6 +426,7 @@ setCountryList(res?.data?.data)
                     )}
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
                       <MantineSelect
+                      required
                         label="Owner Name"
                         placeholder="Select Property"
                         data={ownerList.map((item) => ({
@@ -396,8 +437,8 @@ setCountryList(res?.data?.data)
                         onChange={(value) => handleDropDown("ownerName", value)}
                         styles={{
                           label: {
-                            marginBottom: "7px",
-                            color: "#7C8DB5",
+                            marginBottom: "3px",
+                            color: "#374151",
                             fontSize: "16px",
                           },
                           input: {
@@ -405,7 +446,7 @@ setCountryList(res?.data?.data)
                             borderRadius: "8px",
                             padding: "24px",
                             fontSize: "16px",
-                            color: "#1A202C",
+                            color: "#374151",
                           },
                           dropdown: {
                             backgroundColor: "white",

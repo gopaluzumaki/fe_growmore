@@ -71,6 +71,7 @@ const EditBooking = () => {
   const [properyList, setPropertyList] = useState();
   const [tenantList, setTenantList] = useState<any[]>([]);
   const location = useLocation();
+  const {id} = useParams()
   const [propertyUnits, setPropertyUnits] = useState([]);
   const [imageArray, setImageArray] = useState([])
   const [countryList,setCountryList]=useState([])
@@ -136,11 +137,11 @@ setCountryList(res?.data?.data)
     getProperties();
     getTenants();
 
-    console.log("from edit booking ", location.state);
+    console.log("from edit booking ", id);
     const fetchingBookedData = async () => {
-      if (location.state) {
+      if (id) {
         try {
-          const res = await fetchBooking(location.state);
+          const res = await fetchBooking(id);
           const item = res?.data?.data;
           console.log("booking item", item);
           if (item) {
@@ -190,7 +191,7 @@ setCountryList(res?.data?.data)
       }
     };
     fetchingBookedData();
-  }, [location.state]);
+  }, [id]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -316,7 +317,7 @@ setCountryList(res?.data?.data)
       console.log("API Data => ", formData);
       const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
 
-      const res = await updateBooking(location.state, {
+      const res = await updateBooking(id, {
         property: formData.name1,
         custom_select_a_lead: formData.selectALead,
         custom_property: formData.name1,

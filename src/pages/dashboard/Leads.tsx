@@ -29,6 +29,7 @@ const Leads = () => {
 
   const getData = async () => {
     const res = await getLeadList();
+    console.log(res,"mkl")
     setLeadList(res?.data?.data);
     setFilteredLeadList(res?.data?.data)
   };
@@ -40,9 +41,8 @@ const Leads = () => {
     "Lead Name",
     "Customer Type",
     "Owner Name",
-    "Unit Number",
     "Company",
-    "status",
+    "Status",
     "Actions",
   ];
   const applyFilters = () => {
@@ -130,7 +130,6 @@ const Leads = () => {
                           <td className="p-2 py-3">{item.lead_name}</td>
                           <td className="p-2 py-3">{item.type}</td>
                           <td className="p-2 py-3">{item.lead_owner}</td>
-                          <td className="p-2 py-3">{item.custom_property}</td>
                           <td className="p-2 py-3">{item.company}</td>
                           <td className="p-2 py-3">
                             <div
@@ -147,7 +146,7 @@ const Leads = () => {
 
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
-                              <Link to={"/leads/edit"} state={item.name}>
+                              <Link to={`/leads/edit/${item?.name}`} state={item.name}>
                                 <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
                                   {" "}
                                   <MdOutlineEdit

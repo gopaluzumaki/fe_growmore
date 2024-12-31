@@ -201,7 +201,7 @@ const Legal = () => {
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link
-                                to={"/legal/edit"}
+                                to={`/legal/edit/${item?.name}`}
                                 state={item.name}
                                 className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
                               >

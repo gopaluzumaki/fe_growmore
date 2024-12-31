@@ -10,7 +10,7 @@ import {
 } from "../constants/inputdata";
 import Input from "./TextInput";
 import { uploadFile, fetchOwner, updateOwner, getCountryList } from "../api";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -51,7 +51,8 @@ const EditOwner = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const location = useLocation();
-  console.log(location.state);
+  const {id} = useParams()
+  console.log(id);
   const [countryList,setCountryList]=useState([])
 
   const [formData, setFormData] = useState<FormData>({
@@ -87,11 +88,11 @@ const res=await getCountryList()
 setCountryList(res?.data?.data)
 }
   useEffect(() => {
-    console.log("from edit owner", location.state);
+    console.log("from edit owner", id);
     const fetchingOwnerData = async () => {
-      if (location.state) {
+      if (id) {
         try {
-          const res = await fetchOwner(location.state);
+          const res = await fetchOwner(id);
           const item = res?.data?.data;
           console.log("owner item", item);
           if (item) {
@@ -136,7 +137,7 @@ setCountryList(res?.data?.data)
       }
     };
     fetchingOwnerData();
-  }, [location.state]);
+  }, [id]);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -177,7 +178,7 @@ setCountryList(res?.data?.data)
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
-      const res = await updateOwner(location.state, {
+      const res = await updateOwner(id, {
         image: imgUrl,
         supplier_details: formData?.description,
         supplier_name:
@@ -258,11 +259,15 @@ setCountryList(res?.data?.data)
                           bgLight
                         />
                       ) : type === "dropdown" ? (
+                        <div>
+                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+        {label}
+      </label>
                         <Select
                           onValueChange={(item) => handleDropDown(name, item)}
                           value={formData[name]}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
@@ -275,6 +280,7 @@ setCountryList(res?.data?.data)
                             ))}
                           </SelectContent>
                         </Select>
+                        </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
                           selectedDate={formData[name] as Date}

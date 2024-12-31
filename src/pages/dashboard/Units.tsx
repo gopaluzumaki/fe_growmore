@@ -29,7 +29,6 @@ const Units = () => {
     "Unit Number",
     "Location / Area",
     "Owner Name",
-    "Tenant Name",
     "Status",
     "Actions",
   ];
@@ -128,7 +127,6 @@ const Units = () => {
                           <td className="p-2 py-3">{item.unit_number}</td>
                           <td className="p-2 py-3">{item.location}</td>
                           <td className="p-2 py-3">{item.unit_owner}</td>
-                          <td className="p-2 py-3">{item.tenantName}</td>
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${item.custom_status === "Occupied"
@@ -144,7 +142,7 @@ const Units = () => {
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
-                                <Link to={"/units/edit"} state={{ item }}>
+                                <Link to={`/units/edit/${item?.name}`} state={{ item }}>
                                   <MdOutlineEdit
                                     size={20}
                                     className="text-[#D09D4A]"

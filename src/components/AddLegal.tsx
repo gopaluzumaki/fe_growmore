@@ -438,6 +438,7 @@ setLegalList(updatedLegalList); // Update the state
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                       <MantineSelect
+                      required
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
@@ -475,6 +476,7 @@ setLegalList(updatedLegalList); // Update the state
                         ({ label, name, type, values }) =>
                           type === "mantineSelect" ? (
                             <MantineSelect
+                            required
                               label={label}
                               placeholder={label}
                               data={propertyUnits?.length>0?propertyUnits:[]}
@@ -599,6 +601,7 @@ setLegalList(updatedLegalList); // Update the state
 
                       </p>
                       <MantineSelect
+                      required
                   placeholder="Select Legal Reason"
                   data={legalList.map((p) => p.name)}
                   clearable
@@ -624,6 +627,7 @@ setLegalList(updatedLegalList); // Update the state
                       </p>
                       {statusSelect.map(({ label, name, type, values }) => (
                         <Select
+                        required
                           onValueChange={(value) =>
                             handleDropDown(name, value)
                           }

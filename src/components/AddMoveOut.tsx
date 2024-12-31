@@ -164,7 +164,7 @@ const AddMoveOut = () => {
       const moveOutList = await getMoveOutListData(formValues?.propertyName,formValues?.propertyUnits);
             if(moveOutList?.data?.data?.length>0){
               setAlreadyAdded(true)
-              setShowError(`This ${formValues?.propertyName} property with ${formValues?.propertyUnits} unit is under Move Out`)
+              setShowError(`This ${formValues?.propertyName} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-Out' status`)
             }
             else{
       if (propertyData) {
@@ -278,8 +278,22 @@ const AddMoveOut = () => {
         custom_statusmo: formValues?.status,
         custom_reason_for_move_out: formValues?.reasonForMoveOut,
         custom_reason: formValues?.reasonForStatus,
-        custom_attachment_table: imageData
-
+        custom_attachment_table: imageData,
+        custom_location__area: formValues?.propertyLocation,
+        custom_unit_city: formValues?.propertyCity,
+        custom_unit_country: formValues?.propertyCountry,
+        custom_property_rent: formValues?.propertyRent,
+        custom_sqfoot: formValues?.sqFoot,
+        custom_sqmeter: formValues?.sqMeter,
+        custom_pricesqmeter: formValues?.priceSqMeter,
+        custom_pricesqft: formValues?.priceSqFt,
+        custom_supplier: formValues?.ownerName,
+        custom_contact_number_of_supplier: formValues?.ownerContact,
+        custom_email: formValues?.ownerEmail,
+        custom_owner_type: formValues?.ownerType,
+        custom_contact_number_of_customer: formValues?.customerContact,
+        custom_customer_email: formValues?.customerEmail,
+        custom_customer_type: formValues?.customerType,
       }); //import from API
       if (res) {
         navigate("/moveout");
@@ -316,6 +330,7 @@ const AddMoveOut = () => {
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                       <MantineSelect
+                      required
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
@@ -353,6 +368,7 @@ const AddMoveOut = () => {
                         ({ label, name, type, values }) =>
                           type === "mantineSelect" ? (
                             <MantineSelect
+                            required
                               label={label}
                               placeholder={label}
                               data={propertyUnits}
@@ -475,6 +491,7 @@ const AddMoveOut = () => {
                         </span>
                       </p>
                       <textarea
+                      required
                         id="reasonForMoveOut"
                         name="reasonForMoveOut"
                         value={formValues.reason}
@@ -495,6 +512,7 @@ const AddMoveOut = () => {
                       </p>
                       {statusSelect.map(({ label, name, type, values }) => (
                         <Select
+                        required
                           onValueChange={(value) =>
                             handleDropDown(name, value)
                           }
@@ -522,6 +540,7 @@ const AddMoveOut = () => {
                         </span>
                       </p>
                       <textarea
+                      required
                         id="reasonForStatus"
                         name="reasonForStatus"
                         value={formValues.reasonForStatus}

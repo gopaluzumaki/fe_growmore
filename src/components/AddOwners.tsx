@@ -64,7 +64,7 @@ const AddOwners = () => {
     ownerName: "",
     gender: "",
     city: "",
-    country: "",
+    country: "United Arab Emirates",
     nationality: "",
     passportNum: "",
     passportExpiryDate: null,
@@ -198,6 +198,7 @@ setCountryList(res?.data?.data)
                     {Add_Owner.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
+                        required={true}
                           key={name}
                           label={label}
                           name={name}
@@ -208,10 +209,18 @@ setCountryList(res?.data?.data)
                           bgLight
                         />
                       ) : type === "dropdown" ? (
+                        <div>
+                       <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                            <label htmlFor="custom-dropdown">
+                              {label}
+                            </label>
+                            <label><span style={{ color: "red" }}>*</span></label>
+                          </div>
                         <Select
+                        required
                           onValueChange={(item) => handleDropDown(name, item)}
                         >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
+                          <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
                             <div className="flex items-center">
                               <SelectValue placeholder={label} />
                             </div>
@@ -224,6 +233,7 @@ setCountryList(res?.data?.data)
                             ))}
                           </SelectContent>
                         </Select>
+                        </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
                           selectedDate={formData[name] as Date}
@@ -239,6 +249,7 @@ setCountryList(res?.data?.data)
                       Type_Individual.map(({ label, name, type, values }) =>
                         type === "text" ? (
                           <Input
+                          required={true}
                             key={name}
                             label={label}
                             name={name}
@@ -250,13 +261,18 @@ setCountryList(res?.data?.data)
                           />
                         ) : type === "dropdown" ? (
                           <div>
-                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
-        {label}
-      </label>
+                        <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                            <label htmlFor="custom-dropdown">
+                              {label}
+                            </label>
+                            <label><span style={{ color: "red" }}>*</span></label>
+                          </div>
                           <Select
+                          required
                             onValueChange={(item) => handleDropDown(name, item)}
+                            value={name==="country"?formData?.country:undefined}
                           >
-                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
+                            <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
                               <div className="flex items-center">
                                 <SelectValue placeholder={label} />
                               </div>
@@ -287,6 +303,7 @@ setCountryList(res?.data?.data)
                       Type_Company.map(({ label, name, type }) =>
                         type === "text" ? (
                           <Input
+                          required={true}
                             key={name}
                             label={label}
                             name={name}
@@ -298,6 +315,7 @@ setCountryList(res?.data?.data)
                           />
                         ) : type === "dropdown" ? (
                           <Select
+                          required
                             onValueChange={(item) => handleDropDown(name, item)}
                           >
                             <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
