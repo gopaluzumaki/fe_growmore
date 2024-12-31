@@ -35,6 +35,7 @@ import {
   updateProperty,
   fetchUnit,
   API_URL,
+  fetchUnitForTenancyContract,
 } from "../api";
 import {
   Select,
@@ -166,39 +167,40 @@ const EditTenancyContracts = () => {
 
   // set start and end date in renewal details
 
-  useEffect(() => {
-    const fetchingBookedData = async () => {
-      if (location.state) {
-        try {
-          const res = await fetchTenancyContract(location.state);
-          const item = res?.data?.data;
+  // useEffect(() => {
+  //   const fetchingBookedData = async () => {
+  //     if (location.state) {
+  //       try {
+  //         const res = await fetchTenancyContract(location.state);
+  //         const item = res?.data?.data;
 
-          console.log("property items data: ", item);
+  //         console.log("property items data: ", item);
 
-          if (item) {
-            setFormValues((prevData) => ({
-              ...prevData,
+  //         if (item) {
+  //           setFormValues((prevData) => ({
+  //             ...prevData,
 
-              startDate: formValues.renewal_duration
-                ? item?.end_date
-                : item?.start_date,
-              endDate: formValues.renewal_duration
-                ? handleStartEndDate_AccToRenewal(item.end_date)
-                : item?.end_date,
-            }));
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
+  //             startDate: formValues.renewal_duration
+  //               ? item?.end_date
+  //               : item?.start_date,
+  //             endDate: formValues.renewal_duration
+  //               ? handleStartEndDate_AccToRenewal(item.end_date)
+  //               : item?.end_date,
+  //           }));
+  //         }
+  //       } catch (error) {
+  //         console.error(error);
+  //       }
+  //     }
+  //   };
 
-    fetchingBookedData();
-  }, [location.state, formValues.renewal_duration, formValues.number_of_days]);
+  //   fetchingBookedData();
+  // }, [location.state, formValues.renewal_duration, formValues.number_of_days]);
 
   // to prefilled formdata values.
 
   useEffect(() => {
+    console.log("location.state", location.state);
     const fetchingBookedData = async () => {
       if (location.state) {
         try {
@@ -254,6 +256,18 @@ const EditTenancyContracts = () => {
 
             handlers.setState(updatedValues);
 
+            // Handle dropdowns
+            if (item?.lease_customer)
+              await handleDropDown("tenantName", item.lease_customer);
+            if (item?.custom_name_of_owner)
+              await handleDropDown("ownerName", item.custom_name_of_owner);
+            if (item?.property) {
+              await handleDropDown("propertyName", item.property);
+            }
+            if (item?.custom_number_of_unit) {
+              await handleDropDown("propertyUnits", item.custom_number_of_unit);
+            }
+
             setFormValues((prevData) => ({
               ...prevData,
               chequeDate: mappedLeaseItems[0].chequeDate,
@@ -263,12 +277,7 @@ const EditTenancyContracts = () => {
               startDate: item?.start_date,
               endDate: item?.end_date,
               anualPriceRent: item.custom_price__rent_annually + "",
-              sqFoot:
-                item.custom_price__rent_annually / item.custom_price_sq_ft || 0,
-              sqMeter:
-                item.custom_price__rent_annually / item.custom_price_sq_m || 0,
-              priceSqMeter: item.custom_price_sq_m,
-              priceSqFt: item.custom_price_sq_ft,
+
               securityDepositeAmt: item.security_deposit,
               brokerageAmt: item.custom_brokerage_amount,
               notice_period: item.notice_period,
@@ -313,15 +322,6 @@ const EditTenancyContracts = () => {
               custom_overstay_check: item.custom_overstay_check,
             }));
 
-            // Handle dropdowns
-            if (item?.lease_customer)
-              await handleDropDown("tenantName", item.lease_customer);
-            if (item?.custom_name_of_owner)
-              await handleDropDown("ownerName", item.custom_name_of_owner);
-            if (item?.property) {
-              await handleDropDown("propertyName", item.property);
-            }
-
             setOwnerImgUrl(item.custom_image || "");
             setPropertyImgUrl(item?.propertyDoc || "");
           }
@@ -363,133 +363,6 @@ const EditTenancyContracts = () => {
     console.log("formatted date value : ", formattedDate);
     return formattedDate;
   }
-
-  // just comment out to take reference for future.
-  // useEffect(() => {
-  //   const fetchingBookedData = async () => {
-  //     if (location.state) {
-  //       try {
-  //         const res = await fetchTenancyContract(location.state);
-  //         const item = res?.data?.data;
-  //         console.log("tenancy contract item", item);
-
-  //         if (item) {
-  //           // Map lease items for nested fields
-  //           const mappedLeaseItems = item.lease_item.map((lease) => ({
-  //             chequeNo: lease.custom_cheque_no,
-  //             chequeDate: lease.custom_cheque_date,
-  //             cheque: lease.custom_name_on_the_cheque,
-  //             status: lease.custom_status,
-  //             duration: lease.custom_duration,
-  //             comments: lease.custom_comments,
-  //             approvalStatus: lease.custom_approval_status,
-  //           }));
-
-  //           const updatedValues = [
-  //             {
-  //               label: "Move In",
-  //               checked: item.custom_move_in === 1,
-  //               key: randomId(),
-  //             },
-  //             {
-  //               label: "Move Out",
-  //               checked: item.custom_move_out === 1,
-  //               key: randomId(),
-  //             },
-  //             {
-  //               label: "Payment Remainder",
-  //               checked: item.custom_payment_remainder === 1,
-  //               key: randomId(),
-  //             },
-  //             {
-  //               label: "Birthday Message",
-  //               checked: item.custom_birthday_message === 1,
-  //               key: randomId(),
-  //             },
-  //             {
-  //               label: "60 Days Renewal Notice",
-  //               checked: item.custom_60_days_renewal_notice === 1,
-  //               key: randomId(),
-  //             },
-  //             {
-  //               label: "90 Days Renewal Notice",
-  //               checked: item.custom_90_days_renewal_notice === 1,
-  //               key: randomId(),
-  //             },
-  //           ];
-
-  //           handlers.setState(updatedValues);
-
-  //           setFormValues((prevData) => ({
-  //             ...prevData,
-
-  //             tenancyStatus: item?.lease_status,
-  //             bankName: item.custom_bank_name,
-  //             numberOfChecks: item?.custom_no_of__cheques,
-  //             startDate: item.start_date,
-  //             endDate: item.end_date,
-  //             anualPriceRent: item.custom_price__rent_annually + "",
-  //             sqFoot:
-  //               item.custom_price__rent_annually / item.custom_price_sq_ft || 0,
-  //             sqMeter:
-  //               item.custom_price__rent_annually / item.custom_price_sq_m || 0,
-  //             priceSqMeter: item.custom_price_sq_m,
-  //             priceSqFt: item.custom_price_sq_ft,
-  //             securityDepositeAmt: item.security_deposit,
-  //             brokerageAmt: item.custom_brokerage_amount,
-  //             notice_period: item.notice_period,
-  //             custom_property_no: item.custom_property_no,
-  //             custom_premises_no: item.custom_premises_no,
-  //             custom_mode_of_payment: item.custom_mode_of_payment,
-  //             propertyName: item.property,
-  //             propertyType: item.custom_type,
-  //             propertyLocation: item.custom_location__area,
-  //             propertyRent: item.custom_rent_amount_to_pay,
-  //             propertyUnits: item.custom_number_of_unit,
-  //             propertyDoc: item.propertyDoc,
-  //             tenantName: item.lease_customer,
-  //             tenantContact: item.custom_contact_number,
-  //             tenantEmail: item.custom_email,
-  //             tenantCity: item.custom_city,
-  //             tenantPassport: item.custom_passport_number,
-  //             tenantPassportExpiry: item.custom_passport_expiry_date,
-  //             tenantCountryOfIssuance: item.custom_country_of_issuance,
-  //             tenantEmiratesId: item.custom_emirates_id,
-  //             tenantEmiratesIdExpiry: item.custom_emirates_id_expiry_date,
-  //             tenantSignature: item.custom_signature_of_customer,
-  //             ownerName: item.custom_name_of_owner,
-  //             ownerType: item.custom_type_of_owner,
-  //             ownerContact: item.custom_contact_number_of_owner,
-  //             ownerEmiratesId: item.custom_emirates_idtrade_license,
-  //             ownerCountry: item.custom_owner_country,
-  //             ownerEmail: item.custom_owner_email,
-  //             ownerMobile: item.custom_mobile_number,
-  //             ownerImage: item.custom_image,
-  //             ownerSignature: item.custom_signature_of_owner,
-
-  //             leaseItems: mappedLeaseItems, // Store mapped lease items
-  //           }));
-
-  //           // Handle dropdowns
-  //           if (item?.lease_customer)
-  //             await handleDropDown("tenantName", item.lease_customer);
-  //           if (item?.custom_name_of_owner)
-  //             await handleDropDown("ownerName", item.custom_name_of_owner);
-  //           if (item?.property) {
-  //             await handleDropDown("propertyName", item.property);
-  //           }
-
-  //           setOwnerImgUrl(item.custom_image || "");
-  //           setPropertyImgUrl(item?.propertyDoc || "");
-  //         }
-  //       } catch (error) {
-  //         console.error(error);
-  //       }
-  //     }
-  //   };
-
-  //   fetchingBookedData();
-  // }, [location.state]);
 
   const handleOwnerFileChange = async (
     event: ChangeEvent<HTMLInputElement>
@@ -627,131 +500,6 @@ const EditTenancyContracts = () => {
     setOwnerList(item);
   };
 
-  // comment out for reference
-  // useEffect(() => {
-  //   let chequeDate: any = [];
-  //   chequeDate.push(formValues.chequeDate);
-  //   if (formValues.numberOfChecks === "2") {
-  //     let currentDate = new Date(formValues.chequeDate);
-
-  //     let date = currentDate.setMonth(currentDate.getMonth() + 6);
-
-  //     let dateMDY = `${new Date(date).getFullYear()}-${
-  //       new Date(date).getMonth() + 1
-  //     }-${new Date(date).getDate()}`;
-
-  //     chequeDate.push(dateMDY);
-  //   } else if (formValues.numberOfChecks === "3") {
-  //     let currentDate = new Date(formValues.chequeDate);
-
-  //     let date = currentDate.setMonth(currentDate.getMonth() + 4);
-  //     let date1 = currentDate.setMonth(currentDate.getMonth() + 4);
-
-  //     let dateMDY = `${new Date(date).getFullYear()}-${
-  //       new Date(date).getMonth() + 1
-  //     }-${new Date(date).getDate()}`;
-
-  //     let dateMDY1 = `${new Date(date1).getFullYear()}-${
-  //       new Date(date1).getMonth() + 1
-  //     }-${new Date(date1).getDate()}`;
-
-  //     chequeDate.push(dateMDY);
-  //     chequeDate.push(dateMDY1);
-  //   } else if (formValues.numberOfChecks === "6") {
-  //     let currentDate = new Date(formValues.chequeDate);
-
-  //     let date = currentDate.setMonth(currentDate.getMonth() + 2);
-  //     let date1 = currentDate.setMonth(currentDate.getMonth() + 2);
-  //     let date2 = currentDate.setMonth(currentDate.getMonth() + 2);
-  //     let date3 = currentDate.setMonth(currentDate.getMonth() + 2);
-  //     let date4 = currentDate.setMonth(currentDate.getMonth() + 2);
-
-  //     let dateMDY = `${new Date(date).getFullYear()}-${
-  //       new Date(date).getMonth() + 1
-  //     }-${new Date(date).getDate()}`;
-
-  //     let dateMDY1 = `${new Date(date1).getFullYear()}-${
-  //       new Date(date1).getMonth() + 1
-  //     }-${new Date(date1).getDate()}`;
-
-  //     let dateMDY2 = `${new Date(date2).getFullYear()}-${
-  //       new Date(date2).getMonth() + 1
-  //     }-${new Date(date2).getDate()}`;
-
-  //     let dateMDY3 = `${new Date(date3).getFullYear()}-${
-  //       new Date(date3).getMonth() + 1
-  //     }-${new Date(date3).getDate()}`;
-
-  //     let dateMDY4 = `${new Date(date4).getFullYear()}-${
-  //       new Date(date4).getMonth() + 1
-  //     }-${new Date(date4).getDate()}`;
-
-  //     chequeDate.push(dateMDY);
-  //     chequeDate.push(dateMDY1);
-  //     chequeDate.push(dateMDY2);
-  //     chequeDate.push(dateMDY3);
-  //     chequeDate.push(dateMDY4);
-  //   }
-  //   if (
-  //     formValues?.numberOfChecks &&
-  //     formValues?.anualPriceRent &&
-  //     formValues?.bankName &&
-  //     formValues?.chequeNo &&
-  //     formValues?.chequeDate &&
-  //     formValues?.leaseItems?.length > 0
-  //   ) {
-
-  //     setTableData(() => {
-  //       const newData = [];
-
-  //       // Populate table data from leaseItems
-
-  // // if number of checks there then will set table data
-  // if(formValues.numberOfChecks){
-  //          for (let i = 0; i < +formValues.numberOfChecks; i++) {
-  //         newData.push({
-  //           rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
-  //           chequeNumber: formValues.chequeNo.split(",")[i] ?? "",
-  //           chequeDate: chequeDate[i],
-  //           bankName: formValues.bankName,
-  //           Sno: i+1,
-  //           cheque: formValues.cheque,
-  //           status: formValues.status,
-  //           duration: formValues.duration,
-  //           comments: formValues.comments,
-  //           approvalStatus: formValues.approvalStatus,
-  //         });
-  //       }
-  //      }
-  //      else{
-  //       formValues.leaseItems.forEach((lease, index) => {
-  //         newData.push({
-  //           rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
-  //           chequeNumber: formValues.chequeNo.split(",")[index] ?? "",
-  //           chequeDate: chequeDate[index] ?? lease.chequeDate,
-  //           bankName: formValues.bankName,
-  //           Sno: index + 1,
-  //           cheque: lease.cheque,
-  //           status: lease.status,
-  //           duration: lease.duration,
-  //           comments: lease.comments,
-  //           approvalStatus: lease.approvalStatus,
-  //         });
-  //       });
-  //      }
-
-  //       return newData;
-  //     });
-  //   }
-  // }, [
-  //   formValues?.numberOfChecks,
-  //   formValues?.anualPriceRent,
-  //   formValues?.bankName,
-  //   formValues?.chequeNo,
-  //   formValues?.chequeDate,
-  //   formValues?.leaseItems,
-  // ]);
-
   // to manage payment details table
   useEffect(() => {
     let chequeDate: any = [];
@@ -875,6 +623,26 @@ const EditTenancyContracts = () => {
     formValues?.leaseItems,
   ]);
 
+  useEffect(() => {
+    console.log("formValues.sqFoot", formValues.sqFoot);
+    console.log("formValues.propertyRent", formValues.propertyRent);
+    if (formValues.sqFoot && formValues.propertyRent) {
+      const sqMeter = formValues.sqFoot * 0.092903;
+      setFormValues((prevData) => ({
+        ...prevData,
+        sqMeter: Number(formValues.sqFoot * 0.092903).toFixed(2),
+        priceSqFt: Number(formValues.propertyRent / formValues.sqFoot).toFixed(
+          2
+        ),
+        priceSqMeter: Number(formValues.propertyRent / sqMeter).toFixed(2),
+      }));
+
+      console.log("sqMeter", sqMeter);
+      console.log("priceSqFt", formValues.priceSqFt);
+      console.log("priceSqMeter", formValues.priceSqMeter);
+    }
+  }, [formValues.sqFoot, formValues.propertyRent]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -886,16 +654,6 @@ const EditTenancyContracts = () => {
       setFormValues({ ...formValues, [name]: numericValue });
     }
 
-    if (name === "sqFoot" && value) {
-      let sqMeter = value * 0.092903;
-      handleDropDown("sqMeter", value * 0.092903);
-      handleDropDown("priceSqFt", formValues["anualPriceRent"] / value);
-      handleDropDown("priceSqMeter", formValues["anualPriceRent"] / sqMeter);
-    } else if (!value) {
-      handleDropDown("sqMeter", 0);
-      handleDropDown("priceSqFt", 0);
-      handleDropDown("priceSqMeter", 0);
-    }
     setFormValues((prevData) => ({
       ...prevData,
       [name]: value,
@@ -932,7 +690,6 @@ const EditTenancyContracts = () => {
           propertyName: propertyData?.name,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
-          propertyRent: propertyData?.rent,
           propertyStatus: propertyData?.status,
           propertyDoc: propertyData?.custom_thumbnail_image,
         }));
@@ -985,41 +742,8 @@ const EditTenancyContracts = () => {
       }
     }
 
-    // if (name === "ownerName") {
-    //   // Fetch tenant data based on the selected tenant
-    //   const res = await fetchOwner(item);
-    //   const ownerData = res?.data?.data;
-    //   if (ownerData) {
-    //     // Fill all the tenant-related fields with the fetched tenant data
-    //     setFormValues((prevData) => ({
-    //       ...prevData,
-    //       ownerName: ownerData?.name,
-    //       ownerType: ownerData?.supplier_type,
-    //       ownerContact: ownerData?.custom_phone_number,
-    //       ownerEmail: ownerData?.custom_email,
-    //       ownerCountry: ownerData?.country,
-    //       ownerMobile: ownerData?.custom_phone_number,
-    //       ownerDoc: ownerData?.doc,
-    //       ownerSign: ownerData?.custom_signature_of_owner,
-    //       //individual
-    //       ownerPassportNum: ownerData?.custom_passport_number,
-    //       ownerPassportExpiryDate: ownerData?.custom_passport_expiry_date,
-    //       ownerCountryOfIssuance: ownerData?.custom_country_of_issuance,
-    //       ownerEmiratesId: ownerData?.custom_emirates_id,
-    //       ownerEmiratesIdExpiryDate: ownerData?.custom_emirates_id_expiry_date,
-    //       // company
-    //       ownerCompanyName: ownerData?.name,
-    //       ownerTradeLicenseNumner: ownerData?.custom_trade_license_number,
-    //       ownerEmirate: ownerData?.custom_emirate,
-    //       ownerTradeLicenseExpiryDate:
-    //         ownerData?.custom_trade_license_expiry_date,
-    //       ownerPoaHolder: ownerData?.custom_power_of_attorney_holder_name,
-    //     }));
-    //   }
-    // }
-
     if (name === "propertyUnits" && item != undefined) {
-      const unit_List = await fetchUnit(item);
+      const unit_List = await fetchUnitForTenancyContract(item);
       const unit_List_Data = unit_List?.data?.data;
       if (unit_List_Data) {
         const res = await fetchOwner(unit_List_Data?.unit_owner);
@@ -1033,6 +757,9 @@ const EditTenancyContracts = () => {
           priceSqMeter: unit_List_Data?.custom_price_square_m,
           priceSqFt: unit_List_Data?.custom_price_square_ft,
           custom_premises_no: unit_List_Data?.custom_premise_no,
+          custom_city: unit_List_Data?.custom_city,
+          custom_country: unit_List_Data?.custom_country,
+          propertyRent: unit_List_Data?.rent,
         }));
       }
     }
@@ -1165,7 +892,7 @@ const EditTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_number_of_unit: formValues.propertyUnits?.name,
+        custom_number_of_unit: formValues.propertyUnits,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,
@@ -1321,9 +1048,6 @@ const EditTenancyContracts = () => {
       border: "1px solid gray",
     },
   };
-
-  console.log("table data == >", tableData);
-  console.log("form values == >", formValues);
 
   return (
     <main>
@@ -1991,10 +1715,7 @@ const EditTenancyContracts = () => {
                               }))}
                               value={formValues.propertyUnits || ""}
                               onChange={(value) => {
-                                const selectedUnit = propertyUnits.find(
-                                  (unit) => unit.name === value
-                                );
-                                handleDropDown("propertyUnits", selectedUnit);
+                                handleDropDown("propertyUnits", value);
                               }}
                               styles={{
                                 label: {
@@ -2021,7 +1742,7 @@ const EditTenancyContracts = () => {
                             <></>
                           )
                       )}
-                      <div>
+                      {/* <div>
                         <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           <label>Image Attachment</label>
                         </p>
@@ -2035,9 +1756,9 @@ const EditTenancyContracts = () => {
                             onChange={handlePropertyFileChange}
                           />
                         </div>
-                      </div>
+                      </div> */}
                     </div>
-                    {formValues.propertyUnits.custom_unit_number ? (
+                    {formValues.propertyUnits ? (
                       <div className="grid grid-cols-2 gap-4">
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
@@ -2046,12 +1767,12 @@ const EditTenancyContracts = () => {
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            City : {formValues.propertyCity}
+                            City : {formValues.custom_city}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            Country : {formValues.propertyCountry}
+                            Country : {formValues.custom_country}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
@@ -2541,6 +2262,7 @@ const EditTenancyContracts = () => {
                     )}
                   </div>
 
+                  {/* payment details */}
                   {formValues.custom_mode_of_payment === "Cheque" &&
                     (formValues.tenancyStatus === "Active" ||
                       formValues.tenancyStatus === "Draft") && (
@@ -2776,6 +2498,9 @@ const EditTenancyContracts = () => {
                     value={formValues[name] || ""}
                     onChange={(value) =>
                       setFormValues({ ...formValues, [name]: value })
+                    }
+                    disabled={
+                      name === "approvalStatus" && formValues.status !== "Hold"
                     }
                     styles={{
                       label: {

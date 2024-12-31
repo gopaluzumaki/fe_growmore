@@ -28,6 +28,7 @@ import {
   fetchUnitsfromProperty,
   // getUnitList,
   fetchUnit,
+  fetchUnitForTenancyContract,
 } from "../api";
 import {
   Select,
@@ -406,25 +407,43 @@ const AddTenancyContracts = () => {
     formValues?.leaseItems,
   ]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    if (name === "sqFoot" && value) {
-      let sqMeter = value * 0.092903;
-      handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
+  useEffect(() => {
+    if (formValues.sqFoot && formValues.propertyRent) {
+      const sqMeter = formValues.sqFoot * 0.092903;
+      handleDropDown(
+        "sqMeter",
+        Number(formValues.sqFoot * 0.092903).toFixed(2)
+      );
       handleDropDown(
         "priceSqFt",
-        Number(formValues["anualPriceRent"] / value).toFixed(2)
+        Number(formValues.propertyRent / formValues.sqFoot).toFixed(2)
       );
       handleDropDown(
         "priceSqMeter",
-        Number(formValues["anualPriceRent"] / sqMeter).toFixed(2)
+        Number(formValues.propertyRent / sqMeter).toFixed(2)
       );
-    } else if (!value) {
-      handleDropDown("sqMeter", 0);
-      handleDropDown("priceSqFt", 0);
-      handleDropDown("priceSqMeter", 0);
     }
+  }, [formValues.sqFoot, formValues.propertyRent]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // if (name === "sqFoot" && value) {
+    //   let sqMeter = value * 0.092903;
+    //   handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
+    //   handleDropDown(
+    //     "priceSqFt",
+    //     Number(formValues["anualPriceRent"] / value).toFixed(2)
+    //   );
+    //   handleDropDown(
+    //     "priceSqMeter",
+    //     Number(formValues["anualPriceRent"] / sqMeter).toFixed(2)
+    //   );
+    // } else if (!value) {
+    //   handleDropDown("sqMeter", 0);
+    //   handleDropDown("priceSqFt", 0);
+    //   handleDropDown("priceSqMeter", 0);
+    // }
     setFormValues((prevData) => ({
       ...prevData,
       [name]: value,
@@ -452,7 +471,7 @@ const AddTenancyContracts = () => {
           propertyName: propertyData?.name,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
-          propertyRent: propertyData?.rent,
+
           propertyUnits: propertyData?.custom_number_of_units,
           propertyStatus: propertyData?.status,
           propertyDoc: propertyData?.custom_thumbnail_image,
@@ -540,7 +559,7 @@ const AddTenancyContracts = () => {
 
     if (name === "propertyUnits" && item != undefined) {
       console.log("property unit item :", item);
-      const unit_List = await fetchUnit(item);
+      const unit_List = await fetchUnitForTenancyContract(item);
       const unit_List_Data = unit_List?.data?.data;
       console.log("property unit data :", unit_List_Data);
       if (unit_List_Data) {
@@ -555,6 +574,9 @@ const AddTenancyContracts = () => {
           priceSqMeter: unit_List_Data?.custom_price_square_m,
           priceSqFt: unit_List_Data?.custom_price_square_ft,
           custom_premises_no: unit_List_Data?.custom_premise_no,
+          custom_city: unit_List_Data?.custom_city,
+          custom_country: unit_List_Data?.custom_country,
+          propertyRent: unit_List_Data?.rent,
         }));
       }
     }
@@ -642,7 +664,7 @@ const AddTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_number_of_unit: formValues.propertyUnits?.name,
+        custom_number_of_unit: formValues.propertyUnits,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,
@@ -999,10 +1021,7 @@ const AddTenancyContracts = () => {
                                 }))}
                                 value={formValues.propertyUnits || ""}
                                 onChange={(value) => {
-                                  const selectedUnit = propertyUnits.find(
-                                    (unit) => unit.name === value
-                                  );
-                                  handleDropDown("propertyUnits", selectedUnit);
+                                  handleDropDown("propertyUnits", value);
                                 }}
                                 styles={{
                                   label: {
@@ -1046,7 +1065,7 @@ const AddTenancyContracts = () => {
                         </div>
                       </div> */}
                     </div>
-                    {formValues.propertyUnits.custom_unit_number ? (
+                    {formValues.propertyUnits ? (
                       <div className="grid grid-cols-2 gap-4">
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
@@ -1055,12 +1074,12 @@ const AddTenancyContracts = () => {
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            City : {formValues.propertyCity}
+                            City : {formValues.custom_city}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            Country : {formValues.propertyCountry}
+                            Country : {formValues.custom_country}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
@@ -1233,10 +1252,10 @@ const AddTenancyContracts = () => {
                       )}
                     </div>
                   </div>
-
-                  {(formValues.custom_mode_of_payment === "Cheque" &&
-                    formValues.tenancyStatus === "Active") ||
-                  formValues.tenancyStatus === "Draft" ? (
+                  {/* payment details */}
+                  {formValues.custom_mode_of_payment === "Cheque" &&
+                  (formValues.tenancyStatus === "Active" ||
+                    formValues.tenancyStatus === "Draft") ? (
                     <section className="border-t-[1px] border-gray-500 mt-16">
                       <form className="flex flex-col ">
                         <div>
@@ -1469,6 +1488,9 @@ const AddTenancyContracts = () => {
                     value={formValues[name] || ""}
                     onChange={(value) =>
                       setFormValues({ ...formValues, [name]: value })
+                    }
+                    disabled={
+                      name === "approvalStatus" && formValues.status !== "Hold"
                     }
                     styles={{
                       label: {
