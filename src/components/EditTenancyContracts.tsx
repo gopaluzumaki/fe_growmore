@@ -723,7 +723,7 @@ const EditTenancyContracts = () => {
               chequeNumber: "",
               chequeDate: chequeDate[i],
               bankName: formValues.bankName,
-              Sno: i,
+              Sno: i + 1,
               cheque: formValues.cheque,
               status: formValues.status,
               duration: formValues.duration,
