@@ -156,7 +156,7 @@ const EditTenancyContracts = () => {
 
     number_of_days: "",
 
-    custom_mode_of_payment: "",
+    custom_mode_of_payment: "Cheque",
   });
   const [selectedCheckbox, setSelectedCheckbox] = useState<string | null>(null);
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
@@ -1006,7 +1006,7 @@ const EditTenancyContracts = () => {
         notice_period: formValues.notice_period,
         custom_property_no: formValues.custom_property_no,
         custom_premises_no: formValues.custom_premises_no,
-        custom_mode_of_payment: formValues.custom_mode_of_payment,
+        custom_mode_of_payment: "Cheque",
 
         // property details
         property: formValues.propertyName,
