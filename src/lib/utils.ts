@@ -13,3 +13,12 @@ export const formatDateToYYMMDD = (date: string): string => {
   const day = dateObj.getDate().toString().padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
+
+export const formatDateToYYYYMMDD = (date: string): string => {
+  if (!date) return "";
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear().toString();
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+  const day = dateObj.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};

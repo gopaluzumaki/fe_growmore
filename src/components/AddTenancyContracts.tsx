@@ -1548,7 +1548,9 @@ const AddTenancyContracts = () => {
                   index === paymentDetailsModalOpen
                     ? {
                         ...item,
-                        chequeDate: formValues.dateOfCheque || item.chequeDate,
+                        chequeDate: formatDateToYYYYMMDD(
+                          formValues.dateOfCheque || item.chequeDate
+                        ),
                         cheque: formValues.cheque || item.cheque,
                         chequeNumber:
                           formValues.chequeNumber || item.chequeNumber,

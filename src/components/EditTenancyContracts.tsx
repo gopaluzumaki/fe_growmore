@@ -58,7 +58,7 @@ import {
 } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
-import { formatDateToYYMMDD } from "../lib/utils";
+import { formatDateToYYMMDD, formatDateToYYYYMMDD } from "../lib/utils";
 import { useListState, randomId } from "@mantine/hooks";
 
 const initialValues = [
@@ -701,7 +701,9 @@ const EditTenancyContracts = () => {
             newData.push({
               rent: +formValues.anualPriceRent / +formValues.numberOfChecks,
               chequeNumber: lease.chequeNumber,
-              chequeDate: chequeDate[index] ?? lease.chequeDate,
+              chequeDate: formatDateToYYYYMMDD(
+                chequeDate[index] ?? lease.chequeDate
+              ),
               bankName: formValues.bankName,
               Sno: index + 1,
               cheque: lease.cheque,
@@ -2655,7 +2657,9 @@ const EditTenancyContracts = () => {
                   index === paymentDetailsModalOpen
                     ? {
                         ...item,
-                        chequeDate: formValues.dateOfCheque || item.chequeDate,
+                        chequeDate: formatDateToYYYYMMDD(
+                          formValues.dateOfCheque || item.chequeDate
+                        ),
                         cheque: formValues.cheque || item.cheque,
                         chequeNumber:
                           formValues.chequeNumber || item.chequeNumber,
