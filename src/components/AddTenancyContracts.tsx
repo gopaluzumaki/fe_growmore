@@ -682,11 +682,11 @@ const AddTenancyContracts = () => {
         custom_signature_of_customer: formValues.tenantSignature,
         // owner details
         custom_name_of_owner: ownerDetails.supplier_name,
-        custom_type_of_owner: formValues.ownerType,
-        custom_contact_number_of_owner: formValues.ownerContact,
+        custom_type_of_owner: ownerDetails.supplier_type,
+        custom_contact_number_of_owner: ownerDetails.custom_phone_number,
         custom_emirates_idtrade_license: formValues.ownerEmiratesId,
         custom_owner_country: formValues.ownerCountry,
-        custom_owner_email: formValues.ownerEmail,
+        custom_owner_email: ownerDetails.custom_email,
         custom_mobile_number: formValues.ownerMobile,
         custom_image: ownerImgUrl,
         custom_signature_of_owner: formValues.ownerSign,
@@ -1226,19 +1226,19 @@ const AddTenancyContracts = () => {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                            Customer Name :{" "}
+                              Customer Name :{" "}
                               {tenantDetails && tenantDetails.name}
                             </label>
                           </div>
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                            Customer Email :{" "}
+                              Customer Email :{" "}
                               {tenantDetails && tenantDetails.custom_email}
                             </label>
                           </div>
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                            Customer Contact :{" "}
+                              Customer Contact :{" "}
                               {tenantDetails &&
                                 tenantDetails.custom_contact_number_of_customer}
                             </label>
@@ -1365,7 +1365,7 @@ const AddTenancyContracts = () => {
                             <Table.Tbody>
                               {tableData?.map((item, i) => (
                                 <Table.Tr key={i}>
-                                  <Table.Td>{item.Sno+1}</Table.Td>
+                                  <Table.Td>{item.Sno + 1}</Table.Td>
                                   <Table.Td
                                     onClick={() => {
                                       setFormValues({
