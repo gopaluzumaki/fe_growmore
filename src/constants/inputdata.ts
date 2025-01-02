@@ -6,29 +6,39 @@ export const Add_Units = [
     name: "type",
     type: "dropdown",
     values: ["Commercial", "Residential"],
-    readonly:true
+    readonly: true,
   },
   // {
   //   label: "Parent Property Name",
   //   name: "parent_property",
   //   type: "text",
   // },
-  { label: "Location / Area", name: "location", type: "text", readonly:true },
-  { label: "City", name: "city", type: "text", readonly:true },
-  { label: "Country", name: "country", type: "dropdown", readonly:true },
+  { label: "Location / Area", name: "location", type: "text", readonly: true },
+  { label: "City", name: "city", type: "text", readonly: true },
+  { label: "Country", name: "country", type: "dropdown", readonly: true },
   {
     label: "Status",
     name: "custom_status",
     type: "dropdown",
     values: ["Vacant", "Legal", "Occupied", "Under Maintenance"],
-    readonly:true
+    readonly: true,
   },
   { label: "Renting Price", name: "rent", type: "text" },
   { label: "Selling Price", name: "sellingPrice", type: "text" },
   { label: "Square ft of unit", name: "sqFoot", type: "text" },
   { label: "Square m of unit", name: "sqMeter", type: "text" },
-  { label: "Rent Price/ Square m", name: "priceSqMeter", type: "text",readonly:true },
-  { label: "Rent Price/ Square ft", name: "priceSqFt", type: "text",readonly:true },
+  {
+    label: "Rent Price/ Square m",
+    name: "priceSqMeter",
+    type: "text",
+    readonly: true,
+  },
+  {
+    label: "Rent Price/ Square ft",
+    name: "priceSqFt",
+    type: "text",
+    readonly: true,
+  },
   { label: "Unit Number", name: "custom_unit_number", type: "text" },
   { label: "No. of Rooms", name: "rooms", type: "text" },
   { label: "No. of Floors", name: "floors", type: "text" },
@@ -318,12 +328,12 @@ export const Add_Contract_Details = [
   { label: "Brokerage Amount", name: "brokerageAmt", type: "text" },
   { label: "Notice Period", name: "notice_period", type: "text" },
   // { label: "Property no", name: "custom_property_no", type: "text" },
-  {
-    label: "Mode of Payment",
-    name: "custom_mode_of_payment",
-    type: "text",
-    values: ["Cash", "Cheque"],
-  },
+  // {
+  //   label: "Mode of Payment",
+  //   name: "custom_mode_of_payment",
+  //   type: "text",
+  //   values: ["Cash", "Cheque"],
+  // },
 ];
 
 export const Add_TenancyContractProperty = [

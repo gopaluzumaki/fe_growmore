@@ -140,6 +140,8 @@ const AddTenancyContracts = () => {
     duration: "",
     comments: "",
     approvalStatus: "",
+
+    custom_mode_of_payment: "Cheque",
   });
   const [selectedCheckbox, setSelectedCheckbox] = useState<string | null>(null);
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
@@ -664,7 +666,7 @@ const AddTenancyContracts = () => {
         notice_period: formValues.notice_period,
         custom_property_no: formValues.custom_property_no,
         custom_premises_no: formValues.custom_premises_no,
-        custom_mode_of_payment: formValues.custom_mode_of_payment,
+        custom_mode_of_payment: "Cheque",
 
         // property details
         property: formValues.propertyName,
@@ -1266,9 +1268,7 @@ const AddTenancyContracts = () => {
                     </div>
                   </div>
                   {/* payment details */}
-                  {formValues.custom_mode_of_payment === "Cheque" &&
-                  (formValues.tenancyStatus === "Active" ||
-                    formValues.tenancyStatus === "Draft") ? (
+                  {formValues.custom_mode_of_payment === "Cheque" ? (
                     <section className="border-t-[1px] border-gray-500 mt-16">
                       <form className="flex flex-col ">
                         <div>
