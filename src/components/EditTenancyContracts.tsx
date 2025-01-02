@@ -36,6 +36,7 @@ import {
   fetchUnit,
   API_URL,
   fetchUnitForTenancyContract,
+  getTenancyContractList,
 } from "../api";
 import {
   Select,
@@ -392,6 +393,7 @@ const EditTenancyContracts = () => {
               propertyLocation: item.custom_location__area,
               propertyRent: item.custom_rent_amount_to_pay,
               propertyUnits: item.custom_number_of_unit,
+              custom_unit_name: item.custom_unit_name,
               propertyDoc: item.propertyDoc,
               tenantName: item.lease_customer,
               tenantContact: item.custom_contact_number,
@@ -877,6 +879,7 @@ const EditTenancyContracts = () => {
           custom_city: unit_List_Data?.custom_city,
           custom_country: unit_List_Data?.custom_country,
           propertyRent: unit_List_Data?.rent,
+          custom_unit_name: unit_List_Data?.custom_unit_number,
         }));
       }
     }
@@ -933,6 +936,14 @@ const EditTenancyContracts = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const tenancyContractList = await getTenancyContractList();
+    const findOne = tenancyContractList?.data?.data.find(
+      (item) => item.name === location.state && item.lease_status === "Active"
+    );
+    if (findOne) {
+      alert("This tenancy contract is already active");
+      return;
+    }
     try {
       if (formValues.tenancyStatus === "Move In") {
         const response = await updateProperty(
@@ -1003,7 +1014,9 @@ const EditTenancyContracts = () => {
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
         custom_number_of_unit: formValues.propertyUnits,
+        custom_unit_name: formValues.custom_unit_name,
         propertyDoc: propertyImgUrl,
+
         // customer details
         lease_customer: formValues.tenantName,
         customer: formValues.tenantName,
