@@ -27,7 +27,7 @@ export const API_URL = {
     "https://propms.erpnext.syscort.com/api/resource/Property%20Booking",
   Create_Lease: "https://propms.erpnext.syscort.com/api/resource/Lease",
   Lease_list:
-    "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22,%22start_date%22,%22end_date%22,%22custom_rent_amount_to_pay%22]&order_by=creation desc",
+    "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22,%22start_date%22,%22end_date%22,%22custom_rent_amount_to_pay%22,%22custom_price__rent_annually%22]&order_by=creation desc",
   Tenancy_contract_pdf:
     "http://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=",
   MoveIn_List:
@@ -52,7 +52,7 @@ export const API_URL = {
     'https://propms.erpnext.syscort.com/api/resource/Lead?fields=["creation"]',
   Fetch_Case: "https://propms.erpnext.syscort.com/api/resource/Maintenance",
   Profile_Data: "https://propms.erpnext.syscort.com/api/resource/User",
-  Country_List: "https://propms.erpnext.syscort.com/api/resource/Country"
+  Country_List: "https://propms.erpnext.syscort.com/api/resource/Country",
 };
 
 export const loginUser = async (credentials: { usr: string; pwd: string }) => {
@@ -121,12 +121,15 @@ export const getPropertyList = async () => {
 };
 
 export const getPropertyListData = async () => {
-  const response = await axios.get(`${API_URL.Create_Property}?fields=["*"]&order_by=creation desc`, {
-    auth: {
-      username: APP_AUTH.USERNAME,
-      password: APP_AUTH.PASSWORD,
-    },
-  });
+  const response = await axios.get(
+    `${API_URL.Create_Property}?fields=["*"]&order_by=creation desc`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
   return response;
 };
 
@@ -231,17 +234,14 @@ export const fetchUnitForTenancyContract = async (params: any) => {
     },
   });
   return response;
-}
+};
 export const fetchUnitDatas = async (params: any) => {
-  const response = await axios.get(
-    `${API_URL.Create_Property}/${params}`,
-    {
-      auth: {
-        username: APP_AUTH.USERNAME,
-        password: APP_AUTH.PASSWORD,
-      },
-    }
-  );
+  const response = await axios.get(`${API_URL.Create_Property}/${params}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
   return response;
 };
 
@@ -811,11 +811,14 @@ export const deleteBooking = async (params) => {
 };
 
 export const getCountryList = async () => {
-  const response = await axios.get(`${API_URL.Country_List}?fields=["name"]&limit_page_length=[100]`, {
-    auth: {
-      username: APP_AUTH.USERNAME,
-      password: APP_AUTH.PASSWORD,
-    },
-  });
+  const response = await axios.get(
+    `${API_URL.Country_List}?fields=["name"]&limit_page_length=[100]`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
   return response;
 };

@@ -91,10 +91,10 @@ const TenancyContracts = () => {
   };
 
   const calculateExpiryDays = (startDate: string, endDate: string): number => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const differenceInTime = end.getTime() - start.getTime();
-    return differenceInTime / (1000 * 3600 * 24);
+    const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
+    // Calculate the difference in milliseconds
+    const diffMs = new Date(endDate).getTime() - new Date().getTime();
+    return Math.round(diffMs / oneDay);
   };
 
   const statusOptions = [
@@ -310,7 +310,8 @@ const TenancyContracts = () => {
                           </td>
                           <td className="p-2 py-3">{item.lease_customer}</td>
                           <td className="p-2 py-3">
-                            {item.custom_rent_amount_to_pay}
+                            {item?.custom_price__rent_annually ||
+                              item.custom_rent_amount_to_pay}
                           </td>
                           <td className="p-2 py-3 whitespace-nowrap">
                             {formatDate(item.start_date)}
