@@ -577,6 +577,7 @@ const AddTenancyContracts = () => {
           custom_city: unit_List_Data?.custom_city,
           custom_country: unit_List_Data?.custom_country,
           propertyRent: unit_List_Data?.rent,
+          custom_unit_name: unit_List_Data?.custom_unit_number,
         }));
       }
     }
@@ -616,6 +617,14 @@ const AddTenancyContracts = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const tenancyContractList = await getTenancyContractList();
+    const findOne = tenancyContractList?.data?.data.find(
+      (item) => item.name === location.state && item.lease_status === "Active"
+    );
+    if (findOne) {
+      alert("This tenancy contract is already active");
+      return;
+    }
     try {
       const remindersMapping = {
         "Move In": "custom_move_in",
@@ -663,6 +672,7 @@ const AddTenancyContracts = () => {
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
         custom_number_of_unit: formValues.propertyUnits,
+        custom_unit_name: formValues.custom_unit_name,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,
