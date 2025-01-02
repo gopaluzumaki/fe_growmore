@@ -94,7 +94,7 @@ const TenancyContracts = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const differenceInTime = end.getTime() - start.getTime();
-    return Math.max(differenceInTime / (1000 * 3600 * 24), 0);
+    return differenceInTime / (1000 * 3600 * 24);
   };
 
   const statusOptions = [
@@ -318,9 +318,7 @@ const TenancyContracts = () => {
                           <td className="p-2 py-3 whitespace-nowrap">
                             {formatDate(item.end_date)}
                           </td>
-                          <td className="p-2 py-3">
-                            {expiryDays ? `-${expiryDays}` : expiryDays}
-                          </td>
+                          <td className="p-2 py-3">{expiryDays}</td>
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${
