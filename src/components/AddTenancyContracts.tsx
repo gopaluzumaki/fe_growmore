@@ -51,7 +51,7 @@ import {
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
-import { formatDateToYYMMDD } from "../lib/utils";
+import { formatDateToYYMMDD, formatDateToYYYYMMDD } from "../lib/utils";
 import { useListState, randomId } from "@mantine/hooks";
 
 const initialValues = [
