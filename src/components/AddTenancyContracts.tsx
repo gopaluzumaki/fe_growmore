@@ -1226,27 +1226,27 @@ const AddTenancyContracts = () => {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                              Tenant Name :{" "}
+                            Customer Name :{" "}
                               {tenantDetails && tenantDetails.name}
                             </label>
                           </div>
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                              Tenant Email :{" "}
+                            Customer Email :{" "}
                               {tenantDetails && tenantDetails.custom_email}
                             </label>
                           </div>
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                              Tenant Contact :{" "}
+                            Customer Contact :{" "}
                               {tenantDetails &&
                                 tenantDetails.custom_contact_number_of_customer}
                             </label>
                           </div>
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
-                              Tenant Type :
-                              {tenantDetails && tenantDetails.supplier_type}
+                              Customer Type :{" "}
+                              {tenantDetails && tenantDetails.customer_type}
                             </label>
                           </div>
                         </div>
@@ -1365,7 +1365,7 @@ const AddTenancyContracts = () => {
                             <Table.Tbody>
                               {tableData?.map((item, i) => (
                                 <Table.Tr key={i}>
-                                  <Table.Td>{item.Sno}</Table.Td>
+                                  <Table.Td>{item.Sno+1}</Table.Td>
                                   <Table.Td
                                     onClick={() => {
                                       setFormValues({
