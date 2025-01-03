@@ -1207,7 +1207,7 @@ const EditTenancyContracts = () => {
                 </div> */}
                 <form className="relative" onSubmit={handleSubmit}>
                   <div
-                    className="absolute top-4 right-4 px-4 py-2 bg-blue-400 rounded-md text-white"
+                    className="absolute top-4 right-4 px-4 py-2 bg-blue-400 rounded-md text-white cursor-pointer"
                     onClick={async()=>{
                       try {
                             const response = await fetch(`https://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=`+location.state, {
