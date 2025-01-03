@@ -291,7 +291,7 @@ const AddTenancyContracts = () => {
   useEffect(() => {
     let chequeDate: any = [];
     // console.log("formValues.chequeDate", formValues.chequeDate);
-    chequeDate.push(formValues.chequeDate);
+    chequeDate.push(formatDateToYYYYMMDD(formValues.chequeDate));
     if (formValues.numberOfChecks === "2") {
       let currentDate = new Date(formValues.chequeDate);
 
@@ -580,7 +580,7 @@ const AddTenancyContracts = () => {
           custom_city: unit_List_Data?.custom_city,
           custom_country: unit_List_Data?.custom_country,
           propertyRent: unit_List_Data?.rent,
-          custom_unit_name: unit_List_Data?.custom_unit_number,
+          custom_number_of_unit: unit_List_Data?.custom_unit_number,
         }));
       }
     }
@@ -674,8 +674,10 @@ const AddTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_number_of_unit: formValues.propertyUnits,
-        custom_unit_name: formValues.custom_unit_name,
+        //save unit number
+        custom_unit_name: formValues.propertyUnits,
+        // save unit name
+        custom_number_of_unit: formValues.custom_number_of_unit,
         propertyDoc: propertyImgUrl,
         // customer details
         lease_customer: formValues.tenantName,

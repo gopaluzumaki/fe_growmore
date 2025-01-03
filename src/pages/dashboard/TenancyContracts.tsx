@@ -300,8 +300,8 @@ const TenancyContracts = () => {
                           <td className="p-2 py-3">{i + 1}</td>
                           <td className="p-2 py-3">{item.property}</td>
                           <td className="p-2 py-3">
-                            {item?.custom_unit_name ??
-                              item.custom_number_of_unit}
+                            {item?.custom_number_of_unit ??
+                              item?.custom_unit_name}
                           </td>
                           <td className="p-2 py-3">
                             {item.custom_location__area}

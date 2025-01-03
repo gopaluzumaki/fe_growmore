@@ -368,8 +368,8 @@ const EditTenancyContracts = () => {
             if (item?.property) {
               await handleDropDown("propertyName", item.property);
             }
-            if (item?.custom_number_of_unit) {
-              await handleDropDown("propertyUnits", item.custom_number_of_unit);
+            if (item?.custom_unit_name) {
+              await handleDropDown("propertyUnits", item.custom_unit_name);
             }
 
             setFormValues((prevData) => ({
@@ -392,8 +392,8 @@ const EditTenancyContracts = () => {
               propertyType: item.custom_type,
               propertyLocation: item.custom_location__area,
               propertyRent: item.custom_rent_amount_to_pay,
-              propertyUnits: item.custom_number_of_unit,
-              custom_unit_name: item.custom_unit_name,
+              propertyUnits: item.custom_unit_name,
+              custom_number_of_unit: item.custom_number_of_unit,
               propertyDoc: item.propertyDoc,
               tenantName: item.lease_customer,
               tenantContact: item.custom_contact_number,
@@ -622,7 +622,7 @@ const EditTenancyContracts = () => {
   useEffect(() => {
     let chequeDate: any = [];
     // console.log("formValues.chequeDate", formValues.chequeDate);
-    chequeDate.push(formValues.chequeDate);
+    chequeDate.push(formatDateToYYYYMMDD(formValues.chequeDate));
     if (formValues.numberOfChecks === "2") {
       let currentDate = new Date(formValues.chequeDate);
 
@@ -879,7 +879,7 @@ const EditTenancyContracts = () => {
           custom_city: unit_List_Data?.custom_city,
           custom_country: unit_List_Data?.custom_country,
           propertyRent: unit_List_Data?.rent,
-          custom_unit_name: unit_List_Data?.custom_unit_number,
+          custom_number_of_unit: unit_List_Data?.custom_unit_number,
         }));
       }
     }
@@ -1013,8 +1013,10 @@ const EditTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_number_of_unit: formValues.propertyUnits,
-        custom_unit_name: formValues.custom_unit_name,
+        // save unit id
+        custom_unit_name: formValues.propertyUnits,
+        // save unit name
+        custom_number_of_unit: formValues.custom_number_of_unit,
         propertyDoc: propertyImgUrl,
 
         // customer details
