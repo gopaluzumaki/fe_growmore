@@ -723,7 +723,7 @@ const EditTenancyContracts = () => {
               chequeNumber: "",
               chequeDate: chequeDate[i],
               bankName: formValues.bankName,
-              Sno: i,
+              Sno: i + 1,
               cheque: formValues.cheque,
               status: formValues.status,
               duration: formValues.duration,
@@ -936,14 +936,14 @@ const EditTenancyContracts = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const tenancyContractList = await getTenancyContractList();
-    const findOne = tenancyContractList?.data?.data.find(
-      (item) => item.name === location.state && item.lease_status === "Active"
-    );
-    if (findOne) {
-      alert("This tenancy contract is already active");
-      return;
-    }
+    // const tenancyContractList = await getTenancyContractList();
+    // const findOne = tenancyContractList?.data?.data.find(
+    //   (item) => item.name === location.state && item.lease_status === "Active"
+    // );
+    // if (findOne && formValues.tenancyStatus === "Active") {
+    //   alert("This tenancy contract is already active");
+    //   return;
+    // }
     try {
       if (formValues.tenancyStatus === "Move In") {
         const response = await updateProperty(

@@ -620,14 +620,14 @@ const AddTenancyContracts = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const tenancyContractList = await getTenancyContractList();
-    const findOne = tenancyContractList?.data?.data.find(
-      (item) => item.name === location.state && item.lease_status === "Active"
-    );
-    if (findOne) {
-      alert("This tenancy contract is already active");
-      return;
-    }
+    // const tenancyContractList = await getTenancyContractList();
+    // const findOne = tenancyContractList?.data?.data.find(
+    //   (item) => item.name === location.state && item.lease_status === "Active"
+    // );
+    // if (findOne) {
+    //   alert("This tenancy contract is already active");
+    //   return;
+    // }
     try {
       const remindersMapping = {
         "Move In": "custom_move_in",
