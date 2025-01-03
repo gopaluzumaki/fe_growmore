@@ -4,7 +4,7 @@ import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
 import Input from "./TextInput";
 import { Add_Lead } from "../constants/inputdata";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createLead, uploadFile } from "../api";
 import {
@@ -47,6 +47,8 @@ interface FormData {
 const AddLeads = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrls, setImgUrls] = useState([]);
+  const [imageArray, setImageArray] = useState<string[]>([]);
+
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -76,12 +78,42 @@ const AddLeads = () => {
     leadStatus: "",
   });
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Regex for mobile number validation (10 to 15 digits)
+  const mobileRegex = /^[0-9]{10,15}$/;
+  const maxEmailLength = 320;
+  const [errors, setErrors] = useState({ contact: '', email: '' });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if(name==="contact"){
+      if (!mobileRegex.test(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          contact: 'Mobile number must be 10 to 15 digits.',
+        }));
+      } else {
+        
+        setErrors((prev) => ({ ...prev, contact: '' }));
+      }
+    }
+    else if(name==="email"){
+      if (!emailRegex.test(value)||value?.length>320) {
+        setErrors((prev) => ({
+          ...prev,
+          email: 'Please enter a valid email address.',
+        }));
+      } else {
+        
+        setErrors((prev) => ({ ...prev, email: '' }));
+      }
+    }
+    // else{
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    // }
   };
 
   const handleDropdownChange = (name: string, value: string) => {
@@ -100,7 +132,7 @@ const AddLeads = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
 
     try {
       console.log("API Data => ", formData);
@@ -129,7 +161,13 @@ const AddLeads = () => {
       console.log(err);
     }
   };
-
+ useEffect(()=>{
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  },[imgUrls])
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
   return (
     <main>
       <div className="flex">
@@ -156,6 +194,7 @@ const AddLeads = () => {
                           onChange={handleChange}
                           borderd
                           bgLight
+                          warning={errors[name]}
                         />
                       ) : type === "dropdown" ? (
                         <div>
@@ -206,6 +245,33 @@ const AddLeads = () => {
                                           />
                                         </div>
                   </div>
+                  {imageArray?.length > 0 && (<>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                          Attachments
+                      </p>
+                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>)}
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
                       <label>Description</label>
@@ -219,7 +285,7 @@ const AddLeads = () => {
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Save" disabled={errors?.email?.length>0||errors?.contact?.length>0}/>
                   </div>
                 </form>
               </div>

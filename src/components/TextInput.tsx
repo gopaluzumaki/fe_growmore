@@ -5,6 +5,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: string | ReactNode;
   bgLight?: boolean;
   borderd?: boolean;
+  warning?:any;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -23,8 +24,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     min,
     max,
     required =false,
-    readOnly=false
+    readOnly=false,
+    warning
   }) => {
+    console.log(warning,"nmk")
     return (
       <div>
         {label && (
@@ -58,6 +61,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             placeholder={placeholder}
           />
         </div>
+        {warning && (
+          <p className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+            <label htmlFor={id} style={{color: "red"}}>{warning}</label>
+          </p>
+        )}
       </div>
     );
   }

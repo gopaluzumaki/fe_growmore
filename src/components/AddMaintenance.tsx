@@ -78,6 +78,7 @@ const AddMaintenance = () => {
   const [ownerImgUrl, setOwnerImgUrl] = useState("");
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const [propertyUnits, setPropertyUnits] = useState([]);
+  const [imageArray, setImageArray] = useState<string[]>([]);
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "Draft",
@@ -262,7 +263,7 @@ const AddMaintenance = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
 
     try {
       console.log("API Data => ", formValues);
@@ -342,7 +343,14 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
   const handleInputChange = (e) => {
     setNewLocation(e.target.value);
   };
-
+  useEffect(()=>{
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  },[imgUrls])
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
+  console.log(imageArray,"nki",imgUrls)
   return (
     <main>
       <div className="flex">
@@ -596,7 +604,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                       </div>
                     </div>
 
-
+                    
 
                     {/* Description box */}
                     <div className="mt-5">
@@ -690,6 +698,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                           </SelectContent>
                         </Select>
                       ))}</div>
+                      
                     {/* Attachment */}
                     <div className="mb-5">
                       <CustomFileUpload
@@ -699,7 +708,34 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                        type="image/*"
                       />
                     </div>
-                    <div className="max-w-[100px]">
+                    {imageArray?.length > 0 && (<>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                          Attachments
+                      </p>
+                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>)}
+                    <div className="max-w-[100px] mt-2">
                       <PrimaryButton title="Save" />
                     </div>
                   </>)}

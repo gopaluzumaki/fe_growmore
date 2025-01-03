@@ -98,15 +98,44 @@ setCountryList(res?.data?.data)
       [name]: value,
     }));
   };
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+  // Regex for mobile number validation (10 to 15 digits)
+  const mobileRegex = /^[0-9]{10,15}$/;
+  const maxEmailLength = 320;
+  const [errors, setErrors] = useState({ customerContact: '', email: '' });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    if(name==="customerContact"){
+    if (!mobileRegex.test(value)) {
+      setErrors((prev) => ({
+        ...prev,
+        customerContact: 'Mobile number must be 10 to 15 digits.',
+      }));
+    } else {
+      
+      setErrors((prev) => ({ ...prev, customerContact: '' }));
+    }
+  }
+  else if(name==="email"){
+    if (!emailRegex.test(value)||value?.length>320) {
+      setErrors((prev) => ({
+        ...prev,
+        email: 'Please enter a valid email address.',
+      }));
+    } else {
+      
+      setErrors((prev) => ({ ...prev, email: '' }));
+    }
+  }
+  // else{
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+  // }
   };
-
+console.log(errors,"njk")
   const handleDateChange = (name: string, date: Date | null) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -191,6 +220,7 @@ setCountryList(res?.data?.data)
                           onChange={handleChange}
                           borderd
                           bgLight
+                          warning={errors[name]}
                         />
                       ) : type === "dropdown" ? (
                         <div>
@@ -380,7 +410,7 @@ setCountryList(res?.data?.data)
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Save" disabled={errors?.email?.length>0||errors?.customerContact?.length>0}/>
                   </div>
                 </form>
               </div>

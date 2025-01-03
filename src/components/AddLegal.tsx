@@ -119,6 +119,7 @@ const AddLegal = () => {
   const [unitDetails, setUnitDetails] = useState([])
   const [legalList,setLegalList]=useState([])
   const [showCustomerSection,setShowCustomerSection]=useState(false)
+  const [imageArray, setImageArray] = useState<string[]>([]);
 
   useEffect(() => {
     getProperties();
@@ -258,7 +259,7 @@ const AddLegal = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imgUrls.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
 
     try {
       console.log("API Data => ", formValues);
@@ -335,7 +336,13 @@ setLegalList(updatedLegalList); // Update the state
   const handleInputChange = (e) => {
     setNewLegal(e.target.value);
   };
-
+  useEffect(()=>{
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  },[imgUrls])
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
   return (
     <main>
       <div className="flex">
@@ -657,7 +664,34 @@ setLegalList(updatedLegalList); // Update the state
                        type="image/*"
                       />
                     </div>
-                    <div className="max-w-[100px]">
+                    {imageArray?.length > 0 && (<>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                          Attachments
+                      </p>
+                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>)}
+                    <div className="max-w-[100px] mt-2">
                       <PrimaryButton title="Save" />
                     </div>
                   </>)}

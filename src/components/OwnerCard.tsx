@@ -33,6 +33,14 @@ const OwnerCard = ({
   setError
 }: OwnerCardProps) => {
   console.log(name1,"vgh")
+  const formatEmail = (email) => {
+    if (email.length > 50) {
+      const firstPart = email.slice(0, 5);
+      const lastPart = email.slice(-5);
+      return `${firstPart}...${lastPart}`;
+    }
+    return email;
+  };
   return (
     <main>
       <div className="border border-[#E6EDFF] p-3 px-4 rounded-md">
@@ -77,7 +85,7 @@ const OwnerCard = ({
           </p>
           <p className="flex gap-2 py-3 border-b border-[#E6EDFF]">
             <span className="text-sonicsilver">Email :</span>
-            <span className="font-semibold">{email}</span>
+            <span className="font-semibold">{formatEmail(email)}</span>
           </p>
           <p className="flex gap-2 py-3 border-b border-[#E6EDFF]">
             <span className="text-sonicsilver">Total Property Number :</span>

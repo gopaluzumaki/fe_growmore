@@ -133,7 +133,8 @@ const Units = () => {
                                 ? "bg-[#FFEC1C] text-black"
                                 : item.custom_status === "Vacant"
                                   ? "bg-[#34A853] text-white"
-                                  : item.custom_status === "Legal" && "bg-[#EB4335] text-white"
+                                  : item.custom_status === "Legal" ? "bg-[#EB4335] text-white"
+                                  :item.custom_status === "Under Maintenance" && "bg-[#ff8d00] text-white"
                                 }`}
                             >
                               {item.custom_status}

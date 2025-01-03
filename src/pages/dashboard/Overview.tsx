@@ -164,7 +164,7 @@ const Overview = () => {
                             </div></td>
                             <td className="p-2 py-3"><div
                               className={`p-1 rounded ${item?.caseStatus?.length > 0
-                                  ? "bg-[#ff0000] text-black"
+                                  ? "bg-[#ff8d00] text-black"
                                   :
                                   ""
 

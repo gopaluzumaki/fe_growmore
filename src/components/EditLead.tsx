@@ -124,12 +124,42 @@ const EditLead = () => {
     fetchingLeadData();
   }, [id]);
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Regex for mobile number validation (10 to 15 digits)
+  const mobileRegex = /^[0-9]{10,15}$/;
+  const maxEmailLength = 320;
+  const [errors, setErrors] = useState({ contact: '', email: '' });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if(name==="contact"){
+      if (!mobileRegex.test(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          contact: 'Mobile number must be 10 to 15 digits.',
+        }));
+      } else {
+        
+        setErrors((prev) => ({ ...prev, contact: '' }));
+      }
+    }
+    else if(name==="email"){
+      if (!emailRegex.test(value)||value?.length>320) {
+        setErrors((prev) => ({
+          ...prev,
+          email: 'Please enter a valid email address.',
+        }));
+      } else {
+        
+        setErrors((prev) => ({ ...prev, email: '' }));
+      }
+    }
+    // else{
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    // }
   };
 
   const handleDropdownChange = (name: string, value: string) => {
@@ -208,6 +238,7 @@ const EditLead = () => {
                           onChange={handleChange}
                           borderd
                           bgLight
+                          warning={errors[name]}
                         />
                       ) : type === "dropdown" ? (
                         <div>
@@ -294,7 +325,7 @@ const EditLead = () => {
                       ))}
                     </div></>)}
                   <div className="mt-4 max-w-[200px]">
-                    <PrimaryButton title="Update Lead" />
+                    <PrimaryButton title="Update Lead" disabled={errors?.email?.length>0||errors?.contact?.length>0}/>
                   </div>
                 </form>
               </div>
