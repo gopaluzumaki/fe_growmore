@@ -213,7 +213,9 @@ setCountryList(res?.data?.data)
       setPriceSqMeter(priceSqMeter);
     }
 
-    else if (!value) {
+    else if (name === "rent"||name==="sqFoot"||name==="sqMeter"&&!value) {
+      console.log("iadjskn");
+      handleDropDown("sqFoot", 0);
       handleDropDown("sqMeter", 0);
       handleDropDown("priceSqFt", 0);
       handleDropDown("priceSqMeter", 0);
