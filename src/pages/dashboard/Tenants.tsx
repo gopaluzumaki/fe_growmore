@@ -73,6 +73,14 @@ const Tenants = () => {
       padding:"24px"
     },
   };
+  const formatEmail = (email) => {
+    if (email.length > 50) {
+      const firstPart = email.slice(0, 5);
+      const lastPart = email.slice(-5);
+      return `${firstPart}...${lastPart}`;
+    }
+    return email;
+  };
   return (
     <main>
       <div className="flex">
@@ -133,7 +141,7 @@ const Tenants = () => {
                           <td className="p-2 py-3">{i + 1}</td>
                           <td className="p-2 py-3">{item.customer_name}</td>
                           <td className="p-2 py-3">{item.customer_type}</td>
-                          <td className="p-2 py-3">{item.custom_email}</td>
+                          <td className="p-2 py-3">{formatEmail(item.custom_email)}</td>
                           {/* <td className="p-2 py-3">{item.property}</td>
                           <td className="p-2 py-3">{item.owner}</td>
                           <td className="p-2 py-3">{item.unit}</td>

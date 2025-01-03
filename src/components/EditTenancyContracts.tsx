@@ -1178,7 +1178,9 @@ const EditTenancyContracts = () => {
       border: "1px solid gray",
     },
   };
-
+  const username=APP_AUTH.USERNAME
+  const password=APP_AUTH.PASSWORD
+  const credentials = btoa(`${username}:${password}`);
   return (
     <main>
       <div className="flex">
@@ -1204,14 +1206,40 @@ const EditTenancyContracts = () => {
                   />
                 </div> */}
                 <form className="relative" onSubmit={handleSubmit}>
-                  <a
-                    href={API_URL.Tenancy_contract_pdf + location.state}
-                    target="_blank"
-                    rel="noreferrer"
+                  <div
                     className="absolute top-4 right-4 px-4 py-2 bg-blue-400 rounded-md text-white"
+                    onClick={async()=>{
+                      try {
+                            const response = await fetch(`https://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=`+location.state, {
+                              method: "GET",
+                              credentials: "include", // Ensures cookies for authenticated sessions are included
+                              headers: {
+                                Authorization: `Basic ${credentials}`, // Attach Basic Auth header
+                              },
+                            });
+                           
+                            if (!response.ok) {
+                              throw new Error("Failed to fetch PDF");
+                            }
+                      
+                            const blob = await response.blob();
+                            const url = window.URL.createObjectURL(blob);
+                      
+                            const link = document.createElement("a");
+                            link.href = url;
+                            link.download = `${location.state}.pdf`; // Set the desired filename
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            window.URL.revokeObjectURL(url);
+                          } catch (error) {
+                            console.error("Error downloading PDF:", error);
+                            alert("Failed to download PDF.");
+                          }
+                    }}
                   >
                     Export to PDF
-                  </a>
+                  </div>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
                     <MantineSelect
                       label="Status"

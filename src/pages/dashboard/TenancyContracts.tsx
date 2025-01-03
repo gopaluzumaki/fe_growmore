@@ -20,6 +20,7 @@ import {
   getOwnerList,
   deleteTanencyContract,
 } from "../../api";
+import { APP_AUTH } from "../../constants/config";
 
 interface Unit {
   start_date: string;
@@ -192,7 +193,9 @@ const TenancyContracts = () => {
       color: "#000",
     },
   };
-
+ const username=APP_AUTH.USERNAME
+  const password=APP_AUTH.PASSWORD
+  const credentials = btoa(`${username}:${password}`);
   return (
     <main>
       <div className="flex">
@@ -346,17 +349,44 @@ const TenancyContracts = () => {
                                   className="text-[#D09D4A]"
                                 />
                               </Link>
-                              <a
-                                href={API_URL.Tenancy_contract_pdf + item.name}
-                                target="_blank"
-                                rel="noreferrer"
+                              <div
+                    onClick={async()=>{
+                      try {
+                            const response = await fetch(`https://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=`+item.name, {
+                              method: "GET",
+                              credentials: "include", // Ensures cookies for authenticated sessions are included
+                              headers: {
+                                Authorization: `Basic ${credentials}`, // Attach Basic Auth header
+                              },
+                            });
+                           
+                            if (!response.ok) {
+                              throw new Error("Failed to fetch PDF");
+                            }
+                      
+                            const blob = await response.blob();
+                            const url = window.URL.createObjectURL(blob);
+                      
+                            const link = document.createElement("a");
+                            link.href = url;
+                            link.download = `${item.name}.pdf`; // Set the desired filename
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            window.URL.revokeObjectURL(url);
+                          } catch (error) {
+                            console.error("Error downloading PDF:", error);
+                            alert("Failed to download PDF.");
+                          }
+                    }}
+                  
                                 className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
                               >
                                 <FaRegEye
                                   size={20}
                                   className="text-[#D09D4A]"
                                 />
-                              </a>
+                              </div>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
                                 <MdDeleteForever
                                   size={20}
