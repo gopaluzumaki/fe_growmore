@@ -172,9 +172,9 @@ setCountryList(res?.data?.data)
       setPriceSqFt(priceSqFt);
       setPriceSqMeter(priceSqMeter);
     }
-    else if (!value) {
+    else if (name === "rent"||name==="sqFoot"||name==="sqMeter"&&!value) {
       console.log("iadjskn");
-
+      handleDropDown("sqFoot", 0);
       handleDropDown("sqMeter", 0);
       handleDropDown("priceSqFt", 0);
       handleDropDown("priceSqMeter", 0);
@@ -204,7 +204,8 @@ setCountryList(res?.data?.data)
     setPropertyList(item);
   };
 
-  const handleDropDown = async (name, item) => {
+  const handleDropDown = async (name, item,ownerName) => {
+    console.log(ownerName,"nkp")
     if (name === "parent_property") {
       console.log("item", item);
       const propertyList = await getPropertyList();
@@ -240,6 +241,12 @@ setCountryList(res?.data?.data)
         }));
       }
       return;
+    }
+    if(name==="ownerName"){
+      setFormData((prevData) => ({
+        ...prevData,
+        "custom_supplier_name": ownerName,
+      }));
     }
     setFormData((prevData) => ({
       ...prevData,
@@ -294,6 +301,7 @@ setCountryList(res?.data?.data)
       const imageData = imageArray?.map((imgUrl) => ({ image: imgUrl }));
 
       const res = await createProperty({
+        custom_supplier_name:formData?.custom_supplier_name,
         name1: formData?.custom_unit_number,
         custom_parent_property_name: formData.parent_property,
         parent_property: propertyName,
@@ -440,9 +448,13 @@ setCountryList(res?.data?.data)
                         data={ownerList.map((item) => ({
                           value: item?.name,
                           label: item?.supplier_name,
+
                         }))}
                         value={formData.ownerName}
-                        onChange={(value) => handleDropDown("ownerName", value)}
+                        onChange={(value) => {
+    const selectedOption = ownerList.find((item) => item.name === value);
+    handleDropDown("ownerName", value, selectedOption?.supplier_name);
+  }}
                         styles={{
                           label: {
                             marginBottom: "3px",
