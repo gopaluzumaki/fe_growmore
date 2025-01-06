@@ -67,7 +67,7 @@ const TenancyContracts = () => {
     "Location / Area",
     "Owner Name",
     "Customer Name",
-    "Rent amount",
+    "Price / Rent Annually",
     "Start-date",
     "End-Date",
     "Expiry Days",
