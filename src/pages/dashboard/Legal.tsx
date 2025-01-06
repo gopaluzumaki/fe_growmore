@@ -26,6 +26,7 @@ const Legal = () => {
     "Location",
     "Owner",
     "Reason",
+    "Created On",
     "Status",
     "Actions ",
   ];
@@ -196,6 +197,7 @@ const Legal = () => {
                             {item.owner}
                           </td>
                           <td className="p-2 py-3">{item.custom_legal_reason}</td>
+                          <td className="p-2 py-3">{item.creation.split(" ")[0]}</td>
                           <td className="p-2 py-3">{item.custom_status_legal}</td>
 
                           <td className="p-2 py-3">

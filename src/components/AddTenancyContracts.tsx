@@ -53,6 +53,7 @@ import { useNavigate } from "react-router-dom";
 import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD, formatDateToYYYYMMDD } from "../lib/utils";
 import { useListState, randomId } from "@mantine/hooks";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 const initialValues = [
   { label: "Move In", checked: true, key: randomId() },
@@ -74,7 +75,9 @@ const AddTenancyContracts = () => {
   const [numberOfChecks, setNumberOfChecks] = useState();
   const [paymentDetailsModalOpen, setPaymentDetailsModalOpen] = useState(null);
   const [selectedCheque, setSelectedCheque] = useState(null);
-
+  const [imgUrls, setImgUrls] = useState<string[]>([]);
+  const [imageArray, setImageArray] = useState<string[]>([]);
+  const [loading,setLoading] = useState(false)
   const [tableData, setTableData] = useState<
     {
       rent: string;
@@ -623,6 +626,8 @@ const AddTenancyContracts = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+
     // const tenancyContractList = await getTenancyContractList();
     // const findOne = tenancyContractList?.data?.data.find(
     //   (item) => item.name === location.state && item.lease_status === "Active"
@@ -655,6 +660,7 @@ const AddTenancyContracts = () => {
         lease_status: formValues?.tenancyStatus,
         //contract details
         // lease_status:"Draft",
+        custom_attachment_table: imageData,
         bank_name: formValues.bankName,
         cheque_no: formValues.chequeNo,
         cheque_date: formatDateToYYMMDD(formValues.chequeDate),
@@ -770,7 +776,13 @@ const AddTenancyContracts = () => {
     );
     // ))}
   };
-
+  useEffect(()=>{
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  },[imgUrls])
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
   return (
     <main>
       <div className="flex">
@@ -899,6 +911,15 @@ const AddTenancyContracts = () => {
                         }
                       )}
                     </div>
+                    <div className="mb-5">
+                                          <CustomFileUpload
+                                            onFilesUpload={(urls) => {
+                                              setImgUrls(urls);
+                                            }}
+                                            type="image/*"
+                                            setLoading={setLoading}
+                                          />
+                                        </div>
                     {/* <div className="pt-6 pb-20">
                       {tableData?.length > 0 && (
                         <Table>
@@ -924,7 +945,33 @@ const AddTenancyContracts = () => {
                       )}
                     </div> */}
                   </div>
-
+                  {imageArray?.length > 0 && (<>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                          Attachments
+                      </p>
+                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>)}
                   {/* property details */}
                   <div>
                     <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">

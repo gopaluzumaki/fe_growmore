@@ -20,6 +20,7 @@ import {
 } from "../components/ui/select";
 import CustomDatePicker from "./CustomDatePicker";
 import { formatDateToYYMMDD } from "../lib/utils";
+import CustomFileUpload from "./ui/CustomFileUpload";
 interface FormData {
   ownerName: string;
   gender: string;
@@ -43,10 +44,12 @@ interface FormData {
 const AddTenants = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState<string[]>([]);
+  const [imageArray, setImageArray] = useState<string[]>([]);
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [countryList,setCountryList]=useState([])
-
+  const [countryList, setCountryList] = useState([])
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     ownerType: "",
     customerContact: "",
@@ -72,16 +75,17 @@ const AddTenants = () => {
     poaHolder: "",
     description: "",
   });
-useEffect(()=>{
-  getCountryListData()
-},[])
-const getCountryListData=async()=>{
-const res=await getCountryList()
+  useEffect(() => {
+    getCountryListData()
+  }, [])
+  const getCountryListData = async () => {
+    const res = await getCountryList()
 
-setCountryList(res?.data?.data)
-}
+    setCountryList(res?.data?.data)
+  }
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
+      setLoading(true)
       const file = event.target.files[0];
       setSelectedFile(file);
 
@@ -89,6 +93,7 @@ setCountryList(res?.data?.data)
         const res = await uploadFile(file);
         setImgUrl(res?.data?.message?.file_url);
       }
+      setLoading(false)
     }
   };
 
@@ -106,36 +111,36 @@ setCountryList(res?.data?.data)
   const [errors, setErrors] = useState({ customerContact: '', email: '' });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if(name==="customerContact"){
-    if (!mobileRegex.test(value)) {
-      setErrors((prev) => ({
-        ...prev,
-        customerContact: 'Mobile number must be 10 to 15 digits.',
-      }));
-    } else {
-      
-      setErrors((prev) => ({ ...prev, customerContact: '' }));
+    if (name === "customerContact") {
+      if (!mobileRegex.test(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          customerContact: 'Mobile number must be 10 to 15 digits.',
+        }));
+      } else {
+
+        setErrors((prev) => ({ ...prev, customerContact: '' }));
+      }
     }
-  }
-  else if(name==="email"){
-    if (!emailRegex.test(value)||value?.length>320) {
-      setErrors((prev) => ({
-        ...prev,
-        email: 'Please enter a valid email address.',
-      }));
-    } else {
-      
-      setErrors((prev) => ({ ...prev, email: '' }));
+    else if (name === "email") {
+      if (!emailRegex.test(value) || value?.length > 320) {
+        setErrors((prev) => ({
+          ...prev,
+          email: 'Please enter a valid email address.',
+        }));
+      } else {
+
+        setErrors((prev) => ({ ...prev, email: '' }));
+      }
     }
-  }
-  // else{
+    // else{
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-  // }
+    // }
   };
-console.log(errors,"njk")
+  console.log(errors, "njk")
   const handleDateChange = (name: string, date: Date | null) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -145,10 +150,13 @@ console.log(errors,"njk")
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+
     try {
       console.log("API Data => ", formData);
       const res = await createTenant({
-        image: imgUrl,
+        custom_signature_image: imgUrl,
+        custom_attachment_table: imageData,
         customer_details: formData?.description,
         customer_type: formData.ownerType,
         customer_name:
@@ -180,9 +188,9 @@ console.log(errors,"njk")
         custom_emirates_id_expiry_date: formatDateToYYMMDD(
           formData.emiratesIdExpiryDate
         ),
-        custom_date_of_birth:formatDateToYYMMDD(formData?.custom_date_of_birth),
-        custom_visa_start_date:formatDateToYYMMDD(formData?.custom_visa_start_date),
-        custom_visa_end_date:formatDateToYYMMDD(formData?.custom_visa_end_date)
+        custom_date_of_birth: formatDateToYYMMDD(formData?.custom_date_of_birth),
+        custom_visa_start_date: formatDateToYYMMDD(formData?.custom_visa_start_date),
+        custom_visa_end_date: formatDateToYYMMDD(formData?.custom_visa_end_date)
       });
       if (res) {
         navigate("/tenants");
@@ -191,7 +199,13 @@ console.log(errors,"njk")
       console.log(err);
     }
   };
-
+  useEffect(() => {
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  }, [imgUrls])
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
   return (
     <main>
       <div className="flex">
@@ -211,7 +225,7 @@ console.log(errors,"njk")
                     {Add_Tenant.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
-                        required={true}
+                          required={true}
                           key={name}
                           label={label}
                           name={name}
@@ -224,32 +238,32 @@ console.log(errors,"njk")
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                          <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
                             <label htmlFor="custom-dropdown">
                               {label}
                             </label>
                             <label><span style={{ color: "red" }}>*</span></label>
                           </div>
-                        <Select
-                        required
-                          onValueChange={(item) => {
-                            handleDropdownChange(name, item);
-                          }}
+                          <Select
+                            required
+                            onValueChange={(item) => {
+                              handleDropdownChange(name, item);
+                            }}
                           // value={formData[name]}
-                        >
-                          <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          >
+                            <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {values?.map((item, i) => (
+                                <SelectItem key={i} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
@@ -267,7 +281,7 @@ console.log(errors,"njk")
                         ({ label, name, type, values }) =>
                           type === "text" ? (
                             <Input
-                            required={true}
+                              required={true}
                               key={name}
                               label={label}
                               name={name}
@@ -279,34 +293,34 @@ console.log(errors,"njk")
                             />
                           ) : type === "dropdown" ? (
                             <div>
-                        <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
-                            <label htmlFor="custom-dropdown">
-                              {label}
-                            </label>
-                            <label><span style={{ color: "red" }}>*</span></label>
-                          </div>
-                            <Select
-                            required
-                              onValueChange={(item) => {
-                                handleDropdownChange(name, item);
-                              }}
-                              value={name==="country"?formData?.country:undefined}
-                            >
-                              <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
-                                <div className="flex items-center">
-                                  <SelectValue placeholder={label} />
-                                </div>
-                              </SelectTrigger>
-                              <SelectContent
-                                onChange={() => console.log("hello")}
+                              <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                                <label htmlFor="custom-dropdown">
+                                  {label}
+                                </label>
+                                <label><span style={{ color: "red" }}>*</span></label>
+                              </div>
+                              <Select
+                                required
+                                onValueChange={(item) => {
+                                  handleDropdownChange(name, item);
+                                }}
+                                value={name === "country" ? formData?.country : undefined}
                               >
-                                {(name==="country"?countryList:values)?.map((item, i) => (
-                                  <SelectItem key={i} value={name==="country"?item.name:item}>
-                                    {name==="country"?item.name:item}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent
+                                  onChange={() => console.log("hello")}
+                                >
+                                  {(name === "country" ? countryList : values)?.map((item, i) => (
+                                    <SelectItem key={i} value={name === "country" ? item.name : item}>
+                                      {name === "country" ? item.name : item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
                           ) : type === "date" ? (
                             <CustomDatePicker
@@ -323,7 +337,7 @@ console.log(errors,"njk")
                       Type_Company.map(({ label, name, type }) =>
                         type === "text" ? (
                           <Input
-                          required={true}
+                            required={true}
                             key={name}
                             label={label}
                             name={name}
@@ -335,11 +349,11 @@ console.log(errors,"njk")
                           />
                         ) : type === "dropdown" ? (
                           <Select
-                          required
+                            required
                             onValueChange={(item) => {
                               handleDropdownChange(name, item);
                             }}
-                            // value={formData[name]}
+                          // value={formData[name]}
                           >
                             <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-7">
                               <div className="flex items-center">
@@ -367,7 +381,7 @@ console.log(errors,"njk")
                           <></>
                         )
                       )}
-                       <div>
+                    <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         <label>Upload Customer Signature</label>
                       </p>
@@ -382,22 +396,74 @@ console.log(errors,"njk")
                         />
                       </div>
                     </div>
+                   
                     <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Attach ID</label>
-                      </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
+                     
+                      <div className="mb-5">
+                        <CustomFileUpload
+                          onFilesUpload={(urls) => {
+                            setImgUrls(urls);
+                          }}
+                          type="image/*"
+                          setLoading={setLoading}
                         />
                       </div>
                     </div>
+                    
                   </div>
+                  {imgUrl?.length > 0 && (<>
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        Uploaded Signature
+                      </p>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+
+                          <div key={imgUrl} className="relative w-[100px] h-[100px]">
+                            <img
+                              className="w-full h-full rounded-md"
+                              src={
+                                imgUrl
+                                  ? `https://propms.erpnext.syscort.com/${imgUrl}`
+                                  : "/defaultProperty.jpeg"
+                              }
+                              alt="propertyImg"
+                            />
+                            <button
+                              type="button" // Prevent form submission
+                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              onClick={() => setImgUrl('')}
+                            >
+                              X
+                            </button>
+                          </div>
+                      </div>
+                    </>)}
+                  {imageArray?.length > 0 && (<>
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        ID Attachments
+                      </p>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                        {imageArray.map((value, index) => (
+                          <div key={index} className="relative w-[100px] h-[100px]">
+                            <img
+                              className="w-full h-full rounded-md"
+                              src={
+                                value
+                                  ? `https://propms.erpnext.syscort.com/${value}`
+                                  : "/defaultProperty.jpeg"
+                              }
+                              alt="propertyImg"
+                            />
+                            <button
+                              type="button" // Prevent form submission
+                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              onClick={() => handleRemoveImage(index)}
+                            >
+                              X
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </>)}
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
                       <label>Description</label>
@@ -409,8 +475,9 @@ console.log(errors,"njk")
                       className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                     ></textarea>
                   </div>
+
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" disabled={errors?.email?.length>0||errors?.customerContact?.length>0}/>
+                    <PrimaryButton title="Save" disabled={errors?.email?.length > 0 || errors?.customerContact?.length > 0 || loading} />
                   </div>
                 </form>
               </div>

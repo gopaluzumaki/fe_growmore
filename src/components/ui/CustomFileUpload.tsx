@@ -3,12 +3,14 @@ import React from "react";
 import { uploadFile } from "../../api";
 
 export default function CustomFileUpload({
-  onFilesUpload, type
+  onFilesUpload, type,setLoading
 }: {
   onFilesUpload: (files: string[]) => void;
   type: string;
+  setLoading:any;
 }) {
   const handleFilesUpload = async (files) => {
+    setLoading(true)
     const results = await Promise.all(
       files.map(async (value) => {
         const res = await uploadFile(value);
@@ -17,6 +19,7 @@ export default function CustomFileUpload({
     );
     //make api call to upload files that will give use img urls and pass it to onFilesUpload function
     onFilesUpload(results);
+    setLoading(false)
   };
   return (
     <div>

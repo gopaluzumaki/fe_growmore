@@ -66,6 +66,7 @@ const AddMoveIn = () => {
   const [ownerList, setOwnerList] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [numberOfChecks, setNumberOfChecks] = useState();
+  const [loading,setLoading] = useState(false)
   const [tableData, setTableData] = useState<
     {
       rent: string;
@@ -317,7 +318,6 @@ const AddMoveIn = () => {
     setImageArray(updatedImages); // Update state with the remaining images
   };
 
-
   return (
     <main>
       <div className="flex">
@@ -551,6 +551,7 @@ const AddMoveIn = () => {
                           setImgUrls(urls);
                         }}
                         type="image/*"
+                        setLoading={setLoading}
                       />
                     </div>
                     {imageArray?.length > 0 && (<>
@@ -581,7 +582,7 @@ const AddMoveIn = () => {
                     </div>
                   </>)}
                     <div className="max-w-[100px] mt-2">
-                      <PrimaryButton title="Save" />
+                      <PrimaryButton title="Save" disabled={loading}/>
                     </div>
                   </>)}
                 </form>

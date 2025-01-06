@@ -67,7 +67,7 @@ const EditProperty = () => {
   const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState([])
   const [countryList,setCountryList]=useState([])
-
+  const [loading,setLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     type: "",
     name: "",
@@ -235,6 +235,7 @@ useEffect(()=>{
                                                                   setImgUrls(urls);
                                                                 }}
                                                                 type="image/*"
+                                                                setLoading={setLoading}
                                                               />
                                                             </div>
                   </div>
@@ -278,7 +279,7 @@ useEffect(()=>{
                     </div>
                   </>)}
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Save" disabled={loading}/>
                   </div>
                 </form>
               </div>

@@ -64,6 +64,7 @@ const AddMoveOut = () => {
   const [ownerList, setOwnerList] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [numberOfChecks, setNumberOfChecks] = useState();
+  const [loading,setLoading] = useState(false)
   const [tableData, setTableData] = useState<
     {
       rent: string;
@@ -565,6 +566,7 @@ const AddMoveOut = () => {
                           setImgUrls(urls);
                         }}
                         type="image/*"
+                        setLoading={setLoading}
                       />
                     </div>
                     {imageArray?.length > 0 && (<>
@@ -595,7 +597,7 @@ const AddMoveOut = () => {
                     </div>
                   </>)}
                     <div className="max-w-[100px] mt-2">
-                      <PrimaryButton title="Save" />
+                      <PrimaryButton title="Save" disabled={loading}/>
                     </div>
                   </>)}
                 </form>
