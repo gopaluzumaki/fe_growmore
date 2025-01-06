@@ -193,8 +193,8 @@ const TenancyContracts = () => {
       color: "#000",
     },
   };
- const username=APP_AUTH.USERNAME
-  const password=APP_AUTH.PASSWORD
+  const username = APP_AUTH.USERNAME;
+  const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
   return (
     <main>
@@ -301,7 +301,9 @@ const TenancyContracts = () => {
                           className="hover:bg-gray-50 text-center text-[15px]"
                         >
                           <td className="p-2 py-3">{i + 1}</td>
-                          <td className="p-2 py-3">{item.property}</td>
+                          <td className="p-2 py-3">
+                            {item?.custom_property_name ?? item?.property}
+                          </td>
                           <td className="p-2 py-3">
                             {item?.custom_number_of_unit ??
                               item?.custom_unit_name}
@@ -350,36 +352,43 @@ const TenancyContracts = () => {
                                 />
                               </Link>
                               <div
-                    onClick={async()=>{
-                      try {
-                            const response = await fetch(`https://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=`+item.name, {
-                              method: "GET",
-                              credentials: "include", // Ensures cookies for authenticated sessions are included
-                              headers: {
-                                Authorization: `Basic ${credentials}`, // Attach Basic Auth header
-                              },
-                            });
-                           
-                            if (!response.ok) {
-                              throw new Error("Failed to fetch PDF");
-                            }
-                      
-                            const blob = await response.blob();
-                            const url = window.URL.createObjectURL(blob);
-                      
-                            const link = document.createElement("a");
-                            link.href = url;
-                            link.download = `${item.name}.pdf`; // Set the desired filename
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            window.URL.revokeObjectURL(url);
-                          } catch (error) {
-                            console.error("Error downloading PDF:", error);
-                            alert("Failed to download PDF.");
-                          }
-                    }}
-                  
+                                onClick={async () => {
+                                  try {
+                                    const response = await fetch(
+                                      `https://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=` +
+                                        item.name,
+                                      {
+                                        method: "GET",
+                                        credentials: "include", // Ensures cookies for authenticated sessions are included
+                                        headers: {
+                                          Authorization: `Basic ${credentials}`, // Attach Basic Auth header
+                                        },
+                                      }
+                                    );
+
+                                    if (!response.ok) {
+                                      throw new Error("Failed to fetch PDF");
+                                    }
+
+                                    const blob = await response.blob();
+                                    const url =
+                                      window.URL.createObjectURL(blob);
+
+                                    const link = document.createElement("a");
+                                    link.href = url;
+                                    link.download = `${item.name}.pdf`; // Set the desired filename
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    window.URL.revokeObjectURL(url);
+                                  } catch (error) {
+                                    console.error(
+                                      "Error downloading PDF:",
+                                      error
+                                    );
+                                    alert("Failed to download PDF.");
+                                  }
+                                }}
                                 className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
                               >
                                 <FaRegEye
