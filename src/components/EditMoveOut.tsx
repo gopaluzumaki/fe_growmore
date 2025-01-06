@@ -79,7 +79,8 @@ const EditMoveOut = () => {
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const [propertyUnits, setPropertyUnits] = useState([]);
   const [imageArray, setImageArray] = useState([])
-
+  const [loading,setLoading] = useState(false)
+  
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "Draft",
 
@@ -440,10 +441,11 @@ const EditMoveOut = () => {
                           setImgUrls(urls);
                         }}
                        type="image/*"
+                       setLoading={setLoading}
                       />
                     </div>
                     <div className="max-w-[100px]">
-                      <PrimaryButton title="Save" />
+                      <PrimaryButton title="Save" disabled={loading}/>
                     </div>
                   </>)}
                 </form>

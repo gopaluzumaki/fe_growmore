@@ -10,13 +10,13 @@ export const API_URL = {
     "https://propms.erpnext.syscort.com/api/method/frappe.desk.reportview.get_count?doctype=Lease&filters=[[%22Lease%22,%22lease_status%22,%22!=%22,%22Closed%22]]",
   Property_List: "https://propms.erpnext.syscort.com/api/method/property_grid",
   Unit_List:
-    "https://propms.erpnext.syscort.com/api/resource/Property?filters=[[%22is_group%22,%22=%22,0]]&order_by=creation desc&fields=[%22name%20as%20name%22,%22custom_unit_number%20as%20unit_number%22,%22custom_location%20as%20location%22,%22custom_parent_property_name%20as%20property%22,%22unit_owner%22,%22custom_status%22,%22custom_thumbnail_image%20as%20image%22,%22custom_supplier_name%22]",
+    "https://propms.erpnext.syscort.com/api/resource/Property?filters=[[%22is_group%22,%22=%22,0]]&order_by=modified desc&fields=[%22name%20as%20name%22,%22custom_unit_number%20as%20unit_number%22,%22custom_location%20as%20location%22,%22custom_parent_property_name%20as%20property%22,%22unit_owner%22,%22custom_status%22,%22custom_thumbnail_image%20as%20image%22,%22custom_supplier_name%22]",
   Tenant_List: "https://propms.erpnext.syscort.com/api/method/tenant_list",
   Owner_List: "https://propms.erpnext.syscort.com/api/method/owner_list",
   Lead_List:
-    "https://propms.erpnext.syscort.com/api/resource/Lead?fields=[%22*%22]&order_by=creation desc",
+    "https://propms.erpnext.syscort.com/api/resource/Lead?fields=[%22*%22]&order_by=modified desc",
   Booking_List:
-    "https://propms.erpnext.syscort.com/api/resource/Property%20Booking?fields=[%22*%22]&order_by=creation desc",
+    "https://propms.erpnext.syscort.com/api/resource/Property%20Booking?fields=[%22*%22]&order_by=modified desc",
   Tenancy_Contract:
     "https://propms.erpnext.syscort.com/api/method/tenancy_contract",
   Create_Property: "https://propms.erpnext.syscort.com/api/resource/Property",
@@ -27,7 +27,7 @@ export const API_URL = {
     "https://propms.erpnext.syscort.com/api/resource/Property%20Booking",
   Create_Lease: "https://propms.erpnext.syscort.com/api/resource/Lease",
   Lease_list:
-    "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22,%22start_date%22,%22end_date%22,%22custom_rent_amount_to_pay%22,%22custom_price__rent_annually%22,%22custom_unit_name%22]&order_by=creation desc",
+    "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22,%22start_date%22,%22end_date%22,%22custom_rent_amount_to_pay%22,%22custom_price__rent_annually%22,%22custom_unit_name%22]&order_by=modified desc",
   Tenancy_contract_pdf:
     "http://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=",
   MoveIn_List:
@@ -49,7 +49,7 @@ export const API_URL = {
   Legal_Data: "https://propms.erpnext.syscort.com/api/resource/Legal Reason",
   Lease_Data: "https://propms.erpnext.syscort.com/api/resource/Lease",
   Lead_Data:
-    'https://propms.erpnext.syscort.com/api/resource/Lead?fields=["creation"]',
+    'https://propms.erpnext.syscort.com/api/resource/Lead?fields=["modified"]',
   Fetch_Case: "https://propms.erpnext.syscort.com/api/resource/Maintenance",
   Profile_Data: "https://propms.erpnext.syscort.com/api/resource/User",
   Country_List: "https://propms.erpnext.syscort.com/api/resource/Country",
@@ -121,7 +121,7 @@ export const getPropertyList = async () => {
 };
 
 export const getPropertyListData = async () => {
-  const response = await axios.get(`${API_URL.Create_Property}?fields=["*"]&filters=[[%22is_group%22,%22=%22,1]]&order_by=creation desc`, {
+  const response = await axios.get(`${API_URL.Create_Property}?fields=["*"]&filters=[[%22is_group%22,%22=%22,1]]&order_by=modified desc`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -500,7 +500,7 @@ export const fetchLeads = async (params: any) => {
 
 export const getMoveInList = async () => {
   const response = await axios.get(
-    `${API_URL.MoveIn_List}&order_by=creation desc`,
+    `${API_URL.MoveIn_List}&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
@@ -513,7 +513,7 @@ export const getMoveInList = async () => {
 
 export const getMoveInListData = async (propertyName: any, unitName: any) => {
   const response = await axios.get(
-    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move In"],["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"]]&fields=["*"]&order_by=creation desc`,
+    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move In"],["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"]]&fields=["*"]&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
@@ -526,7 +526,7 @@ export const getMoveInListData = async (propertyName: any, unitName: any) => {
 
 export const getMoveOutList = async () => {
   const response = await axios.get(
-    `${API_URL.MoveOut_List}&order_by=creation desc`,
+    `${API_URL.MoveOut_List}&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
@@ -539,7 +539,7 @@ export const getMoveOutList = async () => {
 
 export const getMoveOutListData = async (propertyName: any, unitName: any) => {
   const response = await axios.get(
-    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move Out"],["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"]]&fields=["*"]&order_by=creation desc`,
+    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move Out"],["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"]]&fields=["*"]&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
@@ -552,7 +552,7 @@ export const getMoveOutListData = async (propertyName: any, unitName: any) => {
 
 export const getMaintenanceList = async () => {
   const response = await axios.get(
-    `${API_URL.Maintenance_list}&order_by=creation desc`,
+    `${API_URL.Maintenance_list}&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
@@ -565,7 +565,7 @@ export const getMaintenanceList = async () => {
 
 export const getLegalList = async () => {
   const response = await axios.get(
-    `${API_URL.Legal_list}&order_by=creation desc`,
+    `${API_URL.Legal_list}&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
@@ -698,7 +698,7 @@ export const fetchLeadData = async () => {
 };
 
 export const fetchTenancyData = async () => {
-  const response = await axios.get(`${API_URL.Create_Lease}?fields=["*"]&order_by=creation desc`, {
+  const response = await axios.get(`${API_URL.Create_Lease}?fields=["*"]&order_by=modified desc`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -713,7 +713,7 @@ export const fetchCaseFromMaintenance = async (
   customer: any
 ) => {
   const response = await axios.get(
-    `${API_URL.Fetch_Case}?filters=[["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"],["custom_customer","=","${customer}"]]&fields=[%22custom_status%22,%22custom_property%22,%22custom_unit_no%22,%22custom_customer%22]&order_by=creation desc`,
+    `${API_URL.Fetch_Case}?filters=[["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"],["custom_customer","=","${customer}"]]&fields=[%22custom_status%22,%22custom_property%22,%22custom_unit_no%22,%22custom_customer%22]&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,

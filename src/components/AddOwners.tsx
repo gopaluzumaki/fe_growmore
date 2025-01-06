@@ -20,6 +20,7 @@ import {
 } from "./ui/select";
 import CustomDatePicker from "./CustomDatePicker";
 import { formatDateToYYMMDD } from "../lib/utils";
+import CustomFileUpload from "./ui/CustomFileUpload";
 
 interface FormData {
   ownerName: string;
@@ -49,10 +50,13 @@ interface FormData {
 const AddOwners = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState<string[]>([]);
+  const [imageArray, setImageArray] = useState<string[]>([]);
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [ownerType, setOwnerType] = useState(null);
   const [countryList,setCountryList]=useState([])
+  const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState<FormData>({
     ownerType: "",
@@ -88,6 +92,8 @@ setCountryList(res?.data?.data)
 }
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
+      setLoading(true)
+
       const file = event.target.files[0];
       setSelectedFile(file);
 
@@ -95,6 +101,8 @@ setCountryList(res?.data?.data)
         const res = await uploadFile(file);
         setImgUrl(res?.data?.message?.file_url);
       }
+      setLoading(false)
+
     }
   };
 
@@ -144,10 +152,13 @@ setCountryList(res?.data?.data)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+
     try {
       console.log("API Data => ", formData);
       const res = await createOwner({
-        image: imgUrl,
+        custom_signature_image: imgUrl,
+        custom_attachment_table: imageData,
         supplier_details: formData?.description,
         supplier_type: ownerType,
         supplier_name:
@@ -210,7 +221,13 @@ setCountryList(res?.data?.data)
       setOwnerType(item);
     }
   };
-
+  useEffect(() => {
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  }, [imgUrls])
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
+  };
   return (
     <main>
       <div className="flex">
@@ -391,21 +408,71 @@ setCountryList(res?.data?.data)
                       </div>
                     </div>
                     <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Attach ID</label>
-                      </p>
-                      <div
-                        className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
-                      >
-                        <input
-                          className={`w-full bg-white outline-none`}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
-                      </div>
+                     
+                      <div className="mb-5">
+                                              <CustomFileUpload
+                                                onFilesUpload={(urls) => {
+                                                  setImgUrls(urls);
+                                                }}
+                                                type="image/*"
+                                                setLoading={setLoading}
+                                              />
+                                            </div>
                     </div>
                   </div>
+                  {imgUrl?.length > 0 && (<>
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        Uploaded Signature
+                      </p>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+
+                          <div key={imgUrl} className="relative w-[100px] h-[100px]">
+                            <img
+                              className="w-full h-full rounded-md"
+                              src={
+                                imgUrl
+                                  ? `https://propms.erpnext.syscort.com/${imgUrl}`
+                                  : "/defaultProperty.jpeg"
+                              }
+                              alt="propertyImg"
+                            />
+                            <button
+                              type="button" // Prevent form submission
+                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              onClick={() => setImgUrl('')}
+                            >
+                              X
+                            </button>
+                          </div>
+                      </div>
+                    </>)}
+                  {imageArray?.length > 0 && (<>
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        ID Attachments
+                      </p>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                        {imageArray.map((value, index) => (
+                          <div key={index} className="relative w-[100px] h-[100px]">
+                            <img
+                              className="w-full h-full rounded-md"
+                              src={
+                                value
+                                  ? `https://propms.erpnext.syscort.com/${value}`
+                                  : "/defaultProperty.jpeg"
+                              }
+                              alt="propertyImg"
+                            />
+                            <button
+                              type="button" // Prevent form submission
+                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              onClick={() => handleRemoveImage(index)}
+                            >
+                              X
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </>)}
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
                       <label>Description</label>
@@ -419,7 +486,7 @@ setCountryList(res?.data?.data)
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" disabled={errors?.email?.length>0||errors?.ownerContact?.length>0}/>
+                    <PrimaryButton title="Save" disabled={errors?.email?.length>0||errors?.ownerContact?.length>0||loading}/>
                   </div>
                 </form>
               </div>

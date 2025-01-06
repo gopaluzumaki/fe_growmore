@@ -49,7 +49,7 @@ const AddProperty = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrls, setImgUrls] = useState<string[]>([]);
   const [imageArray, setImageArray] = useState<string[]>([]);
-
+  const [loading,setLoading] = useState(false)
   const [countryList, setCountryList] = useState([])
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
@@ -185,6 +185,7 @@ const AddProperty = () => {
                           setImgUrls(urls);
                         }}
                         type="image/*"
+                        setLoading={setLoading}
                       />
                     </div>
                   </div>
@@ -229,7 +230,7 @@ const AddProperty = () => {
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Save" disabled={loading}/>
                   </div>
                 </form>
               </div>

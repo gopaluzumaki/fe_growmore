@@ -19,6 +19,7 @@ import {
   getTenantList,
   getOwnerList,
   deleteTanencyContract,
+  fetchCaseFromMaintenance,
 } from "../../api";
 import { APP_AUTH } from "../../constants/config";
 
@@ -72,6 +73,7 @@ const TenancyContracts = () => {
     "End-Date",
     "Expiry Days",
     "Status",
+    "Case Status",
     "Actions ",
   ];
 
@@ -85,7 +87,7 @@ const TenancyContracts = () => {
     const tenantListRes = await getTenantList();
     const ownerListRes = await getOwnerList();
 
-    setUnitList(unitListRes?.data?.data || []);
+    setUnitList(await getStatus(unitListRes?.data?.data || []));
     setPropertyList(propertyListRes?.data?.data || []);
     setTenantList(tenantListRes?.data?.data || []);
     setOwnerList(ownerListRes?.data?.data || []);
@@ -97,6 +99,18 @@ const TenancyContracts = () => {
     const diffMs = new Date(endDate).getTime() - new Date().getTime();
     return Math.round(diffMs / oneDay);
   };
+
+  const getStatus = async(records) =>{
+    const results = await Promise.all(records.map(async (record, index) => {
+      // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
+      const caseData = await fetchCaseFromMaintenance(record.property, record.custom_number_of_unit, record.lease_customer);
+      console.log(caseData?.data?.data, "bvf", index);
+      let caseStatus = caseData?.data?.data[0]?.custom_status
+      return { ...record, caseStatus }; // Return record with days left and caseData
+    }));
+
+    return results;
+  }
 
   const statusOptions = [
     "Active",
@@ -337,6 +351,14 @@ const TenancyContracts = () => {
                               {item.lease_status}
                             </div>
                           </td>
+                          <td className="p-2 py-3"><div
+                              className={`p-1 rounded ${item?.caseStatus?.length > 0
+                                  ? "bg-[#ff8d00] text-black"
+                                  :
+                                  ""
+
+                                }`}
+                            >{item?.caseStatus ? item?.caseStatus : '-'}</div></td>
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link
@@ -392,8 +414,11 @@ const TenancyContracts = () => {
                                   size={20}
                                   className="text-[#EB4335]"
                                   onClick={async () => {
+                                    const confirmed = window.confirm(`Are you sure you want to delete this ${item.property}?`);
+                             if (confirmed) {
                                     await deleteTanencyContract(item.name);
                                     getData();
+                             }
                                   }}
                                 />
                               </button>

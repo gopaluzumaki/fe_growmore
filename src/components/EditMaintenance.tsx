@@ -82,7 +82,7 @@ const EditMaintenance = () => {
   const [propertyUnits, setPropertyUnits] = useState([]);
   const [imageArray, setImageArray] = useState([])
   const [damageLocationList, setDamageLocationList] = useState([])
-
+  const [loading,setLoading] = useState(false)
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "Draft",
 
@@ -595,10 +595,11 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                           setImgUrls(urls);
                         }}
                        type="image/*"
+                       setLoading={setLoading}
                       />
                     </div>
                     <div className="max-w-[100px]">
-                      <PrimaryButton title="Save" />
+                      <PrimaryButton title="Save" disabled={loading}/>
                     </div>
                   </>)}
                 </form>
