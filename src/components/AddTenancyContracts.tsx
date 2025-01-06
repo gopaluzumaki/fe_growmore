@@ -474,7 +474,10 @@ const AddTenancyContracts = () => {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
+          //id
           propertyName: propertyData?.name,
+          //name
+          propertyName1: propertyData?.name1,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
 
@@ -677,6 +680,7 @@ const AddTenancyContracts = () => {
 
         // property details
         property: formValues.propertyName,
+        custom_property_name: formValues.propertyName1,
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
@@ -739,13 +743,12 @@ const AddTenancyContracts = () => {
                   custom_rent_amount: item.rent,
                   custom_status: item.status,
                   custom_name_on_the_cheque: item.cheque,
+
+                  // set customer email for notification purpose
+                  custom_send_email: tenantDetails.custom_email,
                 };
               })
-            : [
-                {
-                  custom_comments: "",
-                },
-              ],
+            : [],
       });
       if (res) {
         navigate("/contracts");
