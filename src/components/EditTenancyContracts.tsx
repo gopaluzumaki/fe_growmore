@@ -714,7 +714,7 @@ const EditTenancyContracts = () => {
         if (
           formValues?.leaseItems &&
           formValues?.numberOfChecks &&
-          formValues?.tenancyStatus !== "Renewal" &&
+          // formValues?.tenancyStatus !== "Renewal" &&
           formValues?.leaseItems?.length == formValues.numberOfChecks
         ) {
           formValues.leaseItems.forEach((lease, index) => {
@@ -913,9 +913,10 @@ const EditTenancyContracts = () => {
           return {
             ...prevData,
 
-            numberOfChecks: "",
+            numberOfChecks: null,
             bankName: "",
             chequeDate: "",
+            leaseItems: [],
           };
         });
 
