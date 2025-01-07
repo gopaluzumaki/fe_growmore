@@ -282,27 +282,32 @@ export const cheque_number_form_details = [
     label: "Cheque Name",
     name: "cheque",
     type: "text",
+    required: true,
   },
   {
     label: "Cheque Number",
     name: "chequeNumber",
     type: "number",
+    required: true,
   },
   {
     label: "Cheque Date",
     name: "dateOfCheque",
     type: "date",
+    required: true,
   },
   {
     label: "Status",
     name: "status",
     type: "mantineSelect",
     values: ["Clear", "Hold"],
+    required: true,
   },
   {
     label: "Duration",
     name: "duration",
     type: "number",
+    required: true,
   },
   {
     label: "Comments",
@@ -318,15 +323,26 @@ export const cheque_number_form_details = [
 ];
 
 export const Add_Contract_Details = [
-  { label: "Start Date", name: "startDate", type: "date" },
-  { label: "End Date", name: "endDate", type: "date" },
+  { label: "Start Date", name: "startDate", type: "date", required: true },
+  { label: "End Date", name: "endDate", type: "date", required: true },
   {
     label: "Security Deposit Amount",
     name: "securityDepositeAmt",
     type: "text",
+    required: true,
   },
-  { label: "Brokerage Amount", name: "brokerageAmt", type: "text" },
-  { label: "Notice Period", name: "notice_period", type: "text" },
+  {
+    label: "Brokerage Amount",
+    name: "brokerageAmt",
+    type: "text",
+    required: true,
+  },
+  {
+    label: "Notice Period",
+    name: "notice_period",
+    type: "text",
+    required: true,
+  },
   // { label: "Property no", name: "custom_property_no", type: "text" },
   // {
   //   label: "Mode of Payment",
@@ -343,9 +359,19 @@ export const Add_TenancyContractProperty = [
   //   type: "dropdown",
   //   values: ["Commercial", "Residential"],
   // },
-  { label: "Unit Number", name: "propertyUnits", type: "mantineSelect" },
+  {
+    label: "Unit Number",
+    name: "propertyUnits",
+    type: "mantineSelect",
+    required: true,
+  },
   // { label: "Location / Area", name: "propertyLocation", type: "text" },
-  { label: "Rent Amount to Pay", name: "propertyRent", type: "text" },
+  {
+    label: "Rent Amount to Pay",
+    name: "propertyRent",
+    type: "text",
+    required: true,
+  },
   // { label: "Square ft of unit", name: "sqFoot", type: "text" },
   // { label: "Square m of unit", name: "sqMeter", type: "text" },
   // { label: "Price/ Square m", name: "priceSqMeter", type: "text" },

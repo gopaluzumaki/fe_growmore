@@ -366,7 +366,7 @@ const EditTenancyContracts = () => {
             if (item?.custom_name_of_owner)
               await handleDropDown("ownerName", item.custom_name_of_owner);
             if (item?.property) {
-              await handleDropDown("propertyName", item.property);
+              await handleDropDown("propertyName1", item.property);
             }
             if (item?.custom_unit_name) {
               await handleDropDown("propertyUnits", item.custom_unit_name);
@@ -391,8 +391,8 @@ const EditTenancyContracts = () => {
               custom_property_no: item.custom_property_no,
               custom_premises_no: item.custom_premises_no,
               custom_mode_of_payment: item.custom_mode_of_payment,
-              propertyName: item.property,
-              propertyName1: item.custom_property_name,
+              propertyName1: item.property,
+              propertyName: item.custom_property_name,
               propertyType: item.custom_type,
               propertyLocation: item.custom_location__area,
               propertyRent: item.custom_rent_amount_to_pay,
@@ -800,7 +800,7 @@ const EditTenancyContracts = () => {
   };
 
   const handleDropDown = async (name, item) => {
-    if (name === "propertyName") {
+    if (name === "propertyName1") {
       // Fetch property data based on the selected property
 
       const res = await fetchProperty(item);
@@ -811,9 +811,9 @@ const EditTenancyContracts = () => {
         setFormValues((prevData) => ({
           ...prevData,
           // id
-          propertyName: propertyData?.name,
+          propertyName1: propertyData?.name,
           //name
-          propertyName1: propertyData?.name1,
+          propertyName: propertyData?.name1,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
           propertyStatus: propertyData?.status,
@@ -1016,8 +1016,8 @@ const EditTenancyContracts = () => {
         custom_mode_of_payment: "Cheque",
 
         // property details
-        property: formValues.propertyName,
-        custom_property_name: formValues.propertyName1,
+        property: formValues.propertyName1,
+        custom_property_name: formValues.propertyName,
 
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
@@ -1029,10 +1029,11 @@ const EditTenancyContracts = () => {
         propertyDoc: propertyImgUrl,
 
         // customer details
-        lease_customer: formValues.tenantName,
-        customer: formValues.tenantName,
-        custom_contact_number: formValues.tenantContact,
-        custom_email: formValues.tenantEmail,
+        lease_customer: tenantDetails.name,
+        customer: tenantDetails.name,
+        custom_contact_number: tenantDetails.custom_contact_number_of_customer,
+        custom_email: tenantDetails.custom_email,
+        custom_customer_type: tenantDetails.customer_type,
         custom_city: formValues.tenantCity,
         custom_passport_number: formValues.tenantPassport,
         custom_passport_expiry_date: formatDateToYYMMDD(
@@ -1798,9 +1799,9 @@ const EditTenancyContracts = () => {
                           value: item?.name,
                           label: item?.property,
                         }))}
-                        value={formValues.propertyName}
+                        value={formValues.propertyName1}
                         onChange={(value) =>
-                          handleDropDown("propertyName", value)
+                          handleDropDown("propertyName1", value)
                         }
                         styles={{
                           label: {
@@ -2211,6 +2212,7 @@ const EditTenancyContracts = () => {
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                       <MantineSelect
+                        required
                         label="Customer Name"
                         placeholder="Select Property"
                         data={tenantList.map((value) => {
@@ -2395,26 +2397,31 @@ const EditTenancyContracts = () => {
                             )
                         )} */}
                     </div>
-                    {formValues.tenantName ? (
+                    {tenantDetails ? (
                       <div className="grid grid-cols-2 gap-4">
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            Customer Name : {formValues.tenantName}
+                            Customer Name :{" "}
+                            {tenantDetails && tenantDetails.name}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            Customer Email : {formValues.tenantEmail}
+                            Customer Email :{" "}
+                            {tenantDetails && tenantDetails.custom_email}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            Customer Contact : {formValues.tenantContact}
+                            Customer Contact :{" "}
+                            {tenantDetails &&
+                              tenantDetails.custom_contact_number_of_customer}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
-                            Customer Type : {formValues.tenantType}
+                            Customer Type :{" "}
+                            {tenantDetails && tenantDetails.customer_type}
                           </label>
                         </div>
                       </div>

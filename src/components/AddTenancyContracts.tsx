@@ -462,7 +462,7 @@ const AddTenancyContracts = () => {
   //   };
 
   const handleDropDown = async (name, item) => {
-    if (name === "propertyName") {
+    if (name === "propertyName1") {
       // Fetch property data based on the selected property
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
@@ -472,9 +472,9 @@ const AddTenancyContracts = () => {
         setFormValues((prevData) => ({
           ...prevData,
           //id
-          propertyName: propertyData?.name,
+          propertyName1: propertyData?.name,
           //name
-          propertyName1: propertyData?.name1,
+          propertyName: propertyData?.name1,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
 
@@ -673,8 +673,8 @@ const AddTenancyContracts = () => {
         custom_mode_of_payment: "Cheque",
 
         // property details
-        property: formValues.propertyName,
-        custom_property_name: formValues.propertyName1,
+        property: formValues.propertyName1,
+        custom_property_name: formValues.propertyName,
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
@@ -684,10 +684,12 @@ const AddTenancyContracts = () => {
         custom_number_of_unit: formValues.custom_number_of_unit,
         propertyDoc: propertyImgUrl,
         // customer details
-        lease_customer: formValues.tenantName,
-        customer: formValues.tenantName,
-        custom_contact_number: formValues.tenantContact,
-        custom_email: formValues.tenantEmail,
+        lease_customer: tenantDetails.name,
+        customer: tenantDetails.name,
+        custom_contact_number: tenantDetails.custom_contact_number_of_customer,
+        custom_email: tenantDetails.custom_email,
+        custom_customer_type: tenantDetails.customer_type,
+
         custom_city: formValues.tenantCity,
         custom_passport_number: formValues.tenantPassport,
         custom_passport_expiry_date: formatDateToYYMMDD(
@@ -790,6 +792,8 @@ const AddTenancyContracts = () => {
                     <MantineSelect
                       label="Status"
                       placeholder="Status"
+                      required
+                      name="tenancyStatus"
                       data={["Active", "Draft"]}
                       onChange={(value) =>
                         handleDropDown("tenancyStatus", value)
@@ -830,7 +834,7 @@ const AddTenancyContracts = () => {
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
                       {Add_Contract_Details.map(
-                        ({ label, name, type, values }) => {
+                        ({ label, name, type, values, required }) => {
                           if (
                             type === "text" &&
                             name !== "chequeNo" &&
@@ -839,6 +843,7 @@ const AddTenancyContracts = () => {
                           ) {
                             return (
                               <Input
+                                required={required ?? false}
                                 key={name}
                                 label={label}
                                 name={name}
@@ -860,6 +865,7 @@ const AddTenancyContracts = () => {
                           ) {
                             return (
                               <Select
+                                required={required ?? false}
                                 key={name}
                                 onValueChange={(item) =>
                                   handleDropDown(name, item)
@@ -883,6 +889,7 @@ const AddTenancyContracts = () => {
                           } else if (type === "date") {
                             return (
                               <CustomDatePicker
+                                required={required ?? false}
                                 key={name}
                                 selectedDate={formValues[name] as Date}
                                 onChange={(date) =>
@@ -958,13 +965,14 @@ const AddTenancyContracts = () => {
                         <MantineSelect
                           label="Property Name"
                           placeholder="Select Property"
+                          required
                           data={propertyList.map((item) => ({
                             value: item?.name,
                             label: item?.property,
                           }))}
-                          value={formValues.propertyName}
+                          value={formValues.propertyName1}
                           onChange={(value) =>
-                            handleDropDown("propertyName", value)
+                            handleDropDown("propertyName1", value)
                           }
                           styles={{
                             label: {
@@ -989,9 +997,10 @@ const AddTenancyContracts = () => {
                         />
 
                         {Add_TenancyContractProperty.map(
-                          ({ label, name, type, values }) =>
+                          ({ label, name, type, values, required }) =>
                             type === "text" ? (
                               <Input
+                                required={required ?? false}
                                 key={name}
                                 label={label}
                                 name={name}
@@ -1003,6 +1012,7 @@ const AddTenancyContracts = () => {
                               />
                             ) : type === "dropdown" ? (
                               <Select
+                                required={required ?? false}
                                 onValueChange={(item) =>
                                   handleDropDown(name, item)
                                 }
@@ -1023,6 +1033,7 @@ const AddTenancyContracts = () => {
                               </Select>
                             ) : type === "date" ? (
                               <CustomDatePicker
+                                required={required ?? false}
                                 selectedDate={formValues[name] as Date}
                                 onChange={(date) =>
                                   handleDateChange(name, date)
@@ -1033,6 +1044,7 @@ const AddTenancyContracts = () => {
                               />
                             ) : type === "mantineSelect" ? (
                               <MantineSelect
+                                required={required ?? false}
                                 label={label}
                                 placeholder={label}
                                 data={propertyUnits.map((unit) => ({
@@ -1210,6 +1222,7 @@ const AddTenancyContracts = () => {
                     </p>
                     <div className="flex flex-col gap-4">
                       <MantineSelect
+                        required
                         label="Customer Name"
                         placeholder="Select Customer"
                         data={tenantList.map((value) => {
@@ -1240,7 +1253,7 @@ const AddTenancyContracts = () => {
                         }}
                         searchable
                       />
-                      {formValues.tenantName ? (
+                      {tenantDetails ? (
                         <div className="grid grid-cols-2 gap-4">
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
@@ -1470,123 +1483,129 @@ const AddTenancyContracts = () => {
         transitionProps={{ transition: "fade", duration: 200 }}
         size="60%"
       >
-        <form className="flex flex-col">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            console.log("Original Table Data", tableData);
+            const updatedTableData = tableData.map((item, index) =>
+              index === paymentDetailsModalOpen
+                ? {
+                    ...item,
+                    chequeDate: formatDateToYYYYMMDD(
+                      formValues.dateOfCheque || item.chequeDate
+                    ),
+                    cheque: formValues.cheque || item.cheque,
+                    chequeNumber: formValues.chequeNumber || item.chequeNumber,
+                    status: formValues.status || item.status,
+                    duration: formValues.duration || item.duration,
+                    comments: formValues.comments || item.comments,
+                    approvalStatus:
+                      formValues.approvalStatus || item.approvalStatus,
+                  }
+                : item
+            );
+
+            setTableData(updatedTableData);
+            setPaymentDetailsModalOpen(null);
+
+            console.log("Updated Table Data", updatedTableData);
+          }}
+          className="flex flex-col"
+        >
           <div className="">
             <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
               <span className="pb-1 border-b border-[#7C8DB5]">Cheque</span>
               <span className="pb-1">Details</span>
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(420px,1fr))] gap-4 mb-6">
-              {cheque_number_form_details.map(({ label, name, type, values }) =>
-                (type === "text") | (type === "number") ? (
-                  <Input
-                    key={name}
-                    label={label}
-                    name={name}
-                    type={type}
-                    // value={
-                    //   name === "bankName"
-                    //     ? selectedCheque?.bankName || ""
-                    //     : name === "anualPriceRent"
-                    //     ? selectedCheque?.rent || ""
-                    //     : selectedCheque?.bankName || ""
-                    // }
-                    value={formValues[name] || ""}
-                    onChange={(e) =>
-                      setFormValues({ ...formValues, [name]: e.target.value })
-                    }
-                    className="w-full p-4 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] rounded-lg outline-none"
-                  />
-                ) : type === "mantineSelect" ? (
-                  <MantineSelect
-                    variant="filled"
-                    key={name}
-                    label={label}
-                    placeholder={label}
-                    data={values}
-                    value={formValues[name] || ""}
-                    onChange={(value) =>
-                      setFormValues({ ...formValues, [name]: value })
-                    }
-                    disabled={
-                      name === "approvalStatus" && formValues.status !== "Hold"
-                    }
-                    styles={{
-                      label: {
-                        marginBottom: "7px",
-                        color: "#7C8DB5",
-                        fontSize: "16px",
-                      },
-                      input: {
-                        border: "1px solid #CCDAFF",
-                        borderRadius: "8px",
-                        padding: "24px",
-                        fontSize: "16px",
-                        color: "#1A202C",
-                      },
-                      dropdown: {
-                        backgroundColor: "white",
-                        borderRadius: "8px",
-                        border: "1px solid #E2E8F0",
-                      },
-                    }}
-                    searchable
-                  />
-                ) : type === "text-area" ? (
-                  <Textarea
-                    value={formValues[name] || ""}
-                    onChange={(e) =>
-                      setFormValues({ ...formValues, [name]: e.target.value })
-                    }
-                    variant="filled"
-                    radius="xs"
-                    label={label}
-                    placeholder="Input placeholder"
-                  />
-                ) : type === "date" ? (
-                  <CustomDatePicker
-                    selectedDate={formValues[name] as Date}
-                    onChange={(date) =>
-                      handleDateChange(name, date.toDateString())
-                    }
-                    label={label}
-                    placeholder="Select Date"
-                    value={formValues[name]}
-                  />
-                ) : null
+              {cheque_number_form_details.map(
+                ({ label, name, type, values, required }) =>
+                  (type === "text") | (type === "number") ? (
+                    <Input
+                      required={required ?? false}
+                      key={name}
+                      label={label}
+                      name={name}
+                      type={type}
+                      // value={
+                      //   name === "bankName"
+                      //     ? selectedCheque?.bankName || ""
+                      //     : name === "anualPriceRent"
+                      //     ? selectedCheque?.rent || ""
+                      //     : selectedCheque?.bankName || ""
+                      // }
+                      value={formValues[name] || ""}
+                      onChange={(e) =>
+                        setFormValues({ ...formValues, [name]: e.target.value })
+                      }
+                      className="w-full p-4 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] rounded-lg outline-none"
+                    />
+                  ) : type === "mantineSelect" ? (
+                    <MantineSelect
+                      required={required ?? false}
+                      variant="filled"
+                      key={name}
+                      label={label}
+                      placeholder={label}
+                      data={values}
+                      value={formValues[name] || ""}
+                      onChange={(value) =>
+                        setFormValues({ ...formValues, [name]: value })
+                      }
+                      disabled={
+                        name === "approvalStatus" &&
+                        formValues.status !== "Hold"
+                      }
+                      styles={{
+                        label: {
+                          marginBottom: "7px",
+                          color: "#7C8DB5",
+                          fontSize: "16px",
+                        },
+                        input: {
+                          border: "1px solid #CCDAFF",
+                          borderRadius: "8px",
+                          padding: "24px",
+                          fontSize: "16px",
+                          color: "#1A202C",
+                        },
+                        dropdown: {
+                          backgroundColor: "white",
+                          borderRadius: "8px",
+                          border: "1px solid #E2E8F0",
+                        },
+                      }}
+                      searchable
+                    />
+                  ) : type === "text-area" ? (
+                    <Textarea
+                      required={required ?? false}
+                      value={formValues[name] || ""}
+                      onChange={(e) =>
+                        setFormValues({ ...formValues, [name]: e.target.value })
+                      }
+                      variant="filled"
+                      radius="xs"
+                      label={label}
+                      placeholder="Input placeholder"
+                    />
+                  ) : type === "date" ? (
+                    <CustomDatePicker
+                      required={required ?? false}
+                      selectedDate={formValues[name] as Date}
+                      onChange={(date) =>
+                        handleDateChange(name, date.toDateString())
+                      }
+                      label={label}
+                      placeholder="Select Date"
+                      value={formValues[name]}
+                    />
+                  ) : null
               )}
             </div>
 
-            <PrimaryButton
-              onClick={() => {
-                console.log("Original Table Data", tableData);
-                const updatedTableData = tableData.map((item, index) =>
-                  index === paymentDetailsModalOpen
-                    ? {
-                        ...item,
-                        chequeDate: formatDateToYYYYMMDD(
-                          formValues.dateOfCheque || item.chequeDate
-                        ),
-                        cheque: formValues.cheque || item.cheque,
-                        chequeNumber:
-                          formValues.chequeNumber || item.chequeNumber,
-                        status: formValues.status || item.status,
-                        duration: formValues.duration || item.duration,
-                        comments: formValues.comments || item.comments,
-                        approvalStatus:
-                          formValues.approvalStatus || item.approvalStatus,
-                      }
-                    : item
-                );
-
-                setTableData(updatedTableData);
-                setPaymentDetailsModalOpen(null);
-
-                console.log("Updated Table Data", updatedTableData);
-              }}
-              type="button"
-              title="Edit"
-            />
+            <PrimaryButton type="submit" title="Edit" />
           </div>
           {/* <div className="pt-4">
             <PrimaryButton type="submit" title="Save Details" />
