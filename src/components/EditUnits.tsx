@@ -76,6 +76,7 @@ const EditUnits = () => {
   const [propertyList, setPropertyList] = useState<any[]>([]);
   const [countryList,setCountryList]=useState([])
   const { id } = useParams();
+  const [loading,setLoading] = useState(false)
 
 useEffect(()=>{
   getCountryListData()
@@ -431,6 +432,7 @@ setCountryList(res?.data?.data)
                                              setImgUrls(urls);
                                            }}
                                            type="image/*"
+                                           setLoading={setLoading}
                                          />
                                        </div>
                   </div>
@@ -474,7 +476,7 @@ setCountryList(res?.data?.data)
                       ))}
                     </div></>)}
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Save" disabled={loading}/>
                   </div>
                 </form>
               </div>

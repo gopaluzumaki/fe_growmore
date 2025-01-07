@@ -26,6 +26,7 @@ const MoveIn = () => {
     "Unit Number",
     "Start Date",
     "End Date",
+    "Created On",
     "Status",
     "Actions ",
   ];
@@ -191,6 +192,7 @@ const MoveIn = () => {
                         <td className="p-2 py-3">{item.custom_unit_no}</td>
                         <td className="p-2 py-3">{item.custom_start_date}</td>
                         <td className="p-2 py-3">{item.custom_end_date}</td>
+                        <td className="p-2 py-3">{item.creation.split(" ")[0]}</td>
                         <td className="p-2 py-3">
 
                           {item.custom_statusmi}

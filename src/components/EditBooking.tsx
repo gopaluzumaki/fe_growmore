@@ -75,7 +75,7 @@ const EditBooking = () => {
   const [propertyUnits, setPropertyUnits] = useState([]);
   const [imageArray, setImageArray] = useState([])
   const [countryList,setCountryList]=useState([])
-
+  const [loading,setLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
     propertyName: "",
@@ -502,6 +502,7 @@ setCountryList(res?.data?.data)
                                                                  setImgUrls(urls);
                                                                }}
                                                               type="image/*"
+                                                              setLoading={setLoading}
                                                              />
                                                            </div>
                   </div>
@@ -544,7 +545,7 @@ setCountryList(res?.data?.data)
                       ))}
                     </div></>)}
                   <div className="mt-4 max-w-[200px]">
-                    <PrimaryButton type="submit" title="Save Update" />
+                    <PrimaryButton type="submit" title="Save Update" disabled={loading}/>
                   </div>
                 </form>
               </div>

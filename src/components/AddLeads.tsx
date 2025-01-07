@@ -48,7 +48,7 @@ const AddLeads = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState<string[]>([]);
-
+  const [loading,setLoading] = useState(false)
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -242,6 +242,7 @@ const AddLeads = () => {
                                               setImgUrls(urls);
                                             }}
                                             type="image/*"
+                                            setLoading={setLoading}
                                           />
                                         </div>
                   </div>
@@ -285,7 +286,7 @@ const AddLeads = () => {
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" disabled={errors?.email?.length>0||errors?.contact?.length>0}/>
+                    <PrimaryButton title="Save" disabled={errors?.email?.length>0||errors?.contact?.length>0||loading}/>
                   </div>
                 </form>
               </div>

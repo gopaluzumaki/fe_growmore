@@ -115,6 +115,7 @@ const EditMoveIn = () => {
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [propertyName, setPropertyName] = useState('')
+  const [loading,setLoading] = useState(false)
 
   useEffect(() => {
     const data = async () => {
@@ -419,10 +420,11 @@ const EditMoveIn = () => {
                           setImgUrls(urls);
                         }}
                         type="image/*"
+                        setLoading={setLoading}
                       />
                     </div>
                     <div className="max-w-[100px]">
-                      <PrimaryButton title="Save" />
+                      <PrimaryButton title="Save" disabled={loading}/>
                     </div>
                   </>)}
                 </form>

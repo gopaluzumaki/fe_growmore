@@ -279,7 +279,7 @@ export const payment_details = [
 
 export const cheque_number_form_details = [
   {
-    label: "Cheque Name",
+    label: "Beneficiary Name",
     name: "cheque",
     type: "text",
     required: true,

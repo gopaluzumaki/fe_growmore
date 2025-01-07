@@ -20,6 +20,7 @@ import {
 } from "../components/ui/select";
 import CustomDatePicker from "./CustomDatePicker";
 import { formatDateToYYMMDD } from "../lib/utils";
+import CustomFileUpload from "./ui/CustomFileUpload";
 interface FormData {
   ownerName: string;
   gender: string;
@@ -43,10 +44,13 @@ interface FormData {
 const AddTenants = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrl, setImgUrl] = useState("");
+  const [imgUrls, setImgUrls] = useState([]);
+  const [imageArray, setImageArray] = useState([])
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const location = useLocation();
-  const [countryList,setCountryList]=useState([])
+  const [countryList, setCountryList] = useState([])
+  const [loading, setLoading] = useState(false)
   const { id } = useParams();
   const [formData, setFormData] = useState<FormData>({
     ownerType: "",
@@ -73,14 +77,14 @@ const AddTenants = () => {
     poaHolder: "",
     description: "",
   });
-useEffect(()=>{
-  getCountryListData()
-},[])
-const getCountryListData=async()=>{
-const res=await getCountryList()
+  useEffect(() => {
+    getCountryListData()
+  }, [])
+  const getCountryListData = async () => {
+    const res = await getCountryList()
 
-setCountryList(res?.data?.data)
-}
+    setCountryList(res?.data?.data)
+  }
   useEffect(() => {
     console.log("from edit tenant", id);
     const fetchingTenantData = async () => {
@@ -117,12 +121,16 @@ setCountryList(res?.data?.data)
                 countryOfIssuance: item?.custom_country_of_issuance,
                 emiratesId: item?.custom_emirates_id,
                 emiratesIdExpiryDate: item?.custom_emirates_id_expiry_date,
-                custom_date_of_birth:item?.custom_date_of_birth,
-        custom_visa_start_date:item?.custom_visa_start_date,
-        custom_visa_end_date:item?.custom_visa_end_date
+                custom_date_of_birth: item?.custom_date_of_birth,
+                custom_visa_start_date: item?.custom_visa_start_date,
+                custom_visa_end_date: item?.custom_visa_end_date
               };
             });
-            setImgUrl(item?.image || "");
+            setImgUrl(item?.custom_signature_image || "");
+          }
+          if (item?.custom_attachment_table?.length > 0) {
+            const imageArray = item?.custom_attachment_table?.map((item) => item.image);
+            setImageArray(imageArray)
           }
         } catch (error) {
           console.log(error);
@@ -134,6 +142,7 @@ setCountryList(res?.data?.data)
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
+      setLoading(true)
       const file = event.target.files[0];
       setSelectedFile(file);
 
@@ -141,7 +150,15 @@ setCountryList(res?.data?.data)
         const res = await uploadFile(file);
         setImgUrl(res?.data?.message?.file_url);
       }
+      setLoading(false)
     }
+  };
+  useEffect(() => {
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  }, [imgUrls])
+  const handleRemoveImage = (index) => {
+    const updatedImages = imageArray.filter((_, i) => i !== index);
+    setImageArray(updatedImages); // Update state with the remaining images
   };
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -151,33 +168,33 @@ setCountryList(res?.data?.data)
   const [errors, setErrors] = useState({ customerContact: '', email: '' });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if(name==="customerContact"){
+    if (name === "customerContact") {
       if (!mobileRegex.test(value)) {
         setErrors((prev) => ({
           ...prev,
           customerContact: 'Mobile number must be 10 to 15 digits.',
         }));
       } else {
-        
+
         setErrors((prev) => ({ ...prev, customerContact: '' }));
       }
     }
-    else if(name==="email"){
-      if (!emailRegex.test(value)||value?.length>320) {
+    else if (name === "email") {
+      if (!emailRegex.test(value) || value?.length > 320) {
         setErrors((prev) => ({
           ...prev,
           email: 'Please enter a valid email address.',
         }));
       } else {
-        
+
         setErrors((prev) => ({ ...prev, email: '' }));
       }
     }
     // else{
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
     // }
   };
 
@@ -197,10 +214,13 @@ setCountryList(res?.data?.data)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+
     try {
       console.log("API Data => ", formData);
       const res = await updateTenant(id, {
-        image: imgUrl,
+        custom_signature_image: imgUrl,
+        custom_attachment_table: imageData,
         customer_type: formData.ownerType,
         customer_details: formData?.description,
         customer_name:
@@ -232,9 +252,9 @@ setCountryList(res?.data?.data)
         custom_emirates_id_expiry_date: formatDateToYYMMDD(
           formData.emiratesIdExpiryDate
         ),
-        custom_date_of_birth:formatDateToYYMMDD(formData?.custom_date_of_birth),
-        custom_visa_start_date:formatDateToYYMMDD(formData?.custom_visa_start_date),
-        custom_visa_end_date:formatDateToYYMMDD(formData?.custom_visa_end_date)
+        custom_date_of_birth: formatDateToYYMMDD(formData?.custom_date_of_birth),
+        custom_visa_start_date: formatDateToYYMMDD(formData?.custom_visa_start_date),
+        custom_visa_end_date: formatDateToYYMMDD(formData?.custom_visa_end_date)
       });
       if (res) {
         navigate("/tenants");
@@ -275,28 +295,28 @@ setCountryList(res?.data?.data)
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
-        {label}
-      </label>
-                        <Select
-                          onValueChange={(item) => {
-                            handleDropdownChange(name, item);
-                          }}
-                          value={formData[name]}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+                            {label}
+                          </label>
+                          <Select
+                            onValueChange={(item) => {
+                              handleDropdownChange(name, item);
+                            }}
+                            value={formData[name]}
+                          >
+                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {values?.map((item, i) => (
+                                <SelectItem key={i} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
@@ -325,30 +345,30 @@ setCountryList(res?.data?.data)
                             />
                           ) : type === "dropdown" ? (
                             <div>
-                            <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
-            {label}
-          </label>
-                            <Select
-                              onValueChange={(item) => {
-                                handleDropdownChange(name, item);
-                              }}
-                              value={formData[name]}
-                            >
-                              <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
-                                <div className="flex items-center">
-                                  <SelectValue placeholder={label} />
-                                </div>
-                              </SelectTrigger>
-                              <SelectContent
-                                onChange={() => console.log("hello")}
+                              <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+                                {label}
+                              </label>
+                              <Select
+                                onValueChange={(item) => {
+                                  handleDropdownChange(name, item);
+                                }}
+                                value={formData[name]}
                               >
-                                {(name==="country"?countryList:values)?.map((item, i) => (
-                                  <SelectItem key={i} value={name==="country"?item.name:item}>
-                                    {name==="country"?item.name:item}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                                <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
+                                  <div className="flex items-center">
+                                    <SelectValue placeholder={label} />
+                                  </div>
+                                </SelectTrigger>
+                                <SelectContent
+                                  onChange={() => console.log("hello")}
+                                >
+                                  {(name === "country" ? countryList : values)?.map((item, i) => (
+                                    <SelectItem key={i} value={name === "country" ? item.name : item}>
+                                      {name === "country" ? item.name : item}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
                           ) : type === "date" ? (
                             <CustomDatePicker
@@ -407,9 +427,9 @@ setCountryList(res?.data?.data)
                           <></>
                         )
                       )}
-                    <div>
+                      <div>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        <label>Image Attachment</label>
+                        <label>Upload Customer Signature</label>
                       </p>
                       <div
                         className={`flex items-center gap-3 p-2.5 bg-white border border-[#CCDAFF] rounded-md overflow-hidden`}
@@ -422,7 +442,72 @@ setCountryList(res?.data?.data)
                         />
                       </div>
                     </div>
+                    <div>
+                      
+                      <div className="mb-5">
+                        <CustomFileUpload
+                          onFilesUpload={(urls) => {
+                            setImgUrls(urls);
+                          }}
+                          type="image/*"
+                          setLoading={setLoading}
+                        />
+                      </div>
+                    </div>
                   </div>
+                  {imgUrl?.length > 0 && (<>
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        Uploaded Signature
+                      </p>
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+
+                          <div key={imgUrl} className="relative w-[100px] h-[100px]">
+                            <img
+                              className="w-full h-full rounded-md"
+                              src={
+                                imgUrl
+                                  ? `https://propms.erpnext.syscort.com/${imgUrl}`
+                                  : "/defaultProperty.jpeg"
+                              }
+                              alt="propertyImg"
+                            />
+                            <button
+                              type="button" // Prevent form submission
+                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              onClick={() => setImgUrl('')}
+                            >
+                              X
+                            </button>
+                          </div>
+                      </div>
+                    </>)}
+                  {imageArray?.length > 0 && (<>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                          Attachments
+                      </p>
+                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value
+                                ? `https://propms.erpnext.syscort.com/${value}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>)}
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
                       <label>Description</label>
@@ -436,7 +521,7 @@ setCountryList(res?.data?.data)
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" disabled={errors?.email?.length>0||errors?.customerContact?.length>0}/>
+                    <PrimaryButton title="Save" disabled={errors?.email?.length > 0 || errors?.customerContact?.length > 0 || loading} />
                   </div>
                 </form>
               </div>

@@ -68,7 +68,7 @@ const AddUnits = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState<string[]>([]);
-
+  const [loading,setLoading] = useState(false)
   const navigate = useNavigate();
   const [sqmValue, setSqmValue] = useState();
   const [priceSqFt, setPriceSqFt] = useState();
@@ -484,6 +484,7 @@ setCountryList(res?.data?.data)
                                               setImgUrls(urls);
                                             }}
                                            type="image/*"
+                                           setLoading={setLoading}
                                           />
                                         </div>
                   </div>
@@ -528,7 +529,7 @@ setCountryList(res?.data?.data)
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Save" disabled={loading}/>
                   </div>
                 </form>
               </div>

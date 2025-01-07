@@ -79,6 +79,7 @@ const AddLegal = () => {
   const [ownerImgUrl, setOwnerImgUrl] = useState("");
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const [propertyUnits, setPropertyUnits] = useState([]);
+  const [loading,setLoading] = useState(false)
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "Draft",
@@ -662,6 +663,7 @@ setLegalList(updatedLegalList); // Update the state
                           setImgUrls(urls);
                         }}
                        type="image/*"
+                       setLoading={setLoading}
                       />
                     </div>
                     {imageArray?.length > 0 && (<>
@@ -692,7 +694,7 @@ setLegalList(updatedLegalList); // Update the state
                     </div>
                   </>)}
                     <div className="max-w-[100px] mt-2">
-                      <PrimaryButton title="Save" />
+                      <PrimaryButton title="Save" disabled={loading}/>
                     </div>
                   </>)}
                 </form>

@@ -27,6 +27,7 @@ const MoveOut = () => {
     "Unit Number",
     "Start Date",
     "End Date",
+    "Created On",
     "Status",
     "Actions ",
   ];
@@ -195,6 +196,7 @@ const MoveOut = () => {
                             {item.custom_start_date}
                           </td>
                           <td className="p-2 py-3">{item.custom_end_date}</td>
+                          <td className="p-2 py-3">{item.creation.split(" ")[0]}</td>
                           <td className="p-2 py-3">
 
                             {item.custom_statusmo}

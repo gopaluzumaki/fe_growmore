@@ -118,6 +118,7 @@ const AddMaintenance = () => {
   const [propertyName, setPropertyName] = useState('')
   const [unitDetails, setUnitDetails] = useState([])
   const [damageLocationList,setDamageLocationList]=useState([])
+  const [loading,setLoading] = useState(false)
   const [showCustomerSection,setShowCustomerSection]=useState(false)
   useEffect(() => {
     getProperties();
@@ -706,6 +707,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                           setImgUrls(urls);
                         }}
                        type="image/*"
+                       setLoading={setLoading}
                       />
                     </div>
                     {imageArray?.length > 0 && (<>
@@ -736,7 +738,7 @@ setDamageLocationList(updatedDamageLocationList); // Update the state
                     </div>
                   </>)}
                     <div className="max-w-[100px] mt-2">
-                      <PrimaryButton title="Save" />
+                      <PrimaryButton title="Save" disabled={loading}/>
                     </div>
                   </>)}
                 </form>

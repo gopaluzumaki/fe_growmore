@@ -55,7 +55,7 @@ const EditLead = () => {
   const {id} = useParams()
   const location = useLocation();
   console.log("location-state :", id);
-
+  const [loading,setLoading] = useState(false)
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
@@ -283,6 +283,7 @@ const EditLead = () => {
                                               setImgUrls(urls);
                                             }}
                                             type="image/*"
+                                            setLoading={setLoading}
                                           />
                                         </div>
                   </div>
@@ -325,7 +326,7 @@ const EditLead = () => {
                       ))}
                     </div></>)}
                   <div className="mt-4 max-w-[200px]">
-                    <PrimaryButton title="Update Lead" disabled={errors?.email?.length>0||errors?.contact?.length>0}/>
+                    <PrimaryButton title="Update Lead" disabled={errors?.email?.length>0||errors?.contact?.length>0||loading}/>
                   </div>
                 </form>
               </div>

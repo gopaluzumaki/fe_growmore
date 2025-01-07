@@ -70,7 +70,7 @@ const AddBookReserve = () => {
   const [propertyUnits, setPropertyUnits] = useState([]);
   const [countryList,setCountryList]=useState([])
   const [imageArray, setImageArray] = useState<string[]>([]);
-
+  const [loading,setLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
     propertyName: "",
@@ -514,6 +514,7 @@ setCountryList(res?.data?.data)
                         setImgUrls(urls);
                       }}
                       type="image/*"
+                      setLoading={setLoading}
                     />
                   </div>
                   {imageArray?.length > 0 && (<>
@@ -556,7 +557,7 @@ setCountryList(res?.data?.data)
                     ></textarea>
                   </div>
                   <div type="button" className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Save" disabled={loading}/>
                   </div>
                 </form>
               </div>

@@ -30,7 +30,6 @@ const Property = () => {
     "Property Type",
     "Location",
     "Country",
-    "Status",
     "Actions",
   ];
   useEffect(() => {
@@ -129,7 +128,6 @@ const Property = () => {
                         <td className="p-2 py-3">{item?.type}</td>
                         <td className="p-2 py-3">{item?.custom_location}</td>
                         <td className="p-2 py-3">{item?.custom_country}</td>
-                        <td className="p-2 py-3">{item?.custom_status}</td>
                         <td className="p-2 py-3">
                           <div className="flex gap-3">
                             <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">
