@@ -27,7 +27,7 @@ export const API_URL = {
     "https://propms.erpnext.syscort.com/api/resource/Property%20Booking",
   Create_Lease: "https://propms.erpnext.syscort.com/api/resource/Lease",
   Lease_list:
-    "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22,%22start_date%22,%22end_date%22,%22custom_rent_amount_to_pay%22,%22custom_price__rent_annually%22,%22custom_unit_name%22]&order_by=modified desc",
+    "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22,%22start_date%22,%22end_date%22,%22custom_rent_amount_to_pay%22,%22custom_price__rent_annually%22,%22custom_unit_name%22,%22custom_property_name%22]&order_by=modified desc",
   Tenancy_contract_pdf:
     "http://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=",
   MoveIn_List:
@@ -201,7 +201,7 @@ export const getTenancyContractList = async () => {
 };
 
 export const createProperty = async (propertyData: any) => {
-  console.log(propertyData,"vgh")
+  console.log(propertyData, "vgh");
   const response = await axios.post(API_URL.Create_Property, propertyData, {
     auth: {
       username: APP_AUTH.USERNAME,
@@ -704,6 +704,7 @@ export const fetchTenancyData = async () => {
       password: APP_AUTH.PASSWORD,
     },
   });
+
   return response;
 };
 

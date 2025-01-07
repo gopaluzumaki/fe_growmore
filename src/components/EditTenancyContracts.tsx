@@ -377,7 +377,10 @@ const EditTenancyContracts = () => {
 
             setFormValues((prevData) => ({
               ...prevData,
-              chequeDate: mappedLeaseItems[0].chequeDate,
+              chequeDate:
+                mappedLeaseItems && mappedLeaseItems?.length > 0
+                  ? mappedLeaseItems[0]?.chequeDate
+                  : "",
               tenancyStatus: item?.lease_status,
               bankName: item.custom_bank_name,
               numberOfChecks: item?.custom_no_of__cheques,
@@ -392,6 +395,7 @@ const EditTenancyContracts = () => {
               custom_premises_no: item.custom_premises_no,
               custom_mode_of_payment: item.custom_mode_of_payment,
               propertyName: item.property,
+              propertyName1: item.custom_property_name,
               propertyType: item.custom_type,
               propertyLocation: item.custom_location__area,
               propertyRent: item.custom_rent_amount_to_pay,
@@ -819,7 +823,10 @@ const EditTenancyContracts = () => {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
+          // id
           propertyName: propertyData?.name,
+          //name
+          propertyName1: propertyData?.name1,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
           propertyStatus: propertyData?.status,
@@ -1026,6 +1033,8 @@ const EditTenancyContracts = () => {
 
         // property details
         property: formValues.propertyName,
+        custom_property_name: formValues.propertyName1,
+
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
@@ -1089,6 +1098,9 @@ const EditTenancyContracts = () => {
                   custom_rent_amount: item.rent,
                   custom_status: item.status,
                   custom_name_on_the_cheque: item.cheque,
+
+                  // set customer email for notification purpose
+                  custom_send_email: tenantDetails.custom_email,
                 };
               })
             : [
@@ -1195,8 +1207,8 @@ const EditTenancyContracts = () => {
       border: "1px solid gray",
     },
   };
-  const username=APP_AUTH.USERNAME
-  const password=APP_AUTH.PASSWORD
+  const username = APP_AUTH.USERNAME;
+  const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
   return (
     <main>
@@ -1225,34 +1237,38 @@ const EditTenancyContracts = () => {
                 <form className="relative" onSubmit={handleSubmit}>
                   <div
                     className="absolute top-4 right-4 px-4 py-2 bg-blue-400 rounded-md text-white cursor-pointer"
-                    onClick={async()=>{
+                    onClick={async () => {
                       try {
-                            const response = await fetch(`https://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=`+location.state, {
-                              method: "GET",
-                              credentials: "include", // Ensures cookies for authenticated sessions are included
-                              headers: {
-                                Authorization: `Basic ${credentials}`, // Attach Basic Auth header
-                              },
-                            });
-                           
-                            if (!response.ok) {
-                              throw new Error("Failed to fetch PDF");
-                            }
-                      
-                            const blob = await response.blob();
-                            const url = window.URL.createObjectURL(blob);
-                      
-                            const link = document.createElement("a");
-                            link.href = url;
-                            link.download = `${location.state}.pdf`; // Set the desired filename
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            window.URL.revokeObjectURL(url);
-                          } catch (error) {
-                            console.error("Error downloading PDF:", error);
-                            alert("Failed to download PDF.");
+                        const response = await fetch(
+                          `https://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=` +
+                            location.state,
+                          {
+                            method: "GET",
+                            credentials: "include", // Ensures cookies for authenticated sessions are included
+                            headers: {
+                              Authorization: `Basic ${credentials}`, // Attach Basic Auth header
+                            },
                           }
+                        );
+
+                        if (!response.ok) {
+                          throw new Error("Failed to fetch PDF");
+                        }
+
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = `${location.state}.pdf`; // Set the desired filename
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                      } catch (error) {
+                        console.error("Error downloading PDF:", error);
+                        alert("Failed to download PDF.");
+                      }
                     }}
                   >
                     Export to PDF
