@@ -10,7 +10,7 @@ const getLeadsData=async()=>{
   const res=await fetchLeadData()
   const data=res?.data?.data
   const monthCounts = data.reduce((acc, item) => {
-    const month = new Date(item.creation).getMonth(); // Get 0-based month
+    const month = new Date(item.modified).getMonth(); // Get 0-based month
     acc[month] = (acc[month] || 0) + 1; // Increment count for the month
     return acc;
 }, Array(12).fill(0));

@@ -21,7 +21,6 @@ export const Add_Units = [
     name: "custom_status",
     type: "dropdown",
     values: ["Vacant", "Legal", "Occupied", "Under Maintenance"],
-    readonly: true,
   },
   { label: "Renting Price", name: "rent", type: "text" },
   { label: "Selling Price", name: "sellingPrice", type: "text" },
@@ -63,11 +62,11 @@ export const Add_Property = [
   { label: "Area", name: "custom_area", type: "text" },
   { label: "City", name: "custom_city", type: "text" },
   { label: "Country", name: "custom_country", type: "dropdown" },
-  {
-    label: "Status",
-    name: "custom_status",
-    type: "dropdown",
-    values: ["Vacant", "Legal", "Occupied", "Under Maintenance"],
+  // {
+  //   label: "Status",
+  //   name: "custom_status",
+  //   type: "dropdown",
+  //   values: ["Vacant", "Legal", "Occupied", "Under Maintenance"],
     // values: [
     //   "Available",
     //   "Booked",
@@ -81,7 +80,7 @@ export const Add_Property = [
     //   "Sold",
     //   "Vacating",
     // ],
-  },
+  // },
   { label: "Amenities", name: "custom_amenities", type: "text" },
   // { label: "Price / Rent", name: "rent", type: "text" },
   { label: "Description", name: "description", type: "textArea" },

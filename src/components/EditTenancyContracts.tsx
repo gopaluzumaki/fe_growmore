@@ -1660,6 +1660,15 @@ const EditTenancyContracts = () => {
                               borderd
                               bgLight
                             />
+                            <Input
+                              label="Price / Rent Annually"
+                              name="anualPriceRent"
+                              type="number"
+                              value={formValues?.anualPriceRent}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                            />
                           </div>
                         ) : (
                           <div>
