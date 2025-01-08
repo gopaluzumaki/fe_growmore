@@ -829,6 +829,8 @@ const EditTenancyContracts = () => {
           propertyName1: propertyData?.name,
           //name
           propertyName: propertyData?.name1,
+          propertyUnits:null,
+          propertyRent:'',
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
           propertyStatus: propertyData?.status,
@@ -1190,7 +1192,6 @@ const EditTenancyContracts = () => {
   //     console.log(err);
   //   }
   // };
-
   const getChequeData = (name, label, type) => {
     return (
       <Input
@@ -1384,7 +1385,10 @@ const EditTenancyContracts = () => {
                             parseFloat(
                               formValues.custom_duration *
                                 formValues.custom_day_rate
-                            ).toFixed(2) || 0
+                            )>=0?parseFloat(
+                              formValues.custom_duration *
+                                formValues.custom_day_rate
+                            ).toFixed(2) : 0
                           }
                           borderd
                           bgLight
@@ -1944,7 +1948,7 @@ const EditTenancyContracts = () => {
                                 label: unit.custom_unit_number,
                                 unit,
                               }))}
-                              value={formValues.propertyUnits || ""}
+                              value={formValues.propertyUnits || null}
                               onChange={(value) => {
                                 handleDropDown("propertyUnits", value);
                               }}
@@ -2700,7 +2704,33 @@ const EditTenancyContracts = () => {
         transitionProps={{ transition: "fade", duration: 200 }}
         size="60%"
       >
-        <form className="flex flex-col">
+        <form className="flex flex-col" onSubmit={(e) => {
+          e.preventDefault()
+                console.log("Original Table Data", tableData);
+                const updatedTableData = tableData.map((item, index) =>
+                  index === paymentDetailsModalOpen
+                    ? {
+                        ...item,
+                        chequeDate: formatDateToYYYYMMDD(
+                          formValues.dateOfCheque || item.chequeDate
+                        ),
+                        cheque: formValues.cheque || item.cheque,
+                        chequeNumber:
+                          formValues.chequeNumber || item.chequeNumber,
+                        status: formValues.status || item.status,
+                        duration: formValues.duration || item.duration,
+                        comments: formValues.comments || item.comments,
+                        approvalStatus:
+                          formValues.approvalStatus || item.approvalStatus,
+                      }
+                    : item
+                );
+
+                setTableData(updatedTableData);
+                setPaymentDetailsModalOpen(null);
+
+                console.log("Updated Table Data", updatedTableData);
+              }}>
           <div className="">
             <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
               <span className="pb-1 border-b border-[#7C8DB5]">Cheque</span>
@@ -2713,6 +2743,7 @@ const EditTenancyContracts = () => {
                     disabled={
                       name === "duration" && formValues.status !== "Hold"
                     }
+                  required={true}
                     key={name}
                     label={label}
                     name={name}
@@ -2799,33 +2830,7 @@ const EditTenancyContracts = () => {
             </div>
 
             <PrimaryButton
-              onClick={() => {
-                console.log("Original Table Data", tableData);
-                const updatedTableData = tableData.map((item, index) =>
-                  index === paymentDetailsModalOpen
-                    ? {
-                        ...item,
-                        chequeDate: formatDateToYYYYMMDD(
-                          formValues.dateOfCheque || item.chequeDate
-                        ),
-                        cheque: formValues.cheque || item.cheque,
-                        chequeNumber:
-                          formValues.chequeNumber || item.chequeNumber,
-                        status: formValues.status || item.status,
-                        duration: formValues.duration || item.duration,
-                        comments: formValues.comments || item.comments,
-                        approvalStatus:
-                          formValues.approvalStatus || item.approvalStatus,
-                      }
-                    : item
-                );
-
-                setTableData(updatedTableData);
-                setPaymentDetailsModalOpen(null);
-
-                console.log("Updated Table Data", updatedTableData);
-              }}
-              type="button"
+              
               title="Edit"
             />
           </div>
