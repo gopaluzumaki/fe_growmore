@@ -2601,7 +2601,8 @@ const EditTenancyContracts = () => {
                                 <Table.Th>Rent</Table.Th>
                                 <Table.Th>Cheque Date</Table.Th>
                                 <Table.Th>Bank Name</Table.Th>
-                                <Table.Th>Status</Table.Th>
+                                <Table.Th>Cheque Status</Table.Th>
+                                <Table.Th>Approval Status</Table.Th>
                               </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>
@@ -2633,7 +2634,10 @@ const EditTenancyContracts = () => {
                                   </Table.Td>
                                   <Table.Td>{item.chequeDate}</Table.Td>
                                   <Table.Td>{item.bankName}</Table.Td>
-                                  <Table.Td>Active</Table.Td>
+                                  <Table.Td>{item?.status ?? "-"}</Table.Td>
+                                  <Table.Td>
+                                    {item?.approvalStatus ?? "-"}
+                                  </Table.Td>{" "}
                                 </Table.Tr>
                               ))}
                             </Table.Tbody>
@@ -2706,6 +2710,9 @@ const EditTenancyContracts = () => {
               {cheque_number_form_details.map(({ label, name, type, values }) =>
                 (type === "text") | (type === "number") ? (
                   <Input
+                    disabled={
+                      name === "duration" && formValues.status !== "Hold"
+                    }
                     key={name}
                     label={label}
                     name={name}
@@ -2730,10 +2737,17 @@ const EditTenancyContracts = () => {
                     label={label}
                     placeholder={label}
                     data={values}
-                    value={formValues[name] || ""}
-                    onChange={(value) =>
-                      setFormValues({ ...formValues, [name]: value })
-                    }
+                    value={formValues[name]}
+                    onChange={(value) => {
+                      if (name === "status" && value === "Clear") {
+                        setFormValues({
+                          ...formValues,
+                          [name]: value,
+                          approvalStatus: null,
+                          duration: null,
+                        });
+                      } else setFormValues({ ...formValues, [name]: value });
+                    }}
                     disabled={
                       name === "approvalStatus" && formValues.status !== "Hold"
                     }
@@ -2757,6 +2771,7 @@ const EditTenancyContracts = () => {
                       },
                     }}
                     searchable
+                    clearable
                   />
                 ) : type === "text-area" ? (
                   <Textarea
