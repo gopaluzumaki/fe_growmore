@@ -39,7 +39,7 @@ export const API_URL = {
   Legal_list:
     'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Legal"]]',
   Tenant_Lease_List:
-    'https://propms.erpnext.syscort.com/api/resource/Lease?filters=[["lease_status","=","Active"]]&fields=[%22property%22,%22name%22,%22custom_number_of_unit%22,%22custom_unit_name%22]',
+    'https://propms.erpnext.syscort.com/api/resource/Lease?filters=[["lease_status","=","Active"]]&fields=[%22property%22,%22name%22,%22custom_number_of_unit%22,%22custom_unit_name%22,%22custom_property_name%22]',
   Create_Case: "https://propms.erpnext.syscort.com/api/resource/Maintenance",
   Delete_Maintenance:
     "https://propms.erpnext.syscort.com/api/resource/Maintenance",
