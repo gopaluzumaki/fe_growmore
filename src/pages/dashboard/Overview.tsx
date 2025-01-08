@@ -33,7 +33,7 @@ const Overview = () => {
     
 
       // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
-      const caseData = await fetchCaseFromMaintenance(record.property, record.custom_number_of_unit, record.customer);
+      const caseData = await fetchCaseFromMaintenance(record.custom_property_name, record.custom_number_of_unit, record.customer);
       console.log(caseData?.data?.data, "bvf", index);
       let caseStatus = caseData?.data?.data[0]?.custom_status
       return { ...record, daysLeft, caseStatus }; // Return record with days left and caseData
@@ -149,7 +149,7 @@ const Overview = () => {
                           >
                             <td className="p-2 py-3">{i + 1}</td>
                             <td className="p-2 py-3">{item.customer}</td>
-                            <td className="p-2 py-3">{item.property}</td>
+                            <td className="p-2 py-3">{item.custom_property_name}</td>
                             <td className="p-2 py-3">{item.custom_number_of_unit}</td>
                             <td className="p-2 py-3">{item.custom_location__area}</td>
                             <td className="p-2 py-3"><div
