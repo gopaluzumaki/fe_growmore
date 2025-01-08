@@ -51,7 +51,7 @@ const Legal = () => {
     setUniqueProperty(uniqueCustomProperties)
     const uniqueCustomOwner = [...new Set(
       legalList
-        .map(item => item.owner) // Extract custom_property values
+        .map(item => item.custom_supplier) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueOwner(uniqueCustomOwner)
@@ -69,7 +69,7 @@ const Legal = () => {
         item?.custom_unit_no?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_location__area?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_legal_reason?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.owner?.toLowerCase().includes(searchValue.toLowerCase())
+        item?.custom_supplier?.toLowerCase().includes(searchValue.toLowerCase())
 
      
 
@@ -78,7 +78,7 @@ const Legal = () => {
       const matchesUnit =
         !selectedUnit || item.custom_unit_no === selectedUnit;
       const matchesCustomer =
-        !selectedOwner || item.owner === selectedOwner;
+        !selectedOwner || item.custom_supplier === selectedOwner;
       return matchesSearch && matchesProperty && matchesUnit && matchesCustomer;
     });
     setFilteredLegalList(filteredData);
@@ -194,7 +194,7 @@ const Legal = () => {
                             {item.custom_location__area}
                           </td>
                           <td className="p-2 py-3">
-                            {item.owner}
+                            {item.custom_supplier}
                           </td>
                           <td className="p-2 py-3">{item.custom_legal_reason}</td>
                           <td className="p-2 py-3">{item.creation.split(" ")[0]}</td>

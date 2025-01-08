@@ -129,13 +129,13 @@ const AddMoveOut = () => {
     const res = await getTenantLeaseList()
     const item = res?.data?.data;
     const mergedData = item.reduce((acc, item) => {
-      const existingProperty = acc.find(obj => obj.property === item.property);
+      const existingProperty = acc.find(obj => obj.property === item.custom_property_name);
       if (existingProperty) {
         item.custom_number_of_unit?.length>0&&existingProperty.custom_number_of_unit.push(item.custom_number_of_unit);
         item.custom_number_of_unit?.length>0&&existingProperty.names.push(item.name);
       } else {
         acc.push({
-          property: item.property,
+          property: item.custom_property_name,
           custom_number_of_unit: item.custom_number_of_unit?.length>0?[item.custom_number_of_unit]:[],
           names: [item.name]
         });
@@ -152,7 +152,6 @@ const AddMoveOut = () => {
       [name]: value,
     }));
   };
-
 
   function getCustomNumberOfUnit(propertyName) {
     const propertyData = propertyList.find(item => item.property === propertyName);
@@ -174,7 +173,7 @@ const AddMoveOut = () => {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
-          property: propertyData?.property,
+          property: propertyData?.custom_property_name,
           propertyName: propertyData?.name,
           propertyType: propertyData?.custom_type,
           propertyLocation: propertyData?.custom_location__area,
