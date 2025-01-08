@@ -620,7 +620,7 @@ export const fetchMaintenance = async (params: any) => {
 };
 
 export const fetchDamageLocation = async () => {
-  const response = await axios.get(`${API_URL.Damage_Location}`, {
+  const response = await axios.get(`${API_URL.Damage_Location}?limit_page_length=[100]`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -630,7 +630,7 @@ export const fetchDamageLocation = async () => {
 };
 
 export const fetchLegalReason = async () => {
-  const response = await axios.get(`${API_URL.Legal_Data}`, {
+  const response = await axios.get(`${API_URL.Legal_Data}?limit_page_length=[100]`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,

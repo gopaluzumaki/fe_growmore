@@ -481,7 +481,8 @@ const AddTenancyContracts = () => {
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
 
-          propertyUnits: propertyData?.custom_number_of_units,
+          propertyUnits: null,
+          propertyRent:'',
           propertyStatus: propertyData?.status,
           propertyDoc: propertyData?.custom_thumbnail_image,
         }));
@@ -1104,7 +1105,7 @@ const AddTenancyContracts = () => {
                                   label: unit.custom_unit_number,
                                   unit,
                                 }))}
-                                value={formValues.propertyUnits || ""}
+                                value={formValues.propertyUnits || null}
                                 onChange={(value) => {
                                   handleDropDown("propertyUnits", value);
                                 }}
@@ -1539,36 +1540,33 @@ const AddTenancyContracts = () => {
         transitionProps={{ transition: "fade", duration: 200 }}
         size="60%"
       >
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
+        <form className="flex flex-col" onSubmit={(e) => {
+                e.preventDefault()
+                console.log("Original Table Data", tableData);
+                const updatedTableData = tableData.map((item, index) =>
+                  index === paymentDetailsModalOpen
+                    ? {
+                        ...item,
+                        chequeDate: formatDateToYYYYMMDD(
+                          formValues.dateOfCheque || item.chequeDate
+                        ),
+                        cheque: formValues.cheque || item.cheque,
+                        chequeNumber:
+                          formValues.chequeNumber || item.chequeNumber,
+                        status: formValues.status || item.status,
+                        duration: formValues.duration || item.duration,
+                        comments: formValues.comments || item.comments,
+                        approvalStatus:
+                          formValues.approvalStatus || item.approvalStatus,
+                      }
+                    : item
+                );
 
-            console.log("Original Table Data", tableData);
-            const updatedTableData = tableData.map((item, index) =>
-              index === paymentDetailsModalOpen
-                ? {
-                    ...item,
-                    chequeDate: formatDateToYYYYMMDD(
-                      formValues.dateOfCheque || item.chequeDate
-                    ),
-                    cheque: formValues.cheque || item.cheque,
-                    chequeNumber: formValues.chequeNumber || item.chequeNumber,
-                    status: formValues.status || item.status,
-                    duration: formValues.duration || item.duration,
-                    comments: formValues.comments || item.comments,
-                    approvalStatus:
-                      formValues.approvalStatus || item.approvalStatus,
-                  }
-                : item
-            );
+                setTableData(updatedTableData);
+                setPaymentDetailsModalOpen(null);
 
-            setTableData(updatedTableData);
-            setPaymentDetailsModalOpen(null);
-
-            console.log("Updated Table Data", updatedTableData);
-          }}
-          className="flex flex-col"
-        >
+                console.log("Updated Table Data", updatedTableData);
+              }}>
           <div className="">
             <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
               <span className="pb-1 border-b border-[#7C8DB5]">Cheque</span>
