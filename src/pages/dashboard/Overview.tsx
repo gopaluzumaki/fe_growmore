@@ -19,7 +19,6 @@ const Overview = () => {
   const [unitCount, setUnitCount] = useState("");
   const [tenantCount, setTenantCount] = useState("");
   const [tenancyData, setTenancyData] = useState<any[]>([]);
-
   useEffect(() => {
     getData();
   }, []);
@@ -35,8 +34,11 @@ const Overview = () => {
       // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
       const caseData = await fetchCaseFromMaintenance(record.custom_property_name, record.custom_number_of_unit, record.customer);
       console.log(caseData?.data?.data, "bvf", index);
-      let caseStatus = caseData?.data?.data[0]?.custom_status
-      return { ...record, daysLeft, caseStatus }; // Return record with days left and caseData
+      const caseDataList1 = caseData?.data?.data?.map(
+        (item) => item.custom_status
+      ); 
+      const caseDataList=[...new Set(caseDataList1)]
+      return { ...record, daysLeft, caseDataList }; // Return record with days left and caseData
     }));
 
     return results; // Return the array of resolved records
@@ -162,14 +164,24 @@ const Overview = () => {
                             >
                               {item.lease_status}
                             </div></td>
-                            <td className="p-2 py-3"><div
-                              className={`p-1 rounded ${item?.caseStatus?.length > 0
+                            <td className="p-2 py-3">
+                            {item?.caseDataList?.length>0?<div className="grid grid-cols-2 gap-2">
+                              {item?.caseDataList?.map((value)=>(
+                                
+                                <div
+                              className={`p-1 mb-1 rounded ${value.length > 0
                                   ? "bg-[#ff8d00] text-black"
                                   :
                                   ""
 
                                 }`}
-                            >{item?.caseStatus ? item?.caseStatus : '-'}</div></td>
+                            >
+                              {value}
+                                      </div>
+                      ))}
+                                      </div>:"-"}
+
+                              </td>
 
                             <td className="p-2 py-3"><div
                               className={`p-1 rounded ${item.daysLeft === "Expired"
