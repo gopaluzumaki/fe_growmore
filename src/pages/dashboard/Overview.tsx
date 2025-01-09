@@ -169,6 +169,11 @@ const Overview = () => {
                               {item?.caseDataList?.map((value)=>(
                                 
                                 <div
+                                style={{
+                                  wordWrap: "break-word",
+                                  wordBreak: "break-word",
+                                  overflow: "hidden",
+                                }}
                               className={`p-1 mb-1 rounded ${value.length > 0
                                   ? "bg-[#ff8d00] text-black"
                                   :
