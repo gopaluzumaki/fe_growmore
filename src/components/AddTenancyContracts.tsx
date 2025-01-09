@@ -627,7 +627,7 @@ const AddTenancyContracts = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
     // const tenancyContractList = await getTenancyContractList();
     // const findOne = tenancyContractList?.data?.data.find(
@@ -924,7 +924,7 @@ const AddTenancyContracts = () => {
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);
                         }}
-                        type="image/*"
+                        type="*"
                         setLoading={setLoading}
                       />
                     </div>
@@ -958,24 +958,17 @@ const AddTenancyContracts = () => {
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         Attachments
                       </p>
-                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      <div className="grid grid-cols-3 gap-4 w-25% h-25%">
                         {imageArray.map((value, index) => (
                           <div
                             key={index}
-                            className="relative w-[100px] h-[100px]"
+                            className="flex justify-space-between"
                           >
-                            <img
-                              className="w-full h-full rounded-md"
-                              src={
-                                value
-                                  ? `https://propms.erpnext.syscort.com/${value}`
-                                  : "/defaultProperty.jpeg"
-                              }
-                              alt="propertyImg"
-                            />
+                            <a href={`https://propms.erpnext.syscort.com/${value.url}`} target="value" >{value.name}</a>
+
                             <button
                               type="button" // Prevent form submission
-                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              className="top-0 right-0 bg-red-500 text-white w-9 h-4 p-2 ml-2 rounded-full flex items-center justify-center text-xs"
                               onClick={() => handleRemoveImage(index)}
                             >
                               X
@@ -986,7 +979,7 @@ const AddTenancyContracts = () => {
                     </>
                   )}
                   {/* property details */}
-                  <div>
+                  <div className="mt-5">
                     <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">
                       <span className="pb-1 border-b border-[#7C8DB5]">
                         Property

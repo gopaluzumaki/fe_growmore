@@ -136,7 +136,7 @@ setCountryList(res?.data?.data)
             setImgUrl(item?.custom_signature_image || "");
           }
           if (item?.custom_attachment_table?.length > 0) {
-            const imageArray = item?.custom_attachment_table?.map((item) => item.image);
+            const imageArray = item?.custom_attachment_table?.map((item) => ({ url: item.image }));
             setImageArray(imageArray)
           }
         } catch (error) {
@@ -224,7 +224,7 @@ setCountryList(res?.data?.data)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
     try {
       console.log("API Data => ", formData);
@@ -501,8 +501,8 @@ setCountryList(res?.data?.data)
                           <img
                             className="w-full h-full rounded-md"
                             src={
-                              value
-                                ? `https://propms.erpnext.syscort.com/${value}`
+                              value.url
+                                ? `https://propms.erpnext.syscort.com/${value.url}`
                                 : "/defaultProperty.jpeg"
                             }
                             alt="propertyImg"
