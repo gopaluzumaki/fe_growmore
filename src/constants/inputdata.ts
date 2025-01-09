@@ -300,7 +300,6 @@ export const cheque_number_form_details = [
     name: "status",
     type: "mantineSelect",
     values: ["Clear", "Hold"],
-    required: true,
   },
   {
     label: "Duration",
