@@ -113,7 +113,7 @@ const EditLead = () => {
             // setImgUrls(item?.custom_image_attachment || "");
           }
           if (item?.custom_attachment_table?.length > 0) {
-            const imageArray = item?.custom_attachment_table?.map((item) => item.image);
+            const imageArray = item?.custom_attachment_table?.map((item) => ({ url: item.image }));
             setImageArray(imageArray)
           }
         } catch (error) {
@@ -180,7 +180,7 @@ const EditLead = () => {
   },[imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
     try {
       console.log("API Data => ", formData);
@@ -309,8 +309,8 @@ const EditLead = () => {
                           <img
                             className="w-full h-full rounded-md"
                             src={
-                              value
-                                ? `https://propms.erpnext.syscort.com/${value}`
+                              value.url
+                                ? `https://propms.erpnext.syscort.com/${value.url}`
                                 : "/defaultProperty.jpeg"
                             }
                             alt="propertyImg"

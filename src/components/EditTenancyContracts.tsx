@@ -37,6 +37,7 @@ import {
   API_URL,
   fetchUnitForTenancyContract,
   getTenancyContractList,
+  fetchCaseFromMaintenance,
 } from "../api";
 import {
   Select,
@@ -104,6 +105,7 @@ const EditTenancyContracts = () => {
   const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [caseList,setCaseList] = useState([])
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     numberOfChecks: "",
     bankName: "",
@@ -305,7 +307,11 @@ const EditTenancyContracts = () => {
   }, [formValues.percentage, formValues.fixed_amount]);
 
   // to prefilled formdata values.
-
+  function getFileName(filePath) {
+    // Use the split method to isolate the file name from the path
+    const parts = filePath.split('/');
+    return parts[parts.length - 1]; // Return the last part
+  }
   useEffect(() => {
     console.log("location.state", location.state);
     const fetchingBookedData = async () => {
@@ -313,7 +319,11 @@ const EditTenancyContracts = () => {
         try {
           const res = await fetchTenancyContract(location.state);
           const item = res?.data?.data;
-
+const caseData = await fetchCaseFromMaintenance(item.custom_property_name, item.custom_number_of_unit, item.lease_customer);
+const caseDataList = caseData?.data?.data?.map(
+  (item) => item.custom_status
+); 
+setCaseList(caseDataList)
           console.log("property items data: ", item);
 
           if (item) {
@@ -452,8 +462,9 @@ const EditTenancyContracts = () => {
           }
           if (item?.custom_attachment_table?.length > 0) {
             const imageArray = item?.custom_attachment_table?.map(
-              (item) => item.image
+              (item) => ({ url: item.image, name: getFileName(item.image) })
             );
+            
             setImageArray(imageArray);
           }
         } catch (error) {
@@ -961,7 +972,7 @@ const EditTenancyContracts = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
     // const tenancyContractList = await getTenancyContractList();
     // const findOne = tenancyContractList?.data?.data.find(
@@ -1215,6 +1226,7 @@ const EditTenancyContracts = () => {
   const username = APP_AUTH.USERNAME;
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
+  console.log(caseList,"vgy")
   return (
     <main>
       <div className="flex">
@@ -1229,7 +1241,13 @@ const EditTenancyContracts = () => {
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
-                {/* <div>
+              <div className="flex justify-center">
+  <span className="bg-[red] p-2 rounded-xl" style={{ color: 'white' }}>
+    This tenancy contract is under {[...new Set(caseList)].join(", ")}
+  </span>
+</div>
+
+{/* <div>
                   <PrimaryButton
                     title={
                       formValues?.tenancyStatus !== "Active"
@@ -1777,7 +1795,7 @@ const EditTenancyContracts = () => {
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);
                         }}
-                        type="image/*"
+                        type="*"
                         setLoading={setLoading}
                       />
                     </div>
@@ -1811,24 +1829,17 @@ const EditTenancyContracts = () => {
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         Attachments
                       </p>
-                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      <div className="grid grid-cols-3 gap-4 w-25% h-25%">
                         {imageArray.map((value, index) => (
                           <div
                             key={index}
-                            className="relative w-[100px] h-[100px]"
+                            className="flex justify-space-between"
                           >
-                            <img
-                              className="w-full h-full rounded-md"
-                              src={
-                                value
-                                  ? `https://propms.erpnext.syscort.com/${value}`
-                                  : "/defaultProperty.jpeg"
-                              }
-                              alt="propertyImg"
-                            />
+                            <a href={`https://propms.erpnext.syscort.com/${value.url}`} target="value" >{value.name}</a>
+
                             <button
                               type="button" // Prevent form submission
-                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              className="top-0 right-0 bg-red-500 text-white w-9 h-4 p-2 ml-2 rounded-full flex items-center justify-center text-xs"
                               onClick={() => handleRemoveImage(index)}
                             >
                               X
@@ -1839,7 +1850,7 @@ const EditTenancyContracts = () => {
                     </>
                   )}
                   {/* property details */}
-                  <div>
+                  <div className="mt-5">
                     <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">
                       <span className="pb-1 border-b border-[#7C8DB5]">
                         Property

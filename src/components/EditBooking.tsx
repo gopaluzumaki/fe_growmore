@@ -182,7 +182,7 @@ setCountryList(res?.data?.data)
             }
           }
           if (item?.custom_attachment_table?.length > 0) {
-            const imageArray = item?.custom_attachment_table?.map((item) => item.image);
+            const imageArray = item?.custom_attachment_table?.map((item) => ({ url: item.image }));
             setImageArray(imageArray)
           }
         } catch (error) {
@@ -315,7 +315,7 @@ setCountryList(res?.data?.data)
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
-      const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+      const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
       const res = await updateBooking(id, {
         property: formData.name1,
@@ -528,8 +528,8 @@ setCountryList(res?.data?.data)
                           <img
                             className="w-full h-full rounded-md"
                             src={
-                              value
-                                ? `https://propms.erpnext.syscort.com/${value}`
+                              value.url
+                                ? `https://propms.erpnext.syscort.com/${value.url}`
                                 : "/defaultProperty.jpeg"
                             }
                             alt="propertyImg"

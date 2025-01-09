@@ -298,7 +298,7 @@ setCountryList(res?.data?.data)
         cost_center: "Main - SRE",
         description: formData?.description,
       });
-      const imageData = imageArray?.map((imgUrl) => ({ image: imgUrl }));
+      const imageData = imageArray?.map((imgUrl) => ({ image: imgUrl.url }));
 
       const res = await createProperty({
         custom_supplier_name:formData?.custom_supplier_name,
@@ -498,8 +498,8 @@ setCountryList(res?.data?.data)
                           <img
                             className="w-full h-full rounded-md"
                             src={
-                              value
-                                ? `https://propms.erpnext.syscort.com/${value}`
+                              value.url
+                                ? `https://propms.erpnext.syscort.com/${value.url}`
                                 : "/defaultProperty.jpeg"
                             }
                             alt="propertyImg"

@@ -14,7 +14,7 @@ export default function CustomFileUpload({
     const results = await Promise.all(
       files.map(async (value) => {
         const res = await uploadFile(value);
-        return res?.data?.message?.file_url; // Collect the result
+        return {url:res?.data?.message?.file_url,name:res?.data?.message?.file_name}; // Collect the result
       })
     );
     //make api call to upload files that will give use img urls and pass it to onFilesUpload function
