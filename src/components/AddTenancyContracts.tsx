@@ -1473,9 +1473,9 @@ const AddTenancyContracts = () => {
                                   </Table.Td>
                                   <Table.Td>{item.chequeDate}</Table.Td>
                                   <Table.Td>{item.bankName}</Table.Td>
-                                  <Table.Td>{item?.status ?? "-"}</Table.Td>
+                                  <Table.Td>{item?.status || "-"}</Table.Td>
                                   <Table.Td>
-                                    {item?.approvalStatus ?? "-"}
+                                    {item?.approvalStatus || "N/A"}
                                   </Table.Td>
                                 </Table.Tr>
                               ))}
@@ -1551,13 +1551,12 @@ const AddTenancyContracts = () => {
                     chequeDate: formatDateToYYYYMMDD(
                       formValues.dateOfCheque || item.chequeDate
                     ),
-                    cheque: formValues.cheque || item.cheque,
-                    chequeNumber: formValues.chequeNumber || item.chequeNumber,
-                    status: formValues.status || item.status,
-                    duration: formValues.duration || item.duration,
-                    comments: formValues.comments || item.comments,
-                    approvalStatus:
-                      formValues.approvalStatus || item.approvalStatus,
+                    cheque: formValues.cheque,
+                    chequeNumber: formValues.chequeNumber,
+                    status: formValues.status,
+                    duration: formValues.duration,
+                    comments: formValues.comments,
+                    approvalStatus: formValues.approvalStatus,
                   }
                 : item
             );
