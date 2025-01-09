@@ -1241,11 +1241,11 @@ setCaseList(caseDataList)
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
-              <div className="flex justify-center">
+              {caseList?.length>0&&<div className="flex justify-center">
   <span className="bg-[red] p-2 rounded-xl" style={{ color: 'white' }}>
     This tenancy contract is under {[...new Set(caseList)].join(", ")}
   </span>
-</div>
+</div>}
 
 {/* <div>
                   <PrimaryButton
