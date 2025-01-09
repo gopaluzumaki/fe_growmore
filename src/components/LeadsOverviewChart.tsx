@@ -4,20 +4,32 @@ import Chart from "react-apexcharts";
 import { fetchLeadData } from "../api";
 
 const LeadsOverviewChart: React.FC = () => {
-  const [leadsData,setLeadsData]=useState([])
-  useEffect(()=>{
-const getLeadsData=async()=>{
-  const res=await fetchLeadData()
-  const data=res?.data?.data
-  const monthCounts = data.reduce((acc, item) => {
-    const month = new Date(item.creation).getMonth(); // Get 0-based month
-    acc[month] = (acc[month] || 0) + 1; // Increment count for the month
-    return acc;
-}, Array(12).fill(0));
-    setLeadsData(monthCounts)
-}
-getLeadsData()
-  },[])
+  const [leadsData, setLeadsData] = useState([])
+  useEffect(() => {
+    const getLeadsData = async () => {
+      const res = await fetchLeadData();
+      const data = res?.data?.data;
+  
+      const currentYear = new Date().getFullYear(); // Get the current year
+  
+      const monthCounts = data.reduce((acc, item) => {
+        const modifiedDate = new Date(item.modified);
+        const itemYear = modifiedDate.getFullYear();
+  
+        if (itemYear === currentYear) { // Check if the year matches the current year
+          const month = modifiedDate.getMonth(); // Get 0-based month
+          acc[month] = (acc[month] || 0) + 1; // Increment count for the month
+        }
+  
+        return acc;
+      }, Array(12).fill(0)); // Initialize an array of 12 months with 0 counts
+  
+      setLeadsData(monthCounts);
+    };
+  
+    getLeadsData();
+  }, []);
+  
   const series = [
     {
       name: "Leads Overview (Column)",
@@ -27,7 +39,7 @@ getLeadsData()
     {
       name: "Leads Overview (Line)",
       type: "line",
-      data:leadsData,
+      data: leadsData,
 
     },
   ];
@@ -54,15 +66,16 @@ getLeadsData()
       colors: ["#D09D4A"],
       curve: "smooth",
     },
-    
-    
+
+
     dataLabels: {
       enabled: false,
       enabledOnSeries: [1],
     },
     xaxis: {
       title: {
-        text: "Months"},
+        text: "Months"
+      },
       categories: [
         "Jan",
         "Feb",
@@ -80,7 +93,9 @@ getLeadsData()
     },
     yaxis: {
       title: {
-        text: "Leads"}},
+        text: "Leads"
+      }
+    },
     plotOptions: {
       bar: {
         columnWidth: "50%", // Adjust column width if needed

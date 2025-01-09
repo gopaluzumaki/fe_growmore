@@ -481,7 +481,8 @@ const AddTenancyContracts = () => {
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
 
-          propertyUnits: propertyData?.custom_number_of_units,
+          propertyUnits: null,
+          propertyRent: "",
           propertyStatus: propertyData?.status,
           propertyDoc: propertyData?.custom_thumbnail_image,
         }));
@@ -1104,7 +1105,7 @@ const AddTenancyContracts = () => {
                                   label: unit.custom_unit_number,
                                   unit,
                                 }))}
-                                value={formValues.propertyUnits || ""}
+                                value={formValues.propertyUnits || null}
                                 onChange={(value) => {
                                   handleDropDown("propertyUnits", value);
                                 }}
@@ -1540,9 +1541,9 @@ const AddTenancyContracts = () => {
         size="60%"
       >
         <form
+          className="flex flex-col"
           onSubmit={(e) => {
             e.preventDefault();
-
             console.log("Original Table Data", tableData);
             const updatedTableData = tableData.map((item, index) =>
               index === paymentDetailsModalOpen
@@ -1566,7 +1567,6 @@ const AddTenancyContracts = () => {
 
             console.log("Updated Table Data", updatedTableData);
           }}
-          className="flex flex-col"
         >
           <div className="">
             <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">

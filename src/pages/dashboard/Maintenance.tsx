@@ -59,7 +59,7 @@ const Maintenance = () => {
     setUniqueProperty(uniqueCustomProperties)
     const uniqueCustomOwner = [...new Set(
       maintenanceList
-        .map(item => item.owner) // Extract custom_property values
+        .map(item => item.custom_supplier) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueOwner(uniqueCustomOwner)
@@ -76,7 +76,7 @@ const Maintenance = () => {
         item?.custom_property?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_unit_no?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_location__area?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.owner?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_supplier?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_damage_location?.toLowerCase().includes(searchValue.toLowerCase())
 
 
@@ -85,7 +85,7 @@ const Maintenance = () => {
       const matchesUnit =
         !selectedUnit || item.custom_unit_no === selectedUnit;
       const matchesCustomer =
-        !selectedOwner || item.owner === selectedOwner;
+        !selectedOwner || item.custom_supplier === selectedOwner;
       return matchesSearch && matchesProperty && matchesUnit && matchesCustomer;
     });
     setFilteredMaintenanceList(filteredData);
@@ -202,7 +202,7 @@ const Maintenance = () => {
                             {item.custom_location__area}
                           </td>
                           <td className="p-2 py-3">
-                            {item.owner}
+                            {item.custom_supplier}
                           </td>
                           <td className="p-2 py-3">{item.custom_damage_location}</td>
                           <td className="p-2 py-3">{item.creation.split(" ")[0]}</td>
