@@ -829,8 +829,8 @@ const EditTenancyContracts = () => {
           propertyName1: propertyData?.name,
           //name
           propertyName: propertyData?.name1,
-          propertyUnits:null,
-          propertyRent:'',
+          propertyUnits: null,
+          propertyRent: "",
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
           propertyStatus: propertyData?.status,
@@ -1385,10 +1385,12 @@ const EditTenancyContracts = () => {
                             parseFloat(
                               formValues.custom_duration *
                                 formValues.custom_day_rate
-                            )>=0?parseFloat(
-                              formValues.custom_duration *
-                                formValues.custom_day_rate
-                            ).toFixed(2) : 0
+                            ) >= 0
+                              ? parseFloat(
+                                  formValues.custom_duration *
+                                    formValues.custom_day_rate
+                                ).toFixed(2)
+                              : 0
                           }
                           borderd
                           bgLight
@@ -2640,7 +2642,7 @@ const EditTenancyContracts = () => {
                                   <Table.Td>{item.bankName}</Table.Td>
                                   <Table.Td>{item?.status ?? "-"}</Table.Td>
                                   <Table.Td>
-                                    {item?.approvalStatus ?? "-"}
+                                    {item?.approvalStatus || "N/A"}
                                   </Table.Td>{" "}
                                 </Table.Tr>
                               ))}
@@ -2704,135 +2706,135 @@ const EditTenancyContracts = () => {
         transitionProps={{ transition: "fade", duration: 200 }}
         size="60%"
       >
-        <form className="flex flex-col" onSubmit={(e) => {
-          e.preventDefault()
-                console.log("Original Table Data", tableData);
-                const updatedTableData = tableData.map((item, index) =>
-                  index === paymentDetailsModalOpen
-                    ? {
-                        ...item,
-                        chequeDate: formatDateToYYYYMMDD(
-                          formValues.dateOfCheque || item.chequeDate
-                        ),
-                        cheque: formValues.cheque || item.cheque,
-                        chequeNumber:
-                          formValues.chequeNumber || item.chequeNumber,
-                        status: formValues.status || item.status,
-                        duration: formValues.duration || item.duration,
-                        comments: formValues.comments || item.comments,
-                        approvalStatus:
-                          formValues.approvalStatus || item.approvalStatus,
-                      }
-                    : item
-                );
+        <form
+          className="flex flex-col"
+          onSubmit={(e) => {
+            e.preventDefault();
+            console.log("Original Table Data", tableData);
+            const updatedTableData = tableData.map((item, index) =>
+              index === paymentDetailsModalOpen
+                ? {
+                    ...item,
+                    chequeDate: formatDateToYYYYMMDD(
+                      formValues.dateOfCheque || item.chequeDate
+                    ),
+                    cheque: formValues.cheque,
+                    chequeNumber: formValues.chequeNumber,
+                    status: formValues.status,
+                    duration: formValues.duration,
+                    comments: formValues.comments,
+                    approvalStatus: formValues.approvalStatus,
+                  }
+                : item
+            );
 
-                setTableData(updatedTableData);
-                setPaymentDetailsModalOpen(null);
+            setTableData(updatedTableData);
+            setPaymentDetailsModalOpen(null);
 
-                console.log("Updated Table Data", updatedTableData);
-              }}>
+            console.log("Updated Table Data", updatedTableData);
+          }}
+        >
           <div className="">
             <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
               <span className="pb-1 border-b border-[#7C8DB5]">Cheque</span>
               <span className="pb-1">Details</span>
             </p>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(420px,1fr))] gap-4 mb-6">
-              {cheque_number_form_details.map(({ label, name, type, values }) =>
-                (type === "text") | (type === "number") ? (
-                  <Input
-                    disabled={
-                      name === "duration" && formValues.status !== "Hold"
-                    }
-                  required={true}
-                    key={name}
-                    label={label}
-                    name={name}
-                    type={type}
-                    // value={
-                    //   name === "bankName"
-                    //     ? selectedCheque?.bankName || ""
-                    //     : name === "anualPriceRent"
-                    //     ? selectedCheque?.rent || ""
-                    //     : selectedCheque?.bankName || ""
-                    // }
-                    value={formValues[name] || ""}
-                    onChange={(e) =>
-                      setFormValues({ ...formValues, [name]: e.target.value })
-                    }
-                    className="w-full p-4 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] rounded-lg outline-none"
-                  />
-                ) : type === "mantineSelect" ? (
-                  <MantineSelect
-                    variant="filled"
-                    key={name}
-                    label={label}
-                    placeholder={label}
-                    data={values}
-                    value={formValues[name]}
-                    onChange={(value) => {
-                      if (name === "status" && value === "Clear") {
-                        setFormValues({
-                          ...formValues,
-                          [name]: value,
-                          approvalStatus: null,
-                          duration: null,
-                        });
-                      } else setFormValues({ ...formValues, [name]: value });
-                    }}
-                    disabled={
-                      name === "approvalStatus" && formValues.status !== "Hold"
-                    }
-                    styles={{
-                      label: {
-                        marginBottom: "7px",
-                        color: "#7C8DB5",
-                        fontSize: "16px",
-                      },
-                      input: {
-                        border: "1px solid #CCDAFF",
-                        borderRadius: "8px",
-                        padding: "24px",
-                        fontSize: "16px",
-                        color: "#1A202C",
-                      },
-                      dropdown: {
-                        backgroundColor: "white",
-                        borderRadius: "8px",
-                        border: "1px solid #E2E8F0",
-                      },
-                    }}
-                    searchable
-                    clearable
-                  />
-                ) : type === "text-area" ? (
-                  <Textarea
-                    value={formValues[name] || ""}
-                    onChange={(e) =>
-                      setFormValues({ ...formValues, [name]: e.target.value })
-                    }
-                    variant="filled"
-                    radius="xs"
-                    label={label}
-                    placeholder="Input placeholder"
-                  />
-                ) : type === "date" ? (
-                  <CustomDatePicker
-                    selectedDate={formValues[name] as Date}
-                    onChange={(date) =>
-                      handleDateChange(name, date.toDateString())
-                    }
-                    label={label}
-                    placeholder="Select Date"
-                    value={formValues[name]}
-                  />
-                ) : null
+              {cheque_number_form_details.map(
+                ({ label, name, type, values, required }) =>
+                  (type === "text") | (type === "number") ? (
+                    <Input
+                      disabled={
+                        name === "duration" && formValues.status !== "Hold"
+                      }
+                      required={required ?? false}
+                      key={name}
+                      label={label}
+                      name={name}
+                      type={type}
+                      // value={
+                      //   name === "bankName"
+                      //     ? selectedCheque?.bankName || ""
+                      //     : name === "anualPriceRent"
+                      //     ? selectedCheque?.rent || ""
+                      //     : selectedCheque?.bankName || ""
+                      // }
+                      value={formValues[name] || ""}
+                      onChange={(e) =>
+                        setFormValues({ ...formValues, [name]: e.target.value })
+                      }
+                      className="w-full p-4 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] rounded-lg outline-none"
+                    />
+                  ) : type === "mantineSelect" ? (
+                    <MantineSelect
+                      variant="filled"
+                      key={name}
+                      label={label}
+                      placeholder={label}
+                      data={values}
+                      value={formValues[name]}
+                      onChange={(value) => {
+                        if (name === "status" && value === "Clear") {
+                          setFormValues({
+                            ...formValues,
+                            [name]: value,
+                            approvalStatus: null,
+                            duration: null,
+                          });
+                        } else setFormValues({ ...formValues, [name]: value });
+                      }}
+                      disabled={
+                        name === "approvalStatus" &&
+                        formValues.status !== "Hold"
+                      }
+                      styles={{
+                        label: {
+                          marginBottom: "7px",
+                          color: "#7C8DB5",
+                          fontSize: "16px",
+                        },
+                        input: {
+                          border: "1px solid #CCDAFF",
+                          borderRadius: "8px",
+                          padding: "24px",
+                          fontSize: "16px",
+                          color: "#1A202C",
+                        },
+                        dropdown: {
+                          backgroundColor: "white",
+                          borderRadius: "8px",
+                          border: "1px solid #E2E8F0",
+                        },
+                      }}
+                      searchable
+                      clearable
+                    />
+                  ) : type === "text-area" ? (
+                    <Textarea
+                      value={formValues[name] || ""}
+                      onChange={(e) =>
+                        setFormValues({ ...formValues, [name]: e.target.value })
+                      }
+                      variant="filled"
+                      radius="xs"
+                      label={label}
+                      placeholder="Input placeholder"
+                    />
+                  ) : type === "date" ? (
+                    <CustomDatePicker
+                      selectedDate={formValues[name] as Date}
+                      onChange={(date) =>
+                        handleDateChange(name, date.toDateString())
+                      }
+                      label={label}
+                      placeholder="Select Date"
+                      value={formValues[name]}
+                    />
+                  ) : null
               )}
             </div>
 
-            <PrimaryButton
-              
-              title="Edit"
-            />
+            <PrimaryButton title="Edit" />
           </div>
           {/* <div className="pt-4">
             <PrimaryButton type="submit" title="Save Details" />

@@ -5,7 +5,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: string | ReactNode;
   bgLight?: boolean;
   borderd?: boolean;
-  warning?:any;
+  warning?: any;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -23,17 +23,21 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     disabled = false,
     min,
     max,
-    required =false,
-    readOnly=false,
-    warning
+    required = false,
+    readOnly = false,
+    warning,
   }) => {
-    console.log(warning,"nmk")
+    console.log(warning, "nmk");
     return (
       <div>
         {label && (
           <p className="flex  mb-1.5 ml-1 font-medium text-gray-700">
             <label htmlFor={id}>{label}</label>
-            <label><span style={{color: "red"}}>*</span></label>
+            {required && (
+              <label>
+                <span style={{ color: "red" }}>*</span>
+              </label>
+            )}
           </p>
         )}
         <div
@@ -45,8 +49,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         >
           {icon && <img src={icon as string} alt="iconImg" />}
           <input
-          readOnly={readOnly}
-          required={required}
+            readOnly={readOnly}
+            required={required}
             disabled={disabled}
             className={`w-full ${
               bgLight ? "bg-white" : "bg-brightgray"
@@ -63,7 +67,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </div>
         {warning && (
           <p className="flex  mb-1.5 ml-1 font-medium text-gray-700">
-            <label htmlFor={id} style={{color: "red"}}>{warning}</label>
+            <label htmlFor={id} style={{ color: "red" }}>
+              {warning}
+            </label>
           </p>
         )}
       </div>

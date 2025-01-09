@@ -482,7 +482,7 @@ const AddTenancyContracts = () => {
           propertyLocation: propertyData?.custom_location,
 
           propertyUnits: null,
-          propertyRent:'',
+          propertyRent: "",
           propertyStatus: propertyData?.status,
           propertyDoc: propertyData?.custom_thumbnail_image,
         }));
@@ -1474,9 +1474,9 @@ const AddTenancyContracts = () => {
                                   </Table.Td>
                                   <Table.Td>{item.chequeDate}</Table.Td>
                                   <Table.Td>{item.bankName}</Table.Td>
-                                  <Table.Td>{item?.status ?? "-"}</Table.Td>
+                                  <Table.Td>{item?.status || "-"}</Table.Td>
                                   <Table.Td>
-                                    {item?.approvalStatus ?? "-"}
+                                    {item?.approvalStatus || "N/A"}
                                   </Table.Td>
                                 </Table.Tr>
                               ))}
@@ -1540,33 +1540,34 @@ const AddTenancyContracts = () => {
         transitionProps={{ transition: "fade", duration: 200 }}
         size="60%"
       >
-        <form className="flex flex-col" onSubmit={(e) => {
-                e.preventDefault()
-                console.log("Original Table Data", tableData);
-                const updatedTableData = tableData.map((item, index) =>
-                  index === paymentDetailsModalOpen
-                    ? {
-                        ...item,
-                        chequeDate: formatDateToYYYYMMDD(
-                          formValues.dateOfCheque || item.chequeDate
-                        ),
-                        cheque: formValues.cheque || item.cheque,
-                        chequeNumber:
-                          formValues.chequeNumber || item.chequeNumber,
-                        status: formValues.status || item.status,
-                        duration: formValues.duration || item.duration,
-                        comments: formValues.comments || item.comments,
-                        approvalStatus:
-                          formValues.approvalStatus || item.approvalStatus,
-                      }
-                    : item
-                );
+        <form
+          className="flex flex-col"
+          onSubmit={(e) => {
+            e.preventDefault();
+            console.log("Original Table Data", tableData);
+            const updatedTableData = tableData.map((item, index) =>
+              index === paymentDetailsModalOpen
+                ? {
+                    ...item,
+                    chequeDate: formatDateToYYYYMMDD(
+                      formValues.dateOfCheque || item.chequeDate
+                    ),
+                    cheque: formValues.cheque,
+                    chequeNumber: formValues.chequeNumber,
+                    status: formValues.status,
+                    duration: formValues.duration,
+                    comments: formValues.comments,
+                    approvalStatus: formValues.approvalStatus,
+                  }
+                : item
+            );
 
-                setTableData(updatedTableData);
-                setPaymentDetailsModalOpen(null);
+            setTableData(updatedTableData);
+            setPaymentDetailsModalOpen(null);
 
-                console.log("Updated Table Data", updatedTableData);
-              }}>
+            console.log("Updated Table Data", updatedTableData);
+          }}
+        >
           <div className="">
             <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
               <span className="pb-1 border-b border-[#7C8DB5]">Cheque</span>
