@@ -201,7 +201,7 @@ const EditTenancyContracts = () => {
     fetchingBookedData();
   }, [location.state, formValues.renewal_duration, formValues.number_of_days]);
 
-  // calcutaoin termination things.
+  // calculation termination things.
 
   useEffect(() => {
     if (
@@ -211,10 +211,10 @@ const EditTenancyContracts = () => {
     ) {
       let extraPenalty = 0;
       const monthRate = formValues?.anualPriceRent / 12;
-      const dayRate = monthRate / 30;
+      const dayRate = formValues?.anualPriceRent / 365;
       const overStayCheckAmount = +formValues.custom_overstay_check * dayRate;
       if (formValues.custom_serve_the_notice_period === "No") {
-        extraPenalty = 2 * monthRate;
+        extraPenalty = 60 * dayRate;
       }
       let dayDifference = 0;
       tableData.forEach((item) => {
