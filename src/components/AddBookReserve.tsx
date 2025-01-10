@@ -260,7 +260,7 @@ setCountryList(res?.data?.data)
     e.preventDefault();
     try {
       console.log("API Data => ", formData);
-      const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+      const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
       const res = await createBooking({
         property: formData.name1,
@@ -527,8 +527,8 @@ setCountryList(res?.data?.data)
                           <img
                             className="w-full h-full rounded-md"
                             src={
-                              value
-                                ? `https://propms.erpnext.syscort.com/${value}`
+                              value.url
+                                ? `https://propms.erpnext.syscort.com/${value.url}`
                                 : "/defaultProperty.jpeg"
                             }
                             alt="propertyImg"

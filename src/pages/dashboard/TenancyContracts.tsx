@@ -73,7 +73,7 @@ const TenancyContracts = () => {
     "End-Date",
     "Expiry Days",
     "Status",
-    "Case Status",
+    // "Case Status",
     "Actions ",
   ];
 
@@ -388,17 +388,14 @@ const TenancyContracts = () => {
                                 : item.lease_status}
                             </div>
                           </td>
-                          <td className="p-2 py-3">
-                            <div
-                              className={`p-1 rounded ${
-                                item?.caseStatus?.length > 0
+                          {/* <td className="p-2 py-3"><div
+                              className={`p-1 rounded whitespace-nowrap ${item?.caseStatus?.length > 0
                                   ? "bg-[#ff8d00] text-black"
-                                  : ""
-                              }`}
-                            >
-                              {item?.caseStatus ? item?.caseStatus : "-"}
-                            </div>
-                          </td>
+                                  :
+                                  ""
+
+                                }`}
+                            >{item?.caseStatus ? item?.caseStatus : '-'}</div></td> */}
                           <td className="p-2 py-3">
                             <div className="flex gap-3">
                               <Link

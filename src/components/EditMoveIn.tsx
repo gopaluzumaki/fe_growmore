@@ -156,7 +156,7 @@ const EditMoveIn = () => {
 
       }
       if (propertyData?.custom_attachment_table?.length > 0) {
-        const imageArray = propertyData?.custom_attachment_table?.map((item) => item.image);
+        const imageArray = propertyData?.custom_attachment_table?.map((item) => ({ url: item.image }));
         setImageArray(imageArray)
       }
     }
@@ -185,7 +185,7 @@ const EditMoveIn = () => {
   },[imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
     try {
       console.log("API Data => ", formValues);
       const res = await updateCase({
@@ -397,8 +397,8 @@ const EditMoveIn = () => {
                           <img
                             className="w-full h-full rounded-md"
                             src={
-                              value
-                                ? `https://propms.erpnext.syscort.com/${value}`
+                              value.url
+                                ? `https://propms.erpnext.syscort.com/${value.url}`
                                 : "/defaultProperty.jpeg"
                             }
                             alt="propertyImg"

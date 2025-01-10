@@ -122,7 +122,7 @@ setCountryList(res?.data?.data)
           // setImgUrls(res.data.data.custom_thumbnail_image || "");
         }
         if (res?.data?.data?.custom_attachment_table_unit?.length > 0) {
-          const imageArray = res?.data?.data?.custom_attachment_table_unit?.map((item) => item.image);
+          const imageArray = res?.data?.data?.custom_attachment_table_unit?.map((item) => ({ url: item.image }));
           setImageArray(imageArray)
         }
       } catch (error) {
@@ -283,7 +283,7 @@ setCountryList(res?.data?.data)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl }));
+    const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
     try {
       console.log("API Data => ", formData);
@@ -459,8 +459,8 @@ setCountryList(res?.data?.data)
                           <img
                             className="w-full h-full rounded-md"
                             src={
-                              value
-                                ? `https://propms.erpnext.syscort.com/${value}`
+                              value.url
+                                ? `https://propms.erpnext.syscort.com/${value.url}`
                                 : "/defaultProperty.jpeg"
                             }
                             alt="propertyImg"
