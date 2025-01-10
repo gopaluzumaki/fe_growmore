@@ -991,7 +991,12 @@ const AddTenancyContracts = () => {
                             key={index}
                             className="flex justify-space-between"
                           >
-                            <a href={`https://propms.erpnext.syscort.com/${value.url}`} target="value" >{value.name}</a>
+                            <a
+                              href={`https://propms.erpnext.syscort.com/${value.url}`}
+                              target="value"
+                            >
+                              {value.name}
+                            </a>
 
                             <button
                               type="button" // Prevent form submission
@@ -1496,7 +1501,7 @@ const AddTenancyContracts = () => {
                                   <Table.Td>{item.bankName}</Table.Td>
                                   <Table.Td>{item?.status || "-"}</Table.Td>
                                   <Table.Td>
-                                    {item?.approvalStatus || "N/A"}
+                                    {item?.approvalStatus || "-"}
                                   </Table.Td>
                                 </Table.Tr>
                               ))}
