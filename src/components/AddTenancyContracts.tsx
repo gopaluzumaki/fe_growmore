@@ -54,6 +54,8 @@ import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD, formatDateToYYYYMMDD } from "../lib/utils";
 import { useListState, randomId } from "@mantine/hooks";
 import CustomFileUpload from "./ui/CustomFileUpload";
+import RichTextEditorUI from "./ui/RichTextEditorUI";
+import RichTextEditorUIArabic from "./ui/RichTextEditorUIArabic";
 
 const initialValues = [
   { label: "Move In", checked: true, key: randomId() },
@@ -78,6 +80,9 @@ const AddTenancyContracts = () => {
   const [imgUrls, setImgUrls] = useState<string[]>([]);
   const [imageArray, setImageArray] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [additionalTerms,setAdditionalTerms] = useState()
+  const [additionalTermsArabic,setAdditionalTermsArabic] = useState()
+  console.log(additionalTerms,"cft")
   const [tableData, setTableData] = useState<
     {
       rent: string;
@@ -724,6 +729,8 @@ const AddTenancyContracts = () => {
         custom_bank_name: formValues.bankName,
         custom_price__rent_annually: formValues.anualPriceRent,
 
+        custom_html:additionalTerms,
+        custom_html_2:additionalTermsArabic,
         lease_item:
           tableData && tableData.length > 0
             ? tableData.map((item) => {
@@ -746,7 +753,6 @@ const AddTenancyContracts = () => {
                   custom_rent_amount: item.rent,
                   custom_status: item.status,
                   custom_name_on_the_cheque: item.cheque,
-
                   // set customer email for notification purpose
                   custom_send_email: tenantDetails.custom_email,
                   custom_lease_status: formValues.tenancyStatus,
@@ -925,6 +931,20 @@ const AddTenancyContracts = () => {
                           }
                         }
                       )}
+                    </div>
+                    <div>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        Additional Terms (English)
+                      </p>
+                    <RichTextEditorUI setAdditionalTerms={setAdditionalTerms}/>
+
+                    </div>
+                    <div>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        Additional Terms (Arabic)
+                      </p>
+                    <RichTextEditorUIArabic setAdditionalTermsArabic={setAdditionalTermsArabic}/>
+
                     </div>
                     <div className="mb-5">
                       <CustomFileUpload

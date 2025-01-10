@@ -63,6 +63,8 @@ import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD, formatDateToYYYYMMDD } from "../lib/utils";
 import { useListState, randomId } from "@mantine/hooks";
 import CustomFileUpload from "./ui/CustomFileUpload";
+import  RichTextEditorUI  from "./ui/RichTextEditorUI";
+import RichTextEditorUIArabic from "./ui/RichTextEditorUIArabic";
 
 const initialValues = [
   { label: "Move In", checked: true, key: randomId() },
@@ -106,6 +108,9 @@ const EditTenancyContracts = () => {
   const [imageArray, setImageArray] = useState([]);
   const [loading, setLoading] = useState(false);
   const [caseList,setCaseList] = useState([])
+  const [additionalTerms,setAdditionalTerms] = useState()
+  const [additionalTermsArabic,setAdditionalTermsArabic] = useState()
+
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     numberOfChecks: "",
     bankName: "",
@@ -171,7 +176,7 @@ const EditTenancyContracts = () => {
   const [ownerDetails, setOwnerDetails] = useState();
   const [tenantDetails, setTenantDetails] = useState();
   const [isContractExtended, setIsContractExtended] = useState(0);
-
+  const [richTextOpen,setRichTextOpen] = useState(true)
   // set start and end date in renewal details
 
   useEffect(() => {
@@ -447,7 +452,8 @@ setCaseList(caseDataList)
                 item.custom_serve_the_notice_period,
               custom_overstay_check: item.custom_overstay_check,
               custom_penalty_amount: item.custom_penalty_amount,
-
+              custom_html: item.custom_html,
+              custom_html_2:item.custom_html_2,
               //renewal details
 
               renewal_duration: item.custom_renewal_duration,
@@ -463,6 +469,7 @@ setCaseList(caseDataList)
 
             setOwnerImgUrl(item.custom_image || "");
             setPropertyImgUrl(item?.propertyDoc || "");
+            setRichTextOpen(false)
           }
           if (item?.custom_attachment_table?.length > 0) {
             const imageArray = item?.custom_attachment_table?.map(
@@ -976,7 +983,18 @@ setCaseList(caseDataList)
       propertyType: value,
     }));
   };
-
+useEffect(()=>{
+  setFormValues((prevData) => ({
+    ...prevData,
+    "custom_html": additionalTerms,
+  }));
+},[additionalTerms])
+useEffect(()=>{
+  setFormValues((prevData) => ({
+    ...prevData,
+    "custom_html_2": additionalTermsArabic,
+  }));
+},[additionalTermsArabic])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
@@ -1027,7 +1045,8 @@ setCaseList(caseDataList)
             ? "Draft"
             : formValues.tenancyStatus,
         custom_attachment_table: imageData,
-
+        custom_html:formValues?.custom_html,
+        custom_html_2:formValues?.custom_html_2,
         //termination details
         custom_duration: formValues.custom_duration,
         custom_day_rate: formValues.custom_day_rate,
@@ -1150,7 +1169,8 @@ setCaseList(caseDataList)
         const updateRes = await updateTanencyContract(location.state, {
           lease_status: "Renewal",
           custom_attachment_table: imageData,
-
+          custom_html:formValues?.custom_html,
+          custom_html_2:formValues?.custom_html_2,
           //renewal details
           custom_renewal_duration: formValues.renewal_duration,
           custom_number_of_days: formValues.number_of_days,
@@ -1818,6 +1838,20 @@ setCaseList(caseDataList)
                           }
                         }
                       )}
+                    </div>
+                    <div>
+                    {richTextOpen?<></>:<p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        Additional Terms (English)
+                      </p>}
+                      {richTextOpen?<></>:<RichTextEditorUI content={formValues?.custom_html} setAdditionalTerms={setAdditionalTerms}/>
+}
+                    </div>
+                    <div>
+                    {richTextOpen?<></>:<p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        Additional Terms (Arabic)
+                      </p>}
+                      {richTextOpen?<></>:<RichTextEditorUIArabic content={formValues?.custom_html_2} setAdditionalTermsArabic={setAdditionalTermsArabic}/>
+}
                     </div>
                     <div className="mb-5">
                       <CustomFileUpload
