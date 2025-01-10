@@ -42,10 +42,22 @@ const Maintenance = () => {
    
     const updatedData = maintenanceList?.data?.data.map(item => {
       const creationDate = new Date(item.creation);
-      const timeDifference = new Date() - creationDate; // Difference in milliseconds
-      const daysOfActivation = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
+    
+      // Reset creation date to midnight
+      const creationDateOnly = new Date(creationDate.getFullYear(), creationDate.getMonth(), creationDate.getDate());
+    
+      // Reset current date to midnight
+      const currentDateOnly = new Date();
+      currentDateOnly.setHours(0, 0, 0, 0);
+    
+      // Difference in milliseconds
+      const timeDifference = currentDateOnly - creationDateOnly;
+      // Convert to days
+      const daysOfActivation = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+      
       return { ...item, days_of_Activation: daysOfActivation };
     });
+    
     setMaintenanceList(updatedData || []);
     setFilteredMaintenanceList(updatedData || []);
 
