@@ -749,6 +749,13 @@ const AddTenancyContracts = () => {
 
                   // set customer email for notification purpose
                   custom_send_email: tenantDetails.custom_email,
+                  custom_lease_status: formValues.tenancyStatus,
+                  custom_customer_name: tenantDetails.name,
+                  custom__payment_remainder: values.find(
+                    (item) => item.label === "Payment Remainder"
+                  ).checked
+                    ? 1
+                    : 0,
                 };
               })
             : [],

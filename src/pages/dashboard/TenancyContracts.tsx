@@ -100,25 +100,58 @@ const TenancyContracts = () => {
     return Math.round(diffMs / oneDay);
   };
 
-  const getStatus = async(records) =>{
-    const results = await Promise.all(records.map(async (record, index) => {
-      // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
-      const caseData = await fetchCaseFromMaintenance(record.custom_property_name, record.custom_number_of_unit, record.lease_customer);
-      console.log(caseData?.data?.data, "bvf", index);
-      let caseStatus = caseData?.data?.data[0]?.custom_status
-      return { ...record, caseStatus }; // Return record with days left and caseData
-    }));
+  const getStatus = async (records) => {
+    const results = await Promise.all(
+      records.map(async (record, index) => {
+        // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
+        const caseData = await fetchCaseFromMaintenance(
+          record.custom_property_name,
+          record.custom_number_of_unit,
+          record.lease_customer
+        );
+        console.log(caseData?.data?.data, "bvf", index);
+        let caseStatus = caseData?.data?.data[0]?.custom_status;
+        return { ...record, caseStatus }; // Return record with days left and caseData
+      })
+    );
 
     return results;
-  }
+  };
+
+  // const statusOptions = [
+  //   "Active",
+  //   "Closed",
+  //   "Draft",
+  //   "Extend",
+  //   "Renewal",
+  //   "Termination",
+  // ];
 
   const statusOptions = [
-    "Active",
-    "Closed",
-    "Draft",
-    "Extend",
-    "Renewal",
-    "Termination",
+    {
+      label: "Active",
+      value: "Active",
+    },
+    // {
+    //   label: "Closed",
+    //   value: "Closed",
+    // },
+    {
+      label: "Draft",
+      value: "Draft",
+    },
+    // {
+    //   label: "Extend",
+    //   value: "Extend",
+    // },
+    {
+      label: "Finished",
+      value: "Renewal",
+    },
+    {
+      label: "Termination",
+      value: "Termination",
+    },
   ];
 
   const expiry_Options = ["This Week", "This Month", "This Year"];
@@ -350,7 +383,9 @@ const TenancyContracts = () => {
                                   : "bg-blue-400 text-white"
                               }`}
                             >
-                              {item.lease_status}
+                              {item.lease_status === "Renewal"
+                                ? "Finished"
+                                : item.lease_status}
                             </div>
                           </td>
                           {/* <td className="p-2 py-3"><div
@@ -423,11 +458,13 @@ const TenancyContracts = () => {
                                   size={20}
                                   className="text-[#EB4335]"
                                   onClick={async () => {
-                                    const confirmed = window.confirm(`Are you sure you want to delete this ${item.custom_property_name}?`);
-                             if (confirmed) {
-                                    await deleteTanencyContract(item.name);
-                                    getData();
-                             }
+                                    const confirmed = window.confirm(
+                                      `Are you sure you want to delete this ${item.custom_property_name}?`
+                                    );
+                                    if (confirmed) {
+                                      await deleteTanencyContract(item.name);
+                                      getData();
+                                    }
                                   }}
                                 />
                               </button>
