@@ -319,7 +319,7 @@ const EditTenancyContracts = () => {
         try {
           const res = await fetchTenancyContract(location.state);
           const item = res?.data?.data;
-const caseData = await fetchCaseFromMaintenance(item.custom_property_name, item.custom_number_of_unit, item.lease_customer);
+const caseData = await fetchCaseFromMaintenance(item.custom_property_name, item.custom_number_of_unit);
 const caseDataList = caseData?.data?.data?.map(
   (item) => item.custom_status
 ); 

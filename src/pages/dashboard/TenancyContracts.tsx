@@ -103,7 +103,7 @@ const TenancyContracts = () => {
   const getStatus = async(records) =>{
     const results = await Promise.all(records.map(async (record, index) => {
       // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
-      const caseData = await fetchCaseFromMaintenance(record.custom_property_name, record.custom_number_of_unit, record.lease_customer);
+      const caseData = await fetchCaseFromMaintenance(record.custom_property_name, record.custom_number_of_unit);
       console.log(caseData?.data?.data, "bvf", index);
       let caseStatus = caseData?.data?.data[0]?.custom_status
       return { ...record, caseStatus }; // Return record with days left and caseData
