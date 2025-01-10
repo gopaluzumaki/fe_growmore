@@ -168,6 +168,7 @@ const EditTenancyContracts = () => {
   const [values, handlers] = useListState(initialValues);
   const [ownerDetails, setOwnerDetails] = useState();
   const [tenantDetails, setTenantDetails] = useState();
+  const [isContractExtended, setIsContractExtended] = useState(0);
 
   // set start and end date in renewal details
 
@@ -363,6 +364,9 @@ const EditTenancyContracts = () => {
 
             handlers.setState(updatedValues);
 
+            if (item.custom_is_extended === 1) {
+              setIsContractExtended(1);
+            }
             // Handle dropdowns
             if (item?.lease_customer)
               await handleDropDown("tenantName", item.lease_customer);
@@ -926,6 +930,9 @@ const EditTenancyContracts = () => {
 
         setTableData([]);
       }
+      if (item === "Extend") {
+        setIsContractExtended(1);
+      }
 
       handlers.setState(updateInitialValues(item));
     }
@@ -1004,7 +1011,10 @@ const EditTenancyContracts = () => {
       const payload = {
         ...formValues,
         ...reminderValues,
-        lease_status: formValues.tenancyStatus,
+        lease_status:
+          formValues.tenancyStatus === "Extend"
+            ? "Draft"
+            : formValues.tenancyStatus,
         custom_attachment_table: imageData,
 
         //termination details
@@ -1105,8 +1115,18 @@ const EditTenancyContracts = () => {
                   custom_status: item.status,
                   custom_name_on_the_cheque: item.cheque,
 
-                  // set customer email for notification purpose
+                  // set details for notification purpose
                   custom_send_email: tenantDetails.custom_email,
+                  custom_lease_status:
+                    formValues.tenancyStatus === "Extend"
+                      ? "Draft"
+                      : formValues.tenancyStatus,
+                  custom_customer_name: tenantDetails.name,
+                  custom__payment_remainder: values.find(
+                    (item) => item.label === "Payment Remainder"
+                  ).checked
+                    ? 1
+                    : 0,
                 };
               })
             : [
@@ -1129,9 +1149,18 @@ const EditTenancyContracts = () => {
         }); //import from API
         const createRes = await createTanencyContract({
           ...payload,
-          lease_status: "Active",
+          lease_status: "Draft",
         }); //import from API
         if (updateRes && createRes) {
+          navigate("/contracts");
+        }
+      } else if (formValues.tenancyStatus === "Extend") {
+        const res = await updateTanencyContract(location.state, {
+          ...payload,
+          custom_is_extended: 1,
+        }); //import from API
+
+        if (res) {
           navigate("/contracts");
         }
       } else {
@@ -1320,7 +1349,7 @@ const EditTenancyContracts = () => {
                     <div></div>
                   </div>
 
-                  {formValues.tenancyStatus === "Extend" && (
+                  {isContractExtended === 1 && (
                     <div>
                       <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
                         <span className="pb-1 border-b border-[#7C8DB5]">
