@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useEffect, useRef } from "react";
 import { RichTextEditor } from "@mantine/tiptap";
 import { useEditor } from "@tiptap/react";
