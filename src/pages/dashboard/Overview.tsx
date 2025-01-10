@@ -9,7 +9,13 @@ import DataCard from "../../components/DataCard";
 import Sidebar from "../../components/Sidebar";
 import RentOverviewChart from "../../components/RentOverviewChart";
 import { useEffect, useState } from "react";
-import { fetchCaseFromMaintenance, fetchTenancyData, getPropertyCount, getTenantCount, getUnitCount } from "../../api";
+import {
+  fetchCaseFromMaintenance,
+  fetchTenancyData,
+  getPropertyCount,
+  getTenantCount,
+  getUnitCount,
+} from "../../api";
 import LeadsOverviewChart from "../../components/LeadsOverviewChart";
 import { Link } from "react-router-dom";
 import { MdOutlineEdit } from "react-icons/md";
@@ -24,27 +30,31 @@ const Overview = () => {
   }, []);
   async function calculateDaysLeft(records) {
     const currentDate = new Date(); // Get the current date
-    const results = await Promise.all(records.map(async (record, index) => {
-      const endDate = new Date(record.end_date); // Convert end date to Date object
-      const timeDiff = endDate.getTime() - currentDate.getTime(); // Difference in milliseconds
-      const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert to days
+    const results = await Promise.all(
+      records.map(async (record, index) => {
+        const endDate = new Date(record.end_date); // Convert end date to Date object
+        const timeDiff = endDate.getTime() - currentDate.getTime(); // Difference in milliseconds
+        const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convert to days
 
-    
-
-      // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
-      const caseData = await fetchCaseFromMaintenance(record.custom_property_name, record.custom_number_of_unit, record.customer);
-      console.log(caseData?.data?.data, "bvf", index);
-      const caseDataList1 = caseData?.data?.data?.map(
-        (item) => item.custom_status
-      ); 
-      const caseDataList=[...new Set(caseDataList1)]
-      return { ...record, daysLeft, caseDataList }; // Return record with days left and caseData
-    }));
+        // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
+        const caseData = await fetchCaseFromMaintenance(
+          record.custom_property_name,
+          record.custom_number_of_unit,
+          record.customer
+        );
+        console.log(caseData?.data?.data, "bvf", index);
+        const caseDataList1 = caseData?.data?.data?.map(
+          (item) => item.custom_status
+        );
+        const caseDataList = [...new Set(caseDataList1)];
+        return { ...record, daysLeft, caseDataList }; // Return record with days left and caseData
+      })
+    );
 
     return results; // Return the array of resolved records
   }
 
-  console.log(tenancyData, "ngt")
+  console.log(tenancyData, "ngt");
   const getData = async () => {
     const property = await getPropertyCount();
     const unit = await getUnitCount();
@@ -53,7 +63,7 @@ const Overview = () => {
     setPropertyCount(property?.data?.message);
     setUnitCount(unit?.data?.message);
     setTenantCount(tenant?.data?.message);
-    setTenancyData(await calculateDaysLeft(tenancyData?.data?.data))
+    setTenancyData(await calculateDaysLeft(tenancyData?.data?.data));
   };
 
   const headers = [
@@ -65,10 +75,8 @@ const Overview = () => {
     "Status",
     "Case Status",
     "No. of Days Left",
-    "Action"
+    "Action",
   ];
-
-
 
   return (
     <main>
@@ -151,65 +159,80 @@ const Overview = () => {
                           >
                             <td className="p-2 py-3">{i + 1}</td>
                             <td className="p-2 py-3">{item.customer}</td>
-                            <td className="p-2 py-3">{item.custom_property_name}</td>
-                            <td className="p-2 py-3">{item.custom_number_of_unit}</td>
-                            <td className="p-2 py-3">{item.custom_location__area}</td>
-                            <td className="p-2 py-3"><div
-                              className={`p-1 rounded ${item.lease_status === "Draft"
-                                  ? "bg-red-400 text-black"
-                                  : item.lease_status === "Active"
+                            <td className="p-2 py-3">
+                              {item.custom_property_name}
+                            </td>
+                            <td className="p-2 py-3">
+                              {item.custom_number_of_unit}
+                            </td>
+                            <td className="p-2 py-3">
+                              {item.custom_location__area}
+                            </td>
+                            <td className="p-2 py-3">
+                              <div
+                                className={`p-1 rounded ${
+                                  item.lease_status === "Draft"
+                                    ? "bg-red-400 text-black"
+                                    : item.lease_status === "Active"
                                     ? "bg-[#34A853] text-white"
                                     : "bg-blue-400 text-white"
                                 }`}
-                            >
-                              {item.lease_status}
-                            </div></td>
-                            <td className="p-2 py-3">
-                            {item?.caseDataList?.length>0?<div className="grid grid-cols-2 gap-2">
-                              {item?.caseDataList?.map((value)=>(
-                                
-                                <div
-                                style={{
-                                  wordWrap: "break-word",
-                                  wordBreak: "break-word",
-                                  overflow: "hidden",
-                                }}
-                              className={`p-1 mb-1 rounded ${value.length > 0
-                                  ? "bg-[#ff8d00] text-black"
-                                  :
-                                  ""
-
-                                }`}
-                            >
-                              {value}
-                                      </div>
-                      ))}
-                                      </div>:"-"}
-
-                              </td>
-
-                            <td className="p-2 py-3"><div
-                              className={`p-1 rounded ${item.daysLeft === "Expired"
-                                  ? "bg-[#ff0000] text-black"
-                                  : item?.daysLeft <= 15
-                                    ? "bg-[#ff8d00] text-black"
-                                    : ''
-                                }`}
-                            >
-                              {item.daysLeft}
-                            </div></td>
-                            <td className="p-2 py-3">
-                            <div className="flex ml-4">
-                              <Link
-                                to={"/contracts/edit"}
-                                state={item.name}
-                                className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
                               >
-                                <MdOutlineEdit
-                                  size={20}
-                                  className="text-[#D09D4A]"
-                                />
-                              </Link>
+                                {item.lease_status === "Renewal"
+                                  ? "Finished"
+                                  : item.lease_status}
+                              </div>
+                            </td>
+                            <td className="p-2 py-3">
+                              {item?.caseDataList?.length > 0 ? (
+                                <div className="grid grid-cols-2 gap-2">
+                                  {item?.caseDataList?.map((value) => (
+                                    <div
+                                      style={{
+                                        wordWrap: "break-word",
+                                        wordBreak: "break-word",
+                                        overflow: "hidden",
+                                      }}
+                                      className={`p-1 mb-1 rounded ${
+                                        value.length > 0
+                                          ? "bg-[#ff8d00] text-black"
+                                          : ""
+                                      }`}
+                                    >
+                                      {value}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                "-"
+                              )}
+                            </td>
+
+                            <td className="p-2 py-3">
+                              <div
+                                className={`p-1 rounded ${
+                                  item.daysLeft === "Expired"
+                                    ? "bg-[#ff0000] text-black"
+                                    : item?.daysLeft <= 15
+                                    ? "bg-[#ff8d00] text-black"
+                                    : ""
+                                }`}
+                              >
+                                {item.daysLeft}
+                              </div>
+                            </td>
+                            <td className="p-2 py-3">
+                              <div className="flex ml-4">
+                                <Link
+                                  to={"/contracts/edit"}
+                                  state={item.name}
+                                  className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer"
+                                >
+                                  <MdOutlineEdit
+                                    size={20}
+                                    className="text-[#D09D4A]"
+                                  />
+                                </Link>
                               </div>
                             </td>
                           </tr>

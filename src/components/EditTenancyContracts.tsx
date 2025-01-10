@@ -105,7 +105,7 @@ const EditTenancyContracts = () => {
   const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [caseList,setCaseList] = useState([])
+  const [caseList, setCaseList] = useState([]);
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     numberOfChecks: "",
     bankName: "",
@@ -310,7 +310,7 @@ const EditTenancyContracts = () => {
   // to prefilled formdata values.
   function getFileName(filePath) {
     // Use the split method to isolate the file name from the path
-    const parts = filePath.split('/');
+    const parts = filePath.split("/");
     return parts[parts.length - 1]; // Return the last part
   }
   useEffect(() => {
@@ -320,11 +320,15 @@ const EditTenancyContracts = () => {
         try {
           const res = await fetchTenancyContract(location.state);
           const item = res?.data?.data;
-const caseData = await fetchCaseFromMaintenance(item.custom_property_name, item.custom_number_of_unit, item.lease_customer);
-const caseDataList = caseData?.data?.data?.map(
-  (item) => item.custom_status
-); 
-setCaseList(caseDataList)
+          const caseData = await fetchCaseFromMaintenance(
+            item.custom_property_name,
+            item.custom_number_of_unit,
+            item.lease_customer
+          );
+          const caseDataList = caseData?.data?.data?.map(
+            (item) => item.custom_status
+          );
+          setCaseList(caseDataList);
           console.log("property items data: ", item);
 
           if (item) {
@@ -465,10 +469,11 @@ setCaseList(caseDataList)
             setPropertyImgUrl(item?.propertyDoc || "");
           }
           if (item?.custom_attachment_table?.length > 0) {
-            const imageArray = item?.custom_attachment_table?.map(
-              (item) => ({ url: item.image, name: getFileName(item.image) })
-            );
-            
+            const imageArray = item?.custom_attachment_table?.map((item) => ({
+              url: item.image,
+              name: getFileName(item.image),
+            }));
+
             setImageArray(imageArray);
           }
         } catch (error) {
@@ -1255,7 +1260,7 @@ setCaseList(caseDataList)
   const username = APP_AUTH.USERNAME;
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
-  console.log(caseList,"vgy")
+  console.log(caseList, "vgy");
   return (
     <main>
       <div className="flex">
@@ -1270,13 +1275,19 @@ setCaseList(caseDataList)
             </div>
             <div>
               <div className="my-4 p-6 border border-[#E6EDFF] rounded-xl">
-              {caseList?.length>0&&<div className="flex justify-center">
-  <span className="bg-[red] p-2 rounded-xl" style={{ color: 'white' }}>
-    This tenancy contract is under {[...new Set(caseList)].join(", ")}
-  </span>
-</div>}
+                {caseList?.length > 0 && (
+                  <div className="flex justify-center">
+                    <span
+                      className="bg-[red] p-2 rounded-xl"
+                      style={{ color: "white" }}
+                    >
+                      This tenancy contract is under{" "}
+                      {[...new Set(caseList)].join(", ")}
+                    </span>
+                  </div>
+                )}
 
-{/* <div>
+                {/* <div>
                   <PrimaryButton
                     title={
                       formValues?.tenancyStatus !== "Active"
@@ -1864,7 +1875,12 @@ setCaseList(caseDataList)
                             key={index}
                             className="flex justify-space-between"
                           >
-                            <a href={`https://propms.erpnext.syscort.com/${value.url}`} target="value" >{value.name}</a>
+                            <a
+                              href={`https://propms.erpnext.syscort.com/${value.url}`}
+                              target="value"
+                            >
+                              {value.name}
+                            </a>
 
                             <button
                               type="button" // Prevent form submission
@@ -2682,7 +2698,7 @@ setCaseList(caseDataList)
                                   <Table.Td>{item.bankName}</Table.Td>
                                   <Table.Td>{item?.status ?? "-"}</Table.Td>
                                   <Table.Td>
-                                    {item?.approvalStatus || "N/A"}
+                                    {item?.approvalStatus || "-"}
                                   </Table.Td>{" "}
                                 </Table.Tr>
                               ))}
