@@ -87,7 +87,7 @@ const TenancyContracts = () => {
     const tenantListRes = await getTenantList();
     const ownerListRes = await getOwnerList();
 
-    setUnitList(await getStatus(unitListRes?.data?.data || []));
+    setUnitList(await getStatus(unitListRes?.data?.message || []));
     setPropertyList(propertyListRes?.data?.data || []);
     setTenantList(tenantListRes?.data?.data || []);
     setOwnerList(ownerListRes?.data?.data || []);
@@ -155,7 +155,7 @@ const TenancyContracts = () => {
 
     const matchesSearch =
       !searchValue ||
-      item.property.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item.custom_property_name.toLowerCase().includes(searchValue.toLowerCase()) ||
       item.lease_customer.toLowerCase().includes(searchValue.toLowerCase()) ||
       item.custom_location__area
         .toLowerCase()
@@ -176,7 +176,7 @@ const TenancyContracts = () => {
 
     return (
       matchesSearch &&
-      (!selectedProperty || item.property === selectedProperty) &&
+      (!selectedProperty || item.custom_property_name === selectedProperty) &&
       (!selectedUnit || item.name === selectedUnit) &&
       (!selectedTenant || item.lease_customer === selectedTenant) &&
       (!selectedOwner || item.custom_name_of_owner === selectedOwner) &&

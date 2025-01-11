@@ -26,8 +26,12 @@ export const API_URL = {
   Create_Booking:
     "https://propms.erpnext.syscort.com/api/resource/Property%20Booking",
   Create_Lease: "https://propms.erpnext.syscort.com/api/resource/Lease",
+  Single_Lease:
+    'https://propms.erpnext.syscort.com/api/method/propms_app.api.custom.single_contract',
   Lease_list:
     "https://propms.erpnext.syscort.com/api/resource/Lease?fields=[%22name%22,%22lease_status%22,%22custom_number_of_unit%22,%22property%22,%22custom_name_of_owner%22,%22lease_customer%22,%22custom_location__area%22,%22start_date%22,%22end_date%22,%22custom_rent_amount_to_pay%22,%22custom_price__rent_annually%22,%22custom_unit_name%22,%22custom_property_name%22]&order_by=modified desc",
+  Lease_lists:
+    "https://propms.erpnext.syscort.com/api/method/propms_app.api.custom.contracts_list",
   Tenancy_contract_pdf:
     "http://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=",
   MoveIn_List:
@@ -36,6 +40,10 @@ export const API_URL = {
     'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Move Out"]]',
   Maintenance_list:
     'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Maintenance"]]',
+  Maintenance_lists:
+    'https://propms.erpnext.syscort.com/api/method/propms_app.api.custom.maintenances_list',
+  Single_Maintenance:
+    'https://propms.erpnext.syscort.com/api/method/propms_app.api.custom.single_maintenance',
   Legal_list:
     'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Legal"]]',
   Tenant_Lease_List:
@@ -191,7 +199,7 @@ export const getBookingList = async () => {
 };
 
 export const getTenancyContractList = async () => {
-  const response = await axios.get(API_URL.Lease_list, {
+  const response = await axios.get(API_URL.Lease_lists, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
@@ -355,12 +363,15 @@ export const fetchTenant = async (params: any) => {
 };
 
 export const fetchTenancyContract = async (params: any) => {
-  const response = await axios.get(`${API_URL.Create_Lease}/${params}`, {
-    auth: {
-      username: APP_AUTH.USERNAME,
-      password: APP_AUTH.PASSWORD,
-    },
-  });
+  const response = await axios.get(
+    `${API_URL.Create_Lease}/${params}`,
+    // `${API_URL.Single_Lease}?id=${params}`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    });
   return response;
 };
 
@@ -552,7 +563,7 @@ export const getMoveOutListData = async (propertyName: any, unitName: any) => {
 
 export const getMaintenanceList = async () => {
   const response = await axios.get(
-    `${API_URL.Maintenance_list}&order_by=modified desc`,
+    `${API_URL.Maintenance_lists}?custom_status=Maintenance`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
@@ -610,12 +621,14 @@ export const deleteCase = async (params) => {
 };
 
 export const fetchMaintenance = async (params: any) => {
-  const response = await axios.get(`${API_URL.Create_Case}/${params}`, {
-    auth: {
-      username: APP_AUTH.USERNAME,
-      password: APP_AUTH.PASSWORD,
-    },
-  });
+  const response = await axios.get(
+    `${API_URL.Single_Maintenance}?id=${params}`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    });
   return response;
 };
 

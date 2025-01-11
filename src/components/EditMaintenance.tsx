@@ -123,8 +123,8 @@ const EditMaintenance = () => {
   useEffect(() => {
     const data = async () => {
       const res = await fetchMaintenance(id)
-      const propertyData = res?.data?.data;
-      console.log(propertyData,"jyu")
+      const propertyData = res?.data?.message;
+      console.log(propertyData, "jyu")
       if (propertyData) {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({

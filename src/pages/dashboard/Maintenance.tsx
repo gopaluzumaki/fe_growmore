@@ -40,7 +40,7 @@ const Maintenance = () => {
   const getData = async () => {
     const maintenanceList = await getMaintenanceList();
    
-    const updatedData = maintenanceList?.data?.data.map(item => {
+    const updatedData = maintenanceList?.data?.message.map(item => {
       const creationDate = new Date(item.creation);
     
       // Reset creation date to midnight
