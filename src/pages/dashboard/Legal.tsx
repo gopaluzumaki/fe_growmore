@@ -37,7 +37,7 @@ const Legal = () => {
 
   const getData = async () => {
     const legalList = await getLegalList();
-    console.log(legalList,"nht")
+    console.log(legalList, "nht")
     setLegalList(legalList?.data?.data || []);
     setFilteredLegalList(legalList?.data?.data || []);
 
@@ -45,19 +45,19 @@ const Legal = () => {
   useEffect(() => {
     const uniqueCustomProperties = [...new Set(
       legalList
-        .map(item => item.custom_property) // Extract custom_property values
+        .map(item => item?.custom_property.name1) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueProperty(uniqueCustomProperties)
     const uniqueCustomOwner = [...new Set(
       legalList
-        .map(item => item.custom_supplier) // Extract custom_property values
+        .map(item => item?.custom_supplier?.supplier_name) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueOwner(uniqueCustomOwner)
     const uniqueCustomUnit = [...new Set(
       legalList
-        .map(item => item.custom_unit_no) // Extract custom_property values
+        .map(item => item?.custom_current_property?.name1) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueUnit(uniqueCustomUnit)
@@ -65,20 +65,19 @@ const Legal = () => {
   const applyFilters = () => {
     const filteredData = legalList.filter((item) => {
       const matchesSearch = !searchValue ||
-        item?.custom_property?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_unit_no?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_location__area?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_legal_reason?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_supplier?.toLowerCase().includes(searchValue.toLowerCase())
+        item?.custom_property.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_current_property?.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_current_property?.custom_location?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_legal_reason?.custom_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_supplier?.supplier_name?.toLowerCase().includes(searchValue.toLowerCase())
 
-     
 
       const matchesProperty =
-        !selectedProperty || item.custom_property === selectedProperty;
+        !selectedProperty || item?.custom_property.name1 === selectedProperty;
       const matchesUnit =
-        !selectedUnit || item.custom_unit_no === selectedUnit;
+        !selectedUnit || item?.custom_current_property?.name1 === selectedUnit;
       const matchesCustomer =
-        !selectedOwner || item.custom_supplier === selectedOwner;
+        !selectedOwner || item?.custom_supplier?.supplier_name === selectedOwner;
       return matchesSearch && matchesProperty && matchesUnit && matchesCustomer;
     });
     setFilteredLegalList(filteredData);
@@ -186,17 +185,17 @@ const Legal = () => {
                           className="hover:bg-gray-50 text-center text-[15px]"
                         >
                           <td className="p-2 py-3">{i + 1}</td>
-                          <td className="p-2 py-3">{item?.custom_property}</td>
+                          <td className="p-2 py-3">{item?.custom_property.name1}</td>
                           <td className="p-2 py-3">
-                            {item.custom_unit_no}
+                            {item?.custom_current_property?.name1}
                           </td>
                           <td className="p-2 py-3">
-                            {item.custom_location__area}
+                            {item?.custom_current_property?.custom_location}
                           </td>
                           <td className="p-2 py-3">
-                            {item.custom_supplier}
+                            {item?.custom_supplier?.supplier_name}
                           </td>
-                          <td className="p-2 py-3">{item.custom_legal_reason}</td>
+                          <td className="p-2 py-3">{item?.custom_legal_reason?.custom_name}</td>
                           <td className="p-2 py-3">{item.creation.split(" ")[0]}</td>
                           <td className="p-2 py-3">{item.custom_status_legal}</td>
 
@@ -213,11 +212,11 @@ const Legal = () => {
                                 />
                               </Link>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
-                               const confirmed = window.confirm(`Are you sure you want to delete this ${item.custom_property}?`);
-                               if (confirmed) {
-                                 await deleteCase(item.name);
-                                 getData();
-                               }
+                                const confirmed = window.confirm(`Are you sure you want to delete this ${item?.custom_property.name1}?`);
+                                if (confirmed) {
+                                  await deleteCase(item.name);
+                                  getData();
+                                }
                               }}>
                                 <MdDeleteForever
                                   size={20}

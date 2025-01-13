@@ -44,19 +44,19 @@ const MoveOut = () => {
   useEffect(() => {
     const uniqueCustomProperties = [...new Set(
       moveOutList
-        .map(item => item.custom_property) // Extract custom_property values
+        .map(item => item.custom_property.name1) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueProperty(uniqueCustomProperties)
     const uniqueCustomCustomer = [...new Set(
       moveOutList
-        .map(item => item.custom_customer) // Extract custom_property values
+        .map(item => item?.custom_customer?.customer_name) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueCustomer(uniqueCustomCustomer)
     const uniqueCustomUnit = [...new Set(
       moveOutList
-        .map(item => item.custom_unit_no) // Extract custom_property values
+        .map(item => item?.custom_current_property?.name1) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueUnit(uniqueCustomUnit)
@@ -64,19 +64,19 @@ const MoveOut = () => {
   const applyFilters = () => {
     const filteredData = moveOutList.filter((item) => {
       const matchesSearch = !searchValue ||
-        item?.custom_property?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_unit_no?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_customer?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_property.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_current_property?.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_customer?.customer_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_start_date?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_end_date?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_statusmo?.toLowerCase().includes(searchValue.toLowerCase())
 
       const matchesProperty =
-        !selectedProperty || item.custom_property === selectedProperty;
+        !selectedProperty || item.custom_property.name1 === selectedProperty;
       const matchesUnit =
-        !selectedUnit || item.custom_unit_no === selectedUnit;
+        !selectedUnit || item?.custom_current_property?.name1 === selectedUnit;
       const matchesCustomer =
-        !selectedCustomer || item.custom_customer === selectedCustomer;
+        !selectedCustomer || item?.custom_customer?.customer_name === selectedCustomer;
       return matchesSearch && matchesProperty && matchesUnit && matchesCustomer;
     });
     setFilteredMoveOutList(filteredData);
@@ -185,12 +185,12 @@ const MoveOut = () => {
                           className="hover:bg-gray-50 text-center text-[15px]"
                         >
                           <td className="p-2 py-3">{i + 1}</td>
-                          <td className="p-2 py-3">{item?.custom_customer}</td>
+                          <td className="p-2 py-3">{item?.custom_customer?.customer_name}</td>
                           <td className="p-2 py-3">
-                            {item.custom_property}
+                            {item?.custom_property.name1}
                           </td>
                           <td className="p-2 py-3">
-                            {item.custom_unit_no}
+                            {item?.custom_current_property?.name1}
                           </td>
                           <td className="p-2 py-3">
                             {item.custom_start_date}
@@ -217,7 +217,7 @@ const MoveOut = () => {
                               </Link>
 
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
-                               const confirmed = window.confirm(`Are you sure you want to delete this ${item.custom_property}?`);
+                               const confirmed = window.confirm(`Are you sure you want to delete this ${item.custom_property.name1}?`);
                                if (confirmed) {
                                  await deleteCase(item.name);
                                  getData();

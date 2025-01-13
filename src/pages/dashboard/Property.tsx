@@ -20,7 +20,7 @@ import { CiSearch } from "react-icons/ci";
 
 const Property = () => {
   const [propertyList, setPropertyList] = useState([]);
-  const [filteredPropertyList,setFilteredPropertyList] = useState([]);
+  const [filteredPropertyList, setFilteredPropertyList] = useState([]);
   const [error, setError] = useState('')
   const [searchValue, setSearchvalue] = useState<string | null>(null);
 
@@ -40,7 +40,7 @@ const Property = () => {
 
   const getData = async () => {
     const propertyList = await getPropertyListData();
-    console.log("nbv", propertyList.data.data);
+    console.log("data ", propertyList.data.data);
     setPropertyList(propertyList?.data?.data);
     setFilteredPropertyList(propertyList?.data?.data)
   };
@@ -49,9 +49,9 @@ const Property = () => {
       const matchesSearch = !searchValue ||
         item?.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_location?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_country?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_status?.toLowerCase().includes(searchValue.toLowerCase()) 
-      return matchesSearch 
+        item?.custom_country?.country_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_status?.toLowerCase().includes(searchValue.toLowerCase())
+      return matchesSearch
     });
     setFilteredPropertyList(filteredData);
   };
@@ -66,7 +66,7 @@ const Property = () => {
     input: {
       border: "1px solid gray",
       width: "20vw",
-      padding:"24px"
+      padding: "24px"
     },
   };
   return (
@@ -90,19 +90,19 @@ const Property = () => {
                 <IoAdd size={20} />
               </Link>
             </div>
-          <div className="flex gap-2 items-center">
-                          <Input
-                            onChange={handleSearchValue}
-                            value={searchValue}
-                            styles={searchStyle}
-                            placeholder="Search"
-                            leftSection={<CiSearch className="mr-2" size={24} />}
-                          />
-                        </div>  
+            <div className="flex gap-2 items-center">
+              <Input
+                onChange={handleSearchValue}
+                value={searchValue}
+                styles={searchStyle}
+                placeholder="Search"
+                leftSection={<CiSearch className="mr-2" size={24} />}
+              />
+            </div>
           </div>
           <span className="flex justify-center text-red-500">{error}</span>
 
-          
+
           <div className="my-4 p-4">
             <div className="overflow-x-auto">
               <table className="min-w-full">
@@ -125,9 +125,9 @@ const Property = () => {
                       >
                         <td className="p-2 py-3">{i + 1}</td>
                         <td className="p-2 py-3">{item?.name1}</td>
-                        <td className="p-2 py-3">{item?.type}</td>
+                        <td className="p-2 py-3">{item?.type?.name}</td>
                         <td className="p-2 py-3">{item?.custom_location}</td>
-                        <td className="p-2 py-3">{item?.custom_country}</td>
+                        <td className="p-2 py-3">{item?.custom_country?.country_name}</td>
                         <td className="p-2 py-3">
                           <div className="flex gap-3">
                             <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer">

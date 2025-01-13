@@ -39,25 +39,25 @@ const Maintenance = () => {
 
   const getData = async () => {
     const maintenanceList = await getMaintenanceList();
-   
-    const updatedData = maintenanceList?.data?.message.map(item => {
+    console.log('data ', maintenanceList?.data?.data)
+    const updatedData = maintenanceList?.data?.data.map(item => {
       const creationDate = new Date(item.creation);
-    
+
       // Reset creation date to midnight
       const creationDateOnly = new Date(creationDate.getFullYear(), creationDate.getMonth(), creationDate.getDate());
-    
+
       // Reset current date to midnight
       const currentDateOnly = new Date();
       currentDateOnly.setHours(0, 0, 0, 0);
-    
+
       // Difference in milliseconds
       const timeDifference = currentDateOnly - creationDateOnly;
       // Convert to days
       const daysOfActivation = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-      
+
       return { ...item, days_of_Activation: daysOfActivation };
     });
-    
+
     setMaintenanceList(updatedData || []);
     setFilteredMaintenanceList(updatedData || []);
 
@@ -65,19 +65,19 @@ const Maintenance = () => {
   useEffect(() => {
     const uniqueCustomProperties = [...new Set(
       maintenanceList
-        .map(item => item.custom_property) // Extract custom_property values
+        .map(item => item.custom_property.name1) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueProperty(uniqueCustomProperties)
     const uniqueCustomOwner = [...new Set(
       maintenanceList
-        .map(item => item.custom_supplier) // Extract custom_property values
+        .map(item => item?.custom_supplier?.supplier_name) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueOwner(uniqueCustomOwner)
     const uniqueCustomUnit = [...new Set(
       maintenanceList
-        .map(item => item.custom_unit_no) // Extract custom_property values
+        .map(item => item?.custom_current_property?.name1) // Extract custom_property values
         .filter(value => value !== null && value !== undefined) // Exclude null and undefined
     )];
     setUniqueUnit(uniqueCustomUnit)
@@ -85,19 +85,19 @@ const Maintenance = () => {
   const applyFilters = () => {
     const filteredData = maintenanceList.filter((item) => {
       const matchesSearch = !searchValue ||
-        item?.custom_property?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_unit_no?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_location__area?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_supplier?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_damage_location?.toLowerCase().includes(searchValue.toLowerCase())
+        item?.custom_property?.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_current_property?.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_current_property?.custom_location?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_supplier?.supplier_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_damage_location?.custom_location?.toLowerCase().includes(searchValue.toLowerCase())
 
 
       const matchesProperty =
-        !selectedProperty || item.custom_property === selectedProperty;
+        !selectedProperty || item.custom_property?.name1 === selectedProperty;
       const matchesUnit =
-        !selectedUnit || item.custom_unit_no === selectedUnit;
+        !selectedUnit || item?.custom_current_property?.name1 === selectedUnit;
       const matchesCustomer =
-        !selectedOwner || item.custom_supplier === selectedOwner;
+        !selectedOwner || item?.custom_supplier?.supplier_name === selectedOwner;
       return matchesSearch && matchesProperty && matchesUnit && matchesCustomer;
     });
     setFilteredMaintenanceList(filteredData);
@@ -206,20 +206,20 @@ const Maintenance = () => {
                           className="hover:bg-gray-50 text-center text-[15px]"
                         >
                           <td className="p-2 py-3">{i + 1}</td>
-                          <td className="p-2 py-3">{item?.custom_property}</td>
+                          <td className="p-2 py-3">{item?.custom_property?.name1}</td>
                           <td className="p-2 py-3">
-                            {item.custom_unit_no}
+                            {item?.custom_current_property?.name1}
                           </td>
                           <td className="p-2 py-3">
-                            {item.custom_location__area}
+                            {item?.custom_current_property?.custom_location}
                           </td>
                           <td className="p-2 py-3">
-                            {item.custom_supplier}
+                            {item?.custom_supplier?.supplier_name}
                           </td>
-                          <td className="p-2 py-3">{item.custom_damage_location}</td>
+                          <td className="p-2 py-3">{item?.custom_damage_location?.custom_location}</td>
                           <td className="p-2 py-3">{item.creation.split(" ")[0]}</td>
 
-                          <td className="p-2 py-3">{item.custom_status_maint==="Resolve"?0:item.days_of_Activation}</td>
+                          <td className="p-2 py-3">{item.custom_status_maint === "Resolve" ? 0 : item.days_of_Activation}</td>
                           <td className="p-2 py-3">{item.custom_status_maint}</td>
 
                           <td className="p-2 py-3">

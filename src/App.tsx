@@ -86,7 +86,6 @@ function App() {
         <Route path="/maintenance/add" element={<AddMaintenance />} />
         <Route path="/maintenance/edit/:id" element={<EditMaintenance />} />
         <Route path="/profile" element={<Profile />} />
-
       </Route>
     )
   );
