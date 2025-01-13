@@ -51,16 +51,16 @@ const RichTextEditorUI = ({setAdditionalTerms,content}) => {
         let htmlContent = editor.getHTML();
   
         // Check if the content is RTL
-        if (isRTL(htmlContent)) {
-          // Apply RTL direction to the editor content
-          editorRef.current.querySelector('.ProseMirror').style.direction = "rtl";
-          editor.chain().setTextAlign("right").run();
+        // if (isRTL(htmlContent)) {
+        //   // Apply RTL direction to the editor content
+        //   editorRef.current.querySelector('.ProseMirror').style.direction = "rtl";
+        //   editor.chain().setTextAlign("right").run();
   
-          // Add RTL styles to <ul>, <ol>, and <li>
-          htmlContent = htmlContent.replace(/<(ol|ul)([^>]*)>/g, '<$1$2 style="direction: rtl;">');
-          htmlContent = htmlContent.replace(/<li([^>]*)>/g, '<li$1 style="direction: rtl;">');
-          htmlContent = htmlContent.replace(/<p([^>]*)>/g, '<p$1 style="direction: rtl;">');
-        } else {
+        //   // Add RTL styles to <ul>, <ol>, and <li>
+        //   htmlContent = htmlContent.replace(/<(ol|ul)([^>]*)>/g, '<$1$2 style="direction: rtl;">');
+        //   htmlContent = htmlContent.replace(/<li([^>]*)>/g, '<li$1 style="direction: rtl;">');
+        //   htmlContent = htmlContent.replace(/<p([^>]*)>/g, '<p$1 style="direction: rtl;">');
+        // } else {
           // Apply LTR direction to the editor content
           editorRef.current.querySelector('.ProseMirror').style.direction = "ltr";
           editor.chain().setTextAlign("left").run();
@@ -69,7 +69,7 @@ const RichTextEditorUI = ({setAdditionalTerms,content}) => {
           htmlContent = htmlContent.replace(/<(ol|ul)([^>]*)>/g, '<$1$2 style="direction: ltr;">');
           htmlContent = htmlContent.replace(/<li([^>]*)>/g, '<li$1 style="direction: ltr;">');
           htmlContent = htmlContent.replace(/<p([^>]*)>/g, '<p$1 style="direction: ltr;">');
-        }
+        // }
   
         // Format the HTML for proper nesting
         htmlContent = htmlContent.replace(/<\/li>/g, "</li>\n");
