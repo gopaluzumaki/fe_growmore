@@ -211,13 +211,15 @@ export const getBookingList = async () => {
 };
 
 export const getTenancyContractList = async () => {
-  const response = await axios.get(API_URL.Lease_lists, {
+  let params = { doctype: "Lease", fields: JSON.stringify(["name", "start_date", "end_date"]), filters: null }
+  const response = await axios.get(`${API_URL.Fetched_Data}`, {
+    params,
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
     },
   });
-  return response;
+  return response.data;
 };
 
 export const createProperty = async (propertyData: any) => {
