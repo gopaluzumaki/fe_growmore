@@ -100,7 +100,7 @@ const TenancyContracts = () => {
     return Math.round(diffMs / oneDay);
   };
 
-  const getStatus = async(records) =>{
+  const getStatus = async (records) => {
     const results = await Promise.all(records.map(async (record, index) => {
       // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
       const caseData = await fetchCaseFromMaintenance(record.custom_property_name, record.custom_number_of_unit);
@@ -155,15 +155,15 @@ const TenancyContracts = () => {
 
     const matchesSearch =
       !searchValue ||
-      item.custom_property_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      item.lease_customer.toLowerCase().includes(searchValue.toLowerCase()) ||
-      item.custom_location__area
+      item?.custom_current_property?.custom_parent_property_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item?.lease_customer?.customer_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      item?.custom_current_property?.custom_location
         .toLowerCase()
         .includes(searchValue.toLowerCase()) ||
-      item.custom_name_of_owner
+      item?.custom_name_of_owner?.supplier_name
         .toLowerCase()
         .includes(searchValue.toLowerCase()) ||
-      item.custom_number_of_unit
+      item?.custom_current_property?.name1
         .toLowerCase()
         .includes(searchValue.toLowerCase()) ||
       item.custom_rent_amount_to_pay
@@ -176,10 +176,10 @@ const TenancyContracts = () => {
 
     return (
       matchesSearch &&
-      (!selectedProperty || item.custom_property_name === selectedProperty) &&
+      (!selectedProperty || item?.custom_current_property?.custom_parent_property_name === selectedProperty) &&
       (!selectedUnit || item.name === selectedUnit) &&
-      (!selectedTenant || item.lease_customer === selectedTenant) &&
-      (!selectedOwner || item.custom_name_of_owner === selectedOwner) &&
+      (!selectedTenant || item?.lease_customer?.customer_name === selectedTenant) &&
+      (!selectedOwner || item?.custom_name_of_owner?.supplier_name === selectedOwner) &&
       (!selectedStatus || item.lease_status === selectedStatus) &&
       (!selectedExpiry ||
         (selectedExpiry === "This Week" && expiryDays <= 7) ||
@@ -237,6 +237,8 @@ const TenancyContracts = () => {
   const username = APP_AUTH.USERNAME;
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
+
+  console.log('sss ', unitList)
   return (
     <main>
       <div className="flex">
@@ -270,7 +272,7 @@ const TenancyContracts = () => {
                 />
                 <Select
                   placeholder="Select Unit"
-                  data={[...new Set(unitList.map((u) => u.name))]}
+                  data={[...new Set(unitList.map((u) => u?.custom_current_property?.name1))]}
                   clearable
                   value={selectedUnit}
                   onChange={setSelectedUnit}
@@ -343,19 +345,18 @@ const TenancyContracts = () => {
                         >
                           <td className="p-2 py-3">{i + 1}</td>
                           <td className="p-2 py-3">
-                            {item?.custom_property_name ?? item?.property}
+                            {item?.custom_current_property?.custom_parent_property_name}
                           </td>
                           <td className="p-2 py-3">
-                            {item?.custom_number_of_unit ??
-                              item?.custom_unit_name}
+                            {item?.custom_current_property?.name1}
                           </td>
                           <td className="p-2 py-3">
-                            {item.custom_location__area}
+                            {item?.custom_current_property?.custom_location}
                           </td>
                           <td className="p-2 py-3">
-                            {item.custom_name_of_owner}
+                            {item?.custom_name_of_owner?.supplier_name}
                           </td>
-                          <td className="p-2 py-3">{item.lease_customer}</td>
+                          <td className="p-2 py-3">{item?.lease_customer?.customer_name}</td>
                           <td className="p-2 py-3">
                             {item?.custom_price__rent_annually ||
                               item.custom_rent_amount_to_pay}
@@ -369,13 +370,12 @@ const TenancyContracts = () => {
                           <td className="p-2 py-3">{expiryDays}</td>
                           <td className="p-2 py-3">
                             <div
-                              className={`p-1 rounded ${
-                                item.lease_status === "Draft"
+                              className={`p-1 rounded ${item.lease_status === "Draft"
                                   ? "bg-red-400 text-black"
                                   : item.lease_status === "Active"
-                                  ? "bg-[#34A853] text-white"
-                                  : "bg-blue-400 text-white"
-                              }`}
+                                    ? "bg-[#34A853] text-white"
+                                    : "bg-blue-400 text-white"
+                                }`}
                             >
                               {item.lease_status === "Renewal"
                                 ? "Finished"
@@ -407,7 +407,7 @@ const TenancyContracts = () => {
                                   try {
                                     const response = await fetch(
                                       `https://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=` +
-                                        item.name,
+                                      item.name,
                                       {
                                         method: "GET",
                                         credentials: "include", // Ensures cookies for authenticated sessions are included
@@ -453,7 +453,7 @@ const TenancyContracts = () => {
                                   className="text-[#EB4335]"
                                   onClick={async () => {
                                     const confirmed = window.confirm(
-                                      `Are you sure you want to delete this ${item.custom_property_name}?`
+                                      `Are you sure you want to delete this ${item?.custom_current_property?.custom_parent_property_name}?`
                                     );
                                     if (confirmed) {
                                       await deleteTanencyContract(item.name);
