@@ -122,6 +122,7 @@ const AddTenancyContracts = () => {
     sqMeter: "",
     priceSqMeter: "",
     priceSqFt: "",
+    priceSizeSm: "",
     custom_premises_no: "",
 
     tenantName: "",
@@ -581,6 +582,7 @@ const AddTenancyContracts = () => {
           sqMeter: unit_List_Data?.custom_square_m_of_unit,
           priceSqMeter: unit_List_Data?.custom_price_square_m,
           priceSqFt: unit_List_Data?.custom_price_square_ft,
+          priceSizeSm: unit_List_Data?.custom_square_m_of_unit,
           custom_premises_no: unit_List_Data?.custom_premise_no,
           custom_city: unit_List_Data?.custom_city,
           custom_country: unit_List_Data?.custom_country,
@@ -600,21 +602,23 @@ const AddTenancyContracts = () => {
   };
 
   const handleDateChange = (name: string, date: Date | null) => {
+
     if (name === "startDate") {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (new Date(date) < today) {
-        return toast("The date cannot be in the past.");
+        return toast.error("The date cannot be in the past.");
       }
     }
+
     if (name === "endDate") {
       if (!formValues.startDate) {
-        return toast("The start date cannot be in the empty.");
+        return toast.error("The start date cannot be in the empty.");
       }
       const start = new Date(formValues.startDate);
       const end = new Date(date);
       if (end <= start) {
-        return toast("End date should be greater than the start date.");
+        return toast.error("End date should be greater than the start date.");
       }
     }
 
@@ -689,6 +693,7 @@ const AddTenancyContracts = () => {
         sq_meter: formValues.sqMeter,
         custom_price_sq_m: formValues.priceSqMeter,
         custom_price_sq_ft: formValues.priceSqFt,
+        custom_property_sizesm: formValues.priceSizeSm,
         security_deposit: formValues.securityDepositeAmt,
         custom_brokerage_amount: formValues.brokerageAmt,
 
@@ -704,6 +709,7 @@ const AddTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
+        custom_per_month_rent: formValues.propertyRent / 12,
         //save unit number
         custom_unit_name: formValues.propertyUnits,
         // save unit name

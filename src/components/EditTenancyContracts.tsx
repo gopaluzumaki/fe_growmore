@@ -399,8 +399,6 @@ const EditTenancyContracts = () => {
               await handleDropDown("propertyUnits", item.custom_unit_name);
             }
 
-            console.log(prevData)
-
             setFormValues((prevData) => ({
               ...prevData,
               chequeDate:
@@ -837,6 +835,20 @@ const EditTenancyContracts = () => {
   };
 
   const handleDropDown = async (name, item) => {
+
+    if (name === 'rental_increase') {
+      setFormValues((prevData) => ({
+        ...prevData,
+        percentage: 0,
+        fixed_amount: 0,
+        anualPriceRent: 0,
+        [name]: item,
+      }));
+      return
+    }
+
+    console.log('aaaaa')
+
     if (name === "propertyName1") {
       // Fetch property data based on the selected property
 
@@ -933,6 +945,7 @@ const EditTenancyContracts = () => {
     if (name === "numberOfChecks") {
       setNumberOfChecks(item);
     }
+
     if (name === "tenancyStatus") {
       if (item === "Renewal") {
         setFormValues((prevData) => {
@@ -954,6 +967,7 @@ const EditTenancyContracts = () => {
 
       handlers.setState(updateInitialValues(item));
     }
+
     setFormValues((prevData) => ({
       ...prevData,
       [name]: item,
@@ -961,6 +975,26 @@ const EditTenancyContracts = () => {
   };
 
   const handleDateChange = (name: string, date: Date | null) => {
+
+    if (name === "startDate") {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (new Date(date) < today) {
+        return toast.error("The date cannot be in the past.");
+      }
+    }
+
+    if (name === "endDate") {
+      if (!formValues.startDate) {
+        return toast.error("The start date cannot be in the empty.");
+      }
+      const start = new Date(formValues.startDate);
+      const end = new Date(date);
+      if (end <= start) {
+        return toast.error("End date should be greater than the start date.");
+      }
+    }
+
     setFormValues((prevData) => ({
       ...prevData,
       [name]: date,
@@ -1361,7 +1395,6 @@ const EditTenancyContracts = () => {
                       placeholder="Status"
                       data={[
                         "Active",
-
                         "Draft",
                         "Extend",
                         "Renewal",
@@ -1771,6 +1804,7 @@ const EditTenancyContracts = () => {
                       )}
                     </div>
                   )}
+
                   {/* Contract Details */}
                   <div>
                     <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">

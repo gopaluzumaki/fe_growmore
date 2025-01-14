@@ -477,7 +477,7 @@ const EditMaintenance = () => {
                         </div>
                       </div>
                     </>)}
-                    
+
                     {/* Description box */}
                     <div className="mt-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
