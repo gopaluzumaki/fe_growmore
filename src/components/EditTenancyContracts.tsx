@@ -63,7 +63,7 @@ import { APP_AUTH } from "../constants/config";
 import { formatDateToYYMMDD, formatDateToYYYYMMDD } from "../lib/utils";
 import { useListState, randomId } from "@mantine/hooks";
 import CustomFileUpload from "./ui/CustomFileUpload";
-import  RichTextEditorUI  from "./ui/RichTextEditorUI";
+import RichTextEditorUI from "./ui/RichTextEditorUI";
 import RichTextEditorUIArabic from "./ui/RichTextEditorUIArabic";
 
 const initialValues = [
@@ -107,9 +107,9 @@ const EditTenancyContracts = () => {
   const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [caseList,setCaseList] = useState([])
-  const [additionalTerms,setAdditionalTerms] = useState()
-  const [additionalTermsArabic,setAdditionalTermsArabic] = useState()
+  const [caseList, setCaseList] = useState([])
+  const [additionalTerms, setAdditionalTerms] = useState()
+  const [additionalTermsArabic, setAdditionalTermsArabic] = useState()
 
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
@@ -177,7 +177,7 @@ const EditTenancyContracts = () => {
   const [ownerDetails, setOwnerDetails] = useState();
   const [tenantDetails, setTenantDetails] = useState();
   const [isContractExtended, setIsContractExtended] = useState(0);
-  const [richTextOpen,setRichTextOpen] = useState(true)
+  const [richTextOpen, setRichTextOpen] = useState(true)
   // set start and end date in renewal details
 
   useEffect(() => {
@@ -282,7 +282,7 @@ const EditTenancyContracts = () => {
                     Number(item?.custom_price__rent_annually) +
                     (Number(formValues.percentage) *
                       Number(item?.custom_price__rent_annually)) /
-                      100,
+                    100,
                 }));
               } else if (formValues.rental_increase === "Fixed Amount") {
                 setFormValues((prevData) => ({
@@ -457,7 +457,7 @@ const EditTenancyContracts = () => {
               custom_overstay_check: item.custom_overstay_check,
               custom_penalty_amount: item.custom_penalty_amount,
               custom_html: item.custom_html,
-              custom_html_2:item.custom_html_2,
+              custom_html_2: item.custom_html_2,
               //renewal details
 
               renewal_duration: item.custom_renewal_duration,
@@ -674,9 +674,8 @@ const EditTenancyContracts = () => {
 
       let date = currentDate.setMonth(currentDate.getMonth() + 6);
 
-      let dateMDY = `${new Date(date).getFullYear()}-${
-        new Date(date).getMonth() + 1
-      }-${new Date(date).getDate()}`;
+      let dateMDY = `${new Date(date).getFullYear()}-${new Date(date).getMonth() + 1
+        }-${new Date(date).getDate()}`;
 
       chequeDate.push(formatDateToYYYYMMDD(dateMDY));
     } else if (formValues.numberOfChecks === "3") {
@@ -685,13 +684,11 @@ const EditTenancyContracts = () => {
       let date = currentDate.setMonth(currentDate.getMonth() + 4);
       let date1 = currentDate.setMonth(currentDate.getMonth() + 4);
 
-      let dateMDY = `${new Date(date).getFullYear()}-${
-        new Date(date).getMonth() + 1
-      }-${new Date(date).getDate()}`;
+      let dateMDY = `${new Date(date).getFullYear()}-${new Date(date).getMonth() + 1
+        }-${new Date(date).getDate()}`;
 
-      let dateMDY1 = `${new Date(date1).getFullYear()}-${
-        new Date(date1).getMonth() + 1
-      }-${new Date(date1).getDate()}`;
+      let dateMDY1 = `${new Date(date1).getFullYear()}-${new Date(date1).getMonth() + 1
+        }-${new Date(date1).getDate()}`;
 
       chequeDate.push(formatDateToYYYYMMDD(dateMDY));
       chequeDate.push(formatDateToYYYYMMDD(dateMDY1));
@@ -704,25 +701,20 @@ const EditTenancyContracts = () => {
       let date3 = currentDate.setMonth(currentDate.getMonth() + 2);
       let date4 = currentDate.setMonth(currentDate.getMonth() + 2);
 
-      let dateMDY = `${new Date(date).getFullYear()}-${
-        new Date(date).getMonth() + 1
-      }-${new Date(date).getDate()}`;
+      let dateMDY = `${new Date(date).getFullYear()}-${new Date(date).getMonth() + 1
+        }-${new Date(date).getDate()}`;
 
-      let dateMDY1 = `${new Date(date1).getFullYear()}-${
-        new Date(date1).getMonth() + 1
-      }-${new Date(date1).getDate()}`;
+      let dateMDY1 = `${new Date(date1).getFullYear()}-${new Date(date1).getMonth() + 1
+        }-${new Date(date1).getDate()}`;
 
-      let dateMDY2 = `${new Date(date2).getFullYear()}-${
-        new Date(date2).getMonth() + 1
-      }-${new Date(date2).getDate()}`;
+      let dateMDY2 = `${new Date(date2).getFullYear()}-${new Date(date2).getMonth() + 1
+        }-${new Date(date2).getDate()}`;
 
-      let dateMDY3 = `${new Date(date3).getFullYear()}-${
-        new Date(date3).getMonth() + 1
-      }-${new Date(date3).getDate()}`;
+      let dateMDY3 = `${new Date(date3).getFullYear()}-${new Date(date3).getMonth() + 1
+        }-${new Date(date3).getDate()}`;
 
-      let dateMDY4 = `${new Date(date4).getFullYear()}-${
-        new Date(date4).getMonth() + 1
-      }-${new Date(date4).getDate()}`;
+      let dateMDY4 = `${new Date(date4).getFullYear()}-${new Date(date4).getMonth() + 1
+        }-${new Date(date4).getDate()}`;
 
       chequeDate.push(formatDateToYYYYMMDD(dateMDY));
       chequeDate.push(formatDateToYYYYMMDD(dateMDY1));
@@ -988,18 +980,21 @@ const EditTenancyContracts = () => {
       propertyType: value,
     }));
   };
-useEffect(()=>{
-  setFormValues((prevData) => ({
-    ...prevData,
-    "custom_html": additionalTerms,
-  }));
-},[additionalTerms])
-useEffect(()=>{
-  setFormValues((prevData) => ({
-    ...prevData,
-    "custom_html_2": additionalTermsArabic,
-  }));
-},[additionalTermsArabic])
+  
+  useEffect(() => {
+    setFormValues((prevData) => ({
+      ...prevData,
+      "custom_html": additionalTerms,
+    }));
+  }, [additionalTerms])
+
+  useEffect(() => {
+    setFormValues((prevData) => ({
+      ...prevData,
+      "custom_html_2": additionalTermsArabic,
+    }));
+  }, [additionalTermsArabic])
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
@@ -1050,8 +1045,8 @@ useEffect(()=>{
             ? "Draft"
             : formValues.tenancyStatus,
         custom_attachment_table: imageData,
-        custom_html:formValues?.custom_html,
-        custom_html_2:formValues?.custom_html_2,
+        custom_html: formValues?.custom_html,
+        custom_html_2: formValues?.custom_html_2,
         //termination details
         custom_duration: formValues.custom_duration,
         custom_day_rate: formValues.custom_day_rate,
@@ -1130,52 +1125,52 @@ useEffect(()=>{
         lease_item:
           tableData && tableData.length > 0
             ? tableData.map((item) => {
-                return {
-                  lease_item: "Rent",
-                  frequency: "Monthly",
-                  currency_code: "AED",
-                  document_type: "Sales Invoice",
-                  parentfield: "lease_item",
-                  parenttype: "Lease",
-                  doctype: "Lease Item",
-                  custom_cheque_no: item.chequeNumber,
-                  custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
-                  amount: item.rent,
-                  custom_annual_amount: formValues.anualPriceRent,
-                  custom_cheque_status: "active status",
-                  custom_duration: item.duration,
-                  custom_comments: item.comments,
-                  custom_approval_status: item.approvalStatus,
-                  custom_rent_amount: item.rent,
-                  custom_status: item.status,
-                  custom_name_on_the_cheque: item.cheque,
+              return {
+                lease_item: "Rent",
+                frequency: "Monthly",
+                currency_code: "AED",
+                document_type: "Sales Invoice",
+                parentfield: "lease_item",
+                parenttype: "Lease",
+                doctype: "Lease Item",
+                custom_cheque_no: item.chequeNumber,
+                custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
+                amount: item.rent,
+                custom_annual_amount: formValues.anualPriceRent,
+                custom_cheque_status: "active status",
+                custom_duration: item.duration,
+                custom_comments: item.comments,
+                custom_approval_status: item.approvalStatus,
+                custom_rent_amount: item.rent,
+                custom_status: item.status,
+                custom_name_on_the_cheque: item.cheque,
 
-                  // set details for notification purpose
-                  custom_send_email: tenantDetails.custom_email,
-                  custom_lease_status:
-                    formValues.tenancyStatus === "Extend"
-                      ? "Draft"
-                      : formValues.tenancyStatus,
-                  custom_customer_name: tenantDetails.name,
-                  custom__payment_remainder: values.find(
-                    (item) => item.label === "Payment Remainder"
-                  ).checked
-                    ? 1
-                    : 0,
-                };
-              })
+                // set details for notification purpose
+                custom_send_email: tenantDetails.custom_email,
+                custom_lease_status:
+                  formValues.tenancyStatus === "Extend"
+                    ? "Draft"
+                    : formValues.tenancyStatus,
+                custom_customer_name: tenantDetails.name,
+                custom__payment_remainder: values.find(
+                  (item) => item.label === "Payment Remainder"
+                ).checked
+                  ? 1
+                  : 0,
+              };
+            })
             : [
-                {
-                  custom_comments: "",
-                },
-              ],
+              {
+                custom_comments: "",
+              },
+            ],
       };
       if (formValues.tenancyStatus === "Renewal") {
         const updateRes = await updateTanencyContract(location.state, {
           lease_status: "Renewal",
           custom_attachment_table: imageData,
-          custom_html:formValues?.custom_html,
-          custom_html_2:formValues?.custom_html_2,
+          custom_html: formValues?.custom_html,
+          custom_html_2: formValues?.custom_html_2,
           //renewal details
           custom_renewal_duration: formValues.renewal_duration,
           custom_number_of_days: formValues.number_of_days,
@@ -1324,7 +1319,7 @@ useEffect(()=>{
                       try {
                         const response = await fetch(
                           `https://propms.erpnext.syscort.com/api/method/frappe.utils.print_format.download_pdf?doctype=Lease&format=Tenancy+Contract&name=` +
-                            location.state,
+                          location.state,
                           {
                             method: "GET",
                             credentials: "include", // Ensures cookies for authenticated sessions are included
@@ -1462,12 +1457,12 @@ useEffect(()=>{
                           value={
                             parseFloat(
                               formValues.custom_duration *
-                                formValues.custom_day_rate
+                              formValues.custom_day_rate
                             ) >= 0
                               ? parseFloat(
-                                  formValues.custom_duration *
-                                    formValues.custom_day_rate
-                                ).toFixed(2)
+                                formValues.custom_duration *
+                                formValues.custom_day_rate
+                              ).toFixed(2)
                               : 0
                           }
                           borderd
@@ -1851,18 +1846,18 @@ useEffect(()=>{
                       )}
                     </div>
                     <div>
-                    {richTextOpen?<></>:<p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         Additional Terms (English)
                       </p>}
-                      {richTextOpen?<></>:<RichTextEditorUI content={formValues?.custom_html} setAdditionalTerms={setAdditionalTerms}/>
-}
+                      {richTextOpen ? <></> : <RichTextEditorUI content={formValues?.custom_html} setAdditionalTerms={setAdditionalTerms} />
+                      }
                     </div>
                     <div>
-                    {richTextOpen?<></>:<p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         Additional Terms (Arabic)
                       </p>}
-                      {richTextOpen?<></>:<RichTextEditorUIArabic content={formValues?.custom_html_2} setAdditionalTermsArabic={setAdditionalTermsArabic}/>
-}
+                      {richTextOpen ? <></> : <RichTextEditorUIArabic content={formValues?.custom_html_2} setAdditionalTermsArabic={setAdditionalTermsArabic} />
+                      }
                     </div>
                     <div className="mb-5">
                       <CustomFileUpload
@@ -2744,9 +2739,9 @@ useEffect(()=>{
                   )}
 
                   {formValues.tenancyStatus !== "Extend" &&
-                  formValues.tenancyStatus !== "Termination" &&
-                  formValues.tenancyStatus !== "" &&
-                  formValues.tenancyStatus !== null ? (
+                    formValues.tenancyStatus !== "Termination" &&
+                    formValues.tenancyStatus !== "" &&
+                    formValues.tenancyStatus !== null ? (
                     <section className="my-20">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
                         <span className="pb-1 border-b border-[#7C8DB5]">
@@ -2804,17 +2799,17 @@ useEffect(()=>{
             const updatedTableData = tableData.map((item, index) =>
               index === paymentDetailsModalOpen
                 ? {
-                    ...item,
-                    chequeDate: formatDateToYYYYMMDD(
-                      formValues.dateOfCheque || item.chequeDate
-                    ),
-                    cheque: formValues.cheque,
-                    chequeNumber: formValues.chequeNumber,
-                    status: formValues.status,
-                    duration: formValues.duration,
-                    comments: formValues.comments,
-                    approvalStatus: formValues.approvalStatus,
-                  }
+                  ...item,
+                  chequeDate: formatDateToYYYYMMDD(
+                    formValues.dateOfCheque || item.chequeDate
+                  ),
+                  cheque: formValues.cheque,
+                  chequeNumber: formValues.chequeNumber,
+                  status: formValues.status,
+                  duration: formValues.duration,
+                  comments: formValues.comments,
+                  approvalStatus: formValues.approvalStatus,
+                }
                 : item
             );
 

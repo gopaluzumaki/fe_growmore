@@ -66,7 +66,7 @@ const AddMoveIn = () => {
   const [ownerList, setOwnerList] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [numberOfChecks, setNumberOfChecks] = useState();
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [tableData, setTableData] = useState<
     {
       rent: string;
@@ -93,7 +93,9 @@ const AddMoveIn = () => {
     brokerageAmt: "",
     notice_period: "",
 
+    property: "",
     propertyName: "",
+    currentPropertyName: "",
     propertyType: "",
     propertyLocation: "",
     propertyRent: "",
@@ -101,6 +103,7 @@ const AddMoveIn = () => {
     propertyStatus: "",
     propertyDoc: "",
 
+    owner: "",
     ownerName: "",
     ownerType: "",
     ownerContact: "",
@@ -115,10 +118,10 @@ const AddMoveIn = () => {
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [propertyName, setPropertyName] = useState('')
-  const [alreadyAdded,setAlreadyAdded] = useState(true)
+  const [alreadyAdded, setAlreadyAdded] = useState(true)
   const [imageArray, setImageArray] = useState<string[]>([]);
 
-  const [showError,setShowError] = useState('')
+  const [showError, setShowError] = useState('')
   useEffect(() => {
     getProperties();
     setFormValues((prevData) => ({
@@ -131,16 +134,16 @@ const AddMoveIn = () => {
     // const res = await getPropertyList();
     const res = await getTenantLeaseList()
     const item = res?.data?.data;
-    console.log(item,"njk")
+    console.log(item, "njk")
     const mergedData = item.reduce((acc, item) => {
       const existingProperty = acc.find(obj => obj.property === item.custom_property_name);
       if (existingProperty) {
-        item.custom_number_of_unit?.length>0&&existingProperty.custom_number_of_unit.push(item.custom_number_of_unit);
-        item.custom_number_of_unit?.length>0&&existingProperty.names.push(item.name);
+        item.custom_number_of_unit?.length > 0 && existingProperty.custom_number_of_unit.push(item.custom_number_of_unit);
+        item.custom_number_of_unit?.length > 0 && existingProperty.names.push(item.name);
       } else {
         acc.push({
           property: item.custom_property_name,
-          custom_number_of_unit: item.custom_number_of_unit?.length>0?[item.custom_number_of_unit]:[],
+          custom_number_of_unit: item.custom_number_of_unit?.length > 0 ? [item.custom_number_of_unit] : [],
           names: [item.name]
         });
       }
@@ -167,48 +170,50 @@ const AddMoveIn = () => {
     const data = async () => {
       const res = await fetchTenancyContract(propertyName)
       const propertyData = res?.data?.data;
-      const moveInList = await getMoveInListData(formValues?.propertyName,formValues?.propertyUnits);
-      if(moveInList?.data?.data?.length>0){
+      const moveInList = await getMoveInListData(formValues?.propertyName, formValues?.propertyUnits);
+      if (moveInList?.data?.data?.length > 0) {
         setAlreadyAdded(true)
         setShowError(`This ${formValues?.propertyName} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-In' status`)
       }
-      else{
-      if (propertyData) {
-        setAlreadyAdded(false)
+      else {
+        if (propertyData) {
+          setAlreadyAdded(false)
 
-        // Fill all the fields with the fetched data
-        setFormValues((prevData) => ({
-          ...prevData,
-          property: propertyData?.custom_property_name,
-          propertyName: propertyData?.name,
-          propertyType: propertyData?.custom_type,
-          propertyLocation: propertyData?.custom_location__area,
-          propertyCity: propertyData?.custom_city,
-          propertyCountry: propertyData?.custom_country,
-          propertyRent: propertyData?.rent_amount_to_pay,
-          propertyUnits: propertyData?.custom_number_of_unit,
-          sqFoot: propertyData?.custom_price__rent_annually / propertyData?.custom_price_sq_ft,
-          sqMeter: propertyData?.custom_price__rent_annually / propertyData?.custom_price_sq_m,
-          priceSqMeter: propertyData.custom_price_sq_m,
-          priceSqFt: propertyData.custom_price_sq_ft,
-          // propertyStatus: propertyData?.status,
-          propertyDoc: propertyData?.custom_image,
-          ownerName: propertyData?.custom_name_of_owner,
-          ownerContact: propertyData?.custom_contact_number_of_owner,
-          ownerEmail: propertyData?.custom_owner_email,
-          ownerType: propertyData?.custom_type_of_owner,
+          // Fill all the fields with the fetched data
+          setFormValues((prevData) => ({
+            ...prevData,
+            currentPropertyName: propertyData?.custom_unit_name,
+            property: propertyData?.custom_property_name,
+            propertyName: propertyData?.property,
+            propertyType: propertyData?.custom_type,
+            propertyLocation: propertyData?.custom_location__area,
+            propertyCity: propertyData?.custom_city,
+            propertyCountry: propertyData?.custom_country,
+            propertyRent: propertyData?.rent_amount_to_pay,
+            propertyUnits: propertyData?.custom_number_of_unit,
+            sqFoot: propertyData?.custom_price__rent_annually / propertyData?.custom_price_sq_ft,
+            sqMeter: propertyData?.custom_price__rent_annually / propertyData?.custom_price_sq_m,
+            priceSqMeter: propertyData.custom_price_sq_m,
+            priceSqFt: propertyData.custom_price_sq_ft,
+            // propertyStatus: propertyData?.status,
+            propertyDoc: propertyData?.custom_image,
+            owner: propertyData?.unit_owner,
+            ownerName: propertyData?.custom_name_of_owner,
+            ownerContact: propertyData?.custom_contact_number_of_owner,
+            ownerEmail: propertyData?.custom_owner_email,
+            ownerType: propertyData?.custom_type_of_owner,
 
-          customerName: propertyData?.lease_customer,
-          customerContact: propertyData?.custom_contact_number,
-          customerEmail: propertyData?.custom_email,
-          customerType: propertyData?.custom_customer_type,
-          startDate: propertyData?.start_date,
-          endDate: propertyData?.end_date
+            customerName: propertyData?.lease_customer,
+            customerContact: propertyData?.custom_contact_number,
+            customerEmail: propertyData?.custom_email,
+            customerType: propertyData?.custom_customer_type,
+            startDate: propertyData?.start_date,
+            endDate: propertyData?.end_date
 
-        }));
+          }));
 
+        }
       }
-    }
     }
     data()
   }, [propertyName])
@@ -244,6 +249,7 @@ const AddMoveIn = () => {
         priceSqFt: '',
         // propertyStatus: propertyData?.status,
         propertyDoc: '',
+        owner: '',
         ownerName: '',
         ownerContact: '',
         ownerEmail: '',
@@ -255,7 +261,8 @@ const AddMoveIn = () => {
         customerType: '',
       }));
       const units = getCustomNumberOfUnit(item);
-      setPropertyUnits(units || []);
+      const uniqueUnits = [...new Set(units)];
+      setPropertyUnits(uniqueUnits || []);
     }
     if (name === "propertyUnits") {
       setAlreadyAdded(false)
@@ -277,8 +284,9 @@ const AddMoveIn = () => {
       const res = await createCase({
         // ...formValues,
         custom_status: "Move In",
+        custom_current_property: formValues?.currentPropertyName,
         custom_unit_no: formValues?.propertyUnits,
-        custom_property: formValues?.property,
+        custom_property: formValues?.propertyName,
         custom_customer: formValues?.customerName,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
@@ -310,9 +318,9 @@ const AddMoveIn = () => {
       console.log(err);
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
-  },[imgUrls])
+  }, [imgUrls])
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
@@ -343,7 +351,7 @@ const AddMoveIn = () => {
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                       <MantineSelect
-                      required
+                        required
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
@@ -381,7 +389,7 @@ const AddMoveIn = () => {
                         ({ label, name, type, values }) =>
                           type === "mantineSelect" ? (
                             <MantineSelect
-                            required
+                              required
                               label={label}
                               placeholder={label}
                               data={propertyUnits}
@@ -416,8 +424,8 @@ const AddMoveIn = () => {
                       )}
                     </div>
                   </div>
-<div className="flex justify-center mt-2 text-red-700">{showError}</div>
-                  {formValues?.propertyName && formValues?.propertyUnits && !alreadyAdded&&(<>
+                  <div className="flex justify-center mt-2 text-red-700">{showError}</div>
+                  {formValues?.propertyName && formValues?.propertyUnits && !alreadyAdded && (<>
                     {/* Property Details */}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
@@ -524,7 +532,7 @@ const AddMoveIn = () => {
                       </p>
                       {statusSelect.map(({ label, name, type, values }) => (
                         <Select
-                        required
+                          required
                           onValueChange={(value) =>
                             handleDropDown(name, value)
                           }
@@ -555,34 +563,34 @@ const AddMoveIn = () => {
                       />
                     </div>
                     {imageArray?.length > 0 && (<>
-                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          Attachments
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        Attachments
                       </p>
-                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
-                      {imageArray.map((value, index) => (
-                        <div key={index} className="relative w-[100px] h-[100px]">
-                          <img
-                            className="w-full h-full rounded-md"
-                            src={
-                              value.url
-                                ? `https://propms.erpnext.syscort.com/${value.url}`
-                                : "/defaultProperty.jpeg"
-                            }
-                            alt="propertyImg"
-                          />
-                          <button
-                            type="button" // Prevent form submission
-                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
-                            onClick={() => handleRemoveImage(index)}
-                          >
-                            X
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </>)}
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                        {imageArray.map((value, index) => (
+                          <div key={index} className="relative w-[100px] h-[100px]">
+                            <img
+                              className="w-full h-full rounded-md"
+                              src={
+                                value.url
+                                  ? `https://propms.erpnext.syscort.com/${value.url}`
+                                  : "/defaultProperty.jpeg"
+                              }
+                              alt="propertyImg"
+                            />
+                            <button
+                              type="button" // Prevent form submission
+                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              onClick={() => handleRemoveImage(index)}
+                            >
+                              X
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </>)}
                     <div className="max-w-[100px] mt-2">
-                      <PrimaryButton title="Save" disabled={loading}/>
+                      <PrimaryButton title="Save" disabled={loading} />
                     </div>
                   </>)}
                 </form>

@@ -57,7 +57,7 @@ const EditMoveOut = () => {
   ]
   const [imgUrls, setImgUrls] = useState<string[]>([]);
   const location = useLocation();
-  const {id} = useParams()
+  const { id } = useParams()
   const navigate = useNavigate();
   const [property, setProperty] = useState();
   const [checked, setChecked] = useState<boolean>(false);
@@ -79,8 +79,8 @@ const EditMoveOut = () => {
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const [propertyUnits, setPropertyUnits] = useState([]);
   const [imageArray, setImageArray] = useState([])
-  const [loading,setLoading] = useState(false)
-  
+  const [loading, setLoading] = useState(false)
+
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "Draft",
 
@@ -129,39 +129,43 @@ const EditMoveOut = () => {
   useEffect(() => {
     const data = async () => {
       const res = await fetchMaintenance(id)
-      const propertyData = res?.data?.data;
+      const propertyData = res;
       if (propertyData) {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
           property: propertyData?.name,
-          propertyName: propertyData?.custom_property,
+          propertyName: propertyData?.custom_current_property.custom_parent_property_name,
+          propertyUnits: propertyData?.custom_current_property.name1,
           // propertyType: propertyData?.custom_type,
-          propertyLocation: propertyData?.custom_location__area,
-          propertyCity: propertyData?.custom_unit_city,
-          propertyCountry: propertyData?.custom_unit_country,
-          propertyRent: propertyData?.custom_property_rent,
-          propertyUnits: propertyData?.custom_unit_no,
-          sqFoot: propertyData?.custom_sqfoot,
-          sqMeter: propertyData?.custom_sqmeter,
-          priceSqMeter: propertyData.custom_pricesqmeter,
-          priceSqFt: propertyData.custom_pricesqft,
+          propertyLocation: propertyData?.custom_current_property?.custom_location,
+          propertyCity: propertyData?.custom_current_property?.custom_city,
+          propertyCountry: propertyData?.custom_current_property?.custom_country,
+          propertyRent: propertyData?.custom_current_property?.custom_property_rent,
+          sqFoot: propertyData?.custom_current_property?.custom_square_ft_of_unit,
+          sqMeter: propertyData?.custom_current_property?.custom_square_m_of_unit,
+          priceSqMeter: propertyData?.custom_current_property?.custom_price_square_m,
+          priceSqFt: propertyData?.custom_current_property?.custom_price_square_ft,
           // propertyStatus: propertyData?.status,
           // propertyDoc: propertyData?.custom_image,
-          ownerName: propertyData?.custom_supplier,
-          ownerContact: propertyData?.custom_contact_number_of_supplier,
-          ownerEmail: propertyData?.custom_email,
-          ownerType: propertyData?.custom_owner_type,
+          ownerName: propertyData?.custom_supplier.supplier_name,
+          ownerContact: propertyData?.custom_supplier?.custom_phone_number,
+          ownerEmail: propertyData?.custom_supplier?.custom_email,
+          ownerType: propertyData?.custom_supplier?.supplier_type,
           comment: propertyData?.custom_comment_box,
-          customerName: propertyData?.custom_customer,
-          customerContact: propertyData?.custom_contact_number_of_customer,
-          customerEmail: propertyData?.custom_customer_email,
-          customerType: propertyData?.custom_customer_type,
+          customerName: propertyData?.custom_customer?.customer_name,
+          customerContact: propertyData?.custom_customer?.custom_contact_number_of_customer,
+          customerEmail: propertyData?.custom_customer?.custom_email,
+          customerType: propertyData?.custom_customer?.customer_type,
           startDate: propertyData?.custom_start_date,
           endDate: propertyData?.custom_end_date,
-          status: propertyData?.custom_statusmo,
           reasonForMoveOut: propertyData?.custom_reason_for_move_out,
           reasonForStatus: propertyData?.custom_reason,
+          status: propertyData?.custom_statusmo,
+
+          owne: propertyData?.custom_supplier.name,
+          currentProperty: propertyData?.custom_current_property?.name,
+          parentProperty: propertyData?.custom_current_property?.parent_property,
         }));
 
       }
@@ -181,9 +185,9 @@ const EditMoveOut = () => {
       [name]: item,
     }));
   };
-  useEffect(()=>{
+  useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
-  },[imgUrls])
+  }, [imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
@@ -193,7 +197,8 @@ const EditMoveOut = () => {
         // ...formValues,
         custom_status: "Move Out",
         custom_unit_no: formValues?.propertyUnits,
-        custom_property: formValues?.propertyName,
+        custom_current_property: formValues?.currentProperty,
+        custom_property: formValues?.parentProperty,
         custom_customer: formValues?.customerName,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
@@ -207,7 +212,7 @@ const EditMoveOut = () => {
         custom_sqmeter: formValues?.sqMeter,
         custom_pricesqmeter: formValues?.priceSqMeter,
         custom_pricesqft: formValues?.priceSqFt,
-        custom_supplier: formValues?.ownerName,
+        custom_supplier: formValues?.owne,
         custom_contact_number_of_supplier: formValues?.ownerContact,
         custom_email: formValues?.ownerEmail,
         custom_owner_type: formValues?.ownerType,
@@ -410,42 +415,42 @@ const EditMoveOut = () => {
                     </div>
                     {imageArray?.length > 0 && (<>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          Attachments
+                        Attachments
                       </p>
                       <div className="grid grid-cols-5 gap-4 w-25% h-25%">
-                      {imageArray.map((value, index) => (
-                        <div key={index} className="relative w-[100px] h-[100px]">
-                          <img
-                            className="w-full h-full rounded-md"
-                            src={
-                              value.url
-                                ? `https://propms.erpnext.syscort.com/${value.url}`
-                                : "/defaultProperty.jpeg"
-                            }
-                            alt="propertyImg"
-                          />
-                          <button
-                            type="button" // Prevent form submission
-                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
-                            onClick={() => handleRemoveImage(index)}
-                          >
-                            X
-                          </button>
-                        </div>
-                      ))}
-                    </div></>)}
+                        {imageArray.map((value, index) => (
+                          <div key={index} className="relative w-[100px] h-[100px]">
+                            <img
+                              className="w-full h-full rounded-md"
+                              src={
+                                value.url
+                                  ? `https://propms.erpnext.syscort.com/${value.url}`
+                                  : "/defaultProperty.jpeg"
+                              }
+                              alt="propertyImg"
+                            />
+                            <button
+                              type="button" // Prevent form submission
+                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              onClick={() => handleRemoveImage(index)}
+                            >
+                              X
+                            </button>
+                          </div>
+                        ))}
+                      </div></>)}
                     {/* Attachment */}
                     <div className="mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);
                         }}
-                       type="image/*"
-                       setLoading={setLoading}
+                        type="image/*"
+                        setLoading={setLoading}
                       />
                     </div>
                     <div className="max-w-[100px]">
-                      <PrimaryButton title="Save" disabled={loading}/>
+                      <PrimaryButton title="Save" disabled={loading} />
                     </div>
                   </>)}
                 </form>

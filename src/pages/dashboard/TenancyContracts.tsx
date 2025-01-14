@@ -87,7 +87,7 @@ const TenancyContracts = () => {
     const tenantListRes = await getTenantList();
     const ownerListRes = await getOwnerList();
 
-    setUnitList(await getStatus(unitListRes?.data?.message || []));
+    setUnitList(await getStatus(unitListRes?.data?.data || []));
     setPropertyList(propertyListRes?.data?.data || []);
     setTenantList(tenantListRes?.data?.data || []);
     setOwnerList(ownerListRes?.data?.data || []);

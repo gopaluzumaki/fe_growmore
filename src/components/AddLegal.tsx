@@ -96,6 +96,7 @@ const AddLegal = () => {
     notice_period: "",
 
     propertyName: "",
+    currentPropertyName: "",
     propertyType: "",
     propertyLocation: "",
     propertyRent: "",
@@ -103,6 +104,7 @@ const AddLegal = () => {
     propertyStatus: "",
     propertyDoc: "",
 
+    owner: "",
     ownerName: "",
     ownerType: "",
     ownerContact: "",
@@ -169,6 +171,7 @@ const AddLegal = () => {
     if(result?.data?.data?.length>0){
       setShowCustomerSection(true)
     }
+
     setFormValues((prevData) => ({
       ...prevData,
       propertyType: res?.type,
@@ -176,12 +179,15 @@ const AddLegal = () => {
       propertyCity: res?.custom_city,
       propertyCountry: res?.custom_country,
       propertyRent: res?.rent,
+      currentPropertyName: res?.name,
+
       // propertyUnits: res?.custom_number_of_units,
       propertyStatus: res?.status,
       sqFoot: res?.custom_square_ft_of_unit,
       sqMeter: res?.custom_square_m_of_unit,
       priceSqMeter: res?.custom_price_square_m,
       priceSqFt: res?.custom_price_square_ft,
+      owner: res?.unit_owner,
       ownerName: res?.custom_supplier_name,
       ownerContact: datas?.custom_contact_number_of_owner,
       ownerEmail: datas?.custom_owner_email,
@@ -267,8 +273,9 @@ const AddLegal = () => {
       const res = await createCase({
         // ...formValues,
         custom_status: "Legal",
+        custom_current_property: formValues?.currentPropertyName,
         custom_unit_no: formValues?.propertyUnits,
-        custom_property: formValues?.property,
+        custom_property: formValues?.propertyName,
         custom_customer: formValues?.customerName,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
@@ -285,7 +292,7 @@ const AddLegal = () => {
         custom_sqmeter: formValues?.sqMeter,
         custom_pricesqmeter: formValues?.priceSqMeter,
         custom_pricesqft: formValues?.priceSqFt,
-        custom_supplier: formValues?.ownerName,
+        custom_supplier: formValues?.owner,
         custom_contact_number_of_supplier: formValues?.ownerContact,
         custom_email: formValues?.ownerEmail,
         custom_owner_type: formValues?.ownerType,

@@ -39,16 +39,16 @@ const Units = () => {
 
   const getData = async () => {
     const unitList = await getUnitList();
-    console.log('eqwads', unitList)
+    console.log('data ', unitList)
     setUnitList(unitList?.data?.data);
     setFilteredUnitList(unitList?.data?.data)
   };
   const applyFilters = () => {
     const filteredData = unitList.filter((item) => {
       const matchesSearch = !searchValue ||
-        item?.property?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.unit_number?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.location?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.parent_property.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_unit_number?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.custom_location?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_supplier_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.tenantName?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_status?.toLowerCase().includes(searchValue.toLowerCase())
@@ -123,9 +123,9 @@ const Units = () => {
                           className="hover:bg-gray-50 text-center text-[15px]"
                         >
                           <td className="p-2 py-3">{i + 1}</td>
-                          <td className="p-2 py-3">{item?.property}</td>
-                          <td className="p-2 py-3">{item.unit_number}</td>
-                          <td className="p-2 py-3">{item.location}</td>
+                          <td className="p-2 py-3">{item?.parent_property.name1}</td>
+                          <td className="p-2 py-3">{item.custom_unit_number}</td>
+                          <td className="p-2 py-3">{item.custom_location}</td>
                           <td className="p-2 py-3">{item.custom_supplier_name}</td>
                           <td className="p-2 py-3">
                             <div

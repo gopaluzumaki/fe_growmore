@@ -61,6 +61,7 @@ export const API_URL = {
   Fetch_Case: "https://propms.erpnext.syscort.com/api/resource/Maintenance",
   Profile_Data: "https://propms.erpnext.syscort.com/api/resource/User",
   Country_List: "https://propms.erpnext.syscort.com/api/resource/Country",
+  Fetched_Data: "https://propms.erpnext.syscort.com/api/method/propms_app.api.custom.fetched_data",
 };
 
 export const loginUser = async (credentials: { usr: string; pwd: string }) => {
@@ -76,6 +77,13 @@ export const loginUser = async (credentials: { usr: string; pwd: string }) => {
   );
   console.log("response => ", response);
   return response;
+};
+
+export const getListData = async (doctype: any) => {
+  // let params = { doctype, fields: null, filters: JSON.stringify([["Property", "name", "=", "PRO-00002"]]) }
+  let params = { doctype, fields: null, filters: null }
+  const response = await axios.get(`https://propms.erpnext.syscort.com/api/method/propms_app.api.custom.fetched_data`, { params });
+  return response.data;
 };
 
 export const getPropertyCount = async () => {
@@ -129,23 +137,27 @@ export const getPropertyList = async () => {
 };
 
 export const getPropertyListData = async () => {
-  const response = await axios.get(`${API_URL.Create_Property}?fields=["*"]&filters=[[%22is_group%22,%22=%22,1]]&order_by=modified desc`, {
+  let params = { doctype: "Property", fields: JSON.stringify(["name", "name1", "custom_location", "custom_country", "custom_status", "type"]), filters: JSON.stringify([["Property", "is_group", "=", "1"]]) }
+  const response = await axios.get(`${API_URL.Fetched_Data}`, {
+    params,
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
     },
   });
-  return response;
+  return response.data;
 };
 
 export const getUnitList = async () => {
-  const response = await axios.get(API_URL.Unit_List, {
+  let params = { doctype: "Property", fields: JSON.stringify(["name", "parent_property", "custom_unit_number", "custom_location", "custom_supplier_name", "custom_status"]), filters: JSON.stringify([["Property", "is_group", "=", "0"]]) }
+  const response = await axios.get(`${API_URL.Fetched_Data}`, {
+    params,
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
     },
   });
-  return response;
+  return response.data;
 };
 
 export const getTenantList = async () => {
@@ -199,13 +211,15 @@ export const getBookingList = async () => {
 };
 
 export const getTenancyContractList = async () => {
-  const response = await axios.get(API_URL.Lease_lists, {
+  let params = { doctype: "Lease", fields: JSON.stringify(["name", "start_date", "end_date"]), filters: null }
+  const response = await axios.get(`${API_URL.Fetched_Data}`, {
+    params,
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
     },
   });
-  return response;
+  return response.data;
 };
 
 export const createProperty = async (propertyData: any) => {
@@ -241,6 +255,7 @@ export const fetchUnitForTenancyContract = async (params: any) => {
   });
   return response;
 };
+
 export const fetchUnitDatas = async (params: any) => {
   const response = await axios.get(`${API_URL.Create_Property}/${params}`, {
     auth: {
@@ -510,16 +525,18 @@ export const fetchLeads = async (params: any) => {
 };
 
 export const getMoveInList = async () => {
+  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "creation", "custom_property", "custom_current_property", "custom_supplier", "custom_customer", "custom_status_maint", "custom_start_date", "custom_end_date", "custom_statusmi"]), filters: JSON.stringify([["Maintenance", "custom_status", "=", "Move In"]]) }
   const response = await axios.get(
-    `${API_URL.MoveIn_List}&order_by=modified desc`,
+    `${API_URL.Fetched_Data}`,
     {
+      params,
       auth: {
         username: APP_AUTH.USERNAME,
         password: APP_AUTH.PASSWORD,
       },
     }
   );
-  return response;
+  return response.data;
 };
 
 export const getMoveInListData = async (propertyName: any, unitName: any) => {
@@ -536,16 +553,18 @@ export const getMoveInListData = async (propertyName: any, unitName: any) => {
 };
 
 export const getMoveOutList = async () => {
+  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "creation", "custom_property", "custom_current_property", "custom_supplier", "custom_customer", "custom_status_maint", "custom_start_date", "custom_end_date", "custom_statusmo"]), filters: JSON.stringify([["Maintenance", "custom_status", "=", "Move Out"]]) }
   const response = await axios.get(
-    `${API_URL.MoveOut_List}&order_by=modified desc`,
+    `${API_URL.Fetched_Data}`,
     {
+      params,
       auth: {
         username: APP_AUTH.USERNAME,
         password: APP_AUTH.PASSWORD,
       },
     }
   );
-  return response;
+  return response.data;
 };
 
 export const getMoveOutListData = async (propertyName: any, unitName: any) => {
@@ -562,29 +581,33 @@ export const getMoveOutListData = async (propertyName: any, unitName: any) => {
 };
 
 export const getMaintenanceList = async () => {
+  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "creation", "custom_property", "custom_current_property", "custom_supplier", "custom_damage_location", "custom_status_maint"]), filters: JSON.stringify([["Maintenance", "custom_status", "=", "Maintenance"]]) }
   const response = await axios.get(
-    `${API_URL.Maintenance_lists}?custom_status=Maintenance`,
+    `${API_URL.Fetched_Data}`,
     {
+      params,
       auth: {
         username: APP_AUTH.USERNAME,
         password: APP_AUTH.PASSWORD,
       },
     }
   );
-  return response;
+  return response.data;
 };
 
 export const getLegalList = async () => {
+  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "creation", "custom_property", "custom_current_property", "custom_supplier", "custom_damage_location", "custom_legal_reason", "custom_status_legal"]), filters: JSON.stringify([["Maintenance", "custom_status", "=", "Legal"]]) }
   const response = await axios.get(
-    `${API_URL.Legal_list}&order_by=modified desc`,
+    `${API_URL.Fetched_Data}`,
     {
+      params,
       auth: {
         username: APP_AUTH.USERNAME,
         password: APP_AUTH.PASSWORD,
       },
     }
   );
-  return response;
+  return response.data;
 };
 
 export const getTenantLeaseList = async () => {
@@ -620,16 +643,18 @@ export const deleteCase = async (params) => {
   return response;
 };
 
-export const fetchMaintenance = async (params: any) => {
+export const fetchMaintenance = async (id: any) => {
+  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "custom_current_property", "custom_customer", "custom_supplier", "custom_reason_for_move_out", "custom_reason", "custom_damage_location", "custom_description", "custom_original_issue", "custom_legal_reason", "custom_statusmi", "custom_statusmo", "custom_status_maint", "custom_status_legal"]), filters: JSON.stringify([["Maintenance", "name", "=", id]]) }
   const response = await axios.get(
-    `${API_URL.Single_Maintenance}?id=${params}`,
+    `${API_URL.Fetched_Data}`,
     {
+      params,
       auth: {
         username: APP_AUTH.USERNAME,
         password: APP_AUTH.PASSWORD,
       },
     });
-  return response;
+  return response?.data?.data?.data[0] ?? null;
 };
 
 export const fetchDamageLocation = async () => {
