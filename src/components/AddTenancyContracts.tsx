@@ -660,6 +660,8 @@ const AddTenancyContracts = () => {
         return acc;
       }, {});
 
+      console.log(formValues)
+      console.log(reminderValues)
       const res = await createTanencyContract({
         ...formValues,
         ...reminderValues,
@@ -685,6 +687,7 @@ const AddTenancyContracts = () => {
         custom_mode_of_payment: "Cheque",
 
         // property details
+        custom_current_property: formValues.propertyUnits,
         property: formValues.propertyName1,
         custom_property_name: formValues.propertyName,
         custom_type: formValues.propertyType,

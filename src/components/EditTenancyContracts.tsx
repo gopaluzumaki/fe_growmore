@@ -980,7 +980,7 @@ const EditTenancyContracts = () => {
       propertyType: value,
     }));
   };
-  
+
   useEffect(() => {
     setFormValues((prevData) => ({
       ...prevData,
@@ -1077,7 +1077,7 @@ const EditTenancyContracts = () => {
         custom_mode_of_payment: "Cheque",
 
         // property details
-        property: formValues.propertyName1,
+        property: formValues.currentProperty,
         custom_property_name: formValues.propertyName,
 
         custom_type: formValues.propertyType,
