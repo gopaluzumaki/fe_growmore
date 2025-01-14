@@ -1305,7 +1305,7 @@ const EditTenancyContracts = () => {
   const username = APP_AUTH.USERNAME;
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
-  console.log(caseList, "vgy");
+  console.log(formValues, "formValues");
   return (
     <main>
       <div className="flex">
@@ -1923,6 +1923,7 @@ const EditTenancyContracts = () => {
                       )}
                     </div> */}
                   </div>
+
                   {imageArray?.length > 0 && (
                     <>
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
@@ -1993,6 +1994,7 @@ const EditTenancyContracts = () => {
                         onChange={(value) =>
                           handleDropDown("propertyName1", value)
                         }
+                        disabled={!(formValues.tenancyStatus === "Draft" || formValues.tenancyStatus === "Active")}
                         styles={{
                           label: {
                             marginBottom: "7px",
@@ -2027,6 +2029,7 @@ const EditTenancyContracts = () => {
                               onChange={handleChange}
                               borderd
                               bgLight
+                              disabled={!(formValues.tenancyStatus === "Draft" || formValues.tenancyStatus === "Active")}
                             />
                           ) : type === "dropdown" ? (
                             <Select
@@ -2069,6 +2072,7 @@ const EditTenancyContracts = () => {
                               onChange={(value) => {
                                 handleDropDown("propertyUnits", value);
                               }}
+                              disabled={!(formValues.tenancyStatus === "Draft" || formValues.tenancyStatus === "Active")}
                               styles={{
                                 label: {
                                   marginBottom: "7px",
@@ -2412,6 +2416,7 @@ const EditTenancyContracts = () => {
                         onChange={(value) =>
                           handleDropDown("tenantName", value)
                         }
+                        disabled={!(formValues.tenancyStatus === "Draft" || formValues.tenancyStatus === "Active")}
                         styles={{
                           label: {
                             marginBottom: "7px",
