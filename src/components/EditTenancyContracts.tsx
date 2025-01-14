@@ -423,6 +423,7 @@ const EditTenancyContracts = () => {
               propertyLocation: item.custom_location__area,
               propertyRent: item.custom_rent_amount_to_pay,
               propertyUnits: item.custom_unit_name,
+              custom_current_property: formValues.propertyUnits,
               custom_number_of_unit: item.custom_number_of_unit,
               propertyDoc: item.propertyDoc,
               tenantName: item.lease_customer,
