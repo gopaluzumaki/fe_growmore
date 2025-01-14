@@ -279,16 +279,14 @@ export const fetchProperyForEdit = async (params: any) => {
   return response;
 };
 
-export const fetchProperty = async (pName: any) => {
-  let params = { doctype: "Property", fields: JSON.stringify(["*"]), filters: JSON.stringify([["Property", "parent_property", "=", pName]]) }
-  const response = await axios.get(`${API_URL.Fetched_Data}`, {
-    params,
+export const fetchProperty = async (params: any) => {
+  const response = await axios.get(`${API_URL.Create_Property}/${params}`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
     },
   });
-  return response.data;
+  return response;
 };
 
 export const fetchUnitsfromProperty = async (params: any) => {
@@ -302,6 +300,19 @@ export const fetchUnitsfromProperty = async (params: any) => {
     }
   );
   return response;
+};
+
+
+export const fetchPropertyData = async (pName: any) => {
+  let params = { doctype: "Property", fields: JSON.stringify(["*"]), filters: JSON.stringify([["Property", "name", "=", pName]]) }
+  const response = await axios.get(`${API_URL.Fetched_Data}`, {
+    params,
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response.data.data.data[0];
 };
 
 export const updateProperty = async (propertyData: any, param: string) => {

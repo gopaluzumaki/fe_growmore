@@ -30,6 +30,7 @@ import {
   fetchDamageLocation,
   createDamageLocation,
   fetchDataFromLease,
+  fetchPropertyData,
 } from "../api";
 import {
   Select,
@@ -168,39 +169,42 @@ const AddMaintenance = () => {
       }));
 
       const res = getUnitData(formValues?.propertyUnits)[0]
-      const result = await fetchDataFromLease(formValues?.propertyName, formValues?.propertyUnits)
-      console.log(res, "data...", result?.data?.data)
-      const datas = result?.data?.data[0]
-      if (result?.data?.data?.length > 0) {
-        setShowCustomerSection(true)
+      if (res?.name) {
+        const result = await fetchDataFromLease(formValues?.propertyName, formValues?.propertyUnits)
+        const unit = await fetchPropertyData(res.name)
+        console.log(unit, "cgy", result?.data?.data)
+        const datas = result?.data?.data[0]
+        if (result?.data?.data?.length > 0) {
+          setShowCustomerSection(true)
+        }
+        setFormValues((prevData) => ({
+          ...prevData,
+          propertyType: res?.type,
+          propertyLocation: res?.custom_location,
+          propertyCity: res?.custom_city,
+          propertyCountry: res?.custom_country,
+          propertyRent: res?.rent,
+          currentPropertyName: res?.name,
+          // propertyUnits: res?.custom_number_of_units,
+          propertyStatus: res?.status,
+          sqFoot: res?.custom_square_ft_of_unit,
+          sqMeter: res?.custom_square_m_of_unit,
+          priceSqMeter: res?.custom_price_square_m,
+          priceSqFt: res?.custom_price_square_ft,
+          owner: unit?.unit_owner,
+          ownerName: unit?.unit_owner?.supplier_name,
+          ownerContact: unit?.unit_owner?.custom_phone_number,
+          ownerEmail: unit?.unit_owner?.custom_email,
+          ownerType: unit?.unit_owner?.supplier_type,
+          customerName: datas?.lease_customer,
+          customerContact: datas?.custom_contact_number,
+          customerEmail: datas?.custom_email,
+          customerType: datas?.custom_customer_type,
+          startDate: datas?.start_date,
+          endDate: datas?.end_date
+          // propertyDoc: propertyData?.custom_thumbnail_image,
+        }));
       }
-      setFormValues((prevData) => ({
-        ...prevData,
-        propertyType: res?.type,
-        propertyLocation: res?.custom_location,
-        propertyCity: res?.custom_city,
-        propertyCountry: res?.custom_country,
-        propertyRent: res?.rent,
-        currentPropertyName: res?.name,
-        // propertyUnits: res?.custom_number_of_units,
-        propertyStatus: res?.status,
-        sqFoot: res?.custom_square_ft_of_unit,
-        sqMeter: res?.custom_square_m_of_unit,
-        priceSqMeter: res?.custom_price_square_m,
-        priceSqFt: res?.custom_price_square_ft,
-        owner: res?.unit_owner,
-        ownerName: res?.custom_supplier_name,
-        ownerContact: datas?.custom_contact_number_of_owner,
-        ownerEmail: datas?.custom_owner_email,
-        ownerType: datas?.custom_type_of_owner,
-        customerName: datas?.lease_customer,
-        customerContact: datas?.custom_contact_number,
-        customerEmail: datas?.custom_email,
-        customerType: datas?.custom_customer_type,
-        startDate: datas?.start_date,
-        endDate: datas?.end_date
-        // propertyDoc: propertyData?.custom_thumbnail_image,
-      }));
     }
     getData()
   }, [formValues?.propertyUnits])
@@ -241,7 +245,6 @@ const AddMaintenance = () => {
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
       if (propertyData) {
-        console.log('res ', propertyData)
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
@@ -617,8 +620,6 @@ const AddMaintenance = () => {
                         </div>
                       </div>
                     </>)}
-
-
 
                     {/* Description box */}
                     <div className="mt-5">
