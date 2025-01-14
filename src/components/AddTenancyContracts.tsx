@@ -588,6 +588,7 @@ const AddTenancyContracts = () => {
           custom_country: unit_List_Data?.custom_country,
           propertyRent: unit_List_Data?.rent,
           custom_number_of_unit: unit_List_Data?.custom_unit_number,
+          owner: unit_List_Data?.unit_owner,
         }));
       }
     }
@@ -726,7 +727,7 @@ const AddTenancyContracts = () => {
         ),
         custom_signature_of_customer: formValues.tenantSignature,
         // owner details
-        custom_name_of_owner: ownerDetails.supplier_name,
+        custom_name_of_owner: formValues.owner,
         custom_type_of_owner: ownerDetails.supplier_type,
         custom_contact_number_of_owner: ownerDetails.custom_phone_number,
         custom_emirates_idtrade_license: formValues.ownerEmiratesId,
