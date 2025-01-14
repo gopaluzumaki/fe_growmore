@@ -436,6 +436,7 @@ const EditTenancyContracts = () => {
               tenantEmiratesId: item.custom_emirates_id,
               tenantEmiratesIdExpiry: item.custom_emirates_id_expiry_date,
               tenantSignature: item.custom_signature_of_customer,
+              custom_name_of_owner: item.custom_name_of_owner,
               ownerName: item.custom_name_of_owner,
               ownerType: item.custom_type_of_owner,
               ownerContact: item.custom_contact_number_of_owner,
@@ -1066,6 +1067,8 @@ const EditTenancyContracts = () => {
         return acc;
       }, {});
 
+      console.log(formValues)
+      console.log(reminderValues)
       const payload = {
         ...formValues,
         ...reminderValues,
@@ -1137,7 +1140,7 @@ const EditTenancyContracts = () => {
         ),
         custom_signature_of_customer: formValues.tenantSignature,
         // owner details
-        custom_name_of_owner: ownerDetails.supplier_name,
+        custom_name_of_owner: ownerDetails.custom_name_of_owner,
         custom_type_of_owner: ownerDetails.supplier_type,
         custom_contact_number_of_owner: ownerDetails.custom_phone_number,
         custom_emirates_idtrade_license: formValues.ownerEmiratesId,
@@ -2691,6 +2694,7 @@ const EditTenancyContracts = () => {
                                     onChange={(value) =>
                                       handleDropDown(name, value)
                                     }
+                                    disabled={!(formValues.tenancyStatus === "Draft" || formValues.tenancyStatus === "Active")}
                                     styles={{
                                       label: {
                                         marginBottom: "7px",
