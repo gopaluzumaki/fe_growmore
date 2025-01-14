@@ -211,7 +211,7 @@ export const getBookingList = async () => {
 };
 
 export const getTenancyContractList = async () => {
-  let params = { doctype: "Lease", fields: JSON.stringify(["name", "start_date", "end_date", "custom_current_property", "custom_name_of_owner", "lease_customer", "custom_rent_amount_to_pay"]), filters: null }
+  let params = { doctype: "Lease", fields: JSON.stringify(["name", "start_date", "end_date", "custom_current_property", "custom_name_of_owner", "lease_customer", "custom_rent_amount_to_pay", "lease_status"]), filters: null }
   const response = await axios.get(`${API_URL.Fetched_Data}`, {
     params,
     auth: {

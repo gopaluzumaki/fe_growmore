@@ -2,6 +2,7 @@
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
+import { toast } from 'react-toastify';
 import {
   Add_TenancyContractOwner,
   Add_TenancyContractTenant,
@@ -80,9 +81,9 @@ const AddTenancyContracts = () => {
   const [imgUrls, setImgUrls] = useState<string[]>([]);
   const [imageArray, setImageArray] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [additionalTerms,setAdditionalTerms] = useState()
-  const [additionalTermsArabic,setAdditionalTermsArabic] = useState()
-  console.log(additionalTerms,"cft")
+  const [additionalTerms, setAdditionalTerms] = useState()
+  const [additionalTermsArabic, setAdditionalTermsArabic] = useState()
+  console.log(additionalTerms, "cft")
   const [tableData, setTableData] = useState<
     {
       rent: string;
@@ -305,9 +306,8 @@ const AddTenancyContracts = () => {
 
       let date = currentDate.setMonth(currentDate.getMonth() + 6);
 
-      let dateMDY = `${new Date(date).getFullYear()}-${
-        new Date(date).getMonth() + 1
-      }-${new Date(date).getDate()}`;
+      let dateMDY = `${new Date(date).getFullYear()}-${new Date(date).getMonth() + 1
+        }-${new Date(date).getDate()}`;
 
       chequeDate.push(formatDateToYYYYMMDD(dateMDY));
     } else if (formValues.numberOfChecks === "3") {
@@ -316,13 +316,11 @@ const AddTenancyContracts = () => {
       let date = currentDate.setMonth(currentDate.getMonth() + 4);
       let date1 = currentDate.setMonth(currentDate.getMonth() + 4);
 
-      let dateMDY = `${new Date(date).getFullYear()}-${
-        new Date(date).getMonth() + 1
-      }-${new Date(date).getDate()}`;
+      let dateMDY = `${new Date(date).getFullYear()}-${new Date(date).getMonth() + 1
+        }-${new Date(date).getDate()}`;
 
-      let dateMDY1 = `${new Date(date1).getFullYear()}-${
-        new Date(date1).getMonth() + 1
-      }-${new Date(date1).getDate()}`;
+      let dateMDY1 = `${new Date(date1).getFullYear()}-${new Date(date1).getMonth() + 1
+        }-${new Date(date1).getDate()}`;
 
       chequeDate.push(formatDateToYYYYMMDD(dateMDY));
       chequeDate.push(formatDateToYYYYMMDD(dateMDY1));
@@ -335,25 +333,20 @@ const AddTenancyContracts = () => {
       let date3 = currentDate.setMonth(currentDate.getMonth() + 2);
       let date4 = currentDate.setMonth(currentDate.getMonth() + 2);
 
-      let dateMDY = `${new Date(date).getFullYear()}-${
-        new Date(date).getMonth() + 1
-      }-${new Date(date).getDate()}`;
+      let dateMDY = `${new Date(date).getFullYear()}-${new Date(date).getMonth() + 1
+        }-${new Date(date).getDate()}`;
 
-      let dateMDY1 = `${new Date(date1).getFullYear()}-${
-        new Date(date1).getMonth() + 1
-      }-${new Date(date1).getDate()}`;
+      let dateMDY1 = `${new Date(date1).getFullYear()}-${new Date(date1).getMonth() + 1
+        }-${new Date(date1).getDate()}`;
 
-      let dateMDY2 = `${new Date(date2).getFullYear()}-${
-        new Date(date2).getMonth() + 1
-      }-${new Date(date2).getDate()}`;
+      let dateMDY2 = `${new Date(date2).getFullYear()}-${new Date(date2).getMonth() + 1
+        }-${new Date(date2).getDate()}`;
 
-      let dateMDY3 = `${new Date(date3).getFullYear()}-${
-        new Date(date3).getMonth() + 1
-      }-${new Date(date3).getDate()}`;
+      let dateMDY3 = `${new Date(date3).getFullYear()}-${new Date(date3).getMonth() + 1
+        }-${new Date(date3).getDate()}`;
 
-      let dateMDY4 = `${new Date(date4).getFullYear()}-${
-        new Date(date4).getMonth() + 1
-      }-${new Date(date4).getDate()}`;
+      let dateMDY4 = `${new Date(date4).getFullYear()}-${new Date(date4).getMonth() + 1
+        }-${new Date(date4).getDate()}`;
 
       chequeDate.push(formatDateToYYYYMMDD(dateMDY));
       chequeDate.push(formatDateToYYYYMMDD(dateMDY1));
@@ -607,6 +600,24 @@ const AddTenancyContracts = () => {
   };
 
   const handleDateChange = (name: string, date: Date | null) => {
+    if (name === "startDate") {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (new Date(date) < today) {
+        return toast("The date cannot be in the past.");
+      }
+    }
+    if (name === "endDate") {
+      if (!formValues.startDate) {
+        return toast("The start date cannot be in the empty.");
+      }
+      const start = new Date(formValues.startDate);
+      const end = new Date(date);
+      if (end <= start) {
+        return toast("End date should be greater than the start date.");
+      }
+    }
+
     setFormValues((prevData) => ({
       ...prevData,
       [name]: date,
@@ -732,41 +743,41 @@ const AddTenancyContracts = () => {
         custom_bank_name: formValues.bankName,
         custom_price__rent_annually: formValues.anualPriceRent,
 
-        custom_html:additionalTerms,
-        custom_html_2:additionalTermsArabic,
+        custom_html: additionalTerms,
+        custom_html_2: additionalTermsArabic,
         lease_item:
           tableData && tableData.length > 0
             ? tableData.map((item) => {
-                return {
-                  lease_item: "Rent",
-                  frequency: "Monthly",
-                  currency_code: "AED",
-                  document_type: "Sales Invoice",
-                  parentfield: "lease_item",
-                  parenttype: "Lease",
-                  doctype: "Lease Item",
-                  custom_cheque_no: item.chequeNumber,
-                  custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
-                  amount: item.rent,
-                  custom_annual_amount: formValues.anualPriceRent,
-                  custom_cheque_status: "active status",
-                  custom_duration: item.duration,
-                  custom_comments: item.comments,
-                  custom_approval_status: item.approvalStatus,
-                  custom_rent_amount: item.rent,
-                  custom_status: item.status,
-                  custom_name_on_the_cheque: item.cheque,
-                  // set customer email for notification purpose
-                  custom_send_email: tenantDetails.custom_email,
-                  custom_lease_status: formValues.tenancyStatus,
-                  custom_customer_name: tenantDetails.name,
-                  custom__payment_remainder: values.find(
-                    (item) => item.label === "Payment Remainder"
-                  ).checked
-                    ? 1
-                    : 0,
-                };
-              })
+              return {
+                lease_item: "Rent",
+                frequency: "Monthly",
+                currency_code: "AED",
+                document_type: "Sales Invoice",
+                parentfield: "lease_item",
+                parenttype: "Lease",
+                doctype: "Lease Item",
+                custom_cheque_no: item.chequeNumber,
+                custom_cheque_date: formatDateToYYMMDD(item.chequeDate),
+                amount: item.rent,
+                custom_annual_amount: formValues.anualPriceRent,
+                custom_cheque_status: "active status",
+                custom_duration: item.duration,
+                custom_comments: item.comments,
+                custom_approval_status: item.approvalStatus,
+                custom_rent_amount: item.rent,
+                custom_status: item.status,
+                custom_name_on_the_cheque: item.cheque,
+                // set customer email for notification purpose
+                custom_send_email: tenantDetails.custom_email,
+                custom_lease_status: formValues.tenancyStatus,
+                custom_customer_name: tenantDetails.name,
+                custom__payment_remainder: values.find(
+                  (item) => item.label === "Payment Remainder"
+                ).checked
+                  ? 1
+                  : 0,
+              };
+            })
             : [],
       });
       if (res) {
@@ -936,17 +947,17 @@ const AddTenancyContracts = () => {
                       )}
                     </div>
                     <div>
-                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         Additional Terms (English)
                       </p>
-                    <RichTextEditorUI setAdditionalTerms={setAdditionalTerms}/>
+                      <RichTextEditorUI setAdditionalTerms={setAdditionalTerms} />
 
                     </div>
                     <div>
-                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         Additional Terms (Arabic)
                       </p>
-                    <RichTextEditorUIArabic setAdditionalTermsArabic={setAdditionalTermsArabic}/>
+                      <RichTextEditorUIArabic setAdditionalTermsArabic={setAdditionalTermsArabic} />
 
                     </div>
                     <div className="mb-5">
@@ -1518,8 +1529,8 @@ const AddTenancyContracts = () => {
                   )}
 
                   {formValues.tenancyStatus !== "Draft" &&
-                  formValues.tenancyStatus !== "" &&
-                  formValues.tenancyStatus !== null ? (
+                    formValues.tenancyStatus !== "" &&
+                    formValues.tenancyStatus !== null ? (
                     <section className="my-20">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mt-8 mb-4">
                         <span className="pb-1 border-b border-[#7C8DB5]">
@@ -1576,17 +1587,17 @@ const AddTenancyContracts = () => {
             const updatedTableData = tableData.map((item, index) =>
               index === paymentDetailsModalOpen
                 ? {
-                    ...item,
-                    chequeDate: formatDateToYYYYMMDD(
-                      formValues.dateOfCheque || item.chequeDate
-                    ),
-                    cheque: formValues.cheque,
-                    chequeNumber: formValues.chequeNumber,
-                    status: formValues.status,
-                    duration: formValues.duration,
-                    comments: formValues.comments,
-                    approvalStatus: formValues.approvalStatus,
-                  }
+                  ...item,
+                  chequeDate: formatDateToYYYYMMDD(
+                    formValues.dateOfCheque || item.chequeDate
+                  ),
+                  cheque: formValues.cheque,
+                  chequeNumber: formValues.chequeNumber,
+                  status: formValues.status,
+                  duration: formValues.duration,
+                  comments: formValues.comments,
+                  approvalStatus: formValues.approvalStatus,
+                }
                 : item
             );
 

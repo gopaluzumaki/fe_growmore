@@ -4,6 +4,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import ForgetPasswd from "./pages/ForgetPasswd";
@@ -89,7 +90,10 @@ function App() {
       </Route>
     )
   );
-  return <RouterProvider router={router} />;
+  return <>
+    <RouterProvider router={router} />
+    <ToastContainer />
+  </>;
 }
 
 export default App;
