@@ -169,7 +169,7 @@ const AddMaintenance = () => {
 
       const res = getUnitData(formValues?.propertyUnits)[0]
       const result = await fetchDataFromLease(formValues?.propertyName, formValues?.propertyUnits)
-      console.log(res, "cgy", result?.data?.data)
+      console.log(res, "data...", result?.data?.data)
       const datas = result?.data?.data[0]
       if (result?.data?.data?.length > 0) {
         setShowCustomerSection(true)
@@ -241,6 +241,7 @@ const AddMaintenance = () => {
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
       if (propertyData) {
+        console.log('res ', propertyData)
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
@@ -286,8 +287,8 @@ const AddMaintenance = () => {
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
         custom_statusmi: '',
-        custom_statusmo:'',
-        custom_status_maint:formValues?.status,
+        custom_statusmo: '',
+        custom_status_maint: formValues?.status,
         custom_comment_box: formValues?.comment,
         custom_attachment_table: imageData,
         custom_location__area: formValues?.propertyLocation,
@@ -305,9 +306,9 @@ const AddMaintenance = () => {
         custom_contact_number_of_customer: formValues?.customerContact,
         custom_customer_email: formValues?.customerEmail,
         custom_customer_type: formValues?.customerType,
-        custom_damage_location:formValues?.damageLocation,
-        custom_description:formValues?.description,
-        custom_original_issue:formValues?.originalissue
+        custom_damage_location: formValues?.damageLocation,
+        custom_description: formValues?.description,
+        custom_original_issue: formValues?.originalissue
         // custom_supplier:formValues?.
 
       }); //import from API
@@ -568,12 +569,13 @@ const AddMaintenance = () => {
 
 
                     {/* customer */}
-                    {showCustomerSection && (<><p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                      <span className="pb-1 border-b border-[#7C8DB5]">
-                        Customer
-                      </span>
-                      <span className="pb-1">Details</span>
-                    </p>
+                    {formValues?.customerName && (<>
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Customer
+                        </span>
+                        <span className="pb-1">Details</span>
+                      </p>
                       <div className="grid grid-cols-2 gap-4">
 
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
@@ -590,29 +592,31 @@ const AddMaintenance = () => {
                         </div>
                       </div>
                     </>)}
+
                     {/* owner */}
+                    {formValues?.ownerName && (<>
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Owner
+                        </span>
+                        <span className="pb-1">Details</span>
+                      </p>
+                      <div className="grid grid-cols-2 gap-4">
 
-                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                      <span className="pb-1 border-b border-[#7C8DB5]">
-                        Owner
-                      </span>
-                      <span className="pb-1">Details</span>
-                    </p>
-                    <div className="grid grid-cols-2 gap-4">
-
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Name : {formValues.ownerName}</label>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">Owner Name : {formValues.ownerName}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">Owner Email : {formValues.ownerEmail}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">Owner Contact : {formValues.ownerContact}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">Owner Type : {formValues.ownerType}</label>
+                        </div>
                       </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Email : {formValues.ownerEmail}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Contact : {formValues.ownerContact}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Type : {formValues.ownerType}</label>
-                      </div>
-                    </div>
+                    </>)}
 
 
 

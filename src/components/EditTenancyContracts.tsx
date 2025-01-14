@@ -976,14 +976,6 @@ const EditTenancyContracts = () => {
 
   const handleDateChange = (name: string, date: Date | null) => {
 
-    if (name === "startDate") {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (new Date(date) < today) {
-        return toast.error("The date cannot be in the past.");
-      }
-    }
-
     if (name === "endDate") {
       if (!formValues.startDate) {
         return toast.error("The start date cannot be in the empty.");

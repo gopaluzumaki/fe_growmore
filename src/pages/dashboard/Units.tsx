@@ -49,7 +49,7 @@ const Units = () => {
         item?.parent_property.name1?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_unit_number?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_location?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item?.custom_supplier_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item?.unit_owner?.supplier_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.tenantName?.toLowerCase().includes(searchValue.toLowerCase()) ||
         item?.custom_status?.toLowerCase().includes(searchValue.toLowerCase())
       return matchesSearch 
@@ -126,7 +126,7 @@ const Units = () => {
                           <td className="p-2 py-3">{item?.parent_property.name1}</td>
                           <td className="p-2 py-3">{item.custom_unit_number}</td>
                           <td className="p-2 py-3">{item.custom_location}</td>
-                          <td className="p-2 py-3">{item.custom_supplier_name}</td>
+                          <td className="p-2 py-3">{item?.unit_owner?.supplier_name}</td>
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${item.custom_status === "Occupied"

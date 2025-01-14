@@ -426,51 +426,55 @@ const EditLegal = () => {
 
 
                     {/* customer */}
-                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                      <span className="pb-1 border-b border-[#7C8DB5]">
-                        Customer
-                      </span>
-                      <span className="pb-1">Details</span>
-                    </p>
-                    <div className="grid grid-cols-2 gap-4">
+                    {formValues?.customerName && (<>
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Customer
+                        </span>
+                        <span className="pb-1">Details</span>
+                      </p>
+                      <div className="grid grid-cols-2 gap-4">
 
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">customer Name : {formValues.customerName}</label>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">customer Name : {formValues.customerName}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">customer Email : {formValues.customerEmail}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">customer Contact : {formValues.customerContact}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">customer Type : {formValues.customerType}</label>
+                        </div>
                       </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">customer Email : {formValues.customerEmail}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">customer Contact : {formValues.customerContact}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">customer Type : {formValues.customerType}</label>
-                      </div>
-                    </div>
+                    </>)}
 
                     {/* owner */}
+                    {formValues?.ownerName && (<>
+                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                        <span className="pb-1 border-b border-[#7C8DB5]">
+                          Owner
+                        </span>
+                        <span className="pb-1">Details</span>
+                      </p>
+                      <div className="grid grid-cols-2 gap-4">
 
-                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                      <span className="pb-1 border-b border-[#7C8DB5]">
-                        Owner
-                      </span>
-                      <span className="pb-1">Details</span>
-                    </p>
-                    <div className="grid grid-cols-2 gap-4">
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">owner Name : {formValues.ownerName}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">owner Email : {formValues.ownerEmail}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">owner Contact : {formValues.ownerContact}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">owner Type : {formValues.ownerType}</label>
+                        </div>
+                      </div>
+                    </>)}
 
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">owner Name : {formValues.ownerName}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">owner Email : {formValues.ownerEmail}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">owner Contact : {formValues.ownerContact}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">owner Type : {formValues.ownerType}</label>
-                      </div>
-                    </div>
                     {/* Legal Reason */}
                     <div className="mt-5 mb-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
