@@ -811,13 +811,17 @@ const AddTenancyContracts = () => {
     );
     // ))}
   };
+
   useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
   }, [imgUrls]);
+
+
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
   };
+
   return (
     <main>
       <div className="flex">
