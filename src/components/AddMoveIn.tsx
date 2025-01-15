@@ -26,6 +26,7 @@ import {
   fetchUnitsfromProperty,
   getTenantLeaseList,
   fetchTenancyContract,
+  fetchPropertyData,
   createCase,
   getMoveInList,
   getMoveInListData,
@@ -114,6 +115,7 @@ const AddMoveIn = () => {
     ownerDoc: "",
     ownerSign: "",
   });
+
   const [selectedCheckbox, setSelectedCheckbox] = useState<string | null>(null);
   const [showSecurityDepositeAmt, setShowSecurityDepositeAmt] = useState(false);
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
@@ -134,7 +136,7 @@ const AddMoveIn = () => {
     // const res = await getPropertyList();
     const res = await getTenantLeaseList()
     const item = res?.data?.data;
-    console.log(item, "njk")
+    // console.log(item, "lease...")
     const mergedData = item.reduce((acc, item) => {
       const existingProperty = acc.find(obj => obj.property === item.custom_property_name);
       if (existingProperty) {
@@ -143,6 +145,7 @@ const AddMoveIn = () => {
       } else {
         acc.push({
           property: item.custom_property_name,
+          currentProperty: item.custom_current_property,
           custom_number_of_unit: item.custom_number_of_unit?.length > 0 ? [item.custom_number_of_unit] : [],
           names: [item.name]
         });
@@ -161,61 +164,67 @@ const AddMoveIn = () => {
   };
 
 
-  function getCustomNumberOfUnit(propertyName) {
-    const propertyData = propertyList.find(item => item.property === propertyName);
+  function getCustomNumberOfUnit(property) {
+    const propertyData = propertyList.find(item => item.property === property);
     return propertyData ? propertyData.custom_number_of_unit : null;
   }
 
   useEffect(() => {
     const data = async () => {
-      const res = await fetchTenancyContract(propertyName)
-      const propertyData = res?.data?.data;
-      const moveInList = await getMoveInListData(formValues?.propertyName, formValues?.propertyUnits);
+      const lease = await fetchTenancyContract(propertyName.lease)
+      const res = await fetchPropertyData(propertyName.property)
+      const leaseyData = lease.data.data;
+      const propertyData = res;
+
+      const moveInList = await getMoveInListData(formValues?.lease, formValues?.propertyUnits);
       if (moveInList?.data?.data?.length > 0) {
         setAlreadyAdded(true)
-        setShowError(`This ${formValues?.propertyName} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-In' status`)
+        setShowError(`This ${formValues?.lease} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-In' status`)
       }
       else {
-        if (propertyData) {
+        if (propertyData && leaseyData) {
           setAlreadyAdded(false)
 
           // Fill all the fields with the fetched data
           setFormValues((prevData) => ({
             ...prevData,
-            currentPropertyName: propertyData?.custom_unit_name,
-            property: propertyData?.custom_property_name,
-            propertyName: propertyData?.property,
-            propertyType: propertyData?.custom_type,
-            propertyLocation: propertyData?.custom_location__area,
+            currentPropertyName: propertyData?.name,
+            property:  propertyData?.parent_property.name,
+            propertyName: propertyData?.parent_property.name1,
+            propertyType: propertyData?.type.name,
+            propertyLocation: propertyData?.custom_location,
             propertyCity: propertyData?.custom_city,
-            propertyCountry: propertyData?.custom_country,
-            propertyRent: propertyData?.rent_amount_to_pay,
-            propertyUnits: propertyData?.custom_number_of_unit,
-            sqFoot: propertyData?.custom_price__rent_annually / propertyData?.custom_price_sq_ft,
-            sqMeter: propertyData?.custom_price__rent_annually / propertyData?.custom_price_sq_m,
-            priceSqMeter: propertyData.custom_price_sq_m,
-            priceSqFt: propertyData.custom_price_sq_ft,
-            // propertyStatus: propertyData?.status,
-            propertyDoc: propertyData?.custom_image,
-            owner: propertyData?.unit_owner,
-            ownerName: propertyData?.custom_name_of_owner,
-            ownerContact: propertyData?.custom_contact_number_of_owner,
-            ownerEmail: propertyData?.custom_owner_email,
-            ownerType: propertyData?.custom_type_of_owner,
+            propertyCountry: propertyData?.custom_country.country_name,
+            propertyRent: leaseyData?.rent_amount_to_pay,
+            propertyUnits: propertyData?.custom_unit_number,
+            sqFoot: leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_ft,
+            sqMeter: leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_m,
+            priceSqMeter: leaseyData.custom_price_sq_m,
+            priceSqFt: leaseyData.custom_price_sq_ft,
+            propertyStatus: leaseyData?.status,
+            propertyDoc: leaseyData?.custom_image,
 
-            customerName: propertyData?.lease_customer,
-            customerContact: propertyData?.custom_contact_number,
-            customerEmail: propertyData?.custom_email,
-            customerType: propertyData?.custom_customer_type,
-            startDate: propertyData?.start_date,
-            endDate: propertyData?.end_date
+            owner: propertyData?.unit_owner.name,
+            ownerName: propertyData?.unit_owner.supplier_name,
+            ownerContact: propertyData?.unit_owner.custom_phone_number,
+            ownerEmail: propertyData?.unit_owner.custom_email,
+            ownerType: propertyData?.unit_owner.supplier_type,
+
+            customerName: leaseyData?.lease_customer,
+            customerContact: leaseyData?.custom_contact_number,
+            customerEmail: leaseyData?.custom_email,
+            customerType: leaseyData?.custom_customer_type,
+            startDate: leaseyData?.start_date,
+            endDate: leaseyData?.end_date
 
           }));
 
         }
       }
     }
-    data()
+    if (propertyName) {
+      data()
+    }
   }, [propertyName])
 
   function getNameFromCustomNumber(customNumber) {
@@ -224,11 +233,15 @@ const AddMoveIn = () => {
       // Check if custom_number_of_unit contains the value
       const index = item.custom_number_of_unit.indexOf(customNumber);
       if (index !== -1) {
-        return item.names[index];  // Return the corresponding name
+        return {
+          property: item.currentProperty,
+          lease: item.names[index]
+        };  // Return the corresponding name
       }
     }
     return null;  // Return null if custom_number_of_unit is not found
   }
+
   const handleDropDown = async (name, item) => {
     if (name === "propertyName") {
       setPropertyName('')
@@ -275,6 +288,7 @@ const AddMoveIn = () => {
       [name]: item,
     }));
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
@@ -286,7 +300,7 @@ const AddMoveIn = () => {
         custom_status: "Move In",
         custom_current_property: formValues?.currentPropertyName,
         custom_unit_no: formValues?.propertyUnits,
-        custom_property: formValues?.propertyName,
+        custom_property: formValues?.property,
         custom_customer: formValues?.customerName,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
@@ -318,9 +332,11 @@ const AddMoveIn = () => {
       console.log(err);
     }
   };
+
   useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
   }, [imgUrls])
+
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images

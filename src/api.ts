@@ -47,7 +47,7 @@ export const API_URL = {
   Legal_list:
     'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Legal"]]',
   Tenant_Lease_List:
-    'https://propms.erpnext.syscort.com/api/resource/Lease?filters=[["lease_status","=","Active"]]&fields=[%22property%22,%22name%22,%22custom_number_of_unit%22,%22custom_unit_name%22,%22custom_property_name%22]',
+    'https://propms.erpnext.syscort.com/api/resource/Lease?filters=[["lease_status","=","Active"]]&fields=[%22property%22,%22name%22,%22custom_number_of_unit%22,%22custom_unit_name%22,%22custom_property_name%22,%22custom_current_property%22]',
   Create_Case: "https://propms.erpnext.syscort.com/api/resource/Maintenance",
   Delete_Maintenance:
     "https://propms.erpnext.syscort.com/api/resource/Maintenance",
@@ -393,7 +393,6 @@ export const fetchTenant = async (params: any) => {
 export const fetchTenancyContract = async (params: any) => {
   const response = await axios.get(
     `${API_URL.Create_Lease}/${params}`,
-    // `${API_URL.Single_Lease}?id=${params}`,
     {
       auth: {
         username: APP_AUTH.USERNAME,

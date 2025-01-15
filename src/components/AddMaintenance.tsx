@@ -208,6 +208,7 @@ const AddMaintenance = () => {
     }
     getData()
   }, [formValues?.propertyUnits])
+  
   const handleDropDown = async (name, item) => {
     setShowCustomerSection(false)
     if (name === "propertyName") {
@@ -338,6 +339,7 @@ const AddMaintenance = () => {
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLocation, setNewLocation] = useState("");
+  
   const handleAddNewLocation = async () => {
     if (newLocation.trim()) {
       const updatedDamageLocationList = [...damageLocationList]; // Create a copy of the list
