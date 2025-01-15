@@ -2618,7 +2618,7 @@ const EditTenancyContracts = () => {
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">
                             Customer Name :{" "}
-                            {tenantDetails && tenantDetails.name}
+                            {tenantDetails && tenantDetails.customer_name}
                           </label>
                         </div>
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">

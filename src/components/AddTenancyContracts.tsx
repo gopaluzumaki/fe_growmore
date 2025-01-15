@@ -822,6 +822,7 @@ const AddTenancyContracts = () => {
     setImageArray(updatedImages); // Update state with the remaining images
   };
 
+
   return (
     <main>
       <div className="flex">
@@ -1359,7 +1360,7 @@ const AddTenancyContracts = () => {
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                             <label className="block">
                               Customer Name :{" "}
-                              {tenantDetails && tenantDetails.name}
+                              {tenantDetails && tenantDetails.customer_name}
                             </label>
                           </div>
                           <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
