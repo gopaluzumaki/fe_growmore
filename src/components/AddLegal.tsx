@@ -16,6 +16,7 @@ import Input from "./TextInput";
 import { ChangeEvent, useEffect, useState } from "react";
 import {
   fetchProperty,
+  fetchPropertyData,
   getPropertyList,
   getTenantList,
   getOwnerList,
@@ -157,6 +158,7 @@ const AddLegal = () => {
   function getUnitData(customUnitNumber) {
     return unitDetails.filter(item => item.custom_unit_number === customUnitNumber);
   }
+
   useEffect(() => {
     setShowCustomerSection(false)
     const getData = async () => {
@@ -204,6 +206,8 @@ const AddLegal = () => {
     }
     getData()
   }, [formValues?.propertyUnits])
+
+
   const handleDropDown = async (name, item) => {
     setShowCustomerSection(false)
 
@@ -235,6 +239,7 @@ const AddLegal = () => {
         customerType: '',
         legalReason: ''
       }));
+
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
       if (propertyData) {
@@ -255,15 +260,26 @@ const AddLegal = () => {
         setUnitDetails(data)
         const values = data?.map((item) => item.custom_unit_number);
         setPropertyUnits((prev) => {
+
+          console.log(values)
+          
           return values;
         });
 
       }
     }
+
+    if (name === "propertyUnits") {
+      console.log(formValues)
+      const unit = await fetchPropertyData(item)
+      console.log('unit ', unit)
+    }
+
     setFormValues((prevData) => ({
       ...prevData,
       [name]: item,
     }));
+
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -326,8 +342,10 @@ const AddLegal = () => {
       color: "#000",
     },
   };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLegal, setNewLegal] = useState("");
+
   const handleAddNewLegal = async () => {
     if (newLegal.trim()) {
       const updatedLegalList = [...legalList]; // Create a copy of the list
@@ -346,13 +364,16 @@ const AddLegal = () => {
   const handleInputChange = (e) => {
     setNewLegal(e.target.value);
   };
+
   useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
   }, [imgUrls])
+
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
   };
+
   return (
     <main>
       <div className="flex">

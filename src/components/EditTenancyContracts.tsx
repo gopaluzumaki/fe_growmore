@@ -331,10 +331,11 @@ const EditTenancyContracts = () => {
       if (location.state) {
         try {
           const res = await fetchTenancyContract(location.state);
+
           const item = res?.data?.data;
           const caseData = await fetchCaseFromMaintenance(
-            item.custom_property_name,
-            item.custom_number_of_unit
+            item.property,
+            item.custom_unit_name
           );
           const caseDataList = caseData?.data?.data?.map(
             (item) => item.custom_status
@@ -1320,6 +1321,7 @@ const EditTenancyContracts = () => {
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
 
+  console.log('caseList', caseList)
 
   return (
     <main>

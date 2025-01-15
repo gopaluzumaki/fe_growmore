@@ -763,7 +763,7 @@ export const fetchCaseFromMaintenance = async (
   unitName: any,
 ) => {
   const response = await axios.get(
-    `${API_URL.Fetch_Case}?filters=[["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"]]&fields=[%22custom_status%22,%22custom_property%22,%22custom_unit_no%22,%22custom_customer%22]&order_by=modified desc`,
+    `${API_URL.Fetch_Case}?filters=[["custom_property","=","${propertyName}"],["custom_current_property","=","${unitName}"]]&fields=[%22custom_status%22,%22custom_property%22,%22custom_unit_no%22,%22custom_customer%22]&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
