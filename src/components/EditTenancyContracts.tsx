@@ -960,14 +960,12 @@ const EditTenancyContracts = () => {
         setFormValues((prevData) => {
           return {
             ...prevData,
-
             numberOfChecks: null,
             bankName: "",
             chequeDate: "",
             leaseItems: [],
           };
         });
-
         setTableData([]);
       }
       if (item === "Extend") {
@@ -1413,6 +1411,7 @@ const EditTenancyContracts = () => {
                       onChange={(value) => {
                         if (formValues.tenancyStatus === "Renewal") {
                           setIsReload(true)
+                          window.location.reload();
                         }
                         handleDropDown("tenancyStatus", value)
                       }}
