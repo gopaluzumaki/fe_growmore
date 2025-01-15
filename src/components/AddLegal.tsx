@@ -165,7 +165,7 @@ const AddLegal = () => {
         ...prevData,
         legalReason: '',
       }));
-      
+
       const res = getUnitData(formValues?.propertyUnits)[0]
       const result = await fetchDataFromLease(formValues?.propertyName, formValues?.propertyUnits)
       const datas = result?.data?.data[0]

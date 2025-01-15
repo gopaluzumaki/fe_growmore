@@ -208,10 +208,12 @@ const EditTenancyContracts = () => {
           console.error(error);
         }
       }
+      setIsReload(false)
     };
-    setIsReload(false)
-    fetchingBookedData();
-  }, [location.state, formValues.renewal_duration, isReload]);
+    console.log('isReload ', isReload)
+    if (isReload) fetchingBookedData();
+
+  }, [location.state, formValues.renewal_duration, formValues.number_of_days, isReload]);
 
   // calculation termination things.
 
@@ -467,7 +469,7 @@ const EditTenancyContracts = () => {
 
               renewal_duration: item.custom_renewal_duration,
 
-              number_of_days:item.custom_number_of_days,
+              number_of_days: item.custom_number_of_days,
 
               rental_increase: item?.custom_rental_increase,
 
@@ -1320,7 +1322,7 @@ const EditTenancyContracts = () => {
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
 
-  console.log('aaa ', formValues)
+
   return (
     <main>
       <div className="flex">
@@ -1407,10 +1409,13 @@ const EditTenancyContracts = () => {
                         "Renewal",
                         "Termination",
                       ]}
-                      onChange={(value) =>
-                        handleDropDown("tenancyStatus", value)
-                      }
                       value={formValues.tenancyStatus}
+                      onChange={(value) => {
+                        if (formValues.tenancyStatus === "Renewal") {
+                          setIsReload(true)
+                        }
+                        handleDropDown("tenancyStatus", value)
+                      }}
                       // disabled={formValues.tenancyStatus === "Draft"}
                       styles={{
                         label: {
