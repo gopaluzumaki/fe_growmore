@@ -1289,6 +1289,7 @@ const EditTenancyContracts = () => {
   //     console.log(err);
   //   }
   // };
+ 
   const getChequeData = (name, label, type) => {
     return (
       <Input
@@ -1313,6 +1314,7 @@ const EditTenancyContracts = () => {
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
   console.log(formValues, "formValues");
+
   return (
     <main>
       <div className="flex">
@@ -1961,6 +1963,7 @@ const EditTenancyContracts = () => {
                       </div>
                     </>
                   )}
+                 
                   {/* property details */}
                   <div className="mt-5">
                     <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">
@@ -2698,7 +2701,7 @@ const EditTenancyContracts = () => {
                                     onChange={(value) =>
                                       handleDropDown(name, value)
                                     }
-                                    disabled={!(formValues.tenancyStatus === "Draft" || formValues.tenancyStatus === "Active")}
+                                    disabled={(formValues.tenancyStatus === "Extend" || formValues.tenancyStatus === "Termination")}
                                     styles={{
                                       label: {
                                         marginBottom: "7px",
