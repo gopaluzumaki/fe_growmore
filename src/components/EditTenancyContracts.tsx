@@ -320,6 +320,7 @@ const EditTenancyContracts = () => {
     const parts = filePath.split("/");
     return parts[parts.length - 1]; // Return the last part
   }
+
   useEffect(() => {
     console.log("location.state", location.state);
     const fetchingBookedData = async () => {
@@ -493,13 +494,16 @@ const EditTenancyContracts = () => {
 
     fetchingBookedData();
   }, [location.state]);
+
   useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
   }, [imgUrls]);
+
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
   };
+
   function handleStartEndDate_AccToRenewal(date) {
     let new_date = new Date(date); // Convert to Date object
 
@@ -1109,7 +1113,7 @@ const EditTenancyContracts = () => {
         custom_mode_of_payment: "Cheque",
 
         // property details
-        property: formValues.currentProperty,
+        property: formValues.propertyName1,
         custom_property_name: formValues.propertyName,
 
         custom_type: formValues.propertyType,
@@ -1140,7 +1144,7 @@ const EditTenancyContracts = () => {
         ),
         custom_signature_of_customer: formValues.tenantSignature,
         // owner details
-        custom_name_of_owner: ownerDetails.custom_name_of_owner,
+        custom_name_of_owner: ownerDetails.name,
         custom_type_of_owner: ownerDetails.supplier_type,
         custom_contact_number_of_owner: ownerDetails.custom_phone_number,
         custom_emirates_idtrade_license: formValues.ownerEmiratesId,
