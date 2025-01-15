@@ -31,6 +31,7 @@ import {
   fetchDamageLocation,
   createDamageLocation,
   fetchDataFromLease,
+  fetchUnitsfromPropertyNew,
   fetchLegalReason,
   createLegalReason,
 } from "../api";
@@ -174,13 +175,12 @@ const AddLegal = () => {
       if (result?.data?.data?.length > 0) {
         setShowCustomerSection(true)
       }
-
       setFormValues((prevData) => ({
         ...prevData,
-        propertyType: res?.type,
+        // propertyType: res?.type,
         propertyLocation: res?.custom_location,
         propertyCity: res?.custom_city,
-        propertyCountry: res?.custom_country,
+        propertyCountry: res?.custom_country?.country_name,
         propertyRent: res?.rent,
         currentPropertyName: res?.name,
 
@@ -190,15 +190,18 @@ const AddLegal = () => {
         sqMeter: res?.custom_square_m_of_unit,
         priceSqMeter: res?.custom_price_square_m,
         priceSqFt: res?.custom_price_square_ft,
-        owner: res?.unit_owner,
-        ownerName: res?.custom_supplier_name,
-        ownerContact: datas?.custom_contact_number_of_owner,
-        ownerEmail: datas?.custom_owner_email,
-        ownerType: datas?.custom_type_of_owner,
+
+        owner: res?.unit_owner.name,
+        ownerName: res?.unit_owner.supplier_name,
+        ownerContact: res?.unit_owner.custom_phone_number,
+        ownerEmail: res?.unit_owner.custom_email,
+        ownerType: res?.unit_owner.supplier_type,
+
         customerName: datas?.lease_customer,
         customerContact: datas?.custom_contact_number,
         customerEmail: datas?.custom_email,
         customerType: datas?.custom_customer_type,
+
         startDate: datas?.start_date,
         endDate: datas?.end_date
         // propertyDoc: propertyData?.custom_thumbnail_image,
@@ -255,24 +258,17 @@ const AddLegal = () => {
           propertyStatus: propertyData?.status,
           propertyDoc: propertyData?.custom_thumbnail_image,
         }));
-        const response = await fetchUnitsfromProperty(propertyData?.name);
+
+        const response = await fetchUnitsfromPropertyNew(propertyData?.name);
         const data = response?.data?.data;
+        console.log('data...', data)
         setUnitDetails(data)
         const values = data?.map((item) => item.custom_unit_number);
         setPropertyUnits((prev) => {
-
-          console.log(values)
-          
           return values;
         });
 
       }
-    }
-
-    if (name === "propertyUnits") {
-      console.log(formValues)
-      const unit = await fetchPropertyData(item)
-      console.log('unit ', unit)
     }
 
     setFormValues((prevData) => ({
@@ -281,6 +277,7 @@ const AddLegal = () => {
     }));
 
   };
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

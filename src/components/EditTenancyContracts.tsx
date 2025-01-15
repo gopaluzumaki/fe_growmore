@@ -1787,6 +1787,7 @@ const EditTenancyContracts = () => {
                               onChange={handleChange}
                               borderd
                               bgLight
+                              disabled={true}
                             />
                             <Input
                               label="Price / Rent Annually"
@@ -1796,6 +1797,7 @@ const EditTenancyContracts = () => {
                               onChange={handleChange}
                               borderd
                               bgLight
+                              disabled={true}
                             />
                           </div>
                         ) : (
@@ -1808,6 +1810,17 @@ const EditTenancyContracts = () => {
                               onChange={handleChange}
                               borderd
                               bgLight
+                              disabled={true}
+                            />
+                            <Input
+                              label="Price / Rent Annually"
+                              name="anualPriceRent"
+                              type="number"
+                              value={formValues?.anualPriceRent}
+                              onChange={handleChange}
+                              borderd
+                              bgLight
+                              disabled={true}
                             />
                           </div>
                         )
@@ -1895,20 +1908,7 @@ const EditTenancyContracts = () => {
                         }
                       )}
                     </div>
-                    <div>
-                      {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        Additional Terms (English)
-                      </p>}
-                      {richTextOpen ? <></> : <RichTextEditorUI content={formValues?.custom_html} setAdditionalTerms={setAdditionalTerms} />
-                      }
-                    </div>
-                    <div>
-                      {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        Additional Terms (Arabic)
-                      </p>}
-                      {richTextOpen ? <></> : <RichTextEditorUIArabic content={formValues?.custom_html_2} setAdditionalTermsArabic={setAdditionalTermsArabic} />
-                      }
-                    </div>
+
                     <div className="mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
@@ -2794,6 +2794,21 @@ const EditTenancyContracts = () => {
                       </form>
                     </section>
                   )}
+
+                  <div>
+                    {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Additional Terms (English)
+                    </p>}
+                    {richTextOpen ? <></> : <RichTextEditorUI content={formValues?.custom_html} setAdditionalTerms={setAdditionalTerms} />
+                    }
+                  </div>
+                  <div>
+                    {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Additional Terms (Arabic)
+                    </p>}
+                    {richTextOpen ? <></> : <RichTextEditorUIArabic content={formValues?.custom_html_2} setAdditionalTermsArabic={setAdditionalTermsArabic} />
+                    }
+                  </div>
 
                   {formValues.tenancyStatus !== "Extend" &&
                     formValues.tenancyStatus !== "Termination" &&

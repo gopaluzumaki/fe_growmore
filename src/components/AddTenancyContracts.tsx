@@ -708,7 +708,7 @@ const AddTenancyContracts = () => {
         custom_type: formValues.propertyType,
         custom_location__area: formValues.propertyLocation,
         custom_rent_amount_to_pay: formValues.propertyRent,
-        custom_per_month_rent: formValues.propertyRent / 12,
+        custom_per_month_rent: formValues.anualPriceRent / 12,
         //save unit number
         custom_unit_name: formValues.propertyUnits,
         // save unit name
@@ -956,20 +956,7 @@ const AddTenancyContracts = () => {
                         }
                       )}
                     </div>
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        Additional Terms (English)
-                      </p>
-                      <RichTextEditorUI setAdditionalTerms={setAdditionalTerms} />
 
-                    </div>
-                    <div>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        Additional Terms (Arabic)
-                      </p>
-                      <RichTextEditorUIArabic setAdditionalTermsArabic={setAdditionalTermsArabic} />
-
-                    </div>
                     <div className="mb-5">
                       <CustomFileUpload
                         onFilesUpload={(urls) => {
@@ -1538,6 +1525,23 @@ const AddTenancyContracts = () => {
                     <></>
                   )}
 
+
+                  <div>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Additional Terms (English)
+                    </p>
+                    <RichTextEditorUI setAdditionalTerms={setAdditionalTerms} />
+
+                  </div>
+                  <div>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Additional Terms (Arabic)
+                    </p>
+                    <RichTextEditorUIArabic setAdditionalTermsArabic={setAdditionalTermsArabic} />
+
+                  </div>
+
+
                   {formValues.tenancyStatus !== "Draft" &&
                     formValues.tenancyStatus !== "" &&
                     formValues.tenancyStatus !== null ? (
@@ -1573,6 +1577,8 @@ const AddTenancyContracts = () => {
                   <div className="max-w-[100px] mt-16">
                     <PrimaryButton title="Save" />
                   </div>
+
+
                 </form>
               </div>
             </div>

@@ -302,6 +302,18 @@ export const fetchUnitsfromProperty = async (params: any) => {
   return response;
 };
 
+export const fetchUnitsfromPropertyNew = async (pName: any) => {
+  let params = { doctype: "Property", fields: JSON.stringify(["*"]), filters: JSON.stringify([["Property", "parent_property", "=", pName]]) }
+  const response = await axios.get(`${API_URL.Fetched_Data}`, {
+    params,
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response.data;
+};
+
 
 export const fetchPropertyData = async (pName: any) => {
   let params = { doctype: "Property", fields: JSON.stringify(["*"]), filters: JSON.stringify([["Property", "name", "=", pName]]) }

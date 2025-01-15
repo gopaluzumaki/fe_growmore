@@ -177,7 +177,7 @@ const TenancyContracts = () => {
     return (
       matchesSearch &&
       (!selectedProperty || item?.custom_current_property?.custom_parent_property_name === selectedProperty) &&
-      (!selectedUnit || item.name === selectedUnit) &&
+      (!selectedUnit || item?.custom_current_property?.name1 === selectedUnit) &&
       (!selectedTenant || item?.lease_customer?.customer_name === selectedTenant) &&
       (!selectedOwner || item?.custom_name_of_owner?.supplier_name === selectedOwner) &&
       (!selectedStatus || item.lease_status === selectedStatus) &&

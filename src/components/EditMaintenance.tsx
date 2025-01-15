@@ -125,7 +125,7 @@ const EditMaintenance = () => {
     const data = async () => {
       const res = await fetchMaintenance(id)
       const propertyData = res;
-      console.log(propertyData, "jyu")
+
       if (propertyData) {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
@@ -196,15 +196,16 @@ const EditMaintenance = () => {
 
 
   const handleDropDown = async (name, item) => {
-
     setFormValues((prevData) => ({
       ...prevData,
       [name]: item,
     }));
   };
+
   useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
   }, [imgUrls])
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
@@ -251,12 +252,15 @@ const EditMaintenance = () => {
       console.log(err);
     }
   };
+
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
   };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLocation, setNewLocation] = useState("");
+  
   const handleAddNewLocation = async () => {
     if (newLocation.trim()) {
       const updatedDamageLocationList = [...damageLocationList]; // Create a copy of the list
