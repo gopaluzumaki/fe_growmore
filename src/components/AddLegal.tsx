@@ -79,7 +79,7 @@ const AddLegal = () => {
   const [ownerImgUrl, setOwnerImgUrl] = useState("");
   const [propertyImgUrl, setPropertyImgUrl] = useState("");
   const [propertyUnits, setPropertyUnits] = useState([]);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [formValues, setFormValues] = useState<{ [key: string]: string }>({
     tenancyStatus: "Draft",
@@ -120,8 +120,8 @@ const AddLegal = () => {
   const [showBrokarageAmt, setShowBrokarageAmt] = useState(false);
   const [propertyName, setPropertyName] = useState('')
   const [unitDetails, setUnitDetails] = useState([])
-  const [legalList,setLegalList]=useState([])
-  const [showCustomerSection,setShowCustomerSection]=useState(false)
+  const [legalList, setLegalList] = useState([])
+  const [showCustomerSection, setShowCustomerSection] = useState(false)
   const [imageArray, setImageArray] = useState<string[]>([]);
 
   useEffect(() => {
@@ -137,7 +137,7 @@ const AddLegal = () => {
   const getLegalReasonList = async () => {
     const res = await fetchLegalReason();
     const item = res?.data?.data;
-    let dropdownData = [...item.map((p) => ({ name: p.name })), { name:'Add new +', isButton: true }];
+    let dropdownData = [...item.map((p) => ({ name: p.name })), { name: 'Add new +', isButton: true }];
     setLegalList(dropdownData);
   };
   const getProperties = async () => {
@@ -159,47 +159,49 @@ const AddLegal = () => {
   }
   useEffect(() => {
     setShowCustomerSection(false)
-    const getData=async()=>{
+    const getData = async () => {
 
       setFormValues((prevData) => ({
         ...prevData,
-        legalReason:'',
+        legalReason: '',
       }));
-    const res = getUnitData(formValues?.propertyUnits)[0]
-    const result=await fetchDataFromLease(formValues?.propertyName,formValues?.propertyUnits)
-    const datas=result?.data?.data[0]
-    if(result?.data?.data?.length>0){
-      setShowCustomerSection(true)
+      
+      const res = getUnitData(formValues?.propertyUnits)[0]
+      const result = await fetchDataFromLease(formValues?.propertyName, formValues?.propertyUnits)
+      const datas = result?.data?.data[0]
+      if (result?.data?.data?.length > 0) {
+        setShowCustomerSection(true)
+      }
+
+      setFormValues((prevData) => ({
+        ...prevData,
+        propertyType: res?.type,
+        propertyLocation: res?.custom_location,
+        propertyCity: res?.custom_city,
+        propertyCountry: res?.custom_country,
+        propertyRent: res?.rent,
+        currentPropertyName: res?.name,
+
+        // propertyUnits: res?.custom_number_of_units,
+        propertyStatus: res?.status,
+        sqFoot: res?.custom_square_ft_of_unit,
+        sqMeter: res?.custom_square_m_of_unit,
+        priceSqMeter: res?.custom_price_square_m,
+        priceSqFt: res?.custom_price_square_ft,
+        owner: res?.unit_owner,
+        ownerName: res?.custom_supplier_name,
+        ownerContact: datas?.custom_contact_number_of_owner,
+        ownerEmail: datas?.custom_owner_email,
+        ownerType: datas?.custom_type_of_owner,
+        customerName: datas?.lease_customer,
+        customerContact: datas?.custom_contact_number,
+        customerEmail: datas?.custom_email,
+        customerType: datas?.custom_customer_type,
+        startDate: datas?.start_date,
+        endDate: datas?.end_date
+        // propertyDoc: propertyData?.custom_thumbnail_image,
+      }));
     }
-
-    setFormValues((prevData) => ({
-      ...prevData,
-      propertyType: res?.type,
-      propertyLocation: res?.custom_location,
-      propertyCity: res?.custom_city,
-      propertyCountry: res?.custom_country,
-      propertyRent: res?.rent,
-      currentPropertyName: res?.name,
-
-      // propertyUnits: res?.custom_number_of_units,
-      propertyStatus: res?.status,
-      sqFoot: res?.custom_square_ft_of_unit,
-      sqMeter: res?.custom_square_m_of_unit,
-      priceSqMeter: res?.custom_price_square_m,
-      priceSqFt: res?.custom_price_square_ft,
-      owner: res?.unit_owner,
-      ownerName: res?.custom_supplier_name,
-      ownerContact: datas?.custom_contact_number_of_owner,
-      ownerEmail: datas?.custom_owner_email,
-      ownerType: datas?.custom_type_of_owner,
-      customerName: datas?.lease_customer,
-          customerContact: datas?.custom_contact_number,
-          customerEmail: datas?.custom_email,
-          customerType: datas?.custom_customer_type,
-          startDate: datas?.start_date,
-          endDate: datas?.end_date
-      // propertyDoc: propertyData?.custom_thumbnail_image,
-    }));}
     getData()
   }, [formValues?.propertyUnits])
   const handleDropDown = async (name, item) => {
@@ -231,7 +233,7 @@ const AddLegal = () => {
         customerContact: '',
         customerEmail: '',
         customerType: '',
-        legalReason:''
+        legalReason: ''
       }));
       const res = await fetchProperty(item);
       const propertyData = res?.data?.data;
@@ -239,7 +241,7 @@ const AddLegal = () => {
         // Fill all the fields with the fetched data
         setFormValues((prevData) => ({
           ...prevData,
-          property:propertyData?.name1,
+          property: propertyData?.name1,
           propertyName: propertyData?.name,
           propertyType: propertyData?.type,
           propertyLocation: propertyData?.custom_location,
@@ -280,8 +282,8 @@ const AddLegal = () => {
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
         custom_statusmi: '',
-        custom_statusmo:'',
-        custom_status_legal:formValues?.status,
+        custom_statusmo: '',
+        custom_status_legal: formValues?.status,
         custom_comment_box: formValues?.comment,
         custom_attachment_table: imageData,
         custom_location__area: formValues?.propertyLocation,
@@ -299,7 +301,7 @@ const AddLegal = () => {
         custom_contact_number_of_customer: formValues?.customerContact,
         custom_customer_email: formValues?.customerEmail,
         custom_customer_type: formValues?.customerType,
-        custom_legal_reason:formValues?.legalReason,
+        custom_legal_reason: formValues?.legalReason,
         // custom_supplier:formValues?.
 
       }); //import from API
@@ -324,14 +326,14 @@ const AddLegal = () => {
       color: "#000",
     },
   };
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLegal, setNewLegal] = useState("");
-  const handleAddNewLegal =async () => {
+  const handleAddNewLegal = async () => {
     if (newLegal.trim()) {
       const updatedLegalList = [...legalList]; // Create a copy of the list
-updatedLegalList.splice(legalList.length - 1, 0, { name: newLegal }); // Insert at second last index
-setLegalList(updatedLegalList); // Update the state
-      const createLegalReasons=await createLegalReason({"custom_name":newLegal});
+      updatedLegalList.splice(legalList.length - 1, 0, { name: newLegal }); // Insert at second last index
+      setLegalList(updatedLegalList); // Update the state
+      const createLegalReasons = await createLegalReason({ "custom_name": newLegal });
       setFormValues((prevValues) => ({
         ...prevValues,
         legalReason: newLegal,
@@ -344,9 +346,9 @@ setLegalList(updatedLegalList); // Update the state
   const handleInputChange = (e) => {
     setNewLegal(e.target.value);
   };
-  useEffect(()=>{
+  useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
-  },[imgUrls])
+  }, [imgUrls])
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
@@ -354,82 +356,82 @@ setLegalList(updatedLegalList); // Update the state
   return (
     <main>
       <div className="flex">
-      {isModalOpen && (
-  <>
-    {/* Overlay with blur effect */}
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
-        backdropFilter: "blur(5px)", // Blur effect for the background
-        zIndex: 9999, // Behind the modal
-      }}
-      onClick={() => setIsModalOpen(false)} // Close modal if user clicks on the overlay
-    />
-    
-    {/* Modal */}
-    <div
-      style={{
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)", // Center the modal
-        padding: "20px",
-        backgroundColor: "white",
-        borderRadius: "8px",
-        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-        zIndex: 10000, // Ensure modal is on top
-      }}
-    >
-      <h3>Add New Legal Reason</h3>
-      <input
-        type="text"
-        value={newLegal}
-        onChange={handleInputChange}
-        placeholder="Enter Legal Reason"
-        autoFocus
-        style={{
-          marginBottom: "10px",
-          padding: "5px",
-          width: "100%",
-        }}
-      />
-      <div>
-        <button
-          onClick={handleAddNewLegal}
-          style={{
-            marginRight: "10px",
-            padding: "5px 10px",
-            backgroundColor: "#4CAF50", // Green color for the Add button
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          Add
-        </button>
-        <button
-          onClick={() => setIsModalOpen(false)}
-          style={{
-            padding: "5px 10px",
-            backgroundColor: "#f44336", // Red color for the Cancel button
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </>
-)}
+        {isModalOpen && (
+          <>
+            {/* Overlay with blur effect */}
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+                backdropFilter: "blur(5px)", // Blur effect for the background
+                zIndex: 9999, // Behind the modal
+              }}
+              onClick={() => setIsModalOpen(false)} // Close modal if user clicks on the overlay
+            />
+
+            {/* Modal */}
+            <div
+              style={{
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)", // Center the modal
+                padding: "20px",
+                backgroundColor: "white",
+                borderRadius: "8px",
+                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                zIndex: 10000, // Ensure modal is on top
+              }}
+            >
+              <h3>Add New Legal Reason</h3>
+              <input
+                type="text"
+                value={newLegal}
+                onChange={handleInputChange}
+                placeholder="Enter Legal Reason"
+                autoFocus
+                style={{
+                  marginBottom: "10px",
+                  padding: "5px",
+                  width: "100%",
+                }}
+              />
+              <div>
+                <button
+                  onClick={handleAddNewLegal}
+                  style={{
+                    marginRight: "10px",
+                    padding: "5px 10px",
+                    backgroundColor: "#4CAF50", // Green color for the Add button
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Add
+                </button>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  style={{
+                    padding: "5px 10px",
+                    backgroundColor: "#f44336", // Red color for the Cancel button
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </>
+        )}
 
         <Sidebar />
         <div className={`flex-grow ml-80 my-5 px-2`}>
@@ -453,7 +455,7 @@ setLegalList(updatedLegalList); // Update the state
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                       <MantineSelect
-                      required
+                        required
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
@@ -491,10 +493,10 @@ setLegalList(updatedLegalList); // Update the state
                         ({ label, name, type, values }) =>
                           type === "mantineSelect" ? (
                             <MantineSelect
-                            required
+                              required
                               label={label}
                               placeholder={label}
-                              data={propertyUnits?.length>0?propertyUnits:[]}
+                              data={propertyUnits?.length > 0 ? propertyUnits : []}
                               value={formValues.propertyUnits}
                               onChange={(value) =>
                                 handleDropDown("propertyUnits", value)
@@ -558,27 +560,27 @@ setLegalList(updatedLegalList); // Update the state
 
 
                     {/* customer */}
-                    {showCustomerSection&&(<><p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                    {showCustomerSection && (<><p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                       <span className="pb-1 border-b border-[#7C8DB5]">
                         Customer
                       </span>
                       <span className="pb-1">Details</span>
                     </p>
-                    <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-4">
 
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Customer Name : {formValues.customerName}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Customer Email : {formValues.customerEmail}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Customer Contact : {formValues.customerContact}</label>
-                      </div>
-                      <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Customer Type : {formValues.customerType}</label>
-                      </div>
-                    </div></>)}
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">Customer Name : {formValues.customerName}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">Customer Email : {formValues.customerEmail}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">Customer Contact : {formValues.customerContact}</label>
+                        </div>
+                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                          <label className="block">Customer Type : {formValues.customerType}</label>
+                        </div>
+                      </div></>)}
 
                     {/* owner */}
 
@@ -606,7 +608,7 @@ setLegalList(updatedLegalList); // Update the state
 
 
 
-                    
+
                     {/* Legal Reason */}
                     <div className="mt-5 mb-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
@@ -616,24 +618,24 @@ setLegalList(updatedLegalList); // Update the state
 
                       </p>
                       <MantineSelect
-                      required
-                  placeholder="Select Legal Reason"
-                  data={legalList.map((p) => p.name)}
-                  clearable
-                  value={formValues?.legalReason}
-                  onChange={(value) => {
-                    if (value === "Add new +") {
-                      // Handle button click
-                      setIsModalOpen(true);
-                      // Add your logic here to open a modal or add a new item
-                    } else {
-                      handleDropDown("legalReason", value);
-                    }
-                  }}
-                  styles={selectStyle}
-                />
-                      </div>
-                      <div className="mt-5 mb-5">
+                        required
+                        placeholder="Select Legal Reason"
+                        data={legalList.map((p) => p.name)}
+                        clearable
+                        value={formValues?.legalReason}
+                        onChange={(value) => {
+                          if (value === "Add new +") {
+                            // Handle button click
+                            setIsModalOpen(true);
+                            // Add your logic here to open a modal or add a new item
+                          } else {
+                            handleDropDown("legalReason", value);
+                          }
+                        }}
+                        styles={selectStyle}
+                      />
+                    </div>
+                    <div className="mt-5 mb-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
                           Status
@@ -642,7 +644,7 @@ setLegalList(updatedLegalList); // Update the state
                       </p>
                       {statusSelect.map(({ label, name, type, values }) => (
                         <Select
-                        required
+                          required
                           onValueChange={(value) =>
                             handleDropDown(name, value)
                           }
@@ -669,39 +671,39 @@ setLegalList(updatedLegalList); // Update the state
                         onFilesUpload={(urls) => {
                           setImgUrls(urls);
                         }}
-                       type="image/*"
-                       setLoading={setLoading}
+                        type="image/*"
+                        setLoading={setLoading}
                       />
                     </div>
                     {imageArray?.length > 0 && (<>
-                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          Attachments
+                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                        Attachments
                       </p>
-                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
-                      {imageArray.map((value, index) => (
-                        <div key={index} className="relative w-[100px] h-[100px]">
-                          <img
-                            className="w-full h-full rounded-md"
-                            src={
-                              value.url
-                                ? `https://propms.erpnext.syscort.com/${value.url}`
-                                : "/defaultProperty.jpeg"
-                            }
-                            alt="propertyImg"
-                          />
-                          <button
-                            type="button" // Prevent form submission
-                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
-                            onClick={() => handleRemoveImage(index)}
-                          >
-                            X
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </>)}
+                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                        {imageArray.map((value, index) => (
+                          <div key={index} className="relative w-[100px] h-[100px]">
+                            <img
+                              className="w-full h-full rounded-md"
+                              src={
+                                value.url
+                                  ? `https://propms.erpnext.syscort.com/${value.url}`
+                                  : "/defaultProperty.jpeg"
+                              }
+                              alt="propertyImg"
+                            />
+                            <button
+                              type="button" // Prevent form submission
+                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                              onClick={() => handleRemoveImage(index)}
+                            >
+                              X
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </>)}
                     <div className="max-w-[100px] mt-2">
-                      <PrimaryButton title="Save" disabled={loading}/>
+                      <PrimaryButton title="Save" disabled={loading} />
                     </div>
                   </>)}
                 </form>

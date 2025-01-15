@@ -191,7 +191,7 @@ const AddMaintenance = () => {
           sqMeter: res?.custom_square_m_of_unit,
           priceSqMeter: res?.custom_price_square_m,
           priceSqFt: res?.custom_price_square_ft,
-          owner: unit?.unit_owner,
+          owner: unit?.unit_owner.name,
           ownerName: unit?.unit_owner?.supplier_name,
           ownerContact: unit?.unit_owner?.custom_phone_number,
           ownerEmail: unit?.unit_owner?.custom_email,
