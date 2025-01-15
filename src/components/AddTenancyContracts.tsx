@@ -670,6 +670,12 @@ const AddTenancyContracts = () => {
 
       console.log(formValues)
       console.log(reminderValues)
+
+      const invalidPayments = tableData.filter((entry) => !entry.chequeNumber);
+      if (!tableData.length || invalidPayments.length) {
+        return toast.error("Add Payment Details")
+      }
+
       const res = await createTanencyContract({
         ...formValues,
         ...reminderValues,
@@ -1514,7 +1520,7 @@ const AddTenancyContracts = () => {
                                   <Table.Td>{item.bankName}</Table.Td>
                                   <Table.Td>{item?.status || "-"}</Table.Td>
                                   <Table.Td>
-                                    {item?.approvalStatus || "-"}
+                                    {item?.approvalStatus || item?.status ? "N/A" : "-"}
                                   </Table.Td>
                                 </Table.Tr>
                               ))}

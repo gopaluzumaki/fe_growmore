@@ -77,6 +77,8 @@ const initialValues = [
 
 const EditTenancyContracts = () => {
   const navigate = useNavigate();
+  const [leaseStatus, setLeaseStatus] = useState('');
+  const [isReload, setIsReload] = useState(true);
   const [property, setProperty] = useState();
   const [checked, setChecked] = useState<boolean>(false);
   const [propertyList, setPropertyList] = useState<any[]>([]);
@@ -191,9 +193,9 @@ const EditTenancyContracts = () => {
           console.log("property items data: ", item);
 
           if (item) {
+            setLeaseStatus(item.lease_status)
             setFormValues((prevData) => ({
               ...prevData,
-
               startDate: formValues.renewal_duration
                 ? item?.end_date
                 : item?.start_date,
@@ -207,9 +209,9 @@ const EditTenancyContracts = () => {
         }
       }
     };
-
+    setIsReload(false)
     fetchingBookedData();
-  }, [location.state, formValues.renewal_duration, formValues.number_of_days]);
+  }, [location.state, formValues.renewal_duration, isReload]);
 
   // calculation termination things.
 
@@ -465,7 +467,7 @@ const EditTenancyContracts = () => {
 
               renewal_duration: item.custom_renewal_duration,
 
-              number_of_days: item.custom_number_of_days,
+              number_of_days:item.custom_number_of_days,
 
               rental_increase: item?.custom_rental_increase,
 
@@ -1071,8 +1073,11 @@ const EditTenancyContracts = () => {
         return acc;
       }, {});
 
-      console.log(formValues)
-      console.log(reminderValues)
+      const invalidPayments = tableData.filter((entry) => !entry.chequeNumber);
+      if (!tableData.length || invalidPayments.length) {
+        return toast.error("Add Payment Details")
+      }
+
       const payload = {
         ...formValues,
         ...reminderValues,
@@ -1314,8 +1319,8 @@ const EditTenancyContracts = () => {
   const username = APP_AUTH.USERNAME;
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
-  console.log(formValues, "formValues");
 
+  console.log('aaa ', formValues)
   return (
     <main>
       <div className="flex">
@@ -1755,7 +1760,7 @@ const EditTenancyContracts = () => {
                             name="number_of_days"
                             min={0}
                             type="number"
-                            value={formValues[name]}
+                            value={formValues.number_of_days}
                             onChange={handleChange}
                             borderd
                             bgLight
@@ -2820,7 +2825,7 @@ const EditTenancyContracts = () => {
                   )}
 
                   <div className="max-w-[100px] mt-10">
-                    <PrimaryButton title="Save" disabled={formValues.tenancyStatus === "Renewal" || formValues.tenancyStatus === "Finished"} />
+                    <PrimaryButton title="Save" disabled={leaseStatus === "Renewal" || leaseStatus === "Finished"} />
                   </div>
                 </form>
               </div>
