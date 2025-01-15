@@ -1407,6 +1407,7 @@ const EditTenancyContracts = () => {
                         "Renewal",
                         "Termination",
                       ]}
+                      disabled={leaseStatus === "Renewal" || leaseStatus === "Finished"}
                       value={formValues.tenancyStatus}
                       onChange={(value) => {
                         if (formValues.tenancyStatus === "Renewal") {
