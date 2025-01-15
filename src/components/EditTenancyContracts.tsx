@@ -210,7 +210,7 @@ const EditTenancyContracts = () => {
       }
       setIsReload(false)
     };
-    console.log('isReload ', isReload)
+
     if (isReload) fetchingBookedData();
 
   }, [location.state, formValues.renewal_duration, formValues.number_of_days, isReload]);
@@ -1320,8 +1320,6 @@ const EditTenancyContracts = () => {
   const username = APP_AUTH.USERNAME;
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
-
-  console.log('caseList', caseList)
 
   return (
     <main>
