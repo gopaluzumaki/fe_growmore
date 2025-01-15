@@ -235,7 +235,7 @@ const Maintenance = () => {
                                 />
                               </Link>
                               <button className="bg-[#F7F7F7] border border-[#C3C3C3] p-1.5 rounded cursor-pointer" onClick={async () => {
-                                const confirmed = window.confirm(`Are you sure you want to delete this ${item.custom_property}?`);
+                                const confirmed = window.confirm(`Are you sure you want to delete this ${item?.custom_property?.name1}?`);
                                 if (confirmed) {
                                   await deleteCase(item.name);
                                   getData();

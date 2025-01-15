@@ -1289,7 +1289,7 @@ const EditTenancyContracts = () => {
   //     console.log(err);
   //   }
   // };
- 
+
   const getChequeData = (name, label, type) => {
     return (
       <Input
@@ -1310,6 +1310,7 @@ const EditTenancyContracts = () => {
       border: "1px solid gray",
     },
   };
+
   const username = APP_AUTH.USERNAME;
   const password = APP_AUTH.PASSWORD;
   const credentials = btoa(`${username}:${password}`);
@@ -1963,7 +1964,7 @@ const EditTenancyContracts = () => {
                       </div>
                     </>
                   )}
-                 
+
                   {/* property details */}
                   <div className="mt-5">
                     <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4">
@@ -2819,7 +2820,7 @@ const EditTenancyContracts = () => {
                   )}
 
                   <div className="max-w-[100px] mt-10">
-                    <PrimaryButton title="Save" />
+                    <PrimaryButton title="Save" disabled={formValues.tenancyStatus === "Renewal" || formValues.tenancyStatus === "Finished"} />
                   </div>
                 </form>
               </div>
