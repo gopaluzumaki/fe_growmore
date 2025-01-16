@@ -198,7 +198,7 @@ const EditMoveIn = () => {
         custom_unit_no: formValues?.propertyUnits,
         custom_current_property: formValues?.currentProperty,
         custom_property: formValues?.parentProperty,
-        custom_customer: formValues?.customerName,
+        // custom_customer: formValues?.customerName,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
         custom_statusmi: formValues?.status,

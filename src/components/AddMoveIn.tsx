@@ -315,7 +315,7 @@ const AddMoveIn = () => {
         custom_sqmeter: formValues?.sqMeter,
         custom_pricesqmeter: formValues?.priceSqMeter,
         custom_pricesqft: formValues?.priceSqFt,
-        custom_supplier: formValues?.ownerName,
+        custom_supplier: formValues?.owner,
         custom_contact_number_of_supplier: formValues?.ownerContact,
         custom_email: formValues?.ownerEmail,
         custom_owner_type: formValues?.ownerType,
