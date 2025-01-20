@@ -1185,7 +1185,7 @@ const EditTenancyContracts = () => {
                 custom_comments: item.comments,
                 custom_approval_status: item.approvalStatus,
                 custom_rent_amount: item.rent,
-                custom_status: item.status,
+                custom_status: item.status ? item.status : "",
                 custom_name_on_the_cheque: item.cheque,
 
                 // set details for notification purpose
@@ -2793,7 +2793,7 @@ const EditTenancyContracts = () => {
                                   </Table.Td>
                                   <Table.Td>{item.chequeDate}</Table.Td>
                                   <Table.Td>{item.bankName}</Table.Td>
-                                  <Table.Td>{item?.status ?? "-"}</Table.Td>
+                                  <Table.Td>{item.status ? item.status : "-"}</Table.Td>
                                   <Table.Td>
                                     {item?.approvalStatus || item?.status ? "N/A" : "-"}
                                   </Table.Td>{" "}
