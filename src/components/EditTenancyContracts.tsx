@@ -1400,7 +1400,10 @@ const EditTenancyContracts = () => {
                     <MantineSelect
                       label="Status"
                       placeholder="Status"
-                      data={[
+                      data={leaseStatus === "Draft" ? [
+                        "Active",
+                        "Draft"
+                      ] : [
                         "Active",
                         "Draft",
                         "Extend",
@@ -1411,8 +1414,16 @@ const EditTenancyContracts = () => {
                       value={formValues.tenancyStatus}
                       onChange={(value) => {
                         if (formValues.tenancyStatus === "Renewal") {
-                          setIsReload(true)
-                          window.location.reload();
+                          const confirmed = window.confirm(
+                            `Are you sure to revert it?`
+                          );
+                          if (confirmed) {
+                            setIsReload(true)
+                            window.location.reload();
+                            return
+                          } else {
+                            return handleDropDown("tenancyStatus", "Renewal")
+                          }
                         }
                         handleDropDown("tenancyStatus", value)
                       }}
@@ -1949,7 +1960,7 @@ const EditTenancyContracts = () => {
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         Attachments
                       </p>
-                      <div className="grid grid-cols-3 gap-4 w-25% h-25%">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 grid-rows-2 gap-4">
                         {imageArray.map((value, index) => (
                           <div
                             key={index}
@@ -2795,20 +2806,6 @@ const EditTenancyContracts = () => {
                     </section>
                   )}
 
-                  <div>
-                    {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                      Additional Terms (English)
-                    </p>}
-                    {richTextOpen ? <></> : <RichTextEditorUI content={formValues?.custom_html} setAdditionalTerms={setAdditionalTerms} />
-                    }
-                  </div>
-                  <div>
-                    {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                      Additional Terms (Arabic)
-                    </p>}
-                    {richTextOpen ? <></> : <RichTextEditorUIArabic content={formValues?.custom_html_2} setAdditionalTermsArabic={setAdditionalTermsArabic} />
-                    }
-                  </div>
 
                   {formValues.tenancyStatus !== "Extend" &&
                     formValues.tenancyStatus !== "Termination" &&
@@ -2843,6 +2840,24 @@ const EditTenancyContracts = () => {
                   ) : (
                     ""
                   )}
+
+
+
+                  <div>
+                    {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Additional Terms (English)
+                    </p>}
+                    {richTextOpen ? <></> : <RichTextEditorUI content={formValues?.custom_html} setAdditionalTerms={setAdditionalTerms} />
+                    }
+                  </div>
+                  <div>
+                    {richTextOpen ? <></> : <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Additional Terms (Arabic)
+                    </p>}
+                    {richTextOpen ? <></> : <RichTextEditorUIArabic content={formValues?.custom_html_2} setAdditionalTermsArabic={setAdditionalTermsArabic} />
+                    }
+                  </div>
+
 
                   <div className="max-w-[100px] mt-10">
                     <PrimaryButton title="Save" disabled={leaseStatus === "Renewal" || leaseStatus === "Finished"} />

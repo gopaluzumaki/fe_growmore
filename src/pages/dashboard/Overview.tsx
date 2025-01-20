@@ -38,8 +38,8 @@ const Overview = () => {
 
         // Fetch case data (assuming fetchCaseFromMaintenance is an async function)
         const caseData = await fetchCaseFromMaintenance(
-          record.custom_property_name,
-          record.custom_number_of_unit
+          record.property,
+          record.custom_current_property
         );
         console.log(caseData?.data?.data, "bvf", index);
         const caseDataList1 = caseData?.data?.data?.map(

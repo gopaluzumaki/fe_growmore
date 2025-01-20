@@ -42,6 +42,7 @@ export default function CustomFileUpload({
             borderRadius: "8px",
             padding: "9px",
             fontSize: "16px",
+            maxWidth:"100%",
             color: "#1A202C",
           },
         }}

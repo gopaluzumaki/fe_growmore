@@ -996,7 +996,7 @@ const AddTenancyContracts = () => {
                       <p className="mb-1.5 ml-1 font-medium text-gray-700">
                         Attachments
                       </p>
-                      <div className="grid grid-cols-3 gap-4 w-25% h-25%">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 grid-rows-2 gap-4">
                         {imageArray.map((value, index) => (
                           <div
                             key={index}
@@ -1526,20 +1526,7 @@ const AddTenancyContracts = () => {
                   )}
 
 
-                  <div>
-                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                      Additional Terms (English)
-                    </p>
-                    <RichTextEditorUI setAdditionalTerms={setAdditionalTerms} />
-
-                  </div>
-                  <div>
-                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                      Additional Terms (Arabic)
-                    </p>
-                    <RichTextEditorUIArabic setAdditionalTermsArabic={setAdditionalTermsArabic} />
-
-                  </div>
+                  
 
 
                   {formValues.tenancyStatus !== "Draft" &&
@@ -1574,6 +1561,24 @@ const AddTenancyContracts = () => {
                   ) : (
                     ""
                   )}
+
+
+
+<div>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Additional Terms (English)
+                    </p>
+                    <RichTextEditorUI setAdditionalTerms={setAdditionalTerms} />
+
+                  </div>
+                  <div>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Additional Terms (Arabic)
+                    </p>
+                    <RichTextEditorUIArabic setAdditionalTermsArabic={setAdditionalTermsArabic} />
+
+                  </div>
+                  
                   <div className="max-w-[100px] mt-16">
                     <PrimaryButton title="Save" />
                   </div>
