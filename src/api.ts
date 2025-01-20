@@ -565,7 +565,7 @@ export const getMoveInList = async () => {
 
 export const getMoveInListData = async (propertyName: any, unitName: any) => {
   const response = await axios.get(
-    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move In"],["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"]]&fields=["*"]&order_by=modified desc`,
+    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move In"],["custom_property","=","${propertyName}"],["custom_current_property","=","${unitName}"]]&fields=["*"]&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
@@ -593,7 +593,7 @@ export const getMoveOutList = async () => {
 
 export const getMoveOutListData = async (propertyName: any, unitName: any) => {
   const response = await axios.get(
-    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move Out"],["custom_property","=","${propertyName}"],["custom_unit_no","=","${unitName}"]]&fields=["*"]&order_by=modified desc`,
+    `https://propms.erpnext.syscort.com/api/resource/Maintenance?filters=[["custom_status","=","Move Out"],["custom_property","=","${propertyName}"],["custom_current_property","=","${unitName}"]]&fields=["*"]&order_by=modified desc`,
     {
       auth: {
         username: APP_AUTH.USERNAME,
@@ -668,7 +668,7 @@ export const deleteCase = async (params) => {
 };
 
 export const fetchMaintenance = async (id: any) => {
-  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "custom_current_property", "custom_customer", "custom_supplier", "custom_reason_for_move_out", "custom_reason", "custom_damage_location", "custom_description", "custom_original_issue", "custom_legal_reason", "custom_statusmi", "custom_statusmo", "custom_status_maint", "custom_status_legal"]), filters: JSON.stringify([["Maintenance", "name", "=", id]]) }
+  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "custom_current_property", "custom_customer", "custom_supplier", "custom_reason_for_move_out", "custom_reason", "custom_damage_location", "custom_description", "custom_original_issue", "custom_legal_reason", "custom_statusmi", "custom_statusmo", "custom_status_maint", "custom_status_legal", "custom_comment_box", "custom_attachment_table"]), filters: JSON.stringify([["Maintenance", "name", "=", id]]) }
   const response = await axios.get(
     `${API_URL.Fetched_Data}`,
     {

@@ -175,30 +175,39 @@ const AddMoveIn = () => {
       const res = await fetchPropertyData(propertyName.property)
       const leaseyData = lease.data.data;
       const propertyData = res;
+      let customerData = {};
 
-      const moveInList = await getMoveInListData(formValues?.lease, formValues?.propertyUnits);
+
+      if (leaseyData?.lease_customer) {
+        const customer = await fetchTenant(leaseyData?.lease_customer);
+        customerData = customer.data.data
+      }
+
+      const moveInList = await getMoveInListData(leaseyData.property, leaseyData?.custom_current_property);
       if (moveInList?.data?.data?.length > 0) {
         setAlreadyAdded(true)
-        setShowError(`This ${formValues?.lease} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-In' status`)
+        setShowError(`This ${propertyName.property} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-In' status`)
       }
       else {
         if (propertyData && leaseyData) {
           setAlreadyAdded(false)
 
+
           // Fill all the fields with the fetched data
           setFormValues((prevData) => ({
             ...prevData,
-            currentPropertyName: propertyData?.name,
-            property:  propertyData?.parent_property.name,
+            currentPropertyName: leaseyData?.custom_current_property,
+            property: propertyData?.parent_property.name,
             propertyName: propertyData?.parent_property.name1,
             propertyType: propertyData?.type.name,
             propertyLocation: propertyData?.custom_location,
             propertyCity: propertyData?.custom_city,
             propertyCountry: propertyData?.custom_country.country_name,
             propertyRent: leaseyData?.rent_amount_to_pay,
-            propertyUnits: propertyData?.custom_unit_number,
-            sqFoot: leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_ft,
-            sqMeter: leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_m,
+
+            // propertyUnits: propertyData?.custom_unit_number,
+            sqFoot: (leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_ft).toFixed(2),
+            sqMeter: (leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_m).toFixed(2),
             priceSqMeter: leaseyData.custom_price_sq_m,
             priceSqFt: leaseyData.custom_price_sq_ft,
             propertyStatus: leaseyData?.status,
@@ -210,10 +219,12 @@ const AddMoveIn = () => {
             ownerEmail: propertyData?.unit_owner.custom_email,
             ownerType: propertyData?.unit_owner.supplier_type,
 
-            customerName: leaseyData?.lease_customer,
-            customerContact: leaseyData?.custom_contact_number,
-            customerEmail: leaseyData?.custom_email,
-            customerType: leaseyData?.custom_customer_type,
+            customer: customerData?.name,
+            customerName: customerData?.customer_name,
+            customerContact: customerData?.custom_contact_number_of_customer,
+            customerEmail: customerData?.custom_email,
+            customerType: customerData?.customer_type,
+
             startDate: leaseyData?.start_date,
             endDate: leaseyData?.end_date
 
@@ -301,7 +312,7 @@ const AddMoveIn = () => {
         custom_current_property: formValues?.currentPropertyName,
         custom_unit_no: formValues?.propertyUnits,
         custom_property: formValues?.property,
-        custom_customer: formValues?.customerName,
+        custom_customer: formValues?.customer,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
         custom_statusmi: formValues?.status,

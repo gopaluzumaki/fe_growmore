@@ -184,9 +184,11 @@ const EditMoveIn = () => {
       [name]: item,
     }));
   };
+  
   useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
   }, [imgUrls])
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));

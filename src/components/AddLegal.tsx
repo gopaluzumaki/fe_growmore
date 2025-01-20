@@ -172,9 +172,17 @@ const AddLegal = () => {
       const res = getUnitData(formValues?.propertyUnits)[0]
       const result = await fetchDataFromLease(formValues?.propertyName, formValues?.propertyUnits)
       const datas = result?.data?.data[0]
+      let customerData = {};
+
       if (result?.data?.data?.length > 0) {
         setShowCustomerSection(true)
       }
+
+      if (datas?.lease_customer) {
+        const customer = await fetchTenant(datas?.lease_customer);
+        customerData = customer.data.data
+      }
+
       setFormValues((prevData) => ({
         ...prevData,
         // propertyType: res?.type,
@@ -197,10 +205,11 @@ const AddLegal = () => {
         ownerEmail: res?.unit_owner.custom_email,
         ownerType: res?.unit_owner.supplier_type,
 
-        customerName: datas?.lease_customer,
-        customerContact: datas?.custom_contact_number,
-        customerEmail: datas?.custom_email,
-        customerType: datas?.custom_customer_type,
+        customer: customerData?.name,
+        customerName: customerData?.customer_name,
+        customerContact: customerData?.custom_contact_number_of_customer,
+        customerEmail: customerData?.custom_email,
+        customerType: customerData?.customer_type,
 
         startDate: datas?.start_date,
         endDate: datas?.end_date
@@ -291,7 +300,7 @@ const AddLegal = () => {
         custom_current_property: formValues?.currentPropertyName,
         custom_unit_no: formValues?.propertyUnits,
         custom_property: formValues?.propertyName,
-        custom_customer: formValues?.customerName,
+        custom_customer: formValues?.customer,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
         custom_statusmi: '',

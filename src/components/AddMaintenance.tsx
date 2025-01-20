@@ -174,9 +174,17 @@ const AddMaintenance = () => {
         const unit = await fetchPropertyData(res.name)
         console.log(unit, "cgy", result?.data?.data)
         const datas = result?.data?.data[0]
+        let customerData = {};
         if (result?.data?.data?.length > 0) {
           setShowCustomerSection(true)
         }
+
+        if (datas?.lease_customer) {
+          const customer = await fetchTenant(datas?.lease_customer);
+          customerData = customer.data.data
+        }
+
+
         setFormValues((prevData) => ({
           ...prevData,
           propertyType: res?.type,
@@ -196,10 +204,13 @@ const AddMaintenance = () => {
           ownerContact: unit?.unit_owner?.custom_phone_number,
           ownerEmail: unit?.unit_owner?.custom_email,
           ownerType: unit?.unit_owner?.supplier_type,
-          customerName: datas?.lease_customer,
-          customerContact: datas?.custom_contact_number,
-          customerEmail: datas?.custom_email,
-          customerType: datas?.custom_customer_type,
+
+          customer: customerData?.name,
+          customerName: customerData?.customer_name,
+          customerContact: customerData?.custom_contact_number_of_customer,
+          customerEmail: customerData?.custom_email,
+          customerType: customerData?.customer_type,
+
           startDate: datas?.start_date,
           endDate: datas?.end_date
           // propertyDoc: propertyData?.custom_thumbnail_image,
@@ -208,7 +219,7 @@ const AddMaintenance = () => {
     }
     getData()
   }, [formValues?.propertyUnits])
-  
+
   const handleDropDown = async (name, item) => {
     setShowCustomerSection(false)
     if (name === "propertyName") {
@@ -287,7 +298,7 @@ const AddMaintenance = () => {
         custom_current_property: formValues?.currentPropertyName,
         custom_property: formValues?.propertyName,
         custom_unit_no: formValues?.propertyUnits,
-        custom_customer: formValues?.customerName,
+        custom_customer: formValues?.customer,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
         custom_statusmi: '',
@@ -339,7 +350,7 @@ const AddMaintenance = () => {
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLocation, setNewLocation] = useState("");
-  
+
   const handleAddNewLocation = async () => {
     if (newLocation.trim()) {
       const updatedDamageLocationList = [...damageLocationList]; // Create a copy of the list

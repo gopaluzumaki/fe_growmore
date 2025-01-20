@@ -168,8 +168,14 @@ const AddMoveOut = () => {
       const res = await fetchPropertyData(propertyName.property)
       const leaseyData = lease.data.data;
       const propertyData = res;
+      let customerData = {};
 
-      const moveOutList = await getMoveOutListData(formValues?.lease, formValues?.propertyUnits);
+      if (leaseyData?.lease_customer) {
+        const customer = await fetchTenant(leaseyData?.lease_customer);
+        customerData = customer.data.data
+      }
+
+      const moveOutList = await getMoveOutListData(leaseyData.property, leaseyData?.custom_current_property);
       if (moveOutList?.data?.data?.length > 0) {
         setAlreadyAdded(true)
         setShowError(`This ${formValues?.propertyName} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-Out' status`)
@@ -180,7 +186,7 @@ const AddMoveOut = () => {
           // Fill all the fields with the fetched data
           setFormValues((prevData) => ({
             ...prevData,
-            currentPropertyName: propertyData?.name,
+            currentPropertyName: leaseyData?.custom_current_property,
             property: propertyData?.parent_property.name,
             propertyName: propertyData?.parent_property.name1,
             propertyType: propertyData?.type.name,
@@ -188,7 +194,8 @@ const AddMoveOut = () => {
             propertyCity: propertyData?.custom_city,
             propertyCountry: propertyData?.custom_country.country_name,
             propertyRent: propertyData?.rent_amount_to_pay,
-            propertyUnits: propertyData?.custom_unit_number,
+
+            // propertyUnits: leaseyData?.custom_number_of_units,
             sqFoot: leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_ft,
             sqMeter: leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_m,
             priceSqMeter: leaseyData.custom_price_sq_m,
@@ -202,10 +209,12 @@ const AddMoveOut = () => {
             ownerEmail: propertyData?.unit_owner.custom_email,
             ownerType: propertyData?.unit_owner.supplier_type,
 
-            customerName: leaseyData?.lease_customer,
-            customerContact: leaseyData?.custom_contact_number,
-            customerEmail: leaseyData?.custom_email,
-            customerType: leaseyData?.custom_customer_type,
+            customer: customerData?.name,
+            customerName: customerData?.customer_name,
+            customerContact: customerData?.custom_contact_number_of_customer,
+            customerEmail: customerData?.custom_email,
+            customerType: customerData?.customer_type,
+
             startDate: leaseyData?.start_date,
             endDate: leaseyData?.end_date
 
@@ -291,7 +300,7 @@ const AddMoveOut = () => {
         custom_current_property: formValues?.currentPropertyName,
         custom_unit_no: formValues?.propertyUnits,
         custom_property: formValues?.property,
-        custom_customer: formValues?.customerName,
+        custom_customer: formValues?.customer,
         custom_start_date: formValues?.startDate,
         custom_end_date: formValues?.endDate,
         custom_statusmo: formValues?.status,
