@@ -668,7 +668,7 @@ export const deleteCase = async (params) => {
 };
 
 export const fetchMaintenance = async (id: any) => {
-  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "custom_current_property", "custom_customer", "custom_supplier", "custom_reason_for_move_out", "custom_reason", "custom_damage_location", "custom_description", "custom_original_issue", "custom_legal_reason", "custom_statusmi", "custom_statusmo", "custom_status_maint", "custom_status_legal", "custom_comment_box", "custom_attachment_table"]), filters: JSON.stringify([["Maintenance", "name", "=", id]]) }
+  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "custom_current_property", "custom_customer", "custom_supplier", "custom_reason_for_move_out", "custom_reason", "custom_damage_location", "custom_description", "custom_original_issue", "custom_legal_reason", "custom_statusmi", "custom_statusmo", "custom_status_maint", "custom_status_legal", "custom_comment_box"]), filters: JSON.stringify([["Maintenance", "name", "=", id]]) }
   const response = await axios.get(
     `${API_URL.Fetched_Data}`,
     {
