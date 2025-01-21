@@ -2800,7 +2800,7 @@ const EditTenancyContracts = () => {
                                   <Table.Td>{item.bankName}</Table.Td>
                                   <Table.Td>{item.status ? item.status : "-"}</Table.Td>
                                   <Table.Td>
-                                    {item?.approvalStatus || item?.status ? "N/A" : "-"}
+                                    {item?.status ? (item?.approvalStatus ? item?.approvalStatus : "N/A") : "-"}
                                   </Table.Td>{" "}
                                 </Table.Tr>
                               ))}
