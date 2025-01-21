@@ -577,6 +577,19 @@ export const getMoveInListData = async (propertyName: any, unitName: any) => {
   return response;
 };
 
+export const getContractsListData = async (unitName: any) => {
+  const response = await axios.get(
+    `https://propms.erpnext.syscort.com/api/resource/Lease?filters=[["lease_status","=","Active"],["custom_current_property","=","${unitName}"]]&fields=["*"]&order_by=modified desc`,
+    {
+      auth: {
+        username: APP_AUTH.USERNAME,
+        password: APP_AUTH.PASSWORD,
+      },
+    }
+  );
+  return response;
+};
+
 export const getMoveOutList = async () => {
   let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "creation", "custom_property", "custom_current_property", "custom_supplier", "custom_customer", "custom_status_maint", "custom_start_date", "custom_end_date", "custom_statusmo"]), filters: JSON.stringify([["Maintenance", "custom_status", "=", "Move Out"]]) }
   const response = await axios.get(

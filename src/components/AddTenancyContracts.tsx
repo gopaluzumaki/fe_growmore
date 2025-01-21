@@ -28,6 +28,7 @@ import {
   uploadFile,
   fetchUnitsfromProperty,
   // getUnitList,
+  getContractsListData,
   fetchUnit,
   fetchUnitForTenancyContract,
   getTenancyContractList,
@@ -83,6 +84,7 @@ const AddTenancyContracts = () => {
   const [loading, setLoading] = useState(false);
   const [additionalTerms, setAdditionalTerms] = useState()
   const [additionalTermsArabic, setAdditionalTermsArabic] = useState()
+  const [showError, setShowError] = useState('')
   console.log(additionalTerms, "cft")
   const [tableData, setTableData] = useState<
     {
@@ -501,6 +503,7 @@ const AddTenancyContracts = () => {
       const res = await fetchTenant(item);
       const tenantData = res?.data?.data;
       setTenantDetails(tenantData);
+
       if (tenantData) {
         // Fill all the tenant-related fields with the fetched tenant data
         setFormValues((prevData) => ({
@@ -571,6 +574,16 @@ const AddTenancyContracts = () => {
       const unit_List = await fetchUnitForTenancyContract(item);
       const unit_List_Data = unit_List?.data?.data;
       console.log("property unit data :", unit_List_Data);
+
+      const contractsList = await getContractsListData(unit_List_Data.name);
+      if (contractsList?.data?.data?.length > 0) {
+        setFormValues((prevData) => ({
+          ...prevData,
+          custom_number_of_unit: unit_List_Data?.custom_unit_number,
+        }));
+        return setShowError(`This ${unit_List_Data.custom_unit_number} Property, is already in the 'Active' status`)
+      }
+
       if (unit_List_Data) {
         const res = await fetchOwner(unit_List_Data?.unit_owner);
         const ownerData = res?.data?.data;
@@ -639,6 +652,9 @@ const AddTenancyContracts = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (showError) {
+      return
+    }
     e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
@@ -1170,7 +1186,9 @@ const AddTenancyContracts = () => {
                               <></>
                             )
                         )}
+
                       </div>
+                      <div className="flex justify-center mt-2 text-red-700">{showError}</div>
                       {/* <div>
                         <p className="mb-1.5 ml-1 font-medium text-gray-700">
                           <label>Image Attachment</label>
@@ -1526,7 +1544,7 @@ const AddTenancyContracts = () => {
                   )}
 
 
-                  
+
 
 
                   {formValues.tenancyStatus !== "Draft" &&
@@ -1564,7 +1582,7 @@ const AddTenancyContracts = () => {
 
 
 
-<div>
+                  <div>
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
                       Additional Terms (English)
                     </p>
@@ -1578,7 +1596,7 @@ const AddTenancyContracts = () => {
                     <RichTextEditorUIArabic setAdditionalTermsArabic={setAdditionalTermsArabic} />
 
                   </div>
-                  
+
                   <div className="max-w-[100px] mt-16">
                     <PrimaryButton title="Save" />
                   </div>
