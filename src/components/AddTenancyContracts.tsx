@@ -574,12 +574,13 @@ const AddTenancyContracts = () => {
       const unit_List = await fetchUnitForTenancyContract(item);
       const unit_List_Data = unit_List?.data?.data;
       console.log("property unit data :", unit_List_Data);
-
+      setShowError('')
       const contractsList = await getContractsListData(unit_List_Data.name);
       if (contractsList?.data?.data?.length > 0) {
         setFormValues((prevData) => ({
           ...prevData,
-          custom_number_of_unit: unit_List_Data?.custom_unit_number,
+          custom_city: null,
+          propertyUnits: unit_List_Data.name,
         }));
         return setShowError(`This ${unit_List_Data.custom_unit_number} Property, is already in the 'Active' status`)
       }
@@ -652,10 +653,10 @@ const AddTenancyContracts = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (showError) {
       return
     }
-    e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
     // const tenancyContractList = await getTenancyContractList();
@@ -1205,7 +1206,7 @@ const AddTenancyContracts = () => {
                         </div>
                       </div> */}
                     </div>
-                    {formValues.propertyUnits ? (
+                    {formValues.custom_city ? (
                       <div className="grid grid-cols-2 gap-4">
                         <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
                           <label className="block">

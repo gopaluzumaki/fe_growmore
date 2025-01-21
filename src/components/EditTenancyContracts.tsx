@@ -969,9 +969,6 @@ const EditTenancyContracts = () => {
         });
         setTableData([]);
       }
-      if (item === "Extend") {
-        setIsContractExtended(1);
-      }
 
       handlers.setState(updateInitialValues(item));
     }
@@ -1211,9 +1208,9 @@ const EditTenancyContracts = () => {
       if (formValues.tenancyStatus === "Renewal") {
         const updateRes = await updateTanencyContract(location.state, {
           lease_status: "Renewal",
-          custom_attachment_table: imageData,
-          custom_html: formValues?.custom_html,
-          custom_html_2: formValues?.custom_html_2,
+          // custom_attachment_table: imageData,
+          // custom_html: formValues?.custom_html,
+          // custom_html_2: formValues?.custom_html_2,
           //renewal details
           custom_renewal_duration: formValues.renewal_duration,
           custom_number_of_days: formValues.number_of_days,
@@ -1428,7 +1425,7 @@ const EditTenancyContracts = () => {
                           }
                           handleDropDown("tenancyStatus", value)
                         }}
-                        // disabled={formValues.tenancyStatus === "Draft"}
+
                         styles={{
                           label: {
                             marginBottom: "7px",
@@ -1458,7 +1455,7 @@ const EditTenancyContracts = () => {
                     <div></div>
                   </div>
 
-                  {isContractExtended === 1 && (
+                  {(isContractExtended === 1 || formValues.tenancyStatus === "Extend") && (
                     <div>
                       <p className="flex gap-2 mt-8 mb-4 text-[18px] text-[#7C8DB5]">
                         <span className="pb-1 border-b border-[#7C8DB5]">
@@ -1803,7 +1800,6 @@ const EditTenancyContracts = () => {
                               onChange={handleChange}
                               borderd
                               bgLight
-                              disabled={true}
                             />
                             <Input
                               label="Price / Rent Annually"
@@ -1826,7 +1822,6 @@ const EditTenancyContracts = () => {
                               onChange={handleChange}
                               borderd
                               bgLight
-                              disabled={true}
                             />
                             <Input
                               label="Price / Rent Annually"
