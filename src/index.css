@@ -68,6 +68,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -100,6 +101,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -107,11 +109,36 @@
 
 
 button:disabled {
-  background-color: #cccccc; 
-  cursor: not-allowed; 
+  background-color: #cccccc;
+  cursor: not-allowed;
   opacity: 0.6;
 }
 
-.mantine-Input-wrapper button>div{
-  white-space:inherit!important;
+.mantine-Input-wrapper button>div {
+  white-space: inherit !important;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  visibility: hidden;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px;
+  position: absolute;
+  bottom: 70%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
 }

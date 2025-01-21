@@ -1397,57 +1397,62 @@ const EditTenancyContracts = () => {
                     Export to PDF
                   </div>
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
-                    <MantineSelect
-                      label="Status"
-                      placeholder="Status"
-                      data={leaseStatus === "Draft" ? [
-                        "Active",
-                        "Draft"
-                      ] : [
-                        "Active",
-                        "Draft",
-                        "Extend",
-                        "Renewal",
-                        "Termination",
-                      ]}
-                      disabled={leaseStatus === "Renewal" || leaseStatus === "Finished"}
-                      value={formValues.tenancyStatus}
-                      onChange={(value) => {
-                        if (formValues.tenancyStatus === "Renewal") {
-                          const confirmed = window.confirm(
-                            `Are you sure to revert it?`
-                          );
-                          if (confirmed) {
-                            setIsReload(true)
-                            window.location.reload();
-                            return
-                          } else {
-                            return handleDropDown("tenancyStatus", "Renewal")
+                    <div class="tooltip-container">
+                      <MantineSelect
+                        label="Status"
+                        placeholder="Status"
+                        data={leaseStatus === "Draft" ? [
+                          "Active",
+                          "Draft"
+                        ] : [
+                          "Active",
+                          "Draft",
+                          "Extend",
+                          "Renewal",
+                          "Termination",
+                        ]}
+                        disabled={leaseStatus === "Renewal" || leaseStatus === "Finished"}
+                        value={formValues.tenancyStatus}
+                        onChange={(value) => {
+                          if (formValues.tenancyStatus === "Renewal") {
+                            const confirmed = window.confirm(
+                              `Are you sure to revert it?`
+                            );
+                            if (confirmed) {
+                              setIsReload(true)
+                              window.location.reload();
+                              return
+                            } else {
+                              return handleDropDown("tenancyStatus", "Renewal")
+                            }
                           }
-                        }
-                        handleDropDown("tenancyStatus", value)
-                      }}
-                      // disabled={formValues.tenancyStatus === "Draft"}
-                      styles={{
-                        label: {
-                          marginBottom: "7px",
-                          color: "#7C8DB5",
-                          fontSize: "16px",
-                        },
-                        input: {
-                          border: "1px solid #CCDAFF",
-                          borderRadius: "8px",
-                          padding: "24px",
-                          fontSize: "16px",
-                          color: "#1A202C",
-                        },
-                        dropdown: {
-                          backgroundColor: "white",
-                          borderRadius: "8px",
-                          border: "1px solid #E2E8F0",
-                        },
-                      }}
-                    />
+                          handleDropDown("tenancyStatus", value)
+                        }}
+                        // disabled={formValues.tenancyStatus === "Draft"}
+                        styles={{
+                          label: {
+                            marginBottom: "7px",
+                            color: "#7C8DB5",
+                            fontSize: "16px",
+                          },
+                          input: {
+                            border: "1px solid #CCDAFF",
+                            borderRadius: "8px",
+                            padding: "24px",
+                            fontSize: "16px",
+                            color: "#1A202C",
+                          },
+                          dropdown: {
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            border: "1px solid #E2E8F0",
+                          },
+                        }}
+                      />
+                      {(leaseStatus === "Renewal" || leaseStatus === "Finished") && (
+                        <div class="tooltip">Status updates are restricted as this tenancy contract has already been renewed.</div>
+                      )}
+                    </div>
                     <div></div>
                     <div></div>
                     <div></div>
