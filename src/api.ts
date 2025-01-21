@@ -62,6 +62,7 @@ export const API_URL = {
   Profile_Data: "https://propms.erpnext.syscort.com/api/resource/User",
   Country_List: "https://propms.erpnext.syscort.com/api/resource/Country",
   Fetched_Data: "https://propms.erpnext.syscort.com/api/method/propms_app.api.custom.fetched_data",
+  Fetched_Single_Data: "https://propms.erpnext.syscort.com/api/method/propms_app.api.custom.single_data",
 };
 
 export const loginUser = async (credentials: { usr: string; pwd: string }) => {
@@ -668,9 +669,9 @@ export const deleteCase = async (params) => {
 };
 
 export const fetchMaintenance = async (id: any) => {
-  let params = { doctype: "Maintenance", fields: JSON.stringify(["name", "custom_current_property", "custom_customer", "custom_supplier", "custom_reason_for_move_out", "custom_reason", "custom_damage_location", "custom_description", "custom_original_issue", "custom_legal_reason", "custom_statusmi", "custom_statusmo", "custom_status_maint", "custom_status_legal", "custom_comment_box"]), filters: JSON.stringify([["Maintenance", "name", "=", id]]) }
+  let params = { doctype: "Maintenance", id }
   const response = await axios.get(
-    `${API_URL.Fetched_Data}`,
+    `${API_URL.Fetched_Single_Data}`,
     {
       params,
       auth: {
@@ -678,7 +679,7 @@ export const fetchMaintenance = async (id: any) => {
         password: APP_AUTH.PASSWORD,
       },
     });
-  return response?.data?.data?.data[0] ?? null;
+  return response?.data?.data?.data ?? null;
 };
 
 export const fetchDamageLocation = async () => {

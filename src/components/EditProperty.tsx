@@ -66,8 +66,8 @@ const EditProperty = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState([])
-  const [countryList,setCountryList]=useState([])
-  const [loading,setLoading] = useState(false)
+  const [countryList, setCountryList] = useState([])
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     type: "",
     name: "",
@@ -89,16 +89,16 @@ const EditProperty = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
-  console.log(id,"bjk",location.state)
+  console.log(id, "bjk", location.state)
 
-useEffect(()=>{
-  getCountryListData()
-},[])
-const getCountryListData=async()=>{
-const res=await getCountryList()
+  useEffect(() => {
+    getCountryListData()
+  }, [])
+  const getCountryListData = async () => {
+    const res = await getCountryList()
 
-setCountryList(res?.data?.data)
-}
+    setCountryList(res?.data?.data)
+  }
   useEffect(() => {
     const fetchPropertyData = async () => {
       try {
@@ -149,7 +149,7 @@ setCountryList(res?.data?.data)
     }));
   };
 
-  
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -158,9 +158,9 @@ setCountryList(res?.data?.data)
       [name]: value,
     }));
   };
-useEffect(()=>{
-  setImageArray((prevArray) => [...prevArray, ...imgUrls]);
-},[imgUrls])
+  useEffect(() => {
+    setImageArray((prevArray) => [...prevArray, ...imgUrls]);
+  }, [imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
@@ -178,7 +178,7 @@ useEffect(()=>{
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
   };
-  console.log(imageArray,"bgy")
+  console.log(imageArray, "bgy")
   return (
     <main>
       <div className="flex">
@@ -204,40 +204,40 @@ useEffect(()=>{
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
-        {label}
-      </label>
-                        <Select
-                          value={formData[name as keyof FormData]}
-                          onValueChange={(item) => handleDropDown(name, item)}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(name==="custom_country"?countryList:values)?.map((item, i) => (
-                              <SelectItem key={i} value={name==="custom_country"?item.name:item}>
-                                {name==="custom_country"?item.name:item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+                            {label}
+                          </label>
+                          <Select
+                            value={formData[name as keyof FormData]}
+                            onValueChange={(item) => handleDropDown(name, item)}
+                          >
+                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(name === "custom_country" ? countryList : values)?.map((item, i) => (
+                                <SelectItem key={i} value={name === "custom_country" ? item.name : item}>
+                                  {name === "custom_country" ? item.name : item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       ) : (
                         <></>
                       )
                     )}
                     <div className="mb-5">
-                                                              <CustomFileUpload
-                                                                onFilesUpload={(urls) => {
-                                                                  setImgUrls(urls);
-                                                                }}
-                                                                type="image/*"
-                                                                setLoading={setLoading}
-                                                              />
-                                                            </div>
+                      <CustomFileUpload
+                        onFilesUpload={(urls) => {
+                          setImgUrls(urls);
+                        }}
+                        type="image/*"
+                        setLoading={setLoading}
+                      />
+                    </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
@@ -253,8 +253,8 @@ useEffect(()=>{
                   </div>
                   {imageArray?.length > 0 && (<>
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          Attachments
-                      </p>
+                      Attachments
+                    </p>
                     <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (
                         <div key={index} className="relative w-[100px] h-[100px]">
@@ -279,7 +279,7 @@ useEffect(()=>{
                     </div>
                   </>)}
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" disabled={loading}/>
+                    <PrimaryButton title="Save" disabled={loading} />
                   </div>
                 </form>
               </div>
