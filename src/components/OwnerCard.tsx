@@ -34,7 +34,7 @@ const OwnerCard = ({
 }: OwnerCardProps) => {
   console.log(name1,"vgh")
   const formatEmail = (email) => {
-    if (email.length > 50) {
+    if (email?.length > 50) {
       const firstPart = email.slice(0, 5);
       const lastPart = email.slice(-5);
       return `${firstPart}...${lastPart}`;

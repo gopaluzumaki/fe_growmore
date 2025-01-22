@@ -186,7 +186,7 @@ const AddMoveIn = () => {
       const moveInList = await getMoveInListData(leaseyData.property, leaseyData?.custom_current_property);
       if (moveInList?.data?.data?.length > 0) {
         setAlreadyAdded(true)
-        setShowError(`This ${propertyName.property} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-In' status`)
+        setShowError(`This ${formValues?.propertyName} property, with unit ${formValues?.propertyUnits}, is already in the 'Move-In' status`)
       }
       else {
         if (propertyData && leaseyData) {

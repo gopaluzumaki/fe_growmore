@@ -135,7 +135,7 @@ const EditMoveOut = () => {
         setFormValues((prevData) => ({
           ...prevData,
           property: propertyData?.name,
-          propertyName: propertyData?.custom_current_property.custom_parent_property_name,
+          propertyName: propertyData?.custom_property.name1,
           propertyUnits: propertyData?.custom_current_property.name1,
           // propertyType: propertyData?.custom_type,
           propertyLocation: propertyData?.custom_current_property?.custom_location,
