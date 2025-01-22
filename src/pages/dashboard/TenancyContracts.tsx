@@ -30,7 +30,7 @@ interface Unit {
   custom_location__area: string;
   custom_name_of_owner: string;
   lease_customer: string;
-  custom_rent_amount_to_pay: string;
+  custom_price__rent_annually: string;
   property: string;
   lease_status: string;
   name: string;
@@ -166,7 +166,7 @@ const TenancyContracts = () => {
       item?.custom_current_property?.name1
         .toLowerCase()
         .includes(searchValue.toLowerCase()) ||
-      item.custom_rent_amount_to_pay
+      item.custom_price__rent_annually
         .toLowerCase()
         .includes(searchValue.toLowerCase()) ||
       item.lease_status.toLowerCase().includes(searchValue.toLowerCase()) ||
@@ -359,7 +359,7 @@ const TenancyContracts = () => {
                           <td className="p-2 py-3">{item?.lease_customer?.customer_name}</td>
                           <td className="p-2 py-3">
                             {item?.custom_price__rent_annually ||
-                              item.custom_rent_amount_to_pay}
+                              item.custom_price__rent_annually}
                           </td>
                           <td className="p-2 py-3 whitespace-nowrap">
                             {formatDate(item.start_date)}

@@ -298,16 +298,17 @@ const EditTenancyContracts = () => {
                 }));
               }
             }
-            setFormValues((prevData) => ({
-              ...prevData,
-
-              startDate: formValues.renewal_duration
-                ? item?.end_date
-                : item?.start_date,
-              endDate: formValues.renewal_duration
-                ? handleStartEndDate_AccToRenewal(item.end_date)
-                : item?.end_date,
-            }));
+            if (item.lease_status !== "Renewal") {
+              setFormValues((prevData) => ({
+                ...prevData,
+                startDate: formValues.renewal_duration
+                  ? item?.end_date
+                  : item?.start_date,
+                endDate: formValues.renewal_duration
+                  ? handleStartEndDate_AccToRenewal(item.end_date)
+                  : item?.end_date,
+              }));
+            }
           }
         } catch (error) {
           console.error(error);
