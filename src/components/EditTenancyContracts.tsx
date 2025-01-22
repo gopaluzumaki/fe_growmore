@@ -2946,7 +2946,7 @@ const EditTenancyContracts = () => {
                       data={values}
                       value={formValues[name]}
                       onChange={(value) => {
-                        if (name === "status" && (value === "Clear" || value === "")) {
+                        if (name === "status" && (value === "Clear" || !value)) {
                           setFormValues({
                             ...formValues,
                             [name]: value,
