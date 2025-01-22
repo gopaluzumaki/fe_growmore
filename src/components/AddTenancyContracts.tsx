@@ -575,15 +575,15 @@ const AddTenancyContracts = () => {
       const unit_List_Data = unit_List?.data?.data;
       console.log("property unit data :", unit_List_Data);
       setShowError('')
-      const contractsList = await getContractsListData(unit_List_Data.name);
-      if (contractsList?.data?.data?.length > 0) {
-        setFormValues((prevData) => ({
-          ...prevData,
-          custom_city: null,
-          propertyUnits: unit_List_Data.name,
-        }));
-        return setShowError(`This ${unit_List_Data.custom_unit_number} Property, is already in the 'Active' status`)
-      }
+      // const contractsList = await getContractsListData(unit_List_Data.name);
+      // if (contractsList?.data?.data?.length > 0) {
+      //   setFormValues((prevData) => ({
+      //     ...prevData,
+      //     custom_city: null,
+      //     propertyUnits: unit_List_Data.name,
+      //   }));
+      //   return setShowError(`This ${unit_List_Data.custom_unit_number} Property, is already in the 'Active' status`)
+      // }
 
       if (unit_List_Data) {
         const res = await fetchOwner(unit_List_Data?.unit_owner);
