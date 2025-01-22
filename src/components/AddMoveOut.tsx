@@ -196,10 +196,10 @@ const AddMoveOut = () => {
             propertyRent: propertyData?.rent_amount_to_pay,
 
             // propertyUnits: leaseyData?.custom_number_of_units,
-            sqFoot: leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_ft,
-            sqMeter: leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_m,
-            priceSqMeter: leaseyData.custom_price_sq_m,
-            priceSqFt: leaseyData.custom_price_sq_ft,
+            sqFoot: propertyData?.custom_square_ft_of_unit,
+            sqMeter: propertyData?.custom_square_m_of_unit,
+            priceSqMeter: propertyData?.custom_price_square_m,
+            priceSqFt: propertyData?.custom_price_square_ft,
             propertyStatus: leaseyData?.status,
             propertyDoc: leaseyData?.custom_image,
 

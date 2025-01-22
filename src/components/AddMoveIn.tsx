@@ -206,10 +206,10 @@ const AddMoveIn = () => {
             propertyRent: leaseyData?.rent_amount_to_pay,
 
             // propertyUnits: propertyData?.custom_unit_number,
-            sqFoot: (leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_ft).toFixed(2),
-            sqMeter: (leaseyData?.custom_price__rent_annually / leaseyData?.custom_price_sq_m).toFixed(2),
-            priceSqMeter: leaseyData.custom_price_sq_m,
-            priceSqFt: leaseyData.custom_price_sq_ft,
+            sqFoot: propertyData?.custom_square_ft_of_unit,
+            sqMeter: propertyData?.custom_square_m_of_unit,
+            priceSqMeter: propertyData?.custom_price_square_m,
+            priceSqFt: propertyData?.custom_price_square_ft,
             propertyStatus: leaseyData?.status,
             propertyDoc: leaseyData?.custom_image,
 
