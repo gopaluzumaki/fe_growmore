@@ -279,7 +279,7 @@ const EditTenancyContracts = () => {
           console.log("property items data: ", item);
 
           if (item) {
-            if (formValues.tenancyStatus === "Renewal") {
+            if (formValues.tenancyStatus === "Renewal" && item.lease_status !== "Renewal") {
               if (formValues.rental_increase === "Percentage") {
                 setFormValues((prevData) => ({
                   ...prevData,
@@ -2442,7 +2442,10 @@ const EditTenancyContracts = () => {
                         label="Customer Name"
                         placeholder="Select Property"
                         data={tenantList.map((value) => {
-                          return value?.name;
+                          return {
+                            value: value?.name,
+                            label: value?.customer_name,
+                          }
                         })}
                         value={formValues.tenantName}
                         onChange={(value) =>

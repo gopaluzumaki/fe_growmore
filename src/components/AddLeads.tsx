@@ -48,7 +48,7 @@ const AddLeads = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState<string[]>([]);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -86,33 +86,33 @@ const AddLeads = () => {
   const [errors, setErrors] = useState({ contact: '', email: '' });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if(name==="contact"){
+    if (name === "contact") {
       if (!mobileRegex.test(value)) {
         setErrors((prev) => ({
           ...prev,
           contact: 'Mobile number must be 10 to 15 digits.',
         }));
       } else {
-        
+
         setErrors((prev) => ({ ...prev, contact: '' }));
       }
     }
-    else if(name==="email"){
-      if (!emailRegex.test(value)||value?.length>320) {
+    else if (name === "email") {
+      if (!emailRegex.test(value) || value?.length > 320) {
         setErrors((prev) => ({
           ...prev,
           email: 'Please enter a valid email address.',
         }));
       } else {
-        
+
         setErrors((prev) => ({ ...prev, email: '' }));
       }
     }
     // else{
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
     // }
   };
 
@@ -137,7 +137,7 @@ const AddLeads = () => {
     try {
       console.log("API Data => ", formData);
       const res = await createLead({
-        first_name:formData?.leadName,
+        first_name: formData?.leadName,
         lead_owner: "saeed.m@syscort.com",
         status: formData?.leadStatus,
         type: formData?.leadType,
@@ -161,9 +161,9 @@ const AddLeads = () => {
       console.log(err);
     }
   };
- useEffect(()=>{
+  useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
-  },[imgUrls])
+  }, [imgUrls])
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
@@ -185,7 +185,7 @@ const AddLeads = () => {
                     {Add_Lead.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
-                        required={true}
+                          required={true}
                           key={name}
                           label={label}
                           name={name}
@@ -198,31 +198,31 @@ const AddLeads = () => {
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                          <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
                             <label htmlFor="custom-dropdown">
                               {label}
                             </label>
                             <label><span style={{ color: "red" }}>*</span></label>
                           </div>
-                        <Select
-                        required
-                          onValueChange={(value) =>
-                            handleDropdownChange(name, value)
-                          }
-                        >
-                          <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <Select
+                            required
+                            onValueChange={(value) =>
+                              handleDropdownChange(name, value)
+                            }
+                          >
+                            <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {values?.map((item, i) => (
+                                <SelectItem key={i} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
@@ -235,21 +235,21 @@ const AddLeads = () => {
                         <></>
                       )
                     )}
-                     {/* Attachment */}
-                                        <div className="mb-5">
-                                          <CustomFileUpload
-                                            onFilesUpload={(urls) => {
-                                              setImgUrls(urls);
-                                            }}
-                                            type="image/*"
-                                            setLoading={setLoading}
-                                          />
-                                        </div>
+                    {/* Attachment */}
+                    <div className="mb-5">
+                      <CustomFileUpload
+                        onFilesUpload={(urls) => {
+                          setImgUrls(urls);
+                        }}
+                        type="image/*"
+                        setLoading={setLoading}
+                      />
+                    </div>
                   </div>
                   {imageArray?.length > 0 && (<>
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          Attachments
-                      </p>
+                      Attachments
+                    </p>
                     <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (
                         <div key={index} className="relative w-[100px] h-[100px]">
@@ -286,7 +286,7 @@ const AddLeads = () => {
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" disabled={errors?.email?.length>0||errors?.contact?.length>0||loading}/>
+                    <PrimaryButton title="Save" disabled={errors?.email?.length > 0 || errors?.contact?.length > 0 || loading} />
                   </div>
                 </form>
               </div>

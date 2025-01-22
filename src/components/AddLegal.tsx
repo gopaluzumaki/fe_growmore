@@ -482,9 +482,9 @@ const AddLegal = () => {
                     </p>
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                       <MantineSelect
-                        required
                         label="Property Name"
                         placeholder="Select Property"
+                        required
                         data={propertyList.map((item) => ({
                           value: item?.name,
                           label: item?.property,
@@ -513,16 +513,15 @@ const AddLegal = () => {
                             border: "1px solid #E2E8F0",
                           },
                         }}
-
                       />
 
                       {Add_TenancyContractProperty.map(
                         ({ label, name, type, values }) =>
                           type === "mantineSelect" ? (
                             <MantineSelect
-                              required
                               label={label}
                               placeholder={label}
+                              required
                               data={propertyUnits?.length > 0 ? propertyUnits : []}
                               value={formValues.propertyUnits}
                               onChange={(value) =>
@@ -584,155 +583,152 @@ const AddLegal = () => {
                         <label className="block">Price/ Square ft : {formValues.priceSqFt}</label>
                       </div>
                     </div>
+                  </>)}
 
-
-                    {/* customer */}
-                    {showCustomerSection && (<><p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                      <span className="pb-1 border-b border-[#7C8DB5]">
-                        Customer
-                      </span>
-                      <span className="pb-1">Details</span>
-                    </p>
-                      <div className="grid grid-cols-2 gap-4">
-
-                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                          <label className="block">Customer Name : {formValues.customerName}</label>
-                        </div>
-                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                          <label className="block">Customer Email : {formValues.customerEmail}</label>
-                        </div>
-                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                          <label className="block">Customer Contact : {formValues.customerContact}</label>
-                        </div>
-                        <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                          <label className="block">Customer Type : {formValues.customerType}</label>
-                        </div>
-                      </div></>)}
-
-                    {/* owner */}
-
-                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                      <span className="pb-1 border-b border-[#7C8DB5]">
-                        Owner
-                      </span>
-                      <span className="pb-1">Details</span>
-                    </p>
+                  {/* customer */}
+                  {showCustomerSection && (<><p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                    <span className="pb-1 border-b border-[#7C8DB5]">
+                      Customer
+                    </span>
+                    <span className="pb-1">Details</span>
+                  </p>
                     <div className="grid grid-cols-2 gap-4">
 
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Name : {formValues.ownerName}</label>
+                        <label className="block">Customer Name : {formValues.customerName}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Email : {formValues.ownerEmail}</label>
+                        <label className="block">Customer Email : {formValues.customerEmail}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Contact : {formValues.ownerContact}</label>
+                        <label className="block">Customer Contact : {formValues.customerContact}</label>
                       </div>
                       <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
-                        <label className="block">Owner Type : {formValues.ownerType}</label>
+                        <label className="block">Customer Type : {formValues.customerType}</label>
                       </div>
+                    </div></>)}
+
+                  {/* owner */}
+
+                  <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                    <span className="pb-1 border-b border-[#7C8DB5]">
+                      Owner
+                    </span>
+                    <span className="pb-1">Details</span>
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+
+                    <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                      <label className="block">Owner Name : {formValues.ownerName}</label>
                     </div>
+                    <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                      <label className="block">Owner Email : {formValues.ownerEmail}</label>
+                    </div>
+                    <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                      <label className="block">Owner Contact : {formValues.ownerContact}</label>
+                    </div>
+                    <div className="mt-3 mb-1.5 ml-1 font-medium text-gray-700">
+                      <label className="block">Owner Type : {formValues.ownerType}</label>
+                    </div>
+                  </div>
 
+                  {/* Legal Reason */}
+                  <div className="mt-5 mb-5">
+                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                      <span className="pb-1 border-b border-[#7C8DB5]">
+                        Legal Reason
+                      </span>
 
+                    </p>
+                    <MantineSelect
+                      placeholder="Select Legal Reason"
+                      data={legalList.map((p) => p.name)}
+                      clearable
+                      required
+                      value={formValues?.legalReason}
+                      onChange={(value) => {
+                        if (value === "Add new +") {
+                          // Handle button click
+                          setIsModalOpen(true);
+                          // Add your logic here to open a modal or add a new item
+                        } else {
+                          handleDropDown("legalReason", value);
+                        }
+                      }}
+                      styles={selectStyle}
+                    />
+                  </div>
+                  <div className="mt-5 mb-5">
+                    <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
+                      <span className="pb-1 border-b border-[#7C8DB5]">
+                        Status
+                      </span>
 
-
-                    {/* Legal Reason */}
-                    <div className="mt-5 mb-5">
-                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                        <span className="pb-1 border-b border-[#7C8DB5]">
-                          Legal Reason
-                        </span>
-
-                      </p>
-                      <MantineSelect
+                    </p>
+                    {statusSelect.map(({ label, name, type, values }) => (
+                      <Select
                         required
-                        placeholder="Select Legal Reason"
-                        data={legalList.map((p) => p.name)}
-                        clearable
-                        value={formValues?.legalReason}
-                        onChange={(value) => {
-                          if (value === "Add new +") {
-                            // Handle button click
-                            setIsModalOpen(true);
-                            // Add your logic here to open a modal or add a new item
-                          } else {
-                            handleDropDown("legalReason", value);
-                          }
-                        }}
-                        styles={selectStyle}
-                      />
-                    </div>
-                    <div className="mt-5 mb-5">
-                      <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
-                        <span className="pb-1 border-b border-[#7C8DB5]">
-                          Status
-                        </span>
-
-                      </p>
-                      {statusSelect.map(({ label, name, type, values }) => (
-                        <Select
-                          required
-                          onValueChange={(value) =>
-                            handleDropDown(name, value)
-                          }
-                          value={formValues[name]}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-3">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ))}</div>
-
-                    {/* Attachment */}
-                    <div className="mb-5">
-                      <CustomFileUpload
-                        onFilesUpload={(urls) => {
-                          setImgUrls(urls);
-                        }}
-                        type="image/*"
-                        setLoading={setLoading}
-                      />
-                    </div>
-                    {imageArray?.length > 0 && (<>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                        Attachments
-                      </p>
-                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
-                        {imageArray.map((value, index) => (
-                          <div key={index} className="relative w-[100px] h-[100px]">
-                            <img
-                              className="w-full h-full rounded-md"
-                              src={
-                                value.url
-                                  ? `https://propms.erpnext.syscort.com/${value.url}`
-                                  : "/defaultProperty.jpeg"
-                              }
-                              alt="propertyImg"
-                            />
-                            <button
-                              type="button" // Prevent form submission
-                              className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
-                              onClick={() => handleRemoveImage(index)}
-                            >
-                              X
-                            </button>
+                        onValueChange={(value) =>
+                          handleDropDown(name, value)
+                        }
+                        value={formValues[name]}
+                      >
+                        <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-3">
+                          <div className="flex items-center">
+                            <SelectValue placeholder={label} />
                           </div>
-                        ))}
-                      </div>
-                    </>)}
-                    <div className="max-w-[100px] mt-2">
-                      <PrimaryButton title="Save" disabled={loading} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {values?.map((item, i) => (
+                            <SelectItem key={i} value={item}>
+                              {item}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ))}</div>
+
+                  {/* Attachment */}
+                  <div className="mb-5">
+                    <CustomFileUpload
+                      onFilesUpload={(urls) => {
+                        setImgUrls(urls);
+                      }}
+                      type="image/*"
+                      setLoading={setLoading}
+                    />
+                  </div>
+                  {imageArray?.length > 0 && (<>
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Attachments
+                    </p>
+                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      {imageArray.map((value, index) => (
+                        <div key={index} className="relative w-[100px] h-[100px]">
+                          <img
+                            className="w-full h-full rounded-md"
+                            src={
+                              value.url
+                                ? `https://propms.erpnext.syscort.com/${value.url}`
+                                : "/defaultProperty.jpeg"
+                            }
+                            alt="propertyImg"
+                          />
+                          <button
+                            type="button" // Prevent form submission
+                            className="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-xs"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </>)}
+                  <div className="max-w-[100px] mt-2">
+                    <PrimaryButton title="Save" disabled={loading} />
+                  </div>
+
                 </form>
               </div>
             </div>

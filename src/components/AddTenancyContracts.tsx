@@ -1334,7 +1334,10 @@ const AddTenancyContracts = () => {
                         label="Customer Name"
                         placeholder="Select Customer"
                         data={tenantList.map((value) => {
-                          return value?.name;
+                          return {
+                            value: value?.name,
+                            label: value?.customer_name,
+                          }
                         })}
                         value={formValues.tenantName}
                         onChange={(value) =>
@@ -1543,10 +1546,6 @@ const AddTenancyContracts = () => {
                   ) : (
                     <></>
                   )}
-
-
-
-
 
                   {formValues.tenancyStatus !== "Draft" &&
                     formValues.tenancyStatus !== "" &&
