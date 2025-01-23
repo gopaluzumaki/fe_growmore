@@ -13,8 +13,8 @@ export const Add_Units = [
   //   name: "parent_property",
   //   type: "text",
   // },
-  { label: "Location / Area", name: "location", type: "text", readonly: true },
-  { label: "City", name: "city", type: "text", readonly: true },
+  { label: "Location / Area", name: "location", type: "text" },
+  { label: "City", name: "city", type: "text", },
   { label: "Country", name: "country", type: "dropdown", readonly: true },
   {
     label: "Status",

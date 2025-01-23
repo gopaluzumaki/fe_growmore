@@ -1532,10 +1532,10 @@ const AddTenancyContracts = () => {
                                   </Table.Td>
                                   <Table.Td>{item.chequeDate}</Table.Td>
                                   <Table.Td>{item.bankName}</Table.Td>
-                                  <Table.Td>{item?.status || "-"}</Table.Td>
+                                  <Table.Td>{item.status ? item.status : "-"}</Table.Td>
                                   <Table.Td>
-                                    {item?.approvalStatus || item?.status ? "N/A" : "-"}
-                                  </Table.Td>
+                                    {item?.status ? (item?.approvalStatus ? item?.approvalStatus : "N/A") : "-"}
+                                  </Table.Td>{" "}
                                 </Table.Tr>
                               ))}
                             </Table.Tbody>
@@ -1687,14 +1687,14 @@ const AddTenancyContracts = () => {
                       data={values}
                       value={formValues[name]}
                       onChange={(value) => {
-                        if (name === "status" && value === "Clear") {
+                        if (name === "status" && (value === "Clear" || !value)) {
                           setFormValues({
                             ...formValues,
                             [name]: value,
                             approvalStatus: null,
                             duration: null,
                           });
-                        } else setFormValues({ ...formValues, [name]: value });
+                        } else setFormValues({ ...formValues, [name]: value, duration: null });
                       }}
                       disabled={
                         name === "approvalStatus" &&
