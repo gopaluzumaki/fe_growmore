@@ -2957,7 +2957,7 @@ const EditTenancyContracts = () => {
                             approvalStatus: null,
                             duration: null,
                           });
-                        } else setFormValues({ ...formValues, [name]: value, duration: null });
+                        } else setFormValues({ ...formValues, [name]: value });
                       }}
                       disabled={
                         name === "approvalStatus" &&

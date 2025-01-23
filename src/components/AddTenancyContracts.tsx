@@ -1687,6 +1687,7 @@ const AddTenancyContracts = () => {
                       data={values}
                       value={formValues[name]}
                       onChange={(value) => {
+                        console.log('aaa')
                         if (name === "status" && (value === "Clear" || !value)) {
                           setFormValues({
                             ...formValues,
@@ -1694,7 +1695,7 @@ const AddTenancyContracts = () => {
                             approvalStatus: null,
                             duration: null,
                           });
-                        } else setFormValues({ ...formValues, [name]: value, duration: null });
+                        } else setFormValues({ ...formValues, [name]: value });
                       }}
                       disabled={
                         name === "approvalStatus" &&
