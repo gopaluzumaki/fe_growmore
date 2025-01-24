@@ -68,14 +68,14 @@ const AddUnits = () => {
   const [_, setSelectedFile] = useState<File | null>(null);
   const [imgUrls, setImgUrls] = useState([]);
   const [imageArray, setImageArray] = useState<string[]>([]);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
   const [sqmValue, setSqmValue] = useState();
   const [priceSqFt, setPriceSqFt] = useState();
   const [priceSqMeter, setPriceSqMeter] = useState();
   const [ownerList, setOwnerList] = useState<any[]>([]);
   const [propertyList, setPropertyList] = useState<any[]>([]);
-  const [countryList,setCountryList]=useState([])
+  const [countryList, setCountryList] = useState([])
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -88,15 +88,15 @@ const AddUnits = () => {
       }
     }
   };
-useEffect(()=>{
-  getCountryListData()
-  
-},[])
-const getCountryListData=async()=>{
-const res=await getCountryList()
+  useEffect(() => {
+    getCountryListData()
 
-setCountryList(res?.data?.data)
-}
+  }, [])
+  const getCountryListData = async () => {
+    const res = await getCountryList()
+
+    setCountryList(res?.data?.data)
+  }
   const [formData, setFormData] = useState<FormData>({
     parent_property: "",
     type: "",
@@ -118,7 +118,7 @@ setCountryList(res?.data?.data)
     bathrooms: "",
     balcony: "",
     view: "",
-    premises:"",
+    premises: "",
     ownerName: "",
     description: "",
   });
@@ -127,13 +127,13 @@ setCountryList(res?.data?.data)
     const { name, value } = e.target;
     console.log("dsadas", name, value);
     if (name === "sqFoot" && value) {
-      console.log("dasewa",value);
+      console.log("dasewa", value);
       let sqMeter = value * 0.092903;
       handleDropDown("sqMeter", Number(value * 0.092903).toFixed(2));
-      handleDropDown("priceSqFt", value<=0?0:Number(formData["rent"] / value).toFixed(2));
+      handleDropDown("priceSqFt", value <= 0 ? 0 : Number(formData["rent"] / value).toFixed(2));
       handleDropDown(
         "priceSqMeter",
-        value<=0?0: Number(formData["rent"] / sqMeter).toFixed(2)
+        value <= 0 ? 0 : Number(formData["rent"] / sqMeter).toFixed(2)
       );
 
       // let priceSqFt
@@ -143,13 +143,13 @@ setCountryList(res?.data?.data)
       setPriceSqMeter(priceSqMeter);
     }
     else if (name === "sqMeter" && value) {
-      console.log("dasewa",typeof value);
+      console.log("dasewa", typeof value);
       let sqFoot = value * 10.7639;
       handleDropDown("sqFoot", Number(value * 10.7639).toFixed(2));
-      handleDropDown("priceSqMeter", value<=0?0:Number(formData["rent"] / value).toFixed(2));
+      handleDropDown("priceSqMeter", value <= 0 ? 0 : Number(formData["rent"] / value).toFixed(2));
       handleDropDown(
         "priceSqFt",
-        value<=0?0:Number(formData["rent"] / sqFoot).toFixed(2)
+        value <= 0 ? 0 : Number(formData["rent"] / sqFoot).toFixed(2)
       );
 
       // let priceSqFt
@@ -159,11 +159,11 @@ setCountryList(res?.data?.data)
       setPriceSqMeter(priceSqMeter);
     }
     else if (name === "rent" && value) {
-      console.log("dasewa",typeof value);
-      handleDropDown("priceSqMeter", value<=0?0:formData["sqMeter"]<=0?0:Number(value / formData["sqMeter"]).toFixed(2));
+      console.log("dasewa", typeof value);
+      handleDropDown("priceSqMeter", value <= 0 ? 0 : formData["sqMeter"] <= 0 ? 0 : Number(value / formData["sqMeter"]).toFixed(2));
       handleDropDown(
         "priceSqFt",
-        value<=0?0:formData["sqFoot"]<=0?0:Number(value / formData["sqFoot"]).toFixed(2)
+        value <= 0 ? 0 : formData["sqFoot"] <= 0 ? 0 : Number(value / formData["sqFoot"]).toFixed(2)
       );
 
       // let priceSqFt
@@ -172,7 +172,7 @@ setCountryList(res?.data?.data)
       setPriceSqFt(priceSqFt);
       setPriceSqMeter(priceSqMeter);
     }
-    else if (name === "rent"||name==="sqFoot"||name==="sqMeter"&&!value) {
+    else if (name === "rent" || name === "sqFoot" || name === "sqMeter" && !value) {
       console.log("iadjskn");
       handleDropDown("sqFoot", 0);
       handleDropDown("sqMeter", 0);
@@ -188,7 +188,7 @@ setCountryList(res?.data?.data)
   const getOwnerData = async () => {
     const res = await getOwnerListData();
     const item = res?.data?.data;
-    console.log(item,"nkl");
+    console.log(item, "nkl");
     setOwnerList(item);
   };
 
@@ -204,8 +204,8 @@ setCountryList(res?.data?.data)
     setPropertyList(item);
   };
 
-  const handleDropDown = async (name, item,ownerName) => {
-    console.log(ownerName,"nkp")
+  const handleDropDown = async (name, item, ownerName) => {
+    console.log(ownerName, "nkp")
     if (name === "parent_property") {
       console.log("item", item);
       const propertyList = await getPropertyList();
@@ -242,7 +242,7 @@ setCountryList(res?.data?.data)
       }
       return;
     }
-    if(name==="ownerName"){
+    if (name === "ownerName") {
       setFormData((prevData) => ({
         ...prevData,
         "custom_supplier_name": ownerName,
@@ -291,7 +291,7 @@ setCountryList(res?.data?.data)
         common_bathroom: formData?.bathrooms,
         custom_balcony_available: formData?.balcony,
         custom_view: formData?.view,
-        custom_premise_no:formData?.premises,
+        custom_premise_no: formData?.premises,
         unit_owner: formData?.ownerName,
         custom_thumbnail_image: imgUrls,
         is_group: 0,
@@ -301,7 +301,7 @@ setCountryList(res?.data?.data)
       const imageData = imageArray?.map((imgUrl) => ({ image: imgUrl.url }));
 
       const res = await createProperty({
-        custom_supplier_name:formData?.custom_supplier_name,
+        custom_supplier_name: formData?.custom_supplier_name,
         name1: formData?.custom_unit_number,
         custom_parent_property_name: formData.parent_property,
         parent_property: propertyName,
@@ -338,9 +338,9 @@ setCountryList(res?.data?.data)
       console.log(err);
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
-  },[imgUrls])
+  }, [imgUrls])
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
@@ -361,7 +361,7 @@ setCountryList(res?.data?.data)
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(px,1fr))] gap-4">
                       <MantineSelect
-                      required
+                        required
                         label="Property Name"
                         placeholder="Select Property"
                         data={propertyList.map((item) => ({
@@ -394,10 +394,10 @@ setCountryList(res?.data?.data)
                         searchable
                       />
                     </div>
-                    {Add_Units.map(({ label, name, type, values,readonly }) =>
+                    {Add_Units.map(({ label, name, type, values, readonly }) =>
                       type === "text" ? (
                         <Input
-                        required={true}
+                          required={true}
                           key={name}
                           label={label}
                           name={name}
@@ -410,31 +410,31 @@ setCountryList(res?.data?.data)
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                          <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
                             <label htmlFor="custom-dropdown">
                               {label}
                             </label>
                             <label><span style={{ color: "red" }}>*</span></label>
                           </div>
-                        <Select
-                        disabled={readonly}
-                        required
-                          value={formData[name as keyof FormData]}
-                          onValueChange={(item) => handleDropDown(name, item)}
-                        >
-                          <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent onChange={() => console.log("hello")}>
-                            {(name==="country"?countryList:values)?.map((item, i) => (
-                              <SelectItem key={i} value={name==="country"?item.name:item}>
-                                {name==="country"?item.name:item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <Select
+                            disabled={readonly}
+                            required
+                            value={formData[name as keyof FormData]}
+                            onValueChange={(item) => handleDropDown(name, item)}
+                          >
+                            <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent onChange={() => console.log("hello")}>
+                              {(name === "country" ? countryList : values)?.map((item, i) => (
+                                <SelectItem key={i} value={name === "country" ? item.name : item}>
+                                  {name === "country" ? item.name : item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       ) : (
                         <></>
@@ -442,7 +442,7 @@ setCountryList(res?.data?.data)
                     )}
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
                       <MantineSelect
-                      required
+                        required
                         label="Owner Name"
                         placeholder="Select Property"
                         data={ownerList.map((item) => ({
@@ -452,9 +452,9 @@ setCountryList(res?.data?.data)
                         }))}
                         value={formData.ownerName}
                         onChange={(value) => {
-    const selectedOption = ownerList.find((item) => item.name === value);
-    handleDropDown("ownerName", value, selectedOption?.supplier_name);
-  }}
+                          const selectedOption = ownerList.find((item) => item.name === value);
+                          handleDropDown("ownerName", value, selectedOption?.supplier_name);
+                        }}
                         styles={{
                           label: {
                             marginBottom: "3px",
@@ -477,21 +477,21 @@ setCountryList(res?.data?.data)
                         searchable
                       />
                     </div>
-                     {/* Attachment */}
-                                        <div className="mb-5">
-                                          <CustomFileUpload
-                                            onFilesUpload={(urls) => {
-                                              setImgUrls(urls);
-                                            }}
-                                           type="image/*"
-                                           setLoading={setLoading}
-                                          />
-                                        </div>
+                    {/* Attachment */}
+                    <div className="mb-5">
+                      <CustomFileUpload
+                        onFilesUpload={(urls) => {
+                          setImgUrls(urls);
+                        }}
+                        type="image/*"
+                        setLoading={setLoading}
+                      />
+                    </div>
                   </div>
                   {imageArray?.length > 0 && (<>
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          Attachments
-                      </p>
+                      Attachments
+                    </p>
                     <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (
                         <div key={index} className="relative w-[100px] h-[100px]">
@@ -529,7 +529,7 @@ setCountryList(res?.data?.data)
                     ></textarea>
                   </div>
                   <div className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" disabled={loading}/>
+                    <PrimaryButton title="Save" disabled={loading} />
                   </div>
                 </form>
               </div>

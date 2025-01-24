@@ -15,6 +15,7 @@ import {
   getPropertyList,
   updateProperty,
   uploadFile,
+  getOwnerListData
 } from "../api";
 import {
   Select,
@@ -74,18 +75,29 @@ const EditUnits = () => {
   const [priceSqMeter, setPriceSqMeter] = useState();
   const location = useLocation();
   const [propertyList, setPropertyList] = useState<any[]>([]);
+  const [ownerList, setOwnerList] = useState<any[]>([]);
   const [countryList, setCountryList] = useState([])
   const { id } = useParams();
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     getCountryListData()
+    getOwnerData();
   }, [])
+
+
+  const getOwnerData = async () => {
+    const res = await getOwnerListData();
+    const item = res?.data?.data;
+    console.log(item, "nkl");
+    setOwnerList(item);
+  };
+
   const getCountryListData = async () => {
     const res = await getCountryList()
-
     setCountryList(res?.data?.data)
   }
+
   useEffect(() => {
     console.log("location.state.item", id);
     const fetchUnitData = async () => {
@@ -294,7 +306,7 @@ const EditUnits = () => {
           name1: formData?.unitNumber,
           custom_premise_no: formData?.premises,
           custom_attachment_table_unit: imageData,
-          rent: formData?.rentPrice,
+          rent: formData?.rent,
           custom_selling_price: formData?.sellingPrice,
           custom_square_ft_of_unit: formData?.sqFoot,
           custom_square_m_of_unit: formData?.sqMeter,
@@ -427,6 +439,44 @@ const EditUnits = () => {
                         <></>
                       )
                     )}
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mb-6">
+                      <MantineSelect
+                        required
+                        label="Owner Name"
+                        placeholder="Select Property"
+                        readOnly
+                        data={ownerList.map((item) => ({
+                          value: item?.name,
+                          label: item?.supplier_name,
+
+                        }))}
+                        value={formData.ownerName}
+                        onChange={(value) => {
+                          const selectedOption = ownerList.find((item) => item.name === value);
+                          handleDropDown("ownerName", value, selectedOption?.supplier_name);
+                        }}
+                        styles={{
+                          label: {
+                            marginBottom: "3px",
+                            color: "#374151",
+                            fontSize: "16px",
+                          },
+                          input: {
+                            border: "1px solid #CCDAFF",
+                            borderRadius: "8px",
+                            padding: "24px",
+                            fontSize: "16px",
+                            color: "#374151",
+                          },
+                          dropdown: {
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            border: "1px solid #E2E8F0",
+                          },
+                        }}
+                        searchable
+                      />
+                    </div>
                     {/* Attachment */}
                     <div className="mb-5">
                       <CustomFileUpload
