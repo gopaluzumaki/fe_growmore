@@ -2,6 +2,7 @@
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
+import { toast } from 'react-toastify';
 import {
   Add_TenancyContractOwner,
   Add_TenancyContractTenant,
@@ -288,6 +289,10 @@ const AddMaintenance = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!formValues?.damageLocation) {
+      return toast.error("Damage Location required!");
+    }
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
 
     try {
@@ -638,12 +643,13 @@ const AddMaintenance = () => {
                     <div className="mt-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Description
+                          Description <span className="text-red-500" aria-hidden="true"> *</span>
                         </span>
                       </p>
                       <textarea
                         id="description"
                         name="description"
+                        required
                         value={formValues.description}
                         onChange={
                           handleChange
@@ -656,7 +662,7 @@ const AddMaintenance = () => {
                     <div className="mt-5 mb-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Damage Location
+                          Damage Location <span className="text-red-500" aria-hidden="true"> *</span>
                         </span>
 
                       </p>
@@ -682,7 +688,7 @@ const AddMaintenance = () => {
                     <div className="mt-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Original Issue
+                          Original Issue <span className="text-red-500" aria-hidden="true"> *</span>
                         </span>
                       </p>
                       <textarea
@@ -690,6 +696,7 @@ const AddMaintenance = () => {
                         id="originalissue"
                         name="originalissue"
                         value={formValues.originalissue}
+                        required
                         onChange={
                           handleChange
                         }

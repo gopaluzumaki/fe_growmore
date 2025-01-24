@@ -2,6 +2,7 @@
 import Header from "./Header";
 import PrimaryButton from "./PrimaryButton";
 import Sidebar from "./Sidebar";
+import { toast } from 'react-toastify';
 import {
   Add_TenancyContractOwner,
   Add_TenancyContractTenant,
@@ -205,6 +206,9 @@ const EditLegal = () => {
   }, [imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!formValues?.legalReason) {
+      return toast.error("Legal Reason required!");
+    }
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
     try {
       console.log("API Data => ", formValues);
@@ -479,7 +483,7 @@ const EditLegal = () => {
                     <div className="mt-5 mb-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Legal Reason
+                          Legal Reason <span className="text-red-500" aria-hidden="true"> *</span>
                         </span>
 
                       </p>

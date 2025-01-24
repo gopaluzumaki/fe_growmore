@@ -523,7 +523,7 @@ const AddMoveOut = () => {
                     <div className="mt-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Reason for move out
+                          Reason for move out <span className="text-red-500" aria-hidden="true"> *</span>
                         </span>
                       </p>
                       <textarea
@@ -572,7 +572,7 @@ const AddMoveOut = () => {
                     <div className="mt-5">
                       <p className="flex gap-2 text-[18px] text-[#7C8DB5] mb-4 mt-3">
                         <span className="pb-1 border-b border-[#7C8DB5]">
-                          Reason for status
+                          Reason for status <span className="text-red-500" aria-hidden="true"> *</span>
                         </span>
                       </p>
                       <textarea
@@ -583,6 +583,7 @@ const AddMoveOut = () => {
                         onChange={
                           handleChange
                         }
+                        required
                         rows={8}
                         className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
                       ></textarea>

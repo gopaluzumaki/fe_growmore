@@ -164,7 +164,7 @@ const TenancyContracts = () => {
       item?.custom_name_of_owner?.supplier_name
         .toLowerCase()
         .includes(searchValue.toLowerCase()) ||
-      item?.custom_current_property?.name1
+      item?.custom_current_property?.custom_unit_number
         .toLowerCase()
         .includes(searchValue.toLowerCase()) ||
       item.custom_price__rent_annually
@@ -178,7 +178,7 @@ const TenancyContracts = () => {
     return (
       matchesSearch &&
       (!selectedProperty || item?.custom_current_property?.custom_parent_property_name === selectedProperty) &&
-      (!selectedUnit || item?.custom_current_property?.name1 === selectedUnit) &&
+      (!selectedUnit || item?.custom_current_property?.custom_unit_number === selectedUnit) &&
       (!selectedTenant || item?.lease_customer?.customer_name === selectedTenant) &&
       (!selectedOwner || item?.custom_name_of_owner?.supplier_name === selectedOwner) &&
       (!selectedStatus || item.lease_status === selectedStatus) &&
@@ -273,7 +273,7 @@ const TenancyContracts = () => {
                 />
                 <Select
                   placeholder="Select Unit"
-                  data={[...new Set(unitList.map((u) => u?.custom_current_property?.name1))]}
+                  data={[...new Set(unitList.map((u) => u?.custom_current_property?.custom_unit_number))]}
                   clearable
                   value={selectedUnit}
                   onChange={setSelectedUnit}
@@ -349,7 +349,7 @@ const TenancyContracts = () => {
                             {item?.custom_current_property?.custom_parent_property_name}
                           </td>
                           <td className="p-2 py-3">
-                            {item?.custom_current_property?.name1}
+                            {item?.custom_current_property?.custom_unit_number}
                           </td>
                           <td className="p-2 py-3">
                             {item?.custom_current_property?.custom_location}
@@ -372,10 +372,10 @@ const TenancyContracts = () => {
                           <td className="p-2 py-3">
                             <div
                               className={`p-1 rounded ${item.lease_status === "Draft"
-                                  ? "bg-red-400 text-black"
-                                  : item.lease_status === "Active"
-                                    ? "bg-[#34A853] text-white"
-                                    : "bg-blue-400 text-white"
+                                ? "bg-red-400 text-black"
+                                : item.lease_status === "Active"
+                                  ? "bg-[#34A853] text-white"
+                                  : "bg-blue-400 text-white"
                                 }`}
                             >
                               {item.lease_status === "Renewal"
