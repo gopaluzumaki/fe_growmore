@@ -71,11 +71,11 @@ const EditBooking = () => {
   const [properyList, setPropertyList] = useState();
   const [tenantList, setTenantList] = useState<any[]>([]);
   const location = useLocation();
-  const {id} = useParams()
+  const { id } = useParams()
   const [propertyUnits, setPropertyUnits] = useState([]);
   const [imageArray, setImageArray] = useState([])
-  const [countryList,setCountryList]=useState([])
-  const [loading,setLoading] = useState(false)
+  const [countryList, setCountryList] = useState([])
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
     propertyName: "",
@@ -123,14 +123,14 @@ const EditBooking = () => {
     const item = res?.data?.data;
     setOwnerList(item);
   };
-useEffect(()=>{
-  getCountryListData()
-},[])
-const getCountryListData=async()=>{
-const res=await getCountryList()
+  useEffect(() => {
+    getCountryListData()
+  }, [])
+  const getCountryListData = async () => {
+    const res = await getCountryList()
 
-setCountryList(res?.data?.data)
-}
+    setCountryList(res?.data?.data)
+  }
   useEffect(() => {
     getLeadData();
     getOwnerData();
@@ -381,9 +381,9 @@ setCountryList(res?.data?.data)
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
   };
-  useEffect(()=>{
+  useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
-  },[imgUrls])
+  }, [imgUrls])
   return (
     <main>
       <div className="flex">
@@ -414,28 +414,28 @@ setCountryList(res?.data?.data)
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
-        {label}
-      </label>
-                        <Select
-                          onValueChange={(value) =>
-                            handleDropdownChange(name, value)
-                          }
-                          value={formData[name]}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                          {(name==="country"?countryList:values)?.map((item, i) => (
-                              <SelectItem key={i} value={name==="country"?item.name:item}>
-                                {name==="country"?item.name:item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+                            {label}
+                          </label>
+                          <Select
+                            onValueChange={(value) =>
+                              handleDropdownChange(name, value)
+                            }
+                            value={formData[name]}
+                          >
+                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(name === "country" ? countryList : values)?.map((item, i) => (
+                                <SelectItem key={i} value={name === "country" ? item.name : item}>
+                                  {name === "country" ? item.name : item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
@@ -455,16 +455,16 @@ setCountryList(res?.data?.data)
                             name === "selectALead"
                               ? formData?.selectALead
                               : name === "name1"
-                              ? formData?.name1
-                              : name === "ownerName"
-                              ? formData?.ownerName
-                              : name === "unitCount"
-                              ? formData?.unitCount
-                              : name === "tenantName"
-                              ? formData?.tenantName
-                              : name === "unitCount"
-                              ? formData?.unitCount
-                              : null
+                                ? formData?.name1
+                                : name === "ownerName"
+                                  ? formData?.ownerName
+                                  : name === "unitCount"
+                                    ? formData?.unitCount
+                                    : name === "tenantName"
+                                      ? formData?.tenantName
+                                      : name === "unitCount"
+                                        ? formData?.unitCount
+                                        : null
                           }
                           onChange={(value) =>
                             handleDropdownChange(name, value)
@@ -494,35 +494,25 @@ setCountryList(res?.data?.data)
                         <></>
                       )
                     )}
+                  </div>
 
-                     {/* Attachment */}
-                                                           <div className="mb-5">
-                                                             <CustomFileUpload
-                                                               onFilesUpload={(urls) => {
-                                                                 setImgUrls(urls);
-                                                               }}
-                                                              type="image/*"
-                                                              setLoading={setLoading}
-                                                             />
-                                                           </div>
+                  {/* Attachment */}
+                  <div className="mb-5">
+                    <CustomFileUpload
+                      onFilesUpload={(urls) => {
+                        setImgUrls(urls);
+                      }}
+                      type="image/*"
+                      setLoading={setLoading}
+                    />
                   </div>
-                  <div className="mt-5">
-                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                      <label>Description</label>
-                    </p>
-                    <textarea
-                      rows={8}
-                      name="description"
-                      className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
-                      value={formData.description}
-                      onChange={handleChange}
-                    ></textarea>
-                  </div>
+
+
                   {imageArray?.length > 0 && (<>
-                      <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          Attachments
-                      </p>
-                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      Attachments
+                    </p>
+                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (
                         <div key={index} className="relative w-[100px] h-[100px]">
                           <img
@@ -544,8 +534,23 @@ setCountryList(res?.data?.data)
                         </div>
                       ))}
                     </div></>)}
+
+
+                  <div className="mt-5">
+                    <p className="mb-1.5 ml-1 font-medium text-gray-700">
+                      <label>Description</label>
+                    </p>
+                    <textarea
+                      rows={8}
+                      name="description"
+                      className="w-full p-3 border border-[#CCDAFF] rounded-md outline-none"
+                      value={formData.description}
+                      onChange={handleChange}
+                    ></textarea>
+                  </div>
+
                   <div className="mt-4 max-w-[200px]">
-                    <PrimaryButton type="submit" title="Save Update" disabled={loading}/>
+                    <PrimaryButton type="submit" title="Save Update" disabled={loading} />
                   </div>
                 </form>
               </div>

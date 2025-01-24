@@ -68,9 +68,9 @@ const AddBookReserve = () => {
   const [properyList, setPropertyList] = useState();
   const [tenantList, setTenantList] = useState<any[]>([]);
   const [propertyUnits, setPropertyUnits] = useState([]);
-  const [countryList,setCountryList]=useState([])
+  const [countryList, setCountryList] = useState([])
   const [imageArray, setImageArray] = useState<string[]>([]);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     selectALead: "",
     propertyName: "",
@@ -94,14 +94,14 @@ const AddBookReserve = () => {
     ownerContact: "",
     description: "",
   });
-useEffect(()=>{
-  getCountryListData()
-},[])
-const getCountryListData=async()=>{
-const res=await getCountryList()
+  useEffect(() => {
+    getCountryListData()
+  }, [])
+  const getCountryListData = async () => {
+    const res = await getCountryList()
 
-setCountryList(res?.data?.data)
-}
+    setCountryList(res?.data?.data)
+  }
   useEffect(() => {
     getLeadData();
     getOwnerData();
@@ -124,14 +124,14 @@ setCountryList(res?.data?.data)
   const getLeadData = async () => {
     const res = await getLeadList();
     const item = res?.data?.data;
-    console.log(item,"njk")
+    console.log(item, "njk")
     setLeadList(item);
   };
 
   const getOwnerData = async () => {
     const res = await getOwnerListData();
     const item = res?.data?.data;
-    console.log(item,"nkl")
+    console.log(item, "nkl")
     setOwnerList(item);
   };
 
@@ -160,7 +160,7 @@ setCountryList(res?.data?.data)
   };
 
   const fetchAndSetFormData = async (name: string, value: string) => {
-    console.log(name,value,"nko")
+    console.log(name, value, "nko")
     const fetchConfig: Record<
       string,
       {
@@ -319,9 +319,9 @@ setCountryList(res?.data?.data)
       }));
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
-  },[imgUrls])
+  }, [imgUrls])
   const handleRemoveImage = (index) => {
     const updatedImages = imageArray.filter((_, i) => i !== index);
     setImageArray(updatedImages); // Update state with the remaining images
@@ -345,7 +345,7 @@ setCountryList(res?.data?.data)
                     {Add_BookReserve.map(({ label, name, type, values }) =>
                       type === "text" ? (
                         <Input
-                        required={true}
+                          required={true}
                           key={name}
                           label={label}
                           name={name}
@@ -357,32 +357,32 @@ setCountryList(res?.data?.data)
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                         <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
+                          <div className="flex  mb-1.5 ml-1 font-medium text-gray-700">
                             <label htmlFor="custom-dropdown">
                               {label}
                             </label>
                             <label><span style={{ color: "red" }}>*</span></label>
                           </div>
-                        <Select
-                        required
-                          onValueChange={(value) =>
-                            handleDropdownChange(name, value)
-                          }
-                          value={name==='country'?formData?.country:formData[name]}
-                        >
-                          <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(name==="country"?countryList:values)?.map((item, i) => (
-                              <SelectItem key={i} value={name==="country"?item.name:item}>
-                                {name==="country"?item.name:item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <Select
+                            required
+                            onValueChange={(value) =>
+                              handleDropdownChange(name, value)
+                            }
+                            value={name === 'country' ? formData?.country : formData[name]}
+                          >
+                            <SelectTrigger className=" p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {(name === "country" ? countryList : values)?.map((item, i) => (
+                                <SelectItem key={i} value={name === "country" ? item.name : item}>
+                                  {name === "country" ? item.name : item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
@@ -393,7 +393,7 @@ setCountryList(res?.data?.data)
                         />
                       ) : type === "matineSelect" ? (
                         <MantineSelect
-                        required
+                          required
                           label={label}
                           placeholder={label}
                           data={
@@ -404,16 +404,16 @@ setCountryList(res?.data?.data)
                             name === "selectALead"
                               ? formData?.selectALead
                               : name === "name1"
-                              ? formData?.name1
-                              : name === "ownerName"
-                              ? formData?.ownerName
-                              : name === "selectALead"
-                              ? formData?.selectALead
-                              : name === "tenantName"
-                              ? formData?.tenantName
-                              : name === "unitCount"
-                              ? formData?.unitCount
-                              : null
+                                ? formData?.name1
+                                : name === "ownerName"
+                                  ? formData?.ownerName
+                                  : name === "selectALead"
+                                    ? formData?.selectALead
+                                    : name === "tenantName"
+                                      ? formData?.tenantName
+                                      : name === "unitCount"
+                                        ? formData?.unitCount
+                                        : null
                           }
                           onChange={(value) =>
                             handleDropdownChange(name, value)
@@ -508,19 +508,20 @@ setCountryList(res?.data?.data)
                       }}
                       searchable
                     /> */}
-
-                    <CustomFileUpload
-                      onFilesUpload={(urls) => {
-                        setImgUrls(urls);
-                      }}
-                      type="image/*"
-                      setLoading={setLoading}
-                    />
                   </div>
+
+                  <CustomFileUpload
+                    onFilesUpload={(urls) => {
+                      setImgUrls(urls);
+                    }}
+                    type="image/*"
+                    setLoading={setLoading}
+                  />
+
                   {imageArray?.length > 0 && (<>
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          Attachments
-                      </p>
+                      Attachments
+                    </p>
                     <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (
                         <div key={index} className="relative w-[100px] h-[100px]">
@@ -557,7 +558,7 @@ setCountryList(res?.data?.data)
                     ></textarea>
                   </div>
                   <div type="button" className="mt-4 max-w-[100px]">
-                    <PrimaryButton title="Save" disabled={loading}/>
+                    <PrimaryButton title="Save" disabled={loading} />
                   </div>
                 </form>
               </div>

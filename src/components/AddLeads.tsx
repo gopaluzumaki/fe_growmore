@@ -235,17 +235,19 @@ const AddLeads = () => {
                         <></>
                       )
                     )}
-                    {/* Attachment */}
-                    <div className="mb-5">
-                      <CustomFileUpload
-                        onFilesUpload={(urls) => {
-                          setImgUrls(urls);
-                        }}
-                        type="image/*"
-                        setLoading={setLoading}
-                      />
-                    </div>
                   </div>
+
+                  {/* Attachment */}
+                  <div className="mb-5">
+                    <CustomFileUpload
+                      onFilesUpload={(urls) => {
+                        setImgUrls(urls);
+                      }}
+                      type="image/*"
+                      setLoading={setLoading}
+                    />
+                  </div>
+
                   {imageArray?.length > 0 && (<>
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
                       Attachments

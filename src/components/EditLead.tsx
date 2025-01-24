@@ -52,10 +52,10 @@ const EditLead = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [imageArray, setImageArray] = useState([])
-  const {id} = useParams()
+  const { id } = useParams()
   const location = useLocation();
   console.log("location-state :", id);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
@@ -132,33 +132,33 @@ const EditLead = () => {
   const [errors, setErrors] = useState({ contact: '', email: '' });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if(name==="contact"){
+    if (name === "contact") {
       if (!mobileRegex.test(value)) {
         setErrors((prev) => ({
           ...prev,
           contact: 'Mobile number must be 10 to 15 digits.',
         }));
       } else {
-        
+
         setErrors((prev) => ({ ...prev, contact: '' }));
       }
     }
-    else if(name==="email"){
-      if (!emailRegex.test(value)||value?.length>320) {
+    else if (name === "email") {
+      if (!emailRegex.test(value) || value?.length > 320) {
         setErrors((prev) => ({
           ...prev,
           email: 'Please enter a valid email address.',
         }));
       } else {
-        
+
         setErrors((prev) => ({ ...prev, email: '' }));
       }
     }
     // else{
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
     // }
   };
 
@@ -175,9 +175,9 @@ const EditLead = () => {
       [name]: date,
     }));
   };
-  useEffect(()=>{
+  useEffect(() => {
     setImageArray((prevArray) => [...prevArray, ...imgUrls]);
-  },[imgUrls])
+  }, [imgUrls])
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const imageData = imageArray.map((imgUrl) => ({ image: imgUrl.url }));
@@ -185,7 +185,7 @@ const EditLead = () => {
     try {
       console.log("API Data => ", formData);
       const res = await updateLead(id, {
-        first_name:formData?.leadName,
+        first_name: formData?.leadName,
         status: formData?.leadStatus,
         type: formData?.leadType,
         mobile_no: formData?.contact,
@@ -242,28 +242,28 @@ const EditLead = () => {
                         />
                       ) : type === "dropdown" ? (
                         <div>
-                        <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
-        {label}
-      </label>
-                        <Select
-                          onValueChange={(value) =>
-                            handleDropdownChange(name, value)
-                          }
-                          value={formData[name]}
-                        >
-                          <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
-                            <div className="flex items-center">
-                              <SelectValue placeholder={label} />
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {values?.map((item, i) => (
-                              <SelectItem key={i} value={item}>
-                                {item}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          <label htmlFor="custom-dropdown" className="mb-1.5 ml-1 font-medium text-gray-700">
+                            {label}
+                          </label>
+                          <Select
+                            onValueChange={(value) =>
+                              handleDropdownChange(name, value)
+                            }
+                            value={formData[name]}
+                          >
+                            <SelectTrigger className="w-[220px] p-3 py-6 text-[16px] text-sonicsilver bg-white border border-[#CCDAFF] outline-none mt-1">
+                              <div className="flex items-center">
+                                <SelectValue placeholder={label} />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {values?.map((item, i) => (
+                                <SelectItem key={i} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       ) : type === "date" ? (
                         <CustomDatePicker
@@ -276,16 +276,6 @@ const EditLead = () => {
                         <></>
                       )
                     )}
-                    {/* Attachment */}
-                                        <div className="mb-5">
-                                          <CustomFileUpload
-                                            onFilesUpload={(urls) => {
-                                              setImgUrls(urls);
-                                            }}
-                                            type="image/*"
-                                            setLoading={setLoading}
-                                          />
-                                        </div>
                   </div>
                   <div className="mt-5">
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
@@ -299,11 +289,24 @@ const EditLead = () => {
                       value={formData.description}
                     ></textarea>
                   </div>
+
+                  {/* Attachment */}
+                  <div className="mb-5">
+                    <CustomFileUpload
+                      onFilesUpload={(urls) => {
+                        setImgUrls(urls);
+                      }}
+                      type="image/*"
+                      setLoading={setLoading}
+                    />
+                  </div>
+
+
                   {imageArray?.length > 0 && (<>
                     <p className="mb-1.5 ml-1 font-medium text-gray-700">
-                          Attachments
-                      </p>
-                      <div className="grid grid-cols-5 gap-4 w-25% h-25%">
+                      Attachments
+                    </p>
+                    <div className="grid grid-cols-5 gap-4 w-25% h-25%">
                       {imageArray.map((value, index) => (
                         <div key={index} className="relative w-[100px] h-[100px]">
                           <img
@@ -326,7 +329,7 @@ const EditLead = () => {
                       ))}
                     </div></>)}
                   <div className="mt-4 max-w-[200px]">
-                    <PrimaryButton title="Update Lead" disabled={errors?.email?.length>0||errors?.contact?.length>0||loading}/>
+                    <PrimaryButton title="Update Lead" disabled={errors?.email?.length > 0 || errors?.contact?.length > 0 || loading} />
                   </div>
                 </form>
               </div>
