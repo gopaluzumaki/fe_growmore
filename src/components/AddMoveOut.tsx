@@ -24,7 +24,7 @@ import {
   createTanencyContract,
   uploadFile,
   fetchUnitsfromProperty,
-  getTenantLeaseList,
+  getTenantLeaseListMoveOut,
   fetchTenancyContract,
   fetchPropertyData,
   createCase,
@@ -129,7 +129,7 @@ const AddMoveOut = () => {
 
   const getProperties = async () => {
     // const res = await getPropertyList();
-    const res = await getTenantLeaseList()
+    const res = await getTenantLeaseListMoveOut()
     const item = res?.data?.data;
     const mergedData = item.reduce((acc, item) => {
       const existingProperty = acc.find(obj => obj.property === item.custom_property_name);

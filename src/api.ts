@@ -48,6 +48,8 @@ export const API_URL = {
     'https://propms.erpnext.syscort.com/api/resource/Maintenance?fields=["*"]&filters=[["custom_status","=","Legal"]]',
   Tenant_Lease_List:
     'https://propms.erpnext.syscort.com/api/resource/Lease?filters=[["lease_status","=","Active"]]&fields=[%22property%22,%22name%22,%22custom_number_of_unit%22,%22custom_unit_name%22,%22custom_property_name%22,%22custom_current_property%22]',
+  Tenant_Lease_List_Move_Out:
+    'https://propms.erpnext.syscort.com/api/resource/Lease?filters=[["lease_status","in",["Active","Termination"]]]&fields=[%22property%22,%22name%22,%22custom_number_of_unit%22,%22custom_unit_name%22,%22custom_property_name%22,%22custom_current_property%22]',
   Create_Case: "https://propms.erpnext.syscort.com/api/resource/Maintenance",
   Delete_Maintenance:
     "https://propms.erpnext.syscort.com/api/resource/Maintenance",
@@ -650,6 +652,16 @@ export const getLegalList = async () => {
 
 export const getTenantLeaseList = async () => {
   const response = await axios.get(`${API_URL.Tenant_Lease_List}`, {
+    auth: {
+      username: APP_AUTH.USERNAME,
+      password: APP_AUTH.PASSWORD,
+    },
+  });
+  return response;
+};
+
+export const getTenantLeaseListMoveOut = async () => {
+  const response = await axios.get(`${API_URL.Tenant_Lease_List_Move_Out}`, {
     auth: {
       username: APP_AUTH.USERNAME,
       password: APP_AUTH.PASSWORD,
